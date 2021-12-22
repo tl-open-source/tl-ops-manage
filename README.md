@@ -54,3 +54,46 @@
     tl_ops_constant_log.lua 修改dir路径
 
 ### 5. 启动nginx/openresty
+
+---------
+
+## 目录结构
+
+    |-- tl-ops-balance
+        |-- .gitignore
+        |-- LICENSE
+        |-- README.md
+        |-- api                                     #rest接口
+        |   |-- tl_ops_api_get_api.lua                  #获取当前已有api负载配置
+        |   |-- tl_ops_api_get_health_state.lua         #获取当前健康检查实时状态
+        |   |-- tl_ops_api_get_service.lua              #获取当前已有service节点配置
+        |   |-- tl_ops_api_reset_all.lua                #根据配置文件中的配置重置所有已有配置
+        |   |-- tl_ops_api_set_api.lua                  #更新当前已有api负载配置
+        |   |-- tl_ops_api_set_service.lua              #更新当前已有service节点配置
+        |-- cache                                   #多级缓存
+        |   |-- tl_ops_cache.lua                        #多级缓存对外工具
+        |   |-- tl_ops_cache_dict.lua                   #一级缓存
+        |   |-- tl_ops_cache_redis.lua                  #二级缓存
+        |   |-- tl_ops_cache_store.lua                  #三级缓存
+        |-- conf                                    #配置
+        |   |-- tl_ops_balance.conf                     #默认提供nginx conf配置
+        |-- constant                                #初始化配置，项目配置
+        |   |-- tl_ops_constant_api.lua                 #url负载默认配置
+        |   |-- tl_ops_constant_balance.lua             #负载均衡功能配置
+        |   |-- tl_ops_constant_comm.lua                #公共静态属性
+        |   |-- tl_ops_constant_health.lua              #健康检查功能配置
+        |   |-- tl_ops_constant_log.lua                 #日志配置
+        |   |-- tl_ops_constant_service.lua             #服务节点负载默认配置
+        |-- health                                  #健康检查实现
+        |   |-- tl_ops_health.lua                       #健康检查功能主体实现
+        |   |-- tl_ops_health_check.lua                 #健康检查功能调用
+        |-- lib                                     #依赖
+        |   |-- iredis.lua                              #redis连接依赖
+        |-- store                                   #三级缓存数据存放目录
+        |   |-- example
+        |-- utils                                   #工具
+            |-- tl_ops_utils_func.lua                   #项目方法封装
+            |-- tl_ops_utils_log.lua                    #自定义日志实现
+            |-- tl_ops_utils_store.lua                  #简易三级缓存实现
+
+
