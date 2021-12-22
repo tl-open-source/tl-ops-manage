@@ -31,3 +31,26 @@
 ##### 持续更新中 ...
 
 
+---------
+
+## 使用方式
+
+### 1. 安装openresty环境
+
+    官网安装openresty
+
+### 2. 修改nginx.conf引入本项目lua包
+
+    lua_package_path "/xxx/tl-ops-balance/?.lua;;"
+
+### 3. 修改nginx.conf引入/conf/tl_ops_balance.conf
+
+    include "/xxx/tl-ops-balance/conf/*.conf;"
+
+    修改tl_ops_balance.conf中的路径
+
+### 4. 修改/constant/下配置
+
+    tl_ops_constant_log.lua 修改dir路径
+
+### 5. 启动nginx/openresty
