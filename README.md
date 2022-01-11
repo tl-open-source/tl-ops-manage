@@ -57,6 +57,8 @@
 
 ### 5. 启动nginx/openresty
 
+    http://localhost/tlops/tl_ops_web_index.html  管理后台
+
 ---------
 
 ## 目录结构 （待更新）
