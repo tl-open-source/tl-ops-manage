@@ -1,33 +1,40 @@
+local snowflake = require("lib.snowflake");
 ---- api 默认列表
 local tl_ops_constant_api_list = {
     url = {
         {
-            url = "/*",                 ---- 当前url匹配规则
-            service = "service1",       ---- 当前url负载到的service
-            index = 0                   ---- 当前url负载到的service下的node
+            id = snowflake.generate_id( 100 ),  ---- default snow id
+            url = "/*",                         ---- 当前url匹配规则
+            service = "service1",               ---- 当前url负载到的service
+            node = 0                           ---- 当前url负载到的service下的node的索引
         },
         {
+            id = snowflake.generate_id( 100 ),
             url = "/api/public/*",
             service = "service1",
-            index = 1
+            node = 1
         },
         {
+            id = snowflake.generate_id( 100 ),
             url = "/api/admin/*",
             service = "service2",
-            index = 0
+            node = 0
         },
         {
+            id = snowflake.generate_id( 100 ),
             url = "/api/v1/*",
             service = "service2",
-            index = 1
+            node = 1
         }
     },
     random = {
         {
-            url = "/*",             ---- 当前url匹配规则
-            service = "service1"    ---- 当前url负载到的service
+            id = snowflake.generate_id( 100 ),  ---- default snow id
+            url = "/*",                         ---- 当前url匹配规则
+            service = "service1"                ---- 当前url负载到的service
         }, 
         {
+            id = snowflake.generate_id( 100 ),
             url = "/api/*",
             service = "service2"
         },

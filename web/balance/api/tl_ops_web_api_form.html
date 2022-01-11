@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>tl-spb-blog-后台添加配置</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <script src="https://www.layuicdn.com/auto/layui.js" v="layui" e="layui"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/vue/2.6.12/vue.min.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/axios/0.24.0/axios.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://www.layuicdn.com/layui/css/layui.css" />
+</head>
+
+<body>
+
+    <div class="layui-form" lay-filter="tl-ops-web-api-form" id="tl-ops-web-api-form" style="padding: 20px 20px 0 0;">
+        <div class="layui-form-item" style="display: none;">
+            <label class="layui-form-label">ID</label>
+            <div class="layui-input-block">
+                <input type="text" name="id" id="id" placeholder="请输入ID" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">API</label>
+            <div class="layui-input-block">
+                <input type="text" name="url" id="url" maxlength="100" placeholder="请输入API" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+
+        <div class="layui-form-item" id="tl-ops-web-api-form-service-view"></div>
+        <script id="tl-ops-web-api-form-service-tpl" type="text/html">
+            {{#  if(d.length === 0) { }}
+            <label class="layui-form-label">SERVICE</label>
+            <div class="layui-input-block">
+                <p style="line-height: 37px;">暂无SERVICE</p>
+            </div>
+            {{#  } else { }}
+            <label class="layui-form-label">SERVICE</label>
+            <div class="layui-input-block">
+                <select name="service" lay-verify="tl-ops-web-api-form-service" id="tl-ops-web-api-form-service">
+                    <option value="">请选择SERVICE</option>
+                {{#  layui.each(d, function(index, service){ }}
+                    <option value="{{index}}">{{index}}</option>
+                {{#  }); }}
+                </select> 
+            </div>
+            {{#  } }}
+        </script>
+
+        <div class="layui-form-item" id="tl-ops-web-api-form-service-node-view"></div>
+        <script id="tl-ops-web-api-form-service-node-tpl" type="text/html">
+            {{#  if(d.length === 0) { }}
+            <label class="layui-form-label">NODE</label>
+            <div class="layui-input-block">
+                <p style="line-height: 37px;">暂无NODE</p>
+            </div>
+            {{#  } else { }}
+            <label class="layui-form-label">NODE</label>
+            <div class="layui-input-block">
+                <select name="node" lay-verify="tl-ops-web-api-form-service-node" id="tl-ops-web-api-form-service-node">
+                    <option value="">请选择NODE</option>
+                {{#  layui.each(d, function(index, node){ }}
+                    <option value="{{index}}">{{node.name}}:{{node.protocol}}:{{node.ip}}:{{node.port}}</option>
+                {{#  }); }}
+                </select> 
+            </div>
+            {{#  } }}
+        </script>
+
+        <div class="layui-form-item layui-hide">
+            <input type="button" lay-submit lay-filter="tl-ops-web-api-form-submit" id="tl-ops-web-api-form-submit" value="确认">
+        </div>
+    </div>
+
+    <script src="../../tl_ops_web_comm.js"></script>
+    <script src="tl_ops_web_api_form.js"></script>
+    <script>
+        layui.use(['laytpl', 'form', 'layedit'], tl_ops_web_api_form_main);
+    </script>
+</body>
+
+</html>

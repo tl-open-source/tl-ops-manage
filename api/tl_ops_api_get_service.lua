@@ -6,6 +6,7 @@
 
 
 local cjson = require("cjson");
+cjson.encode_empty_table_as_object(false)
 local cache = require("cache.tl_ops_cache"):new("tl-ops-service");
 local tl_ops_constant_balance = require("constant.tl_ops_constant_balance");
 local tl_ops_rt = require("constant.tl_ops_constant_comm").tl_ops_rt;
@@ -24,9 +25,9 @@ if not list or list == nil then
     return;
 end
 
-local res_data = {
-    tl_ops_service_rule = rule, 
-    tl_ops_service_list = cjson.decode(list)
-}
+local res_data = {}
+res_data[tl_ops_constant_balance.service.rule.cache_key] = rule
+res_data[tl_ops_constant_balance.service.list.cache_key] = cjson.decode(list)
+
 
 tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.ok, "success", res_data);

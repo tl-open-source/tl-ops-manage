@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>tl-ops-balance后台</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <script src="https://www.layuicdn.com/auto/layui.js" v="layui" e="layui"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/vue/2.6.12/vue.min.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/axios/0.24.0/axios.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://www.layuicdn.com/layui/css/layui.css" />
+</head>
+<body>
+
+<div class="layui-fluid" style="padding: 20px;">
+    <div class="layui-card">
+        <div class="layui-form layui-card-header layuiadmin-card-header-auto">
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label">ID</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="id" placeholder="请输入ID查询" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">SERVICE</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="name" placeholder="请输入SERVICE名称查询" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <button class="layui-btn layuiadmin-btn-useradmin" lay-submit lay-filter="tl-ops-web-service-search">
+                        <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="layui-card-body">
+            <div style="padding-bottom: 10px;">
+                <button class="layui-btn layuiadmin-btn-useradmin" data-type="add">添加</button>
+            </div>
+
+            <script type="text/html" id="tl-ops-web-service-toolbar">
+                <div>
+                    <span>当前SERVICE自检策略 : </span>
+                    <span id="tl-ops-web-service-cur-rule"></span>
+                </div>
+            </script>
+            <table id="tl-ops-web-service-table" lay-filter="tl-ops-web-service-table" ></table>
+            <script type="text/html" id="tl-ops-web-service-operate">
+                <a class="layui-btn layui-btn-xs" lay-event="edit" ><i class="layui-icon layui-icon-edit"></i>编辑</a>
+            </script>
+        </div>
+    </div>
+</div>
+
+<script src="tl_ops_web_service.js"></script>
+<script src="../../tl_ops_web_comm.js"></script>
+<script>
+    layui.use(['table','form','layedit'], tl_ops_web_service_main);
+</script>
+</body>
+</html>

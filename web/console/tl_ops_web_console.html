@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>tl-ops-balance后台</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <script src="https://www.layuicdn.com/auto/layui.js" v="layui" e="layui"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/vue/2.6.12/vue.min.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/axios/0.24.0/axios.min.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/echarts/5.2.2/echarts.min.js"></script>    
+    <link rel="stylesheet" type="text/css" href="https://www.layuicdn.com/layui/css/layui.css" />
+    <link rel="stylesheet" type="text/css" href="https://layui.org.cn/layuiadmin/std/dist/layuiadmin/style/admin.css" />
+    
+</head>
+
+<body>
+    <div class="layui-fluid">
+        <div class="layui-row layui-col-space15" >
+            <div class="layui-col-sm12"> 
+                <div class="layui-row layui-col-space15" id="tl-ops-web-console-service-view"> </div>
+                <script id="tl-ops-web-console-service-tpl" type="text/html">
+                    {{#  if(d.length === 0) { }}
+                    <p style="line-height: 37px;">暂无NODE</p>
+                    {{#  } else { }}
+                    {{#  layui.each(d, function(index, service){ }}
+                    <div class="layui-col-sm3 layui-col-md3">
+                        <div class="layui-card">
+                            <div class="layui-card-header">
+                                <span class="layui-badge layui-bg-blue layuiadmin-badge">{{index}}</span>
+                                负载请求量
+                            </div>
+                            <div class="layui-card-body layuiadmin-card-list">
+                                <p class="layuiadmin-big-font">{{service.success}}</p>
+                            </div>
+                        </div>
+                    </div>
+                    {{#  }); }}
+                    {{#  } }}
+                </script>
+            </div>
+            
+
+            <div class="layui-col-sm12">
+                <div class="layui-row layui-col-space15" id="tl-ops-web-console-echarts-service-view"> </div>
+                <script id="tl-ops-web-console-echarts-service-tpl" type="text/html">
+                    {{#  if(d.length === 0) { }}
+                    <p style="line-height: 37px;">暂无SERVICE</p>
+                    {{#  } else { }}
+                    {{#  layui.each(d, function(index, service){ }}
+                    <div class="layui-col-sm6">
+                        <div class="layui-card">
+                            <div class="layui-card-header">{{service}}服务状态</div>
+                            <div class="layui-card-body">
+                                <div style="height:300px;" id="{{service}}"> </div>
+                            </div>
+                        </div>
+                    </div>
+                    {{#  }); }}
+                    {{#  } }}
+                </script>
+            </div>
+        </div>
+    </div>
+
+    <script src="../tl_ops_web_comm.js"></script>
+    <script src="tl_ops_web_console.js"></script>
+    <script>
+        layui.use(['table', 'form', 'laytpl'], tl_ops_web_console_main);
+    </script>
+</body>
+
+</html>

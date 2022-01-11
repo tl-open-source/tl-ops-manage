@@ -6,7 +6,9 @@
 
 
 local cjson = require("cjson");
+cjson.encode_empty_table_as_object(false)
 local tl_ops_constant_balance = require("constant.tl_ops_constant_balance");
+local tl_ops_constant_health = require("constant.tl_ops_constant_health")
 local tl_ops_rt = require("constant.tl_ops_constant_comm").tl_ops_rt;
 local tl_ops_utils_func = require("utils.tl_ops_utils_func");
 
@@ -52,9 +54,26 @@ local function rest_init_service()
     end
 end
 
+-- init health
+local function rest_init_health()
+    local cache_health = require("cache.tl_ops_cache"):new("tl-ops-health");
+    local options_config_key = tl_ops_constant_health.cache_key.options_config;
+    local options_config_default = tl_ops_constant_health.options;
+
+    local options_config, err = cache_health:set(options_config_key, cjson.encode(options_config_default));
+    if not options_config then
+        tl_ops_utils_func:get_str_json_by_return_arg(tl_ops_rt.error, "health options init err", err)
+        return;
+    end
+
+end
+
+
 
 rest_init_api();
 
 rest_init_service();
+
+rest_init_health();
 
 tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.ok, "success", "");

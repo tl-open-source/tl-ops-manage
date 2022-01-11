@@ -4,18 +4,23 @@
 -- @author iamtsm
 -- @email 1905333456@qq.com
 
-local tl_ops_constant_health = require("constant.tl_ops_constant_health")
 local tl_ops_health_check = require("health.tl_ops_health_check");
+local tl_ops_health_check_dynamic_conf = require("health.tl_ops_health_check_dynamic_conf")
+local tl_ops_constant_health = require("constant.tl_ops_constant_health");
 
 local _M = {}
 
-function _M:init( )
-    local heath_check = tl_ops_health_check:new(
-        tl_ops_constant_health.options,
-        tl_ops_constant_health.service
-    );
+function _M:init(  )
 
-    heath_check:tl_ops_heath_start();
+    --给定配置启动健康检查，支持动态加载已有服务变更配置
+    local health_check = tl_ops_health_check:new( 
+        tl_ops_constant_health.options,  tl_ops_constant_health.service
+    );
+    health_check:tl_ops_health_check_start();
+
+    --动态加载新增配置
+    tl_ops_health_check_dynamic_conf.tl_ops_health_check_dynamic_conf_add_start()
+
 end
 
 

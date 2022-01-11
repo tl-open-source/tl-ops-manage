@@ -195,21 +195,21 @@ function _M:get_req_uri()
 end
 
 ----返回json返回值
-function _M:get_str_json_by_return_arg (code, msg, val)
+function _M:get_str_json_by_return_arg (code, msg, data)
     local res_json = cjson.encode({
         code = code,
         msg = msg,
-        val = val
+        data = data
     });
     
     return res_json;
 end
 
 ----成功返回
-function _M:set_ngx_req_return_ok (code, msg, val)
+function _M:set_ngx_req_return_ok (code, msg, data)
     self:set_ngx_response_type_json();
     ngx.status = 200;
-    ngx.say(self:get_str_json_by_return_arg(code, msg, val));
+    ngx.say(self:get_str_json_by_return_arg(code, msg, data));
     ngx.flush();
 end
 
@@ -307,11 +307,11 @@ function _M:get_table_matcher_longer_str_for_api_list (table, key, str)
 end
 
 ---- 生成健康检查状态key
-function _M:gen_peer_key(prefix, peer, peer_id)
-    if not peer_id then
-        return prefix .. "_" .. peer;
+function _M:gen_node_key(prefix, node, node_id)
+    if not node_id then
+        return prefix .. "_" .. node;
     else 
-        return prefix .. "_" .. peer .. "_" .. peer_id;
+        return prefix .. "_" .. node .. "_" .. node_id;
     end
 end
 
