@@ -45,13 +45,13 @@
 
 ### 2. 修改nginx.conf引入本项目lua包
 
-    lua_package_path "/xxx/tl-ops-balance/?.lua;;"
+    lua_package_path "/xxx/tl-ops-manage/?.lua;;"
 
-### 3. 修改nginx.conf引入/conf/tl_ops_balance.conf
+### 3. 修改nginx.conf引入/conf/tl_ops_manage.conf
 
-    1. include "/xxx/tl-ops-balance/conf/*.conf;"
+    1. include "/xxx/tl-ops-manage/conf/*.conf;"
 
-    2. 修改tl_ops_balance.conf中的路径
+    2. 修改tl_ops_manage.conf中的路径
 
 ### 4. 修改/constant/下配置
 
