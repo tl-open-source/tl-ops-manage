@@ -8,7 +8,7 @@ local tl_ops_constant_health_check = {
         failed = "tl_ops_health_check_failed_count",                 ---- int
         success = "tl_ops_health_check_success_count",               ---- int
 
-        options_config = "tl_ops_health_options_config",                    ---- list       健康配置缓存
+        options_list = "tl_ops_health_options_list",                    ---- list       健康配置缓存
         service_version = "tl_ops_health_service_version",                  ---- int        服务配置变动
         service_options_version = "tl_ops_health_service_options_version",  ---- boolean    服务新增变动
         timers = "tl_ops_health_timers",                                    ---- list       当前开启自检的服务

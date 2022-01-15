@@ -15,35 +15,35 @@ local tl_ops_constant_health = require("constant.tl_ops_constant_health");
 local tl_ops_health_check_version = require("health.tl_ops_health_check_version")
 
 
-local tl_ops_service_rule,err = tl_ops_utils_func:get_req_post_args_by_name(tl_ops_constant_balance.service.rule.cache_key, 1);
-if not tl_ops_service_rule or tl_ops_service_rule == nil then
-    tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.args_error ,"args err1", err);
+local tl_ops_balance_service_rule,_ = tl_ops_utils_func:get_req_post_args_by_name(tl_ops_constant_balance.service.rule.cache_key, 1);
+if not tl_ops_balance_service_rule or tl_ops_balance_service_rule == nil then
+    tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.args_error ,"args err1", _);
     return;
 end
 
-local tl_ops_service_list,err = tl_ops_utils_func:get_req_post_args_by_name(tl_ops_constant_balance.service.list.cache_key, 1);
-if not tl_ops_service_list or tl_ops_service_list == nil then
-    tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.args_error ,"args err2", err);
+local tl_ops_balance_service_list,_ = tl_ops_utils_func:get_req_post_args_by_name(tl_ops_constant_balance.service.list.cache_key, 1);
+if not tl_ops_balance_service_list or tl_ops_balance_service_list == nil then
+    tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.args_error ,"args err2", _);
     return;
 end
 
 ---- 更新生成id
-for key,_ in pairs(tl_ops_service_list) do
-    for _, service in ipairs(tl_ops_service_list[key]) do
+for key,_ in pairs(tl_ops_balance_service_list) do
+    for _, service in ipairs(tl_ops_balance_service_list[key]) do
         service.id = snowflake.generate_id( 100 )
         service.updatetime = ngx.localtime()
     end
 end
 
 
-local cache_list, _ = cache:set(tl_ops_constant_balance.service.list.cache_key, cjson.encode(tl_ops_service_list));
+local cache_list, _ = cache:set(tl_ops_constant_balance.service.list.cache_key, cjson.encode(tl_ops_balance_service_list));
 if not cache_list then
     tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.error, "set list err", _)
     return;
 end
 
 
-local cache_rule, _ = cache:set(tl_ops_constant_balance.service.rule.cache_key, tl_ops_service_rule);
+local cache_rule, _ = cache:set(tl_ops_constant_balance.service.rule.cache_key, tl_ops_balance_service_rule);
 if not cache_rule then
     tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.error, "set rule err ", _)
     return;
@@ -57,13 +57,13 @@ if is_add_service and is_add_service == true then
 end
 
 ---- 对service version更新，通知worker更新所有conf
-for service_name , _ in pairs(tl_ops_service_list) do
+for service_name , _ in pairs(tl_ops_balance_service_list) do
     tl_ops_health_check_version.incr_service_version(service_name);
 end
 
 local res_data = {}
-res_data[tl_ops_constant_balance.service.rule.cache_key] = tl_ops_service_rule
-res_data[tl_ops_constant_balance.service.list.cache_key] = tl_ops_service_list
+res_data[tl_ops_constant_balance.service.rule.cache_key] = tl_ops_balance_service_rule
+res_data[tl_ops_constant_balance.service.list.cache_key] = tl_ops_balance_service_list
 
 
 tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.ok, "ok", res_data)

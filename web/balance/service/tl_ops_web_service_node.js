@@ -93,8 +93,8 @@ const tl_ops_web_service_node_render = function () {
             return {
                 "code": res.code,
                 "msg": res.msg,
-                "count": res.data.tl_ops_service_list[service].length,
-                "data": res.data.tl_ops_service_list[service]
+                "count": res.data.tl_ops_balance_service_list[service].length,
+                "data": res.data.tl_ops_balance_service_list[service]
             };
         }
     }));
@@ -117,8 +117,8 @@ const tl_ops_web_service_node_reload = function (matcher) {
             return {
                 "code": res.code,
                 "msg": res.msg,
-                "count": res.data.tl_ops_service_list[service].length,
-                "data": res.data.tl_ops_service_list[service]
+                "count": res.data.tl_ops_balance_service_list[service].length,
+                "data": res.data.tl_ops_balance_service_list[service]
             };
         }
     }));
@@ -220,10 +220,10 @@ const tl_ops_service_node_data_add_filter = function( data ) {
             return false;
         }
     }
-    if(res_data.tl_ops_service_list[data.field.service].length === undefined){
-        res_data.tl_ops_service_list[data.field.service] = [];
+    if(res_data.tl_ops_balance_service_list[data.field.service].length === undefined){
+        res_data.tl_ops_balance_service_list[data.field.service] = [];
     }
-    res_data.tl_ops_service_list[data.field.service].push(data.field);
+    res_data.tl_ops_balance_service_list[data.field.service].push(data.field);
 
     return true;
 }
@@ -248,13 +248,13 @@ const tl_ops_service_node_data_edit_filter = function( data ) {
         }
     }
     let cur_list = []
-    res_data.tl_ops_service_list[data.field.service].forEach((item)=>{
+    res_data.tl_ops_balance_service_list[data.field.service].forEach((item)=>{
         if(item.id === data.field.id){
             item = data.field;
         }
         cur_list.push(item)
     })
-    res_data.tl_ops_service_list[data.field.service] = cur_list;
+    res_data.tl_ops_balance_service_list[data.field.service] = cur_list;
 
     return true;
 }

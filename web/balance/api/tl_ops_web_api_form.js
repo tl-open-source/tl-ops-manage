@@ -31,7 +31,7 @@ const tl_ops_web_api_form_main = async function (){
     let res = await axios.get("/tlops/service/list");
     res = res.data;
     if(res.code === 0){
-        service_data = res.data.tl_ops_service_list;
+        service_data = res.data.tl_ops_balance_service_list;
     }
 
     //渲染select

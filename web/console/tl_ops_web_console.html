@@ -31,10 +31,19 @@
                         <div class="layui-card">
                             <div class="layui-card-header">
                                 <span class="layui-badge layui-bg-blue layuiadmin-badge">{{index}}</span>
-                                负载请求量
+                                负载请求
                             </div>
-                            <div class="layui-card-body layuiadmin-card-list">
-                                <p class="layuiadmin-big-font">{{service.success}}</p>
+                            <div class="layui-card-body layuiadmin-card-list" >
+                                {{#  if(service.success === 0) { }}
+                                <p class="layuiadmin-big-font" style="color:red;font-size: 24px;">
+                                    {{service.success}}次
+                                    {{#  if(service.failed > 0) { }}
+                                        <b style="font-size:12px;">已下线</b>
+                                    {{#  } }}
+                                </p>
+                                {{#  } else { }}
+                                <p class="layuiadmin-big-font" style="font-size: 24px;">{{service.success}}次</p>
+                                {{#  } }}
                             </div>
                         </div>
                     </div>

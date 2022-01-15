@@ -18,18 +18,22 @@ local _M = {
 
 ---- 更新当前service的状态版本，用于通知其他worker进程同步最新conf
 local tl_ops_health_check_version_incr_service_version = function( service_name )
+    if not service_name then
+        tlog:err(" service_name nil ")
+        return
+    end
     local key = tl_ops_utils_func:gen_node_key(tl_ops_constant_health.cache_key.service_version, service_name)
-    local service_version, err = cache_dict:get(key)
+    local service_version, _ = cache_dict:get(key)
 
     if not service_version then
         service_version, err = cache_dict:add(key, 1);
         if not service_version then 
-            tlog:err(" failed to publish new service_version:" , err)
+            tlog:err(" failed to publish new service_version:" , _)
         end
     else 
-        service_version, err = cache_dict:incr(key, 1);
+        service_version, _ = cache_dict:incr(key, 1);
         if not service_version then 
-            tlog:err(" failed to publish new service_version:" , err)
+            tlog:err(" failed to publish new service_version:" , _)
         end
     end
 

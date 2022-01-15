@@ -108,7 +108,23 @@ const tl_ops_web_console_echarts_render = function( data ){
                 axisTick: {
                     alignWithLabel: true
                 },
-                data: data.nodeList 
+                data: data.nodeList,
+                axisLabel: { //轴文字标签
+                    interval: 0,
+                    show: true,
+                    textStyle: {
+                        color: '#B0CEFC',
+                    },
+                    formatter:function(val){  
+                        var strs = val.split(''); //字符串数组  
+                        var str = ''  
+                        for (var i = 0, s; s = strs[i++];) { //遍历字符串数组  
+                            str += s;  
+                            if (!(i % 18)) str += '\n';  
+                        }  
+                        return str  
+                    } 
+                }
             }
         ],
         yAxis: [
@@ -118,7 +134,11 @@ const tl_ops_web_console_echarts_render = function( data ){
                 position: 'left',
                 axisLabel: {
                     formatter: '{value} 次'
-                }
+                },
+                nameTextStyle: {
+                    color: '#3582fb',
+                    padding: 10
+                },
             },
             {
                 type: 'value',
@@ -126,7 +146,11 @@ const tl_ops_web_console_echarts_render = function( data ){
                 position: 'right',
                 axisLabel: {
                     formatter: '{value} 次'
-                }
+                },
+                nameTextStyle: {
+                    color: '#93c36b',
+                    padding: 10
+                },
             }
         ],
         series: [
@@ -134,7 +158,7 @@ const tl_ops_web_console_echarts_render = function( data ){
                 name: '心跳成功',
                 type: 'bar',
                 yAxisIndex: 0,
-                data: data.successList
+                data: data.successList,
             },
             {
                 name: '心跳失败',

@@ -25,7 +25,7 @@ function _M:get( key )
         return nil;
     end
 
-    local res ,err = cache_redis:get(key);
+    local res ,_ = cache_redis:get(key);
     if not res then
         return nil, "failed to get " .. key .. " from redis";
     end
@@ -42,7 +42,7 @@ function _M:set(key, value)
         return nil;
     end
     
-    local res ,err = cache_redis:set(key, value);
+    local res ,_ = cache_redis:set(key, value);
     if not res then
         return nil, "failed to set " .. key .. " from redis";
     end
@@ -59,7 +59,7 @@ function _M:del(key)
         return nil;
     end
 
-    local res ,err = cache_redis:del(key);
+    local res ,_ = cache_redis:del(key);
     if not res then
         return nil, "failed to del " .. key .. " from redis";
     end

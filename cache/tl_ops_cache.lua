@@ -34,13 +34,13 @@ function _M:get( key )
     end
 
     -- load from dict
-    local res_dict ,err = cache_dict:get(key);
+    local res_dict ,_ = cache_dict:get(key);
     if res_dict and res_dict ~= nil then
         return res_dict;
     end
 
     -- load from redis
-    local res_redis ,err = cache_redis:get(key);
+    local res_redis ,_ = cache_redis:get(key);
     if res_redis and res_redis ~= nil then
         -- set to dict 
         local set_res ,_ = cache_dict:set(key, res_redis);
@@ -52,7 +52,7 @@ function _M:get( key )
 
 
     -- load from store
-    local res_store ,err = cache_store:get(key);
+    local res_store ,_ = cache_store:get(key);
     if res_store and res_store ~= nil then
         
         -- set to redis 
@@ -81,21 +81,21 @@ function _M:set(key, value)
     end
     
     -- set store
-    local set_store ,err_store = cache_store:set(key, value);
+    local set_store ,_ = cache_store:set(key, value);
     if not set_store then
         return nil, "failed set to store " .. key;
     end
 
 
     -- set redis
-    local set_redis ,err_redis = cache_redis:set(key, value);
+    local set_redis ,_ = cache_redis:set(key, value);
     if not set_redis then
         return nil, "failed set to redis after set store " .. key;
     end
 
 
     -- set dict
-    local set_dict ,err_dict = cache_dict:set(key, value);
+    local set_dict ,_ = cache_dict:set(key, value);
     if not set_dict then
         return nil, "failed set to dict after set redis" .. key;
     end
@@ -112,19 +112,19 @@ function _M:del(key)
     end
 
     -- del store
-    local del_store ,err_store = cache_store:del(key);
+    local del_store ,_ = cache_store:del(key);
     if not del_store then
         return nil, "failed to del store " .. key;
     end
 
     -- del redis
-    local del_redis ,err_redis = cache_dict:del(key);
+    local del_redis ,_ = cache_dict:del(key);
     if not del_redis then
         return nil, "failed to del redis after del store" .. key;
     end
 
     -- del dict
-    local del_dict ,err_dict = cache_dict:del(key);
+    local del_dict ,_ = cache_dict:del(key);
     if not del_dict then
         return nil, "failed to del dict after set redis" .. key;
     end

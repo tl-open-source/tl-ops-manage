@@ -48,9 +48,9 @@ local function log(self, level,  ... )
 	local msg = concate_msg(t)
 	local time = os.date("%Y-%m-%d %H:%M:%S", ngx.now())
 
-    local log_file, err = io.open(log_file_name, "a")
+    local log_file, _ = io.open(log_file_name, "a")
     if not log_file then
-    	ngx.log(ngx.ERR, "failed to open file:", log_file_name, ";err=", err)
+    	ngx.log(ngx.ERR, "failed to open file:", log_file_name, ";err=", _)
         return
 	end
 	

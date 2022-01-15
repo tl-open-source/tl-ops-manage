@@ -22,80 +22,103 @@ local service_rule_key = tl_ops_constant_balance.service.rule.cache_key;
 local service_list_key = tl_ops_constant_balance.service.list.cache_key;
 
 
-local tl_ops_api_constant_rule = tl_ops_constant_api.rule;
-local tl_ops_service_rule = tl_ops_constant_service.rule;
 
--- 获取当前url
-local request_uri = tl_ops_utils_func:get_req_uri();
+local tl_ops_balance_api_reg_matcher = function()
+    local matcher = nil
 
--- api负载策略
-local api_rule, err = cache_api:get(api_rule_key);
-if not api_rule then
-    api_rule = tl_ops_api_constant_rule.url;
+    -- 获取当前url
+    local request_uri = tl_ops_utils_func:get_req_uri();
+    
+    -- api负载策略
+    local api_rule, _ = cache_api:get(api_rule_key);
+    if not api_rule then
+        return nil
+    end
+    
+    -- api配置列表
+    local api_list, _ = cache_api:get(api_list_key);
+    if not api_list then
+        return nil
+    end
+    local api_list_table = cjson.decode(api_list);
+    
+    -- 根据负载当前策略进行负载, 返回正则命中的api
+    if api_rule == tl_ops_constant_api.rule.url then
+        matcher = tl_ops_utils_func:get_table_matcher_longer_str_for_api_list(
+            api_list_table, tl_ops_constant_api.rule.url, request_uri
+        );
+    elseif api_rule == tl_ops_constant_api.rule.random then
+        matcher = tl_ops_utils_func:get_table_matcher_longer_str_for_api_list(
+            api_list_table, tl_ops_constant_api.rule.random, request_uri
+        );
+    end
+
+    return matcher
 end
 
--- api配置列表
-local api_list, err = cache_api:get(api_list_key);
-if not api_list then
-    api_list = "{}";
-end
-local api_list_table = cjson.decode(api_list);
 
 
--- 根据负载当前策略进行负载, 返回正则命中的api
-local matcher = nil
-if api_rule == tl_ops_api_constant_rule.url then
-    matcher = tl_ops_utils_func:get_table_matcher_longer_str_for_api_list(
-        api_list_table, tl_ops_api_constant_rule.url, request_uri
-    );
-elseif api_rule == tl_ops_api_constant_rule.random then
-    matcher = tl_ops_utils_func:get_table_matcher_longer_str_for_api_list(
-        api_list_table, tl_ops_api_constant_rule.random, request_uri
-    );
-end
-
-
-if matcher and type(matcher) == 'table' then
-    -- 服务节点策略
-    local service_rule, err = cache_service:get(service_rule_key);
-    if not service_rule then
-        service_rule = tl_ops_service_rule.auto_load;
+local tl_ops_balance_api_service_matcher = function()
+    local service = nil
+    
+    local api_matcher = tl_ops_balance_api_reg_matcher()
+    if not api_matcher or type(api_matcher) ~= 'table' then
+        return nil, nil
     end
 
     -- 服务节点配置列表
-    local service_list, err = cache_service:get(service_list_key);
-    if not service_list then
-        service_list = "{}";
+    local service_list_str, _ = cache_service:get(service_list_key);
+    if not service_list_str then
+        return nil, nil
     end
-    local service_list_table = cjson.decode(service_list);
-
-    ---- 进行负载
-    if service_list_table and type(service_list_table) == 'table' then
-        local check_service_name = matcher['service']
-        local check_service_node = matcher['node']  ---- lua index start 1
-
-        -- 获取当前节点健康状态
-        local key = tl_ops_utils_func:gen_node_key(tl_ops_constant_health.cache_key.state, check_service_name, check_service_node)
-        local state , err = shared:get(key)
-
-        if check_service_node then
-            check_service_node = tonumber(check_service_node) + 1
-        else
-            math.randomseed(#request_uri)
-            check_service_node = tonumber(math.random(0,1) % #service_list_table[check_service_name]) + 1
-        end
-        local service_list = service_list_table[check_service_name]
-        local service = service_list[check_service_node]
-
-        if service then
-            -- offline
-            if not state or state == false then
-                ngx.var.node = service['protocol'] .. service["ip"] .. "/502";
-                ngx.header['Tl-Proxy'] = service['protocol'] .. service["ip"] .. "/502";
-            else
-                ngx.var.node = service['protocol'] .. service["ip"] .. ':' .. service["port"];
-                ngx.header['Tl-Proxy'] = service['name'];
-            end
-        end
+    local service_list_table = cjson.decode(service_list_str);
+    if not service_list_table and type(service_list_table) ~= 'table' then
+        return nil, nil
     end
+    local service_list = service_list_table[api_matcher.service]
+
+    -- 获取当前节点健康状态
+    local key = tl_ops_utils_func:gen_node_key(tl_ops_constant_health.cache_key.state, api_matcher.service, api_matcher.node)
+    local node_state , _ = shared:get(key)
+
+    -- node balance
+    local check_service_node = api_matcher.node  ---- lua index start 1
+    if check_service_node then
+        service = service_list[tonumber(check_service_node) + 1]
+    else
+        -- random balance
+        math.randomseed(#request_uri)
+        check_service_node = tonumber(math.random(0,1) % #service_list_table[api_matcher.service]) + 1
+        service = service_list[check_service_node]
+    end
+
+    return service, node_state
 end
+
+
+local tl_ops_balance_api_balance = function()
+
+    local node, node_state = tl_ops_balance_api_service_matcher()
+
+    if not node then
+        ngx.header['Tl-Proxy-Server'] = "nil";
+        ngx.exit(503)
+    end
+
+    -- offline
+    if not node_state or node_state == false then 
+        ngx.header['Tl-Proxy-Server'] = node['service'];
+        ngx.header['Tl-Proxy-Node'] = node['name'];
+        ngx.header['Tl-Proxy-State'] = "offline"
+        ngx.exit(503)
+    else
+        ngx.var.node = node['protocol'] .. node["ip"] .. ':' .. node["port"];
+        ngx.header['Tl-Proxy-Server'] = node['service'];
+        ngx.header['Tl-Proxy-Node'] = node['name'];
+        ngx.header['Tl-Proxy-State'] = "online"
+    end
+    
+end
+
+
+tl_ops_balance_api_balance()

@@ -27,15 +27,15 @@ const tl_ops_web_health_main = function (){
                     check_content : "GET / HTTP/1.0\r\n\r\n\r\n",
                     check_service_name : newservice
                 }
-                res.data.tl_ops_health_options_config.push(newserviceconfig)
+                res.data.tl_ops_health_options_list.push(newserviceconfig)
             }
-            tl_ops_web_health_render(res.data.tl_ops_health_options_config)
+            tl_ops_web_health_render(res.data.tl_ops_health_options_list)
         }
     })
 
     $('#'+_health_form_btn_id_name).on('click', function(){
         let newServiceList = [];
-        for(let i = 0; i < res_data.tl_ops_health_options_config.length; i++){
+        for(let i = 0; i < res_data.tl_ops_health_options_list.length; i++){
             let service = form.val(_health_form_perfix_id_name + i);
             service.check_failed_max_count = parseInt(service.check_failed_max_count)
             service.check_success_max_count = parseInt(service.check_success_max_count)
@@ -43,7 +43,7 @@ const tl_ops_web_health_main = function (){
             service.check_timeout = parseInt(service.check_timeout)
             newServiceList.push(service);
         }
-        res_data.tl_ops_health_options_config = newServiceList;
+        res_data.tl_ops_health_options_list = newServiceList;
         $.ajax(tl_ajax_data({
             url: '/tlops/health/set',
             data : JSON.stringify(res_data),

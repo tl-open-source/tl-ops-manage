@@ -183,7 +183,7 @@ tl_ops_health_check_main = function (conf)
 	tlog:dbg("tl_ops_health_check_main start")
 
 	----同步配置
-	tl_ops_health_check_dynamic_conf.tl_ops_health_check_dynamic_conf_change_start( conf )
+	tl_ops_health_check_dynamic_conf.dynamic_conf_change_start( conf )
 
 	---- 心跳包
 	if tl_ops_health_check_get_lock(conf) then
@@ -202,7 +202,7 @@ tl_ops_health_check_get_lock = function(conf)
 
 	local ok, _ = shared:add(key, true, conf.check_interval - 0.01)
 	if not ok then
-		if err == "exists" then
+		if _ == "exists" then
 			tlog:dbg("tl_ops_health_check_get_lock key exists : key=", key)
 			return nil
 		end
@@ -231,26 +231,26 @@ tl_ops_health_check_nodes = function (conf)
 
 			tlog:dbg("tl_ops_health_check_nodes start connect socket : name=", name)
 
-			local sock, err = nx_socket()
+			local sock, _ = nx_socket()
 			if not sock then
-				tlog:err("tl_ops_health_check_nodes failed to create stream socket: ", err)
+				tlog:err("tl_ops_health_check_nodes failed to create stream socket: ", _)
 				break
 			end
 			sock:settimeout(check_timeout)
 
 			---- 心跳socket
-			local ok, err = sock:connect(node.ip, node.port)
+			local ok, _ = sock:connect(node.ip, node.port)
 			if not ok then
-				tlog:err("tl_ops_health_check_nodes failed to connect socket: ", err)
+				tlog:err("tl_ops_health_check_nodes failed to connect socket: ", _)
 				tl_ops_health_check_node_failed(conf, node_id, node)
 				break; 
 			end
 
 			tlog:dbg("tl_ops_health_check_nodes connect socket ok : ok=", ok)
 
-			local bytes, err = sock:send(check_content .. "\r\n\r\n\r\n")
+			local bytes, _ = sock:send(check_content .. "\r\n\r\n\r\n")
 			if not bytes then
-				tlog:err("tl_ops_health_check_nodes failed to send socket: ", err)
+				tlog:err("tl_ops_health_check_nodes failed to send socket: ", _)
 				tl_ops_health_check_node_failed(conf, node_id, node)
 				break
 			end
@@ -258,10 +258,10 @@ tl_ops_health_check_nodes = function (conf)
 			tlog:dbg("tl_ops_health_check_nodes send socket ok : byte=", bytes)
 
 			---- socket反馈
-			local receive_line, err = sock:receive()
+			local receive_line, _ = sock:receive()
 			if not receive_line then
-				if err == "check_timeout" then
-					tlog:err("tl_ops_health_check_nodes socket check_timeout: ", err)
+				if _ == "check_timeout" then
+					tlog:err("tl_ops_health_check_nodes socket check_timeout: ", _)
 					sock:close()
 				end
 				tl_ops_health_check_node_failed(conf, node_id, node)
@@ -270,9 +270,9 @@ tl_ops_health_check_nodes = function (conf)
 
 			tlog:dbg("tl_ops_health_check_nodes receive socket ok : ", receive_line)
 
-			local from, to, err = ngx.re.find(receive_line, [[^HTTP/\d+\.\d+\s+(\d+)]], "joi", nil, 1)
+			local from, to, _ = ngx.re.find(receive_line, [[^HTTP/\d+\.\d+\s+(\d+)]], "joi", nil, 1)
 			if not from then
-				tlog:err("tl_ops_health_check_nodes ngx.re.find receive err: ", from, to, err)
+				tlog:err("tl_ops_health_check_nodes ngx.re.find receive err: ", from, to, _)
 				sock:close()
 				tl_ops_health_check_node_failed(conf, node_id, node)
 				break
@@ -312,19 +312,19 @@ tl_ops_health_check_node_failed = function (conf, node_id, node)
 
 	---- key=tl_ops_health_check_failed_count:resin-site0 (health check not ok)
 	local key = tl_ops_utils_func:gen_node_key(tl_ops_constant_health.cache_key.failed, check_service_name, node_id)
-	local cur_failed_count, err = shared:get(key)
+	local cur_failed_count, _ = shared:get(key)
 
 	tlog:dbg("tl_ops_health_check_node_failed failed key= " , key ,", cur_failed_count=" , cur_failed_count)
 
 	if not cur_failed_count then
 		cur_failed_count = 1
-		local ok, err = shared:set(key, cur_failed_count)
+		local ok, _ = shared:set(key, cur_failed_count)
 		if not ok then 
 			tlog:err("tl_ops_health_check_node_failed failed to set node check_failed_max_count key: " , key)
 		end
 	else
 		cur_failed_count = cur_failed_count + 1
-		local ok, err = shared:incr(key, 1)
+		local ok, _ = shared:incr(key, 1)
 		if not ok then
 			tlog:err("tl_ops_health_check_node_failed failed to incr node check_failed_max_count key: "  , key)
 		end
@@ -333,14 +333,14 @@ tl_ops_health_check_node_failed = function (conf, node_id, node)
 	---- 心跳包失败后，重置之前有过累计的成功次数
 	if cur_failed_count == 1 then
 		key = tl_ops_utils_func:gen_node_key(tl_ops_constant_health.cache_key.success, check_service_name, node_id)
-		local succ, err = shared:get(key)
+		local succ, _ = shared:get(key)
 		
 		tlog:dbg("tl_ops_health_check_node_failed success key= " , key ,", succ_count=" , succ)
 
 		if not succ or succ == 0 then
 			tlog:err("tl_ops_health_check_node_failed failed to get node check_success_max_count key: " , key , " or check_success_max_count = 0")
 		else
-			local ok, err = shared:set(key, 0)
+			local ok, _ = shared:set(key, 0)
 			if not ok then
 				tlog:err("tl_ops_health_check_node_failed failed to set node check_success_max_count key: " .. key)
 			end
@@ -355,9 +355,9 @@ tl_ops_health_check_node_failed = function (conf, node_id, node)
 		tlog:dbg("tl_ops_health_check_node_failed failed count > max failed count , cur_failed_count=",cur_failed_count, ",ip=" .. node.ip .. ":" .. node.port) 
 
 		key = tl_ops_utils_func:gen_node_key(tl_ops_constant_health.cache_key.state, check_service_name, node_id)
-		local ok, err = shared:set(key, nil)
+		local ok, _ = shared:set(key, nil)
 		if not ok then
-			tlog:err("tl_ops_health_check_node_failed failed to set node down state:", err)
+			tlog:err("tl_ops_health_check_node_failed failed to set node down state:", _)
 		end
 		node.state = false
 		
@@ -379,19 +379,19 @@ tl_ops_health_check_node_ok = function (conf, node_id, node)
 	local check_service_name = conf.check_service_name
 	
 	local key = tl_ops_utils_func:gen_node_key(tl_ops_constant_health.cache_key.success, check_service_name, node_id)
-	local cur_success_count, err = shared:get(key)
+	local cur_success_count, _ = shared:get(key)
 
 	tlog:dbg("tl_ops_health_check_node_ok success key= " , key ,", cur_success_count=" , cur_success_count)
 
 	if not cur_success_count then
 		cur_success_count = 1
-		local ok, err = shared:set(key, cur_success_count)
+		local ok, _ = shared:set(key, cur_success_count)
 		if not ok then 
 			tlog:err("tl_ops_health_check_node_ok failed to set node ok key: " , key)
 		end
 	else
 		cur_success_count = cur_success_count + 1
-		local ok, err = shared:incr(key, 1)
+		local ok, _ = shared:incr(key, 1)
 		if not ok then
 			tlog:err("tl_ops_health_check_node_ok failed to incr node ok key: "  , key)
 		end
@@ -400,16 +400,16 @@ tl_ops_health_check_node_ok = function (conf, node_id, node)
 	---- 心跳包成功后，重置之前有过累计的失败次数
 	if cur_success_count == 1 then
 		key = tl_ops_utils_func:gen_node_key(tl_ops_constant_health.cache_key.failed, check_service_name, node_id)
-		local fails, err = shared:get(key)
+		local fails, _ = shared:get(key)
 
 		tlog:dbg("tl_ops_health_check_node_ok success key= " , key , ",cur_success_count=", cur_success_count, ", check_failed_max_count=" , fails)
 
 		if not fails or fails == 0 then
-			if err then
+			if _ then
 				tlog:err("tl_ops_health_check_node_ok failed to get node nok key: " , key)
 			end
 		else
-			local ok, err = shared:set(key, 0)
+			local ok, _ = shared:set(key, 0)
 			if not ok then
 				tlog:err("tl_ops_health_check_node_ok failed to set node nok key: " , key)
 			end
@@ -425,9 +425,9 @@ tl_ops_health_check_node_ok = function (conf, node_id, node)
 		tlog:dbg("tl_ops_health_check_node_ok success count > max success count , state=",node.state," cur_success_count=",cur_success_count, ",ip=" .. node.ip .. ":" .. node.port) 
 
 		key = tl_ops_utils_func:gen_node_key(tl_ops_constant_health.cache_key.state, check_service_name, node_id)
-		local ok, err = shared:set(key, true)
+		local ok, _ = shared:set(key, true)
 		if not ok then
-			tlog:err("tl_ops_health_check_node_ok failed to set node down state:", err)
+			tlog:err("tl_ops_health_check_node_ok failed to set node down state:", _)
 		end
 		node.state = true
 		

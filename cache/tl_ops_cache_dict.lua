@@ -25,7 +25,7 @@ function _M:get( key )
         return nil;
     end
 
-    local res ,err = cache_dict:get(key);
+    local res ,_ = cache_dict:get(key);
     if not res then
         return nil, "failed to get " .. key .. " from dict";
     end
@@ -42,7 +42,7 @@ function _M:set(key, value)
         return nil;
     end
     
-    local res ,err = cache_dict:set(key, value);
+    local res ,_ = cache_dict:set(key, value);
     if not res then
         return nil, "failed to set " .. key .. " from dict";
     end
@@ -58,7 +58,7 @@ function _M:del(key)
         return nil;
     end
 
-    local res ,err = cache_dict:del(key);
+    local res ,_ = cache_dict:del(key);
     if not res then
         return nil, "failed to del " .. key .. " from dict";
     end

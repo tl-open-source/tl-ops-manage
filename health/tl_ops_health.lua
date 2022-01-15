@@ -7,6 +7,7 @@
 local tl_ops_health_check = require("health.tl_ops_health_check");
 local tl_ops_health_check_dynamic_conf = require("health.tl_ops_health_check_dynamic_conf")
 local tl_ops_constant_health = require("constant.tl_ops_constant_health");
+local tl_ops_health_check_version = require("health.tl_ops_health_check_version")
 
 local _M = {}
 
@@ -18,8 +19,21 @@ function _M:init(  )
     );
     health_check:tl_ops_health_check_start();
 
+    
     --动态加载新增配置
-    tl_ops_health_check_dynamic_conf.tl_ops_health_check_dynamic_conf_add_start()
+    tl_ops_health_check_dynamic_conf.dynamic_conf_add_start()
+    
+
+    --默认初始化一次version
+    for i = 1, #tl_ops_constant_health.options do
+        local option = tl_ops_constant_health.options[i]
+        local service_name = option.check_service_name
+        if service_name then
+            tl_ops_health_check_version.incr_service_version(service_name)
+        end
+    end
+	
+	tl_ops_health_check_version.incr_service_option_version()
 
 end
 

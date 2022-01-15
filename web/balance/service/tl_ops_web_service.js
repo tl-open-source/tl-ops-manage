@@ -14,7 +14,7 @@ const tl_ops_web_service_main = function (){
     axios.get("/tlops/service/list").then((res)=>{
         res = res.data;
         if(res.code === 0){
-            rule = res.data.tl_ops_service_rule;
+            rule = res.data.tl_ops_balance_service_rule;
             //首次渲染
             tl_ops_web_service_render();
 
@@ -55,13 +55,16 @@ const tl_ops_web_service_event = function () {
 const tl_ops_web_service_cols = function () {
     return [[
         {
-            field: 'LAY_TABLE_INDEX', title: 'ID',width:"10%"
-        }, {
-            field: 'name', title: '服务名称', width:"45%"
+            field: 'name', title: '服务名称', width:"30%"
         },  {
-            field: 'node', title: '节点列表',width:"45%",
+            field: 'node', title: '节点列表',width:"30%",
             templet : (d)=>{
                 return `<p style='text-decoration: underline;color:red;font-weight:700;cursor: pointer;' onclick='tl_ops_web_service_node_manage("${d.name}")'>${d.node.length}个节点</p>`;
+            }
+        }, {
+            field: 'state', title: '服务健康状态',width:"40%",
+            templet : (d)=>{
+                return `<span> 上线节点-${1}，个 </span> <span> 下线节点-${1}个 </span>`;
             }
         }
     ]];
@@ -80,12 +83,12 @@ const tl_ops_web_service_render = function () {
         totalRow: true, //开启合计行
         parseData: function(res){
             res_data = res.data;
-            let datas = [], keys = Object.keys(res.data.tl_ops_service_list);
+            let datas = [], keys = Object.keys(res.data.tl_ops_balance_service_list);
             for(key in keys){
                 datas.push({
                     name : keys[key],
-                    node : Object.keys(res.data.tl_ops_service_list[keys[key]]).length !== 0 
-                            ? res.data.tl_ops_service_list[keys[key]] : []
+                    node : Object.keys(res.data.tl_ops_balance_service_list[keys[key]]).length !== 0 
+                            ? res.data.tl_ops_balance_service_list[keys[key]] : []
                 })
             }
             return {
@@ -112,12 +115,12 @@ const tl_ops_web_service_reload = function (matcher) {
         totalRow: true, //开启合计行
         parseData: function(res){
             res_data = res.data;
-            let datas = [], keys = Object.keys(res.data.tl_ops_service_list);
+            let datas = [], keys = Object.keys(res.data.tl_ops_balance_service_list);
             for(key in keys){
                 datas.push({
                     name : keys[key],
-                    node : Object.keys(res.data.tl_ops_service_list[keys[key]]).length !== 0 
-                            ? res.data.tl_ops_service_list[keys[key]] : []
+                    node : Object.keys(res.data.tl_ops_balance_service_list[keys[key]]).length !== 0 
+                            ? res.data.tl_ops_balance_service_list[keys[key]] : []
                 })
             }
             return {
@@ -198,7 +201,7 @@ const tl_ops_service_data_add_filter = function( data ) {
             return false;
         }
     }
-    res_data.tl_ops_service_list[data.field.service] = [];
+    res_data.tl_ops_balance_service_list[data.field.service] = [];
     res_data.tl_ops_health_service_options_version = true
     return true
 }

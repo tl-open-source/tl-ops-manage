@@ -14,7 +14,7 @@ const tl_ops_web_api_main = function (){
     axios.get("/tlops/api/list").then((res)=>{
         res = res.data;
         if(res.code === 0){
-            rule = res.data.tl_ops_api_rule;
+            rule = res.data.tl_ops_balance_api_rule;
             //渲染
             tl_ops_web_api_render();
 
@@ -109,8 +109,8 @@ const tl_ops_web_api_render = function () {
             return {
                 "code": res.code,
                 "msg": res.msg,
-                "count": res.data.tl_ops_api_list[rule].length,
-                "data": res.data.tl_ops_api_list[rule]
+                "count": res.data.tl_ops_balance_api_list[rule].length,
+                "data": res.data.tl_ops_balance_api_list[rule]
             };
         }
     }));
@@ -133,8 +133,8 @@ const tl_ops_web_api_reload = function (matcher) {
             return {
                 "code": res.code,
                 "msg": res.msg,
-                "count": res.data.tl_ops_api_list[rule].length,
-                "data": res.data.tl_ops_api_list[rule]
+                "count": res.data.tl_ops_balance_api_list[rule].length,
+                "data": res.data.tl_ops_balance_api_list[rule]
             };
         }
     }));
@@ -234,7 +234,7 @@ const tl_ops_api_data_add_filter = function( data ) {
             data.field[key] = parseInt(data.field[key])   
         }
     }
-    res_data.tl_ops_api_list[rule].push(data.field)
+    res_data.tl_ops_balance_api_list[rule].push(data.field)
 
     return true
 }
@@ -255,13 +255,13 @@ const tl_ops_api_data_edit_filter = function( data ) {
         }
     }
     let cur_list = []
-    res_data.tl_ops_api_list[rule].forEach((item)=>{
+    res_data.tl_ops_balance_api_list[rule].forEach((item)=>{
         if(item.id === data.field.id){
             item = data.field;
         }
         cur_list.push(item)
     })
-    res_data.tl_ops_api_list[rule] = cur_list;
+    res_data.tl_ops_balance_api_list[rule] = cur_list;
 
     return true
 }

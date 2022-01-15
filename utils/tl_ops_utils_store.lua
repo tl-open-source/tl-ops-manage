@@ -28,7 +28,7 @@ function _M:store_index( key , seek)
 	content[key] = seek;
 
 	local store_file_name = self.path .. self.business .. ".tlindex"
-    local store_file_io, err = io.open(store_file_name, "w+")  ---- 覆盖index
+    local store_file_io, _ = io.open(store_file_name, "w+")  ---- 覆盖index
     if not store_file_io then
     	tlog:err("failed to open file in store-index: " .. store_file_name)
         return
@@ -45,7 +45,7 @@ end
 ---- 写内容文件
 function _M:store( key,  ... )
 	local store_file_name = self.path .. self.business .. ".tlstore"
-	local store_file_io, err = io.open(store_file_name, "a+")  ---- 追加内容
+	local store_file_io, _ = io.open(store_file_name, "a+")  ---- 追加内容
     if not store_file_io then
     	tlog:err("failed to open file in store: " .. store_file_name)
         return
@@ -76,7 +76,7 @@ end
 ---- 读索引文件
 function _M:read_index( key )
 	local store_file_name = self.path .. self.business .. ".tlindex"
-	local store_file_io, err = io.open(store_file_name, "r")
+	local store_file_io, _ = io.open(store_file_name, "r")
     if not store_file_io then
     	tlog:err("failed to open file in read: " .. store_file_name)
         return
@@ -99,7 +99,7 @@ end
 ---- 写内容文件
 function _M:read( key )
 	local store_file_name = self.path .. self.business .. ".tlstore"
-	local store_file_io, err = io.open(store_file_name, "r")
+	local store_file_io, _ = io.open(store_file_name, "r")
     if not store_file_io then
     	tlog:err("failed to open file in read: " .. store_file_name)
         return

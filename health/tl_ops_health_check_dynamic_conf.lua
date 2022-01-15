@@ -14,7 +14,6 @@ local cache_service = require("cache.tl_ops_cache"):new("tl-ops-service");
 local tl_ops_constant_balance = require("constant.tl_ops_constant_balance");
 local shared = ngx.shared.tlopsbalance
 
-
 local tl_ops_health_check_dynamic_add_check;
 
 
@@ -99,14 +98,14 @@ end
 local tl_ops_health_check_dynamic_conf_add_check = function()
 	tlog:dbg("[add-check] loop check cus options version start")
 
-	local version, err = shared:get(tl_ops_constant_health.cache_key.service_options_version)
+	local version, _ = shared:get(tl_ops_constant_health.cache_key.service_options_version)
 	if not version then
 		return
 	end
 
 	tlog:dbg("[add-check] service version conf true ")
 
-	local options_str, _ = cache_health:get(tl_ops_constant_health.cache_key.options_config)
+	local options_str, _ = cache_health:get(tl_ops_constant_health.cache_key.options_list)
 	if not options_str then
 		tlog:dbg("[add-check] load dynamic options failed , options_str=",options_str)
 		return
@@ -167,7 +166,7 @@ local tl_ops_health_check_dynamic_conf_change_state_async = function( conf )
 	for i = 1, #nodes do
 		local node_id = i - 1
 		local key = tl_ops_utils_func:gen_node_key(tl_ops_constant_health.cache_key.state, conf.check_service_name, node_id)
-		local res, err = shared:get(key)
+		local res, _ = shared:get(key)
 
 		tlog:dbg("[change-check] node state, key=",key,",state=",res)
 
@@ -181,7 +180,7 @@ end
 
 ---- 同步health check option
 local tl_ops_health_check_dynamic_conf_change_service_options_async = function( conf )
-    local options_str, _ = cache_health:get(tl_ops_constant_health.cache_key.options_config)
+    local options_str, _ = cache_health:get(tl_ops_constant_health.cache_key.options_list)
 	if not options_str then
 		tlog:dbg("[change-check] load dynamic options failed , options_str=",options_str)
 		return
@@ -229,7 +228,7 @@ end
 ---- 校验是否需要同步conf变更
 local tl_ops_health_check_dynamic_conf_change_check = function( conf )
 	local key = tl_ops_utils_func:gen_node_key(tl_ops_constant_health.cache_key.service_version, conf.check_service_name)
-	local service_version, err = shared:get(key)
+	local service_version, _ = shared:get(key)
 
 	tlog:dbg("[change-check] start check conf_version=",conf.service_version,",service_version=" , service_version, ",key=",key)
 
@@ -259,6 +258,6 @@ end
 
 
 return {
-	tl_ops_health_check_dynamic_conf_change_start = tl_ops_health_check_dynamic_conf_change_start,
-	tl_ops_health_check_dynamic_conf_add_start = tl_ops_health_check_dynamic_conf_add_start
+	dynamic_conf_change_start = tl_ops_health_check_dynamic_conf_change_start,
+	dynamic_conf_add_start = tl_ops_health_check_dynamic_conf_add_start
 }

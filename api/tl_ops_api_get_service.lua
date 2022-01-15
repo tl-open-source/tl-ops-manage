@@ -13,15 +13,15 @@ local tl_ops_rt = require("constant.tl_ops_constant_comm").tl_ops_rt;
 local tl_ops_utils_func = require("utils.tl_ops_utils_func");
 
 
-local rule, err_rule = cache:get(tl_ops_constant_balance.service.rule.cache_key);
+local rule, _ = cache:get(tl_ops_constant_balance.service.rule.cache_key);
 if not rule or rule == nil then
-    tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.not_found ,"not found rule", err_rule);
+    tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.not_found ,"not found rule", _);
     return;
 end
 
-local list, err_list = cache:get(tl_ops_constant_balance.service.list.cache_key);
+local list, _ = cache:get(tl_ops_constant_balance.service.list.cache_key);
 if not list or list == nil then
-    tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.not_found ,"not found list", err_list);
+    tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.not_found ,"not found list", _);
     return;
 end
 

@@ -4,7 +4,7 @@
 -- @author iamtsm
 -- @email 1905333456@qq.com
 
-local cjson, err = require("cjson");
+local cjson, _ = require("cjson");
 local _M = {}
 
 
@@ -117,10 +117,10 @@ end
 ---- 获取post数据table格式， name : 参数名， deep : 在table中处于的层级
 function _M:get_req_post_args_by_name (name, deep)
     ngx.req.read_body()
-    local post_args_tab,err = ngx.req.get_body_data()
+    local post_args_tab,_ = ngx.req.get_body_data()
 
     if not post_args_tab or post_args_tab == nil then
-        return false, err;
+        return false, _;
     end
 
     post_args_tab = cjson.decode(post_args_tab);
@@ -154,9 +154,9 @@ end
 
 ----返回lua文件内的table格式数据
 function _M:get_str_table_by_lua_file (filename)
-    local res, err = require(filename);
+    local res, _ = require(filename);
     if not res or res == nil then
-        return false, filename .. " nil" .. err;
+        return false, filename .. " nil" .. _;
     else 
         return true, res;
     end
@@ -164,14 +164,14 @@ end
 
 ----返回lua文件内的json格式数据
 function _M:get_str_json_by_lua_file (filename)
-    local res,err = require(filename);
+    local res,_ = require(filename);
     if not res or str == nil then
-        return false, filename .. " nil" .. err;
+        return false, filename .. " nil" .. _;
     end
 
-    local str, err = cjson.encode(res);
+    local str, _ = cjson.encode(res);
     if not str or str == nil then
-        return false, "str nil " .. err;
+        return false, "str nil " .. _;
     end
     
     return true, str;
@@ -234,7 +234,7 @@ function _M:get_table_matcher_str (table, key, str)
     for k ,list in pairs(table) do
         if k == key then
             for i, obj in pairs(list) do
-                local matcher, err = self:get_str_matcher_str(str, obj.url)
+                local matcher, _ = self:get_str_matcher_str(str, obj.url)
                 if matcher ~= "" and matcher ~= nil and type(matcher) == 'table' then
                     matcher_list[count] = matcher;
                     count = count + 1;
@@ -272,7 +272,7 @@ function _M:get_table_matcher_str_for_api_list (table, key, str)
     for k ,list in pairs(table) do
         if k == key then
             for i, obj in pairs(list) do
-                local matcher, err = self:get_str_matcher_str(str, obj.url)
+                local matcher, _ = self:get_str_matcher_str(str, obj.url)
                 if matcher ~= "" and matcher ~= nil and type(matcher) == 'table' then
                     matcher_list[count] = obj;
                     count = count + 1;
@@ -305,6 +305,26 @@ function _M:get_table_matcher_longer_str_for_api_list (table, key, str)
 
     return matcher[res_obj_index], matcher;
 end
+
+
+---- 返回table中是否存在该元素
+function _M:get_table_element_exsit ( tables,  element )
+    if not str then
+        return nil
+    end
+
+    if type(element) == 'string' then
+        for i = 0, #tables do
+            if tables[i] == element then
+                return true
+            end
+        end
+        return false
+    end
+
+    return false
+end
+
 
 ---- 生成健康检查状态key
 function _M:gen_node_key(prefix, node, node_id)
