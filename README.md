@@ -1,11 +1,10 @@
 # tl-ops-manage
 
 [![](https://img.shields.io/badge/base-openresty-blue)](https://openresty.org/cn/)
-[![](https://img.shields.io/badge/dynamic-conf-blue)](https://github.com/iamtsm/tl-ops-manage)
-[![](https://img.shields.io/badge/webmanage-support-blue)](https://github.com/iamtsm/tl-ops-manage)
-[![](https://img.shields.io/badge/healthcheck-100%-green)](https://github.com/iamtsm/tl-ops-manage/blob/main/doc/tl-ops-health.md)
-[![](https://img.shields.io/badge/balance-100%-green)](https://github.com/iamtsm/tl-ops-manage/blob/main/doc/tl-ops-balance.md)
-[![](https://img.shields.io/badge/limit-10%-red)](https://github.com/iamtsm/tl-ops-manage/blob/main/doc/tl-ops-limit.md)
+[![](https://img.shields.io/badge/dynamic%20conf-support-green)](https://github.com/iamtsm/tl-ops-manage)
+[![](https://img.shields.io/badge/webmanage-support-green)](https://github.com/iamtsm/tl-ops-manage)
+[![](https://img.shields.io/badge/healthcheck-support-green)](https://github.com/iamtsm/tl-ops-manage/blob/main/doc/tl-ops-health.md)
+[![](https://img.shields.io/badge/balance-support-green)](https://github.com/iamtsm/tl-ops-manage/blob/main/doc/tl-ops-balance.md)
 
 # service management based on openresty
 
@@ -30,26 +29,26 @@ Customize url routing strategy, random routing strategy
 
 - [x] [balance doc](doc/tl-ops-balance.md)
 
-## Health-check ： 
+## Health-check
 
 Service node health check is automated and configurable，Support dynamic addition and modification of configuration
 
 - [ ] [health doc](doc/tl-ops-health.md)
 
 
-## Limit-fuse ：
+## Limit-fuse
 
 Automatic current limiting and fusing strategy, dynamic configuration content
 
 - [ ] [limit doc](doc/tl-ops-limit.md)
 
-## Store ：
+## Store
 
 Support data storage, traceability of operation records, and complete logging
 
 - [ ] [store doc](doc/tl-ops-store.md)
 
-## Grey-strategy ：
+## Grey-strategy
 
 Customize grayscale publishing routing rules, according to request parameters grayscale
 
@@ -92,3 +91,7 @@ And you need to modify the path of the content in the tl_ops_constant_log.lua to
 Finallyinaly start nginx
 
     http://127.0.0.1/tlops/tl_ops_web_index.html (web manage)
+
+
+
+#### More features are in development ..
