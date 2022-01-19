@@ -5,8 +5,8 @@ local tl_ops_constant_api_list = {
         {
             id = snowflake.generate_id( 100 ),  ---- default snow id
             url = "/*",                         ---- 当前url匹配规则
-            service = "service1",               ---- 当前url负载到的service
-            node = 0                           ---- 当前url负载到的service下的node的索引
+            service = "service1",               ---- 当前url路由到的service
+            node = 0                           ---- 当前url路由到的service下的node的索引
         },
         {
             id = snowflake.generate_id( 100 ),
@@ -31,7 +31,7 @@ local tl_ops_constant_api_list = {
         {
             id = snowflake.generate_id( 100 ),  ---- default snow id
             url = "/*",                         ---- 当前url匹配规则
-            service = "service1"                ---- 当前url负载到的service
+            service = "service1"                ---- 当前url路由到的service
         }, 
         {
             id = snowflake.generate_id( 100 ),
@@ -40,8 +40,8 @@ local tl_ops_constant_api_list = {
         },
     },
     rule = {---- api rule 策略
-        url = "url",        ---- url负载可指定到具体节点
-        random = "random"       ---- 随机负载可指定到具体服务
+        url = "url",        ---- url路由可指定到具体节点
+        random = "random"       ---- 随机路由可指定到具体服务
     },
 }
 

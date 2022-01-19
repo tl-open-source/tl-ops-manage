@@ -1,7 +1,7 @@
 -- tl_ops_balance
 -- en : balance impl
--- zn : 负载的具体实现，根据用户自定义的service , 自动检查服务节点状态，
---      根据自定义的url，以及选中的负载策略，负载到合适的服务节点。
+-- zn : 路由的具体实现，根据用户自定义的service , 自动检查服务节点状态，
+--      根据自定义的url，以及选中的路由策略，路由到合适的服务节点。
 -- @author iamtsm
 -- @email 1905333456@qq.com
 
@@ -29,7 +29,7 @@ local tl_ops_balance_api_reg_matcher = function()
     -- 获取当前url
     local request_uri = tl_ops_utils_func:get_req_uri();
     
-    -- api负载策略
+    -- api路由策略
     local api_rule, _ = cache_api:get(api_rule_key);
     if not api_rule then
         return nil
@@ -42,7 +42,7 @@ local tl_ops_balance_api_reg_matcher = function()
     end
     local api_list_table = cjson.decode(api_list);
     
-    -- 根据负载当前策略进行负载, 返回正则命中的api
+    -- 根据路由当前策略进行路由, 返回正则命中的api
     if api_rule == tl_ops_constant_api.rule.url then
         matcher = tl_ops_utils_func:get_table_matcher_longer_str_for_api_list(
             api_list_table, tl_ops_constant_api.rule.url, request_uri

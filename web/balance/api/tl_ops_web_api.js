@@ -18,7 +18,7 @@ const tl_ops_web_api_main = function (){
             //渲染
             tl_ops_web_api_render();
 
-            $('#tl-ops-web-api-cur-rule')[0].innerHTML = `<b style='color:red;font-size:16px'>${rule}</b> <b> ( ${rule==='random' ? '随机NODE负载' : '指定NODE负载'} )</b>`;
+            $('#tl-ops-web-api-cur-rule')[0].innerHTML = `<b style='color:red;font-size:16px'>${rule}</b> <b> ( ${rule==='random' ? '随机NODE路由' : '指定NODE路由'} )</b>`;
 
             //表格外部事件操作
             $('.layui-btn.layuiadmin-btn-useradmin').on('click', function(){
@@ -57,7 +57,7 @@ const tl_ops_web_api_url_cols = function () {
         }, {
             field: 'url', title: '请求的API', width:"30%"
         },  {
-            field: 'service', title: '负载的SERVICE名称',width:"15%"
+            field: 'service', title: '路由的SERVICE名称',width:"15%"
         },  {
             field: 'node', title: '具体的NODE索引',width:"15%"
         },  {
@@ -80,7 +80,7 @@ const tl_ops_web_api_random_cols = function () {
         }, {
             field: 'url', title: '请求的API', width:"30%"
         },  {
-            field: 'service', title: '负载的SERVICE',width:"25%"
+            field: 'service', title: '路由的SERVICE',width:"25%"
         },  {
             field: 'updatetime', title: '更新时间',width:"20%",
         }, {
@@ -145,7 +145,7 @@ const tl_ops_web_api_reload = function (matcher) {
 const tl_ops_web_api_add = function () {
     layer.open({
         type: 2
-        ,title: '添加自定义API负载'
+        ,title: '添加自定义API路由'
         ,content: 'tl_ops_web_api_form.html?rule='+rule
         ,maxmin: true
         ,minStack:false

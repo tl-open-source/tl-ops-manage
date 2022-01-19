@@ -1,6 +1,6 @@
 -- tl_ops_api 
 -- en : reset service node ,api config list
--- zn : 重置负载负载节点，api配置列表
+-- zn : 重置路由路由节点，api配置列表
 -- @author iamtsm
 -- @email 1905333456@qq.com
 

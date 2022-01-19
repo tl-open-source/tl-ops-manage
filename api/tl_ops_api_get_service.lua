@@ -1,6 +1,6 @@
 -- tl_ops_api 
 -- en : get balance service node config list
--- zn : 获取负载服务节点配置列表
+-- zn : 获取路由服务节点配置列表
 -- @author iamtsm
 -- @email 1905333456@qq.com
 

@@ -1,7 +1,7 @@
 local tl_ops_constant_api = require("constant.tl_ops_constant_api");
 local tl_ops_constant_service = require("constant.tl_ops_constant_service");
 
----- 基础负载功能定义
+---- 基础路由功能定义
 local tl_ops_constant_balance = {
     api = {
         list = {

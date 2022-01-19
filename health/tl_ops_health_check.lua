@@ -215,7 +215,7 @@ tl_ops_health_check_get_lock = function(conf)
 	return true
 end
 
----- 对配置的负载机器依次发送心跳包
+---- 对配置的路由机器依次发送心跳包
 tl_ops_health_check_nodes = function (conf)
 	local check_content = conf.check_content
 	local check_timeout = conf.check_timeout

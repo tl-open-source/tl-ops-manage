@@ -1,6 +1,6 @@
 -- tl_ops_api 
 -- en : set balance api config list
--- zn : 更新负载api配置列表
+-- zn : 更新路由api配置列表
 -- @author iamtsm
 -- @email 1905333456@qq.com
 
