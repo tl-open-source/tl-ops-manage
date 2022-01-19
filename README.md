@@ -1,83 +1,94 @@
-# tl-ops-manage (tl openresty lua manage)
+# tl-ops-manage
+
+[![](https://img.shields.io/badge/base-openresty-blue)](https://openresty.org/cn/)
+[![](https://img.shields.io/badge/dynamic-conf-blue)](https://github.com/iamtsm/tl-ops-manage)
+[![](https://img.shields.io/badge/webmanage-support-blue)](https://github.com/iamtsm/tl-ops-manage)
+[![](https://img.shields.io/badge/healthcheck-100%-green)](https://github.com/iamtsm/tl-ops-manage/blob/main/doc/tl-ops-health.md)
+[![](https://img.shields.io/badge/balance-100%-green)](https://github.com/iamtsm/tl-ops-manage/blob/main/doc/tl-ops-balance.md)
+[![](https://img.shields.io/badge/limit-10%-red)](https://github.com/iamtsm/tl-ops-manage/blob/main/doc/tl-ops-limit.md)
+
+# service management based on openresty
+
+tl-ops-manage is positioned for service management
 
 
-# 基于openresty的轻量级服务管理功能集合实现
+# progress
+
+- [x] router
+- [x] health-check
+- [x] dynamic-conf
+- [x] dynamic-service
+- [x] data-persistence
+- [x] web-manage
+- [ ] limit-fuse
+- [ ] gray-strategy
 
 
-优点 : 轻量化，易扩展，支持可视化操作，记录朔源。
+## Router
 
-## 规划/进度
+Customize url routing strategy, random routing strategy
 
-- [x] 负载策略 
-- [x] 健康检查
-- [x] 健康检查动态配置
-- [x] 节点动态扩展
-- [x] 数据持久化
-- [x] Web管理界面
-- [ ] 限流熔断
-- [ ] 灰度发布
+- [x] [balance doc](doc/tl-ops-balance.md)
 
-#### 负载策略 ： 
-    自定义url负载策略，资源负载策略，随机负载策略。★★服务节点动态扩展★★
+## Health-check ： 
 
-#### 数据持久化 ：
-    配置策略持久化，操作记录可朔源。★★支持多级缓存★★
+Service node health check is automated and configurable，Support dynamic addition and modification of configuration
 
-#### 健康检查 ： 
-    服务节点健康检查自动化，可配置。 ★★支持动态新增修改配置★★
-
-#### 限流熔断 ：
-    限流熔断策略自动化，可配置。
-
-#### 灰度发布 ：
-    api，功能灰度策略发布，可配置。
-
-##### 持续更新中 ...
+- [ ] [health doc](doc/tl-ops-health.md)
 
 
----------
+## Limit-fuse ：
 
-## 使用方式
+Automatic current limiting and fusing strategy, dynamic configuration content
 
-### 1. 安装openresty环境
+- [ ] [limit doc](doc/tl-ops-limit.md)
 
-    官网安装openresty
+## Store ：
 
-### 2. 修改nginx.conf引入本项目lua包
+Support data storage, traceability of operation records, and complete logging
 
-    lua_package_path "/xxx/tl-ops-manage/?.lua;;"
+- [ ] [store doc](doc/tl-ops-store.md)
 
-### 3. 修改nginx.conf引入/conf/tl_ops_manage.conf
+## Grey-strategy ：
 
-    1. include "/xxx/tl-ops-manage/conf/*.conf;"
+Customize grayscale publishing routing rules, according to request parameters grayscale
 
-    2. 修改tl_ops_manage.conf中的路径
-
-### 4. 修改/constant/下配置
-
-    tl_ops_constant_log.lua 修改dir路径
-
-### 5. 启动nginx/openresty
-
-    http://localhost/tlops/tl_ops_web_index.html  管理后台
-
----------
+- [ ] [grey doc](doc/tl-ops-grey.md)
 
 
-## 模块说明文档
+# usage
 
-- [x] [balance模块](doc/tl-ops-balance.md)
+First you need to install [openresty](https://openresty.org/cn/installation.html)。
 
-- [ ] [health模块](doc/tl-ops-health.md)
-
-- [ ] [limit模块](doc/tl-ops-limit.md)
-
-- [ ] [cache模块](doc/tl-ops-cache.md)
-
-- [ ] [store模块](doc/tl-ops-store.md)
+then modify nginx.conf to introduce `tl-ops-manage lua package` and `/conf/tl_ops_manage.conf ` of the current project
 
 
-## 目录结构 （待更新）
+    http {
+        #....
 
+        include "/xxx/tl-ops-manage/conf/*.conf;"
 
+        lua_package_path "/xxx/tl-ops-manage/?.lua;;"
+    }
 
+You need to modify the path of the content in the tl_ops_manage.conf to your own path
+
+    #...
+    location = /tlops/service/list {
+		content_by_lua_file "/ your path /tl-open-source/tl-ops-manage/api/tl_ops_api_get_service.lua";
+	}
+	location = /tlops/service/set {
+		content_by_lua_file "/ your path /tl-open-source/tl-ops-manage/api/tl_ops_api_set_service.lua";
+	}
+    #...
+
+And you need to modify the path of the content in the tl_ops_constant_log.lua to your own path
+
+    local tl_ops_constant_log = {
+        dir = [[/your path/]],
+        format_json = true
+    }
+
+Finallyinaly start nginx
+
+    http://127.0.0.1/tlops/tl_ops_web_index.html (web manage)
