@@ -5,6 +5,7 @@
 [![](https://img.shields.io/badge/webmanage-support-green)](https://github.com/iamtsm/tl-ops-manage)
 [![](https://img.shields.io/badge/healthcheck-support-green)](https://github.com/iamtsm/tl-ops-manage/blob/main/doc/tl-ops-health.md)
 [![](https://img.shields.io/badge/balance-support-green)](https://github.com/iamtsm/tl-ops-manage/blob/main/doc/tl-ops-balance.md)
+[![](https://img.shields.io/badge/limitfuse-support-green)](https://github.com/iamtsm/tl-ops-manage/blob/main/doc/tl-ops-balance.md)
 
 # service management based on openresty
 
@@ -19,7 +20,7 @@ tl-ops-manage is positioned for service management
 - [x] dynamic-service
 - [x] data-persistence
 - [x] web-manage
-- [ ] limit-fuse
+- [x] limit-fuse
 - [ ] gray-strategy
 
 
