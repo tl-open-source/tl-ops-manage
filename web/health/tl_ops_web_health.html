@@ -5,26 +5,40 @@
     <title>tl-ops-manage后台</title>
     <meta name="renderer" content="webkit">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <meta name="viewport"
-        content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
-    <script src="https://www.layuicdn.com/auto/layui.js" v="layui" e="layui"></script>
-    <script src="https://cdn.bootcdn.net/ajax/libs/vue/2.6.12/vue.min.js"></script>
-    <script src="https://cdn.bootcdn.net/ajax/libs/axios/0.24.0/axios.min.js"></script>
-    <link rel="stylesheet" type="text/css" href="https://www.layuicdn.com/layui/css/layui.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <script src="../lib/axios.js"></script>
+    <script src="https://im.iamtsm.cn/lay/dist/layuiadmin/layui/layui.js" v="layui" e="layui"></script>
+    <link rel="stylesheet" type="text/css" href="https://im.iamtsm.cn/lay/dist/layuiadmin/layui/css/layui.css" />
 </head>
 
 <style>
-    .layui-form-pane .layui-form-label {
-        width: 160px;
+    .tl-ops-service-health{
+        padding-left: 20px;
+        padding-bottom: 10px;
     }
-
-    .layui-form-pane .layui-input-block {
-        margin-left: 160px;
+    .tl-health-option-value{
+        margin-left: 10px;
+        text-align: right;
     }
-
-    input {
-        color: darkorchid;
-        font-weight: 700;
+    .tl-ops-health-col{
+        border: 1px solid #e8e8e8;
+        cursor: pointer;
+        border-radius: 6px;
+        background: #b6dba6;
+    }
+    .tl-ops-health-col:hover{
+        border-color: rgba(0,0,0,.09);
+        box-shadow: 0 2px 8px rgb(0 0 0 / 9%);
+    }
+    .tl-ops-health-change-btn{
+        color:black;
+        background: #f7f9fa;
+        width: 100%;
+        padding: 0 10px;
+    }
+    .tl-ops-health-change-btn:hover{
+        background: #e3e4e5;
+        color: black;
     }
 </style>
 
@@ -33,80 +47,56 @@
         <div class="layui-row layui-col-space15">
             <div class="layui-col-md12">
                 <div class="layui-card">
-                    <div class="layui-card-header">服务健康检查配置</div>
-                    <div class="layui-card-body">
-                        <div class="layui-collapse" id="tl-ops-web-health-service-view" lay-accordion> </div>
-
-                            <script id="tl-ops-web-health-service-tpl" type="text/html">
-                                {{#  if(d.length === 0) { }}
-                                <p style="line-height: 37px;">暂无SERVICE</p>
-                                {{#  } else { }}
-                                {{#  layui.each(d, function(index, option){ }}
-                                <div class="layui-colla-item" style="padding-bottom: 20px;">
-                                    <h2 class="layui-colla-title">{{option.check_service_name}}</h2>
-                                    <div class="layui-colla-content {{index === 0 ? 'layui-show':''}}">
-                                        <div class="layui-form layui-form-pane" lay-filter="tl-ops-web-health-form-{{index}}">
-                                            <div class="layui-form-item" style="display: none;">
-                                                <label class="layui-form-label">服务名称</label>
-                                                <div class="layui-input-block">
-                                                    <input type="text" name="check_service_name" class="layui-input" value="{{option.check_service_name}}">
-                                                </div>
-                                            </div>
-                                            <div class="layui-form-item">
-                                                <label class="layui-form-label">失败次数</label>
-                                                <div class="layui-input-block">
-                                                    <input type="number" name="check_failed_max_count" maxlength="5" class="layui-input" value="{{option.check_failed_max_count}}"
-                                                        id="tl-tips-failed-{{index}}" onmouseleave="tl_mouse_leave_tips()"
-                                                        onmouseenter="tl_mouse_enter_tips('tl-tips-failed-{{index}}','在线节点自检失败次数 >= 此次数后将被下线')">
-                                                </div>
-                                            </div>
-                                            <div class="layui-form-item">
-                                                <label class="layui-form-label">成功次数</label>
-                                                <div class="layui-input-block">
-                                                    <input type="number" name="check_success_max_count" maxlength="5" class="layui-input" value="{{option.check_success_max_count}}"
-                                                        id="tl-tips-success-{{index}}" onmouseleave="tl_mouse_leave_tips()"
-                                                        onmouseenter="tl_mouse_enter_tips('tl-tips-success-{{index}}','下线节点自检成功次数 >= 此次数后将重新上线')">
-                                                </div>
-                                            </div>
-                                            <div class="layui-form-item">
-                                                <label class="layui-form-label">时间间隔 (ms)</label>
-                                                <div class="layui-input-block">
-                                                    <input type="number" name="check_interval" class="layui-input" maxlength="15" value="{{option.check_interval}}"
-                                                        id="tl-tips-interval-{{index}}" onmouseleave="tl_mouse_leave_tips()"
-                                                        onmouseenter="tl_mouse_enter_tips('tl-tips-interval-{{index}}','循环自检服务一个周期的时间间隔，该值修改后重启生效')">
-                                                </div>
-                                            </div>
-                                            <div class="layui-form-item">
-                                                <label class="layui-form-label">超时时间 (ms)</label>
-                                                <div class="layui-input-block">
-                                                    <input type="number" name="check_timeout" class="layui-input" maxlength="15" value="{{option.check_timeout}}"
-                                                        id="tl-tips-timeout-{{index}}" onmouseleave="tl_mouse_leave_tips()"
-                                                        onmouseenter="tl_mouse_enter_tips('tl-tips-timeout-{{index}}','自检时，接收服务方的最大超时时间')">
-                                                </div>
-                                            </div>
-                                            <div class="layui-form-item">
-                                                <label class="layui-form-label">请求内容</label>
-                                                <div class="layui-input-block">
-                                                    <input type="text" name="check_content" class="layui-input" maxlength="" value="{{option.check_content}}"
-                                                        id="tl-tips-content-{{index}}" onmouseleave="tl_mouse_leave_tips()"
-                                                        onmouseenter="tl_mouse_enter_tips('tl-tips-content-{{index}}','自检时，发送到服务方的请求数据')">
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                {{#  }); }}
-                                {{#  } }}
-                            </script>
-
-                        <div class="layui-form-item" style="margin-top: 50px;">
-                            <button class="layui-btn" lay-submit id="tl-ops-web-health-btn">确认保存</button>
-                        </div>
+                    <div class="layui-card-header" style="font-size:20px">服务健康检查配置</div>
+                    <div class="layui-card-body" style="padding: 30px 15px;">
+                        <div id="tl-ops-web-health-service-view"> </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
+    <script id="tl-ops-web-health-service-tpl" type="text/html">
+        {{#  if(d.length === 0) { }}
+        <p style="line-height: 37px;">暂无SERVICE</p>
+        {{#  } else { }}
+        <div class="layui-row layui-col-space20">
+        {{#  layui.each(d, function(index, option){ }}
+        <div class="layui-col-md4 ">
+            <div class="layui-form " lay-filter="tl-ops-web-health-form-{{index}}">
+                <div class="tl-ops-health-col">
+                    <div style="margin:5px;text-align:center">
+                        <span class="layui-icon layui-icon-note"></span><span class="tl-health-option-value">{{option.check_service_name}}</span>
+                    </div>
+                    <div class="tl-ops-service-health">
+                        <div>
+                            <span>失败次数：</span><span class="tl-health-option-value">{{option.check_failed_max_count}}</span>
+                        </div>
+                        <div>
+                            <span>成功次数：</span><span class="tl-health-option-value">{{option.check_success_max_count}}</span>
+                        </div>
+                        <div>
+                            <span>时间间隔：</span><span class="tl-health-option-value">{{option.check_interval}}</span>
+                        </div>
+                        <div>
+                            <span>超时时间：</span><span class="tl-health-option-value">{{option.check_timeout}}</span>
+                        </div>
+                        <div>
+                            <span>请求内容：</span><span class="tl-health-option-value">{{option.check_content}}</span>
+                        </div>          
+                    </div>
+                    <div>
+                        <button  class="layui-btn layui-icon layui-icon-set tl-ops-health-change-btn" onclick="tl_ops_web_health_edit('{{option.check_service_name}}')">
+                            <b style="margin-left: 10px;">修改</b>
+                        </button>
+                    </div>                               
+                </div>
+            </div>
+        </div>
+        {{#  }); }}
+        </div>
+        {{#  } }}
+    </script>
 
     <script src="../tl_ops_web_comm.js"></script>
     <script src="tl_ops_web_health.js"></script>

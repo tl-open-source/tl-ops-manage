@@ -326,7 +326,7 @@ function _M:get_table_element_exsit ( tables,  element )
 end
 
 
----- 生成健康检查状态key
+---- 生成 '服务-节点' , '服务' key
 function _M:gen_node_key(prefix, node, node_id)
     if not node_id then
         return prefix .. "_" .. node;

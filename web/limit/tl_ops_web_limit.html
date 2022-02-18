@@ -1,12 +1,111 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
+    <title>tl-ops-manage后台</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <script src="../lib/axios.js"></script>
+    <script src="https://im.iamtsm.cn/lay/dist/layuiadmin/layui/layui.js" v="layui" e="layui"></script>
+    <link rel="stylesheet" type="text/css" href="https://im.iamtsm.cn/lay/dist/layuiadmin/layui/css/layui.css" />
 </head>
+
+<style>
+    .tl-ops-service-limit{
+        padding-left: 20px;
+        padding-bottom: 10px;
+    }
+    .tl-limit-option-value{
+        margin-left: 10px;
+        text-align: right;
+    }
+    .tl-ops-limit-col{
+        border: 1px solid #e8e8e8;
+        cursor: pointer;
+        border-radius: 6px;
+        background: #b2caf5;
+    }
+    .tl-ops-limit-col:hover{
+        border-color: rgba(0,0,0,.09);
+        box-shadow: 0 2px 8px rgb(0 0 0 / 9%);
+    }
+    .tl-ops-limit-change-btn{
+        color:black;
+        background: #f7f9fa;
+        width: 100%;
+        padding: 0 10px;
+    }
+    .tl-ops-limit-change-btn:hover{
+        background: #e3e4e5;
+        color: black;
+    }
+</style>
+
 <body>
-    limit
+    <div class="layui-fluid">
+        <div class="layui-row layui-col-space15">
+            <div class="layui-col-md12">
+                <div class="layui-card">
+                    <div class="layui-card-header" style="font-size:20px">服务限流熔断配置</div>
+                    <div class="layui-card-body" style="padding: 30px 15px;">
+                        <div id="tl-ops-web-limit-service-view"> </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script id="tl-ops-web-limit-service-tpl" type="text/html">
+        {{#  if(d.length === 0) { }}
+        <p style="line-height: 37px;">暂无SERVICE</p>
+        {{#  } else { }}
+        <div class="layui-row layui-col-space20">
+        {{#  layui.each(d, function(index, option){ }}
+        <div class="layui-col-md4 ">
+            <div class="layui-form " lay-filter="tl-ops-web-limit-form-{{index}}">
+                <div class="tl-ops-limit-col">
+                    <div style="margin:5px;text-align:center">
+                        <span class="layui-icon layui-icon-note"></span><span class="tl-limit-option-value">{{option.service_name}}</span>
+                    </div>
+                    <div class="tl-ops-service-limit">
+                        <div>
+                            <span style="color: rgba(0,0,0,.45);">自检层级：</span><span class="tl-limit-option-value">{{option.level}}</span>
+                        </div>
+                        <div>
+                            <span style="color: rgba(0,0,0,.45);">依赖模式：</span><span class="tl-limit-option-value">{{option.depend}}</span>
+                        </div>
+                        <div>
+                            <span style="color: rgba(0,0,0,.45);">节点失败阈值：</span><span class="tl-limit-option-value">{{option.node_threshold}}</span>
+                        </div>  
+                        <div>
+                            <span style="color: rgba(0,0,0,.45);">服务失败阈值：</span><span class="tl-limit-option-value">{{option.service_threshold}}</span>
+                        </div> 
+                        <div>
+                            <span style="color: rgba(0,0,0,.45);">时间间隔 (ms)：</span><span class="tl-limit-option-value">{{option.interval}}</span>
+                        </div>
+                        <div>
+                            <span style="color: rgba(0,0,0,.45);">自动恢复时间 (ms)：</span><span class="tl-limit-option-value">{{option.recover}}</span>
+                        </div>      
+                    </div>
+                    <div>
+                        <button  class="layui-btn layui-icon layui-icon-set tl-ops-limit-change-btn" onclick="tl_ops_web_limit_edit('{{option.service_name}}')">
+                            <b style="margin-left: 10px;">修改</b>
+                        </button>
+                    </div>                               
+                </div>
+            </div>
+        </div>
+        {{#  }); }}
+        </div>
+        {{#  } }}
+    </script>
+
+    <script src="../tl_ops_web_comm.js"></script>
+    <script src="tl_ops_web_limit.js"></script>
+    <script>
+        layui.use(['table', 'form', 'laytpl', 'element'], tl_ops_web_limit_main);
+    </script>
 </body>
+
 </html>

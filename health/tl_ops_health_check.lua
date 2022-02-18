@@ -13,7 +13,6 @@ local tl_ops_constant_health = require("constant.tl_ops_constant_health")
 local cache_health = require("cache.tl_ops_cache"):new("tl-ops-health");
 
 local cache_service = require("cache.tl_ops_cache"):new("tl-ops-service");
-local tl_ops_constant_balance = require("constant.tl_ops_constant_balance");
 
 local tl_ops_health_check_dynamic_conf = require("health.tl_ops_health_check_dynamic_conf")
 local tl_ops_health_check_version = require("health.tl_ops_health_check_version")

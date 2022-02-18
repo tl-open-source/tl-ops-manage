@@ -18,7 +18,11 @@ const tl_ops_web_api_main = function (){
             //渲染
             tl_ops_web_api_render();
 
-            $('#tl-ops-web-api-cur-rule')[0].innerHTML = `<b style='color:red;font-size:16px'>${rule}</b> <b> ( ${rule==='random' ? '随机NODE路由' : '指定NODE路由'} )</b>`;
+            $('#tl-ops-web-api-cur-rule')[0].innerHTML = `<b style='color:red;font-size:16px;cursor: pointer;' class="layui-badge layui-bg-red" 
+                id="tl-api-rule" onmouseleave="tl_mouse_leave_tips()"
+                onmouseenter="tl_mouse_enter_tips('tl-api-rule','修改tl_ops_constant_balance.lua配置可调整策略')">
+                ${rule}
+            </b><b> ( ${rule==='random' ? '随机NODE路由' : '指定NODE路由'} )</b>`;
 
             //表格外部事件操作
             $('.layui-btn.layuiadmin-btn-useradmin').on('click', function(){

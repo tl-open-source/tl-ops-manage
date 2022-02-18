@@ -14,7 +14,8 @@ local cache_service = require("cache.tl_ops_cache"):new("tl-ops-service");
 local tl_ops_constant_balance = require("constant.tl_ops_constant_balance");
 local shared = ngx.shared.tlopsbalance
 
-local tl_ops_health_check_dynamic_add_check;
+-- 需要提前定义，定时器访问不了
+local tl_ops_health_check_dynamic_conf_add_timer_check;
 
 
 --[[
@@ -112,7 +113,7 @@ local tl_ops_health_check_dynamic_conf_add_check = function()
 	end
 	local dynamic_options = cjson.decode(options_str)
 
-	local service_str, _ = cache_service:get(tl_ops_constant_balance.service.list.cache_key)
+	local service_str, _ = cache_service:get(tl_ops_constant_balance.cache_key.service_list)
 	if not service_str then
 		tlog:dbg("[add-check] load dynamic service failed , service_str=",service_str)
 		return
@@ -202,7 +203,7 @@ end
 
 ---- 同步service配置
 local tl_ops_health_check_dynamic_conf_change_service_node_async = function( conf )
-	local service_str, _ = cache_service:get(tl_ops_constant_balance.service.list.cache_key)
+	local service_str, _ = cache_service:get(tl_ops_constant_balance.cache_key.service_list)
 	if not service_str then
 		tlog:dbg("[change-check] load dynamic service failed , service_str=",service_str)
 		return

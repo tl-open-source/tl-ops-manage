@@ -1,11 +1,10 @@
 # tl-ops-manage (tl openresty lua manage)
 
-[![](https://img.shields.io/badge/base-openresty,lua-blue)](https://openresty.org/cn/)
-[![](https://img.shields.io/badge/dynamic%20conf-support-blue)](https://openresty.org/cn/)
-[![](https://img.shields.io/badge/web%20manage-support-blue)](https://openresty.org/cn/)
-[![](https://img.shields.io/badge/healthcheck-100%-green)](https://github.com/iamtsm/tl-ops-manage/blob/main/doc/tl-ops-health.md)
-[![](https://img.shields.io/badge/balance-100%-green)](https://github.com/iamtsm/tl-ops-manage/blob/main/doc/tl-ops-balance.md)
-[![](https://img.shields.io/badge/limit-10%-red)](https://github.com/iamtsm/tl-ops-manage/blob/main/doc/tl-ops-limit.md)
+[![](https://img.shields.io/badge/base-openresty-blue)](https://openresty.org/cn/)
+[![](https://img.shields.io/badge/dynamic%20conf-support-green)](https://github.com/iamtsm/tl-ops-manage)
+[![](https://img.shields.io/badge/webmanage-support-green)](https://github.com/iamtsm/tl-ops-manage)
+[![](https://img.shields.io/badge/healthcheck-support-green)](https://github.com/iamtsm/tl-ops-manage/blob/main/doc/tl-ops-health.md)
+[![](https://img.shields.io/badge/balance-support-green)](https://github.com/iamtsm/tl-ops-manage/blob/main/doc/tl-ops-balance.md)
 
 # 基于openresty的轻量级服务管理功能集合实现
 
