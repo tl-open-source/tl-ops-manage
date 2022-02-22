@@ -107,7 +107,7 @@ local fuse = {
     options = {
         {
             service_name = "service1",
-            interval = 1000000 * 1000,      ---- 检测时间间隔 单位/ms
+            interval = 10 * 1000,      ---- 检测时间间隔 单位/ms
             node_threshold = 0.3,      ---- 切换状态阈值 （node失败占比）
             service_threshold = 0.5,   ---- 切换状态阈值 （service切换阈值，取决于node失败状态占比）
             recover = 3 * 1000,        ---- 全熔断恢复时间 单位/ms
@@ -116,7 +116,7 @@ local fuse = {
         },
         {
             service_name = "service2",
-            interval = 1000000 * 1000,
+            interval = 10 * 1000,
             node_threshold = 0.3,           
             service_threshold = 0.5,
             recover = 3 * 1000,

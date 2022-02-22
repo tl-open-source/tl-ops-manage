@@ -21,20 +21,20 @@ function _M:init(  )
 
     
     -- 启动动态新增配置检测
-    -- tl_ops_limit_fuse_check_dynamic_conf.dynamic_conf_add_start()
+    tl_ops_limit_fuse_check_dynamic_conf.dynamic_conf_add_start()
     
 
     -- 默认初始化一次version
-    -- for i = 1, #tl_ops_constant_limit.options do
-    --     local option = tl_ops_constant_health.options[i]
-    --     local service_name = option.service_name
-    --     if service_name then
-    --         tl_ops_limit_fuse_check_version.incr_service_version(service_name)
-    --     end
-    -- end
+    for i = 1, #tl_ops_constant_limit.fuse.options do
+        local option = tl_ops_constant_limit.fuse.options[i]
+        local service_name = option.service_name
+        if service_name then
+            tl_ops_limit_fuse_check_version.incr_service_version(service_name)
+        end
+    end
     
     -- 启动动态检测配置版本
-	-- tl_ops_limit_fuse_check_version.incr_service_option_version()
+	tl_ops_limit_fuse_check_version.incr_service_option_version()
 
 end
 

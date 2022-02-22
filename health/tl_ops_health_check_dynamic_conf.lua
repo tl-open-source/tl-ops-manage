@@ -95,7 +95,9 @@ local tl_ops_health_check_dynamic_conf_add_core = function(options, services)
 	end
 end
 
----- 同步新增的service option，key : tl_ops_health_version，value : true/false
+---- 同步新增的service option
+---- key : tl_ops_health_version
+---- value : true/false
 local tl_ops_health_check_dynamic_conf_add_check = function()
 	tlog:dbg("[add-check] loop check cus options version start")
 

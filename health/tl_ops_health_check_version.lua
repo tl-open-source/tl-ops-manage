@@ -26,7 +26,7 @@ local tl_ops_health_check_version_incr_service_version = function( service_name 
     local service_version, _ = cache_dict:get(key)
 
     if not service_version then
-        service_version, err = cache_dict:add(key, 1);
+        service_version, _ = cache_dict:add(key, 1);
         if not service_version then 
             tlog:err(" failed to publish new service_version:" , _)
         end

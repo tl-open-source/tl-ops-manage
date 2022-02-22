@@ -195,12 +195,12 @@ function _M:tl_pos_limit_token_expand( )
         return false
     end
     
-    local res ,_ = shared:incr(self.keys.token_bucket, expand_capacity)
+    local res ,_ = shared:incr(self.keys.capacity, expand_capacity)
     if not res or res == false then
         return false
     end
 
-    self.options.capacity = expand_capacity
+    self.options.capacity = self.options.capacity + expand_capacity
 
     -- unlock
     local ok, err = lock:unlock()
@@ -219,7 +219,7 @@ function _M:tl_pos_limit_token_shrink( )
     end
     
     -- 暂定缩容量 = -当前桶容量 * 0.5
-    local shrink_capacity = -(self.options.capacity * 0.5)
+    local shrink_capacity = self.options.capacity * 0.5
 
     -- lock
     local lock, err = lock:new("tlopsbalance")
@@ -232,12 +232,12 @@ function _M:tl_pos_limit_token_shrink( )
         return false
     end
     
-    local res ,_ = shared:incr(self.keys.token_bucket, shrink_capacity)
+    local res ,_ = shared:incr(self.keys.capacity, -shrink_capacity)
     if not res or res == false then
         return false
     end
 
-    self.options.capacity = shrink_capacity
+    self.options.capacity = self.options.capacity - shrink_capacity
 
     -- unlock
     local ok, err = lock:unlock()
