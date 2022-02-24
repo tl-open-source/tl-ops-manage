@@ -9,8 +9,9 @@
 
 # service management based on openresty
 
-tl-ops-manage is positioned for service management
+tl-ops-manage is positioned for service management  
 
+[中文文档](doc/README_ZN.md)
 
 # progress
 
