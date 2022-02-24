@@ -9,6 +9,7 @@ local cjson = require("cjson");
 cjson.encode_empty_table_as_object(false)
 local cache_service = require("cache.tl_ops_cache"):new("tl-ops-service");
 local tl_ops_constant_balance = require("constant.tl_ops_constant_balance");
+local tl_ops_constant_service = require("constant.tl_ops_constant_service");
 local tl_ops_constant_health = require("constant.tl_ops_constant_health")
 local tl_ops_constant_limit = require("constant.tl_ops_constant_limit");
 local tl_ops_rt = require("constant.tl_ops_constant_comm").tl_ops_rt;
@@ -27,7 +28,7 @@ local cache_state = {
 
 
 ---- 服务相关状态
-local list_str, _ = cache_service:get(tl_ops_constant_balance.cache_key.service_list);
+local list_str, _ = cache_service:get(tl_ops_constant_service.cache_key.service_list);
 if not list_str or list_str == nil then
     tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.not_found ,"not found list", _);
     return;

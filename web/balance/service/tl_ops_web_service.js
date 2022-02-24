@@ -22,7 +22,7 @@ const tl_ops_web_service_main = function (){
             res = res.data;
             if(res.code === 0){
                 res_data = res;
-                rule = res.data.tl_ops_balance_service_rule;
+                rule = res.data.tl_ops_service_list;
                 //首次渲染
                 tl_ops_web_service_render();
     
@@ -113,12 +113,12 @@ const tl_ops_web_service_render = function () {
         totalRow: true, //开启合计行
         parseData: function(res){
             res_data = res.data;
-            let datas = [], keys = Object.keys(res.data.tl_ops_balance_service_list);
+            let datas = [], keys = Object.keys(res.data.tl_ops_service_list);
             for(key in keys){
                 datas.push({
                     name : keys[key],
-                    node : Object.keys(res.data.tl_ops_balance_service_list[keys[key]]).length !== 0 
-                            ? res.data.tl_ops_balance_service_list[keys[key]] : []
+                    node : Object.keys(res.data.tl_ops_service_list[keys[key]]).length !== 0 
+                            ? res.data.tl_ops_service_list[keys[key]] : []
                 })
             }
             return {
@@ -145,12 +145,12 @@ const tl_ops_web_service_reload = function (matcher) {
         totalRow: true, //开启合计行
         parseData: function(res){
             res_data = res.data;
-            let datas = [], keys = Object.keys(res.data.tl_ops_balance_service_list);
+            let datas = [], keys = Object.keys(res.data.tl_ops_service_list);
             for(key in keys){
                 datas.push({
                     name : keys[key],
-                    node : Object.keys(res.data.tl_ops_balance_service_list[keys[key]]).length !== 0 
-                            ? res.data.tl_ops_balance_service_list[keys[key]] : []
+                    node : Object.keys(res.data.tl_ops_service_list[keys[key]]).length !== 0 
+                            ? res.data.tl_ops_service_list[keys[key]] : []
                 })
             }
             return {
@@ -221,8 +221,9 @@ const tl_ops_service_data_add_filter = function( data ) {
             return false;
         }
     }
-    res_data.tl_ops_balance_service_list[data.field.service] = [];
+    res_data.tl_ops_service_list[data.field.service] = [];
     res_data.tl_ops_health_service_options_version = true
     res_data.new_service_name = data.field.service
+    res_data.has_new_service_name = true
     return true
 }

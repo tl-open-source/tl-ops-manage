@@ -2,6 +2,10 @@ local tl_ops_status = require("constant.tl_ops_constant_comm").tl_ops_status;
 local snowflake = require("lib.snowflake");
 ---- service 默认列表
 local tl_ops_constant_service = {
+    cache_key = {
+        service_list = "tl_ops_service_list",
+        service_rule = "tl_ops_service_rule",
+    },
     list = {
         service1 = {
             {

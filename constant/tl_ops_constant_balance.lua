@@ -4,12 +4,7 @@ local tl_ops_constant_service = require("constant.tl_ops_constant_service");
 ---- 基础路由功能定义
 local tl_ops_constant_balance = {
     cache_key = {
-        api_list = "tl_ops_balance_api_list",
-        api_rule = "tl_ops_balance_api_rule",
-        service_list = "tl_ops_balance_service_list",
-        service_rule = "tl_ops_balance_service_rule",
-        lock = "tl_ops_balance_service_lock",
-
+        lock = "tl_ops_balance_lock",
         ---- 以服务节点为单位路由请求成功次数记录 (区间)  int
         req_succ = "tl_ops_balance_req_succ",
         ---- 以服务节点为单位，5min为周期成功次数集合 list
@@ -30,7 +25,7 @@ local tl_ops_constant_balance = {
     },
     count = {
         ---- 统计周期 单位/s, 默认:5min
-        interval = 60 * 5           
+        interval = 5
     }
 }
 

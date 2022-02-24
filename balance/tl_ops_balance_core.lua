@@ -30,13 +30,13 @@ local tl_ops_balance_api_reg_matcher = function()
     local request_uri = tl_ops_utils_func:get_req_uri();
     
     -- api路由策略
-    local api_rule, _ = cache_api:get(tl_ops_constant_balance.cache_key.api_rule);
+    local api_rule, _ = cache_api:get(tl_ops_constant_api.cache_key.api_rule);
     if not api_rule then
         return nil
     end
     
     -- api配置列表
-    local api_list, _ = cache_api:get(tl_ops_constant_balance.cache_key.api_list);
+    local api_list, _ = cache_api:get(tl_ops_constant_api.cache_key.api_list);
     if not api_list then
         return nil
     end
@@ -66,7 +66,7 @@ local tl_ops_balance_api_service_matcher = function()
     end
 
     -- 服务节点配置列表
-    local service_list_str, _ = cache_service:get(tl_ops_constant_balance.cache_key.service_list);
+    local service_list_str, _ = cache_service:get(tl_ops_constant_service.cache_key.service_list);
     if not service_list_str then
         return nil, nil
     end

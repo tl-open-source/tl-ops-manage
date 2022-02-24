@@ -8,9 +8,10 @@ local cjson = require("cjson");
 local tlog = require("utils.tl_ops_utils_log"):new("tl_ops_balance_count");
 local tl_ops_utils_func = require("utils.tl_ops_utils_func");
 local tl_ops_constant_balance = require("constant.tl_ops_constant_balance");
-local cache_service = require("cache.tl_ops_cache"):new("tl-ops-service");
+local tl_ops_constant_service = require("constant.tl_ops_constant_service");
+local cache_service = require("cache.tl_ops_cache"):new("tl-opsxxx");
 local lock = require("lib.lock");
-local shared = ngx.shared.tlopsbalance
+local shared = ngx.shared.tlopsbalance;
 
 -- 控制细度 ，以周期为分割，仅用store持久
 local count_name = "tl-ops-balance-count-" .. tl_ops_constant_balance.count.interval;
@@ -48,7 +49,7 @@ local tl_ops_balance_count = function()
     end
 
     local service_list = nil
-    local service_list_str, _ = cache_service:get(tl_ops_constant_balance.cache_key.service_list);
+    local service_list_str, _ = cache_service:get(tl_ops_constant_service.cache_key.service_list);
     if not service_list_str then
         -- use default
         service_list = tl_ops_constant_balance.service.list
@@ -79,13 +80,13 @@ local tl_ops_balance_count = function()
             balance_5min_success[os.date("%Y-%m-%d %H:%M:%S", ngx.now())] = cur_count
             local ok, _ = cache_balance_count:set001(success_key, cjson.encode(balance_5min_success))
             if not ok then
-                tlog:dbg("balance success count async err ,success_key=",success_key,",cur_count=",cur_count,",err=",_)
+                tlog:err("balance success count async err ,success_key=",success_key,",cur_count=",cur_count,",err=",_)
             end
 
             -- rest cur_count
             local ok, _ = shared:set(cur_count_key, 0)
             if not ok then
-                tlog:dbg("balance count reset err ,success_key=",success_key,",cur_count=",cur_count)
+                tlog:err("balance count reset err ,success_key=",success_key,",cur_count=",cur_count)
             end
 
             tlog:dbg("balance count async ok ,success_key=",success_key,",balance_5min_success=",balance_5min_success)

@@ -1,6 +1,10 @@
 local snowflake = require("lib.snowflake");
 ---- api 默认列表
 local tl_ops_constant_api_list = {
+    cache_key = {
+        api_list = "tl_ops_api_list",
+        api_rule = "tl_ops_api_rule"
+    },
     url = {
         {
             id = snowflake.generate_id( 100 ),  ---- default snow id

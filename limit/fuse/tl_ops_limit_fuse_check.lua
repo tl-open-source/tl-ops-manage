@@ -15,7 +15,7 @@ local tl_ops_limit_fuse_check_dynamic_conf = require("limit.fuse.tl_ops_limit_fu
 local tl_ops_limit_fuse_check_version = require("limit.fuse.tl_ops_limit_fuse_check_version")
 local tl_ops_constant_limit = require("constant.tl_ops_constant_limit")
 
-local tl_ops_constant_balance = require("constant.tl_ops_constant_balance");
+local tl_ops_constant_service = require("constant.tl_ops_constant_service");
 
 local shared = ngx.shared.tlopsbalance
 

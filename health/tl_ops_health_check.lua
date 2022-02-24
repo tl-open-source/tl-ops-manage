@@ -220,7 +220,7 @@ tl_ops_health_check_nodes = function (conf)
 	local check_timeout = conf.check_timeout
 	local nodes = conf.nodes
 
-	tlog:dbg("tl_ops_health_check_nodes start" , ",nodes=",nodes , ",#nodes=", #nodes)
+	tlog:dbg("tl_ops_health_check_nodes start" , ",nodes=",nodes)
 
 	for i = 1, #nodes do
 		repeat

@@ -11,7 +11,7 @@ local tl_ops_utils_func = require("utils.tl_ops_utils_func");
 local tl_ops_constant_health = require("constant.tl_ops_constant_health")
 local cache_health = require("cache.tl_ops_cache"):new("tl-ops-health");
 local cache_service = require("cache.tl_ops_cache"):new("tl-ops-service");
-local tl_ops_constant_balance = require("constant.tl_ops_constant_balance");
+local tl_ops_constant_service = require("constant.tl_ops_constant_service");
 local shared = ngx.shared.tlopsbalance
 
 -- 需要提前定义，定时器访问不了
@@ -115,7 +115,7 @@ local tl_ops_health_check_dynamic_conf_add_check = function()
 	end
 	local dynamic_options = cjson.decode(options_str)
 
-	local service_str, _ = cache_service:get(tl_ops_constant_balance.cache_key.service_list)
+	local service_str, _ = cache_service:get(tl_ops_constant_service.cache_key.service_list)
 	if not service_str then
 		tlog:dbg("[add-check] load dynamic service failed , service_str=",service_str)
 		return
@@ -166,6 +166,10 @@ end
 ---- 同步state
 local tl_ops_health_check_dynamic_conf_change_state_async = function( conf )
     local nodes = conf.nodes;
+	if nodes == nil then
+		tlog:dbg("[change-check] nodes nil")
+		return
+	end
 	for i = 1, #nodes do
 		local node_id = i - 1
 		local key = tl_ops_utils_func:gen_node_key(tl_ops_constant_health.cache_key.state, conf.check_service_name, node_id)
@@ -205,7 +209,7 @@ end
 
 ---- 同步service配置
 local tl_ops_health_check_dynamic_conf_change_service_node_async = function( conf )
-	local service_str, _ = cache_service:get(tl_ops_constant_balance.cache_key.service_list)
+	local service_str, _ = cache_service:get(tl_ops_constant_service.cache_key.service_list)
 	if not service_str then
 		tlog:dbg("[change-check] load dynamic service failed , service_str=",service_str)
 		return
