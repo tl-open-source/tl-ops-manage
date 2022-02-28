@@ -22,7 +22,6 @@ tl-ops-manage is positioned for service management
 - [x] data-persistence
 - [x] web-manage
 - [x] limit-fuse
-- [ ] gray-strategy
 
 
 ## Router
@@ -49,12 +48,6 @@ Automatic current limiting and fusing strategy, dynamic configuration content
 Support data storage, traceability of operation records, and complete logging
 
 - [ ] [store doc](doc/tl-ops-store.md)
-
-## Grey-strategy
-
-Customize grayscale publishing routing rules, according to request parameters grayscale
-
-- [ ] [grey doc](doc/tl-ops-grey.md)
 
 
 # usage

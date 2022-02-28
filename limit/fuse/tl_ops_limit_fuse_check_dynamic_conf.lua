@@ -9,7 +9,6 @@ local tlog = require("utils.tl_ops_utils_log"):new("tl_ops_limit_fuse_check_dyna
 local tl_ops_utils_func = require("utils.tl_ops_utils_func");
 local tl_ops_constant_limit = require("constant.tl_ops_constant_limit")
 local cache_limit = require("cache.tl_ops_cache"):new("tl-ops-limit");
-local cache_service = require("cache.tl_ops_cache"):new("tl-ops-service");
 local tl_ops_constant_service = require("constant.tl_ops_constant_service");
 local shared = ngx.shared.tlopsbalance
 
@@ -108,14 +107,15 @@ local tl_ops_limit_fuse_check_dynamic_conf_add_check = function()
 
 	local options_str, _ = cache_limit:get(tl_ops_constant_limit.fuse.cache_key.options_list)
 	if not options_str then
-		tlog:dbg("[add-check] load dynamic options failed , options_str=",options_str)
+		tlog:err("[add-check] load dynamic options failed , options_str=",options_str)
 		return
 	end
 	local dynamic_options = cjson.decode(options_str)
 
+	local cache_service = require("cache.tl_ops_cache"):new("tl-ops-service");
 	local service_str, _ = cache_service:get(tl_ops_constant_service.cache_key.service_list)
 	if not service_str then
-		tlog:dbg("[add-check] load dynamic service failed , service_str=",service_str)
+		tlog:err("[add-check] load dynamic service failed , service_str=",service_str)
 		return
 	end
 	local dynamic_service = cjson.decode(service_str)

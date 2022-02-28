@@ -20,7 +20,7 @@ local mt = { __index = _M }
 
 function _M:new( options, keys )
     if not options or options == nil or not keys or keys == nil then
-        tlog:dbg(" options nil or keys nil")
+        tlog:err(" options nil or keys nil")
         return setmetatable({}, mt)
     end
 

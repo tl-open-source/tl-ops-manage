@@ -17,24 +17,19 @@
 - [x] 节点扩展
 - [x] 数据持久
 - [x] 管理界面
-- [ ] 灰度发布
-- [ ] 数据管理
+- [x] 数据管理
 
 #### 路由策略 ： 
-    自定义url路由策略，资源路由策略，随机路由策略。★★服务节点动态扩展★★
-
-#### 数据持久化 ：
-    配置策略持久化，操作记录可朔源。★★支持多级缓存★★
+    自定义url路由策略，资源路由策略，随机路由策略。
 
 #### 健康检查 ： 
-    服务节点健康检查自动化，可配置。 ★★支持动态新增修改配置★★
+    服务节点健康检查自动化，动态新增修改配置。
 
 #### 限流熔断 ：
-    限流熔断策略自动化，可配置。
+    限流熔断策略自动化，动态新增修改配置
 
-#### 灰度发布 ：
-    api，功能灰度策略发布，可配置。
-
+#### 数据持久化 ：
+    配置策略持久化，操作记录可朔源，支持多级缓存。
 ##### 持续更新中 ...
 
 
@@ -69,15 +64,13 @@
 
 ## 模块说明文档
 
-- [x] [balance模块](doc/tl-ops-balance.md)
+- [x] [路由模块](doc/tl-ops-balance.md)
 
-- [ ] [health模块](doc/tl-ops-health.md)
+- [ ] [健康检查模块](doc/tl-ops-health.md)
 
-- [ ] [limit模块](doc/tl-ops-limit.md)
+- [ ] [熔断限流模块](doc/tl-ops-limit.md)
 
-- [ ] [cache模块](doc/tl-ops-cache.md)
-
-- [ ] [store模块](doc/tl-ops-store.md)
+- [ ] [数据模块](doc/tl-ops-store.md)
 
 
 ## 目录结构
@@ -114,9 +107,8 @@
     |   |-- tl_ops_constant_log.lua
     |   |-- tl_ops_constant_service.lua
     |-- doc
-    |   |-- README ZN.md
+    |   |-- README_ZN.md
     |   |-- tl-ops-balance.md
-    |   |-- tl-ops-grey.md
     |   |-- tl-ops-health.md
     |   |-- tl-ops-limit.md
     |   |-- tl-ops-store.md
@@ -143,8 +135,8 @@
     |   |-- example
     |   |-- tl-ops-api.tlindex
     |   |-- tl-ops-api.tlstore
-    |   |-- tl-ops-balance-count-300.tlindex
-    |   |-- tl-ops-balance-count-300.tlstore
+    |   |-- tl-ops-balance-count-5.tlindex
+    |   |-- tl-ops-balance-count-5.tlstore
     |   |-- tl-ops-health.tlindex
     |   |-- tl-ops-health.tlstore
     |   |-- tl-ops-limit.tlindex
@@ -159,23 +151,13 @@
         |-- tl_ops_web_comm.js
         |-- tl_ops_web_index.html
         |-- balance
-        |   |-- api
-        |   |   |-- tl_ops_web_api.html
-        |   |   |-- tl_ops_web_api.js
-        |   |   |-- tl_ops_web_api_form.html
-        |   |   |-- tl_ops_web_api_form.js
-        |   |-- service
-        |       |-- tl_ops_web_service.html
-        |       |-- tl_ops_web_service.js
-        |       |-- tl_ops_web_service_form.html
-        |       |-- tl_ops_web_service_node.html
-        |       |-- tl_ops_web_service_node.js
-        |       |-- tl_ops_web_service_node_form.html
+        |   |-- tl_ops_web_api.html
+        |   |-- tl_ops_web_api.js
+        |   |-- tl_ops_web_api_form.html
+        |   |-- tl_ops_web_api_form.js
         |-- console
         |   |-- tl_ops_web_console.html
         |   |-- tl_ops_web_console.js
-        |-- grey
-        |   |-- tl_ops_web_grey.html
         |-- health
         |   |-- tl_ops_web_health.html
         |   |-- tl_ops_web_health.js
@@ -187,9 +169,16 @@
         |   |-- tl_ops_web_limit.html
         |   |-- tl_ops_web_limit.js
         |   |-- tl_ops_web_limit_form.html
-        |-- logs
-        |   |-- tl_ops_web_logs.html
+        |-- service
+        |   |-- tl_ops_web_service.html
+        |   |-- tl_ops_web_service.js
+        |   |-- tl_ops_web_service_form.html
+        |   |-- tl_ops_web_service_node.html
+        |   |-- tl_ops_web_service_node.js
+        |   |-- tl_ops_web_service_node_form.html
         |-- store
             |-- tl_ops_web_store.html
+            |-- tl_ops_web_store.js
+
 
 

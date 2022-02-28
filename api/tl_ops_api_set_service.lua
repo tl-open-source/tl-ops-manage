@@ -7,7 +7,7 @@
 
 local cjson = require("cjson");
 local snowflake = require("lib.snowflake");
-local cache = require("cache.tl_ops_cache"):new("tl-ops-service");
+local cache_service = require("cache.tl_ops_cache"):new("tl-ops-service");
 local tl_ops_constant_service = require("constant.tl_ops_constant_service");
 local tl_ops_constant_health = require("constant.tl_ops_constant_health");
 local tl_ops_constant_limit = require("constant.tl_ops_constant_limit");
@@ -50,14 +50,14 @@ for key,_ in pairs(tl_ops_service_list) do
 end
 
 
-local cache_list, _ = cache:set(tl_ops_constant_service.cache_key.service_list, cjson.encode(tl_ops_service_list));
+local cache_list, _ = cache_service:set(tl_ops_constant_service.cache_key.service_list, cjson.encode(tl_ops_service_list));
 if not cache_list then
     tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.error, "set list err", _)
     return;
 end
 
 
-local cache_rule, _ = cache:set(tl_ops_constant_service.cache_key.service_rule, tl_ops_service_rule);
+local cache_rule, _ = cache_service:set(tl_ops_constant_service.cache_key.service_rule, tl_ops_service_rule);
 if not cache_rule then
     tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.error, "set rule err ", _)
     return;
@@ -79,7 +79,8 @@ end
 ---- 新增service逻辑分支
 if has_new_service_name == true and new_service_name ~= '' then
     ---- 同步健康检查配置
-    local health_list_str, _ = cache:get(tl_ops_constant_health.cache_key.options_list);
+    local cache_health = require("cache.tl_ops_cache"):new("tl-ops-health");
+    local health_list_str, _ = cache_health:get(tl_ops_constant_health.cache_key.options_list);
     if not health_list_str or health_list_str == nil then
         tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.not_found, "not found health list", _);
         return;
@@ -89,14 +90,15 @@ if has_new_service_name == true and new_service_name ~= '' then
     new_service_health_option.check_service_name = new_service_name
     table.insert(health_list_table, new_service_health_option)
 
-    local health_res, _ = cache:set(tl_ops_constant_health.cache_key.options_list, cjson.encode(health_list_table));
+    local health_res, _ = cache_health:set(tl_ops_constant_health.cache_key.options_list, cjson.encode(health_list_table));
     if not health_res then
         tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.error, "init health conf err ", _)
         return;
     end
 
     ---- 同步熔断限流配置
-    local limit_list_str, _ = cache:get(tl_ops_constant_limit.fuse.cache_key.options_list);
+    local cache_limit = require("cache.tl_ops_cache"):new("tl-ops-limit");
+    local limit_list_str, _ = cache_limit:get(tl_ops_constant_limit.fuse.cache_key.options_list);
     if not limit_list_str or limit_list_str == nil then
         tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.not_found, "not found limit list", _);
         return;
@@ -106,7 +108,7 @@ if has_new_service_name == true and new_service_name ~= '' then
     new_service_limit_option.service_name = new_service_name
     table.insert(limit_list_table, new_service_limit_option)
 
-    local limit_res, _ = cache:set(tl_ops_constant_limit.fuse.cache_key.options_list, cjson.encode(limit_list_table));
+    local limit_res, _ = cache_limit:set(tl_ops_constant_limit.fuse.cache_key.options_list, cjson.encode(limit_list_table));
     if not limit_res then
         tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.error, "init limit conf err ", _)
         return;

@@ -22,14 +22,14 @@ const tl_ops_web_service_main = function (){
             res = res.data;
             if(res.code === 0){
                 res_data = res;
-                rule = res.data.tl_ops_service_list;
+                rule = res.data.tl_ops_service_rule;
                 //首次渲染
                 tl_ops_web_service_render();
     
                 $('#tl-ops-web-service-cur-rule')[0].innerHTML = `
                     <b style='color:red;font-size:16px;cursor: pointer;' class="layui-badge layui-bg-red" 
                         id="tl-service-rule" onmouseleave="tl_mouse_leave_tips()"
-                        onmouseenter="tl_mouse_enter_tips('tl-service-rule','暂不支持修改，后续支持手动自检模式 “cus_load” ')">
+                        onmouseenter="tl_mouse_enter_tips('tl-service-rule','暂不支持修改, 后续支持手动自检模式 “cus_load” ')">
                         ${rule}
                     </b> 
                     <b> ( ${rule==='auto_load' ? '系统启动时开启自检' : '手动启动某次自检'} )</b>

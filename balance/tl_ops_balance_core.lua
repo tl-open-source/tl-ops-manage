@@ -7,7 +7,6 @@
 
 local cjson = require("cjson");
 local cache_api = require("cache.tl_ops_cache"):new("tl-ops-api");
-local cache_service = require("cache.tl_ops_cache"):new("tl-ops-service");
 local tl_ops_rt = require("constant.tl_ops_constant_comm").tl_ops_rt;
 local tl_ops_constant_api = require("constant.tl_ops_constant_api");
 local tl_ops_constant_service = require("constant.tl_ops_constant_service");
@@ -66,6 +65,7 @@ local tl_ops_balance_api_service_matcher = function()
     end
 
     -- 服务节点配置列表
+    local cache_service = require("cache.tl_ops_cache"):new("tl-ops-service");
     local service_list_str, _ = cache_service:get(tl_ops_constant_service.cache_key.service_list);
     if not service_list_str then
         return nil, nil
