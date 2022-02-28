@@ -55,7 +55,7 @@
 
     tl_ops_constant_log.lua 修改dir路径
 
-### 5. 启动nginx/openresty
+### 5. 启动nginx/openresty，如果是首次启动，先访问 `http://127.0.0.1/tlops/reset` 初始化项目
 
     http://localhost/tlops/tl_ops_web_index.html  管理后台
 

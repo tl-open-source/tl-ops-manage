@@ -83,8 +83,9 @@ And you need to modify the path of the content in the tl_ops_constant_log.lua to
         format_json = true
     }
 
-Finallyinaly start nginx
-
+Finallyinaly start nginx，if it is the first time start ，visit `http://127.0.0.1/tlops/reset` first
+    
+    
     http://127.0.0.1/tlops/tl_ops_web_index.html (web manage)
 
 
