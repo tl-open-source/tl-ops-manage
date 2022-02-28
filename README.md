@@ -9,7 +9,7 @@
 
 # service management based on openresty
 
-tl-ops-manage is positioned for service management  
+tl-ops-manage is positioned for service management  v1.0.0
 
 [中文文档](doc/README_ZN.md)
 
@@ -34,14 +34,14 @@ Customize url routing strategy, random routing strategy
 
 Service node health check is automated and configurable，Support dynamic addition and modification of configuration
 
-- [ ] [health doc](doc/tl-ops-health.md)
+- [x] [health doc](doc/tl-ops-health.md)
 
 
 ## Limit-fuse
 
 Automatic current limiting and fusing strategy, dynamic configuration content
 
-- [ ] [limit doc](doc/tl-ops-limit.md)
+- [x] [limit doc](doc/tl-ops-limit.md)
 
 ## Store
 
@@ -86,6 +86,7 @@ And you need to modify the path of the content in the tl_ops_constant_log.lua to
 Finallyinaly start nginx
 
     http://127.0.0.1/tlops/tl_ops_web_index.html (web manage)
+
 
 
 

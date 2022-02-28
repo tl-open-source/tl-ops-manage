@@ -66,9 +66,9 @@
 
 - [x] [路由模块](doc/tl-ops-balance.md)
 
-- [ ] [健康检查模块](doc/tl-ops-health.md)
+- [x] [健康检查模块](doc/tl-ops-health.md)
 
-- [ ] [熔断限流模块](doc/tl-ops-limit.md)
+- [x] [熔断限流模块](doc/tl-ops-limit.md)
 
 - [ ] [数据模块](doc/tl-ops-store.md)
 
