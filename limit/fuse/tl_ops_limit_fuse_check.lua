@@ -281,6 +281,11 @@ tl_ops_limit_fuse_check_nodes = function ( conf )
 
 	tlog:dbg("tl_ops_limit_fuse_check_nodes start : service_name=", service_name)
 
+	if nodes == nil then
+		tlog:err("tl_ops_limit_fuse_check_nodes nodes nil")
+		return
+	end
+
 	---- node层级
 	for i = 1, #nodes do
 		local node_id = i-1
@@ -528,6 +533,11 @@ tl_ops_limit_fuse_reset_count = function ( conf )
 	local service_name = conf.service_name
 	local nodes = conf.nodes
 
+	if nodes == nil then
+		tlog:err("tl_ops_limit_fuse_reset_count nodes nil")
+		return
+	end
+
 	for i = 1, #nodes do
 		local node_id = i-1
 
@@ -553,6 +563,11 @@ tl_ops_limit_fuse_auto_recover = function( conf )
 	if service_state == _STATE.LIMIT_FUSE_OPEN then
 		tl_ops_limit_fuse_service_degrade( conf )
 		tlog:dbg("tl_ops_limit_fuse_auto_recover service done : service=", service_name, ",state=",service_state)
+	end
+
+	if nodes == nil then
+		tlog:err("tl_ops_limit_fuse_auto_recover nodes nil")
+		return
 	end
 
 	---- 节点熔断自动恢复

@@ -9,13 +9,9 @@ local tlog = require("utils.tl_ops_utils_log"):new("tl_ops_balance_count");
 local tl_ops_utils_func = require("utils.tl_ops_utils_func");
 local tl_ops_constant_balance = require("constant.tl_ops_constant_balance");
 local tl_ops_constant_service = require("constant.tl_ops_constant_service");
-local cache_service = require("cache.tl_ops_cache"):new("tl-opsxxx");
+local cache_service = require("cache.tl_ops_cache"):new("tl-ops-service");
 local lock = require("lib.lock");
 local shared = ngx.shared.tlopsbalance;
-
--- 控制细度 ，以周期为分割，仅用store持久
-local count_name = "tl-ops-balance-count-" .. tl_ops_constant_balance.count.interval;
-local cache_balance_count = require("cache.tl_ops_cache"):new(count_name);
 
 
 local _M = {
@@ -58,7 +54,16 @@ local tl_ops_balance_count = function()
     end
     
 
+    -- 控制细度 ，以周期为分割，仅用store持久
+    local count_name = "tl-ops-balance-count-" .. tl_ops_constant_balance.count.interval;
+    local cache_balance_count = require("cache.tl_ops_cache"):new(count_name);
+
     for service_name, nodes in pairs(service_list) do
+        if nodes == nil then
+            tlog:err("nodes nil")
+            return
+        end
+    
         for i = 1, #nodes do
             local node_id = i-1
             local cur_count_key = tl_ops_utils_func:gen_node_key(tl_ops_constant_balance.cache_key.req_succ, service_name, node_id)

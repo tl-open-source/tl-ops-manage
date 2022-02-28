@@ -7,7 +7,7 @@
 local cjson = require("cjson");
 cjson.encode_empty_table_as_object(false)
 
-local cache = require("cache.tl_ops_cache"):new("tl-ops-api");
+local cache = require("cache.tl_ops_cache"):new("tl-ops-limit");
 local tl_ops_constant_limit = require("constant.tl_ops_constant_limit");
 local tl_ops_rt = require("constant.tl_ops_constant_comm").tl_ops_rt;
 local tl_ops_utils_func = require("utils.tl_ops_utils_func");

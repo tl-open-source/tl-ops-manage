@@ -18,9 +18,6 @@ local tlog = require("utils.tl_ops_utils_log"):new("tl_ops_health_state");
 local shared = ngx.shared.tlopsbalance
 
 
-local count_name = "tl-ops-balance-count-" .. tl_ops_constant_balance.count.interval;
-local cache_balance_count = require("cache.tl_ops_cache"):new(count_name);
-
 ----返回的cache state
 local cache_state = {
     service = {}, health = {}, limit = {}, balance = {}
@@ -47,6 +44,10 @@ for service_name, nodes in pairs(service_list) do
     if not version_cache then
         version_cache = 0 ----"version cache nil"
     end
+
+    if nodes == nil then
+		nodes = cjson.encode("{}")
+	end
  
     ---- node级别cache
     for i = 1, #nodes do
@@ -65,6 +66,9 @@ for service_name, nodes in pairs(service_list) do
         if not success_cache then
             success_cache = 0 ----"success cache nil"
         end
+
+        local count_name = "tl-ops-balance-count-" .. tl_ops_constant_balance.count.interval;
+        local cache_balance_count = require("cache.tl_ops_cache"):new(count_name);
         local balance_success_cache = cache_balance_count:get001(tl_ops_utils_func:gen_node_key(tl_ops_constant_balance.cache_key.balance_5min_success, node.service, node_id)) 
         if not balance_success_cache then
             balance_success_cache = "{}"

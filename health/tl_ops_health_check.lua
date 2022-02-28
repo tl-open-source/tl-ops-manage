@@ -218,6 +218,11 @@ tl_ops_health_check_nodes = function (conf)
 
 	tlog:dbg("tl_ops_health_check_nodes start" , ",nodes=",nodes)
 
+	if nodes == nil then
+		tlog:err("tl_ops_health_check_nodes nodes nil")
+		return
+	end
+
 	for i = 1, #nodes do
 		repeat
 			local node = nodes[i]
