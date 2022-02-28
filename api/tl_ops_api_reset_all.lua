@@ -65,6 +65,15 @@ local function rest_init_health()
         return;
     end
 
+    local tl_ops_health_check_version = require("health.tl_ops_health_check_version")
+    --默认初始化一次version
+    for i = 1, #tl_ops_constant_health.options do
+        local option = tl_ops_constant_health.options[i]
+        local service_name = option.check_service_name
+        if service_name then
+            tl_ops_health_check_version.incr_service_version(service_name)
+        end
+    end
 end
 
 -- init limit fuse
@@ -77,6 +86,16 @@ local function rest_init_limit_fuse()
     if not options_list then
         tl_ops_utils_func:get_str_json_by_return_arg(tl_ops_rt.error, "health options init err", _)
         return;
+    end
+
+    local tl_ops_limit_fuse_check_version = require("limit.fuse.tl_ops_limit_fuse_check_version")
+    -- 默认初始化一次version
+    for i = 1, #tl_ops_constant_limit.fuse.options do
+        local option = tl_ops_constant_limit.fuse.options[i]
+        local service_name = option.service_name
+        if service_name then
+            tl_ops_limit_fuse_check_version.incr_service_version(service_name)
+        end
     end
 
 end
