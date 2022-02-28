@@ -64,13 +64,13 @@
 
 ## 模块说明文档
 
-- [x] [路由模块](doc/tl-ops-balance.md)
+- [x] [路由模块](tl-ops-balance.md)
 
-- [x] [健康检查模块](doc/tl-ops-health.md)
+- [x] [健康检查模块](tl-ops-health.md)
 
-- [x] [熔断限流模块](doc/tl-ops-limit.md)
+- [x] [熔断限流模块](tl-ops-limit.md)
 
-- [ ] [数据模块](doc/tl-ops-store.md)
+- [ ] [数据模块](tl-ops-store.md)
 
 
 ## 目录结构
