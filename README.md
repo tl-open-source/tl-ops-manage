@@ -52,7 +52,7 @@ Support data storage, traceability of operation records, and complete logging
 
 # usage
 
-First you need to install [openresty](https://openresty.org/cn/installation.html)。
+First you need to install [openresty](https://openresty.org/cn/installation.html)，and [redis](https://redis.io/download)
 
 then modify nginx.conf to introduce `tl-ops-manage lua package` and `/conf/tl_ops_manage.conf ` of the current project
 
@@ -83,7 +83,7 @@ And you need to modify the path of the content in the tl_ops_constant_log.lua to
         format_json = true
     }
 
-Finallyinaly start nginx，if it is the first time start ，visit `http://127.0.0.1/tlops/reset` first
+Finallyinaly start nginx，if it is the first time start ，visit `http://127.0.0.1/tlops/reset` to init project
     
     
     http://127.0.0.1/tlops/tl_ops_web_index.html (web manage)
