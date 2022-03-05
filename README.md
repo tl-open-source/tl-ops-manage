@@ -6,10 +6,15 @@
 [![](https://img.shields.io/badge/healthcheck-support-green)](https://github.com/iamtsm/tl-ops-manage/blob/main/doc/tl-ops-health.md)
 [![](https://img.shields.io/badge/balance-support-green)](https://github.com/iamtsm/tl-ops-manage/blob/main/doc/tl-ops-balance.md)
 [![](https://img.shields.io/badge/limitfuse-support-green)](https://github.com/iamtsm/tl-ops-manage/blob/main/doc/tl-ops-balance.md)
+![GitHub Stars](https://img.shields.io/github/stars/iamtsm/tl-ops-manage)
+![Github Forks](https://img.shields.io/github/forks/iamtsm/tl-ops-manage)
+
 
 # service management based on openresty
 
-tl-ops-manage is positioned for service management  v1.0.0
+tl-ops-manage is positioned for service management
+
+![image](doc/tl-ops-manage.png)
 
 [中文文档](doc/README_ZN.md)
 
