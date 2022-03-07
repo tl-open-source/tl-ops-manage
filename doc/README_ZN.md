@@ -76,7 +76,7 @@
 
 - [x] [熔断限流模块](tl-ops-limit.md)
 
-- [ ] [数据模块](tl-ops-store.md)
+- [x] [数据模块](tl-ops-store.md)
 
 
 ## 目录结构

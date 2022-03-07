@@ -52,7 +52,7 @@ Automatic current limiting and fusing strategy, dynamic configuration content
 
 Support data storage, traceability of operation records, and complete logging
 
-- [ ] [store doc](doc/tl-ops-store.md)
+- [x] [store doc](doc/tl-ops-store.md)
 
 
 # usage
