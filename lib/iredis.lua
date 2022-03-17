@@ -69,10 +69,6 @@ function _M.connect_mod( self, redis )
         return err;
     end
 
-    local res, err = redis:auth("tsm000000!!")
-    if not res then
-        return err;
-    end
 
     return ok;
 end
