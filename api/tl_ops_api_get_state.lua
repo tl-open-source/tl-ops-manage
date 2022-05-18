@@ -23,6 +23,13 @@ local cache_state = {
     service = {}, health = {}, limit = {}, balance = {}
 }
 
+local limit_options_str, _ = cache_service:get(tl_ops_constant_limit.fuse.cache_key.options_list);
+if not limit_options_str or limit_options_str == nil then
+    tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.not_found, "not found list", _);
+    return;
+end
+local limit_options_list = cjson.decode(limit_options_str)
+
 
 ---- 服务相关状态
 local list_str, _ = cache_service:get(tl_ops_constant_service.cache_key.service_list);
@@ -32,18 +39,34 @@ if not list_str or list_str == nil then
 end
 local service_list = cjson.decode(list_str)
 
-for service_name, nodes in pairs(service_list) do
-    cache_state.service[service_name] = {}
 
+for service_name, nodes in pairs(service_list) do
     ---- service级别cache
-    local lock_cache = shared:get(tl_ops_utils_func:gen_node_key(tl_ops_constant_health.cache_key.lock, service_name))
-    if not lock_cache then
-        lock_cache = false ----"lock cache nil"
+    local health_lock_cache = shared:get(tl_ops_utils_func:gen_node_key(tl_ops_constant_health.cache_key.lock, service_name))
+    if not health_lock_cache then
+        health_lock_cache = false ----"lock cache nil"
     end
-    local version_cache = shared:get(tl_ops_utils_func:gen_node_key(tl_ops_constant_health.cache_key.service_version, service_name))
-    if not version_cache then
-        version_cache = 0 ----"version cache nil"
+    local health_version_cache = shared:get(tl_ops_utils_func:gen_node_key(tl_ops_constant_health.cache_key.service_version, service_name))
+    if not health_version_cache then
+        health_version_cache = 0 ----"version cache nil"
     end
+
+    local limit_state_cache = shared:get(tl_ops_utils_func:gen_node_key(tl_ops_constant_limit.fuse.cache_key.service_state, service_name))
+    if not limit_state_cache then
+        limit_state_cache = 0 ----"state cache nil"
+    end
+    local limit_version_cache = shared:get(tl_ops_utils_func:gen_node_key(tl_ops_constant_limit.fuse.cache_key.service_version, service_name))
+    if not limit_version_cache then
+        limit_version_cache = 0 ----"version cache nil"
+    end
+
+    cache_state.service[service_name] = {
+        health_lock = health_lock_cache,
+        health_version = health_version_cache,
+        limit_state = limit_state_cache,
+        limit_version = limit_version_cache,
+    }
+    cache_state.service[service_name].nodes = { }
 
     if nodes == nil then
 		nodes = cjson.encode("{}")
@@ -54,18 +77,33 @@ for service_name, nodes in pairs(service_list) do
         local node_id = i-1
         local node = nodes[i]
 
-        local state_cache = shared:get(tl_ops_utils_func:gen_node_key(tl_ops_constant_health.cache_key.state, node.service, node_id))
-        if not state_cache then
-            state_cache = false ----"state cache nil"
+        local health_node_state_cache = shared:get(tl_ops_utils_func:gen_node_key(tl_ops_constant_health.cache_key.state, node.service, node_id))
+        if not health_node_state_cache then
+            health_node_state_cache = false ----"state cache nil"
         end
-        local failed_cache = shared:get(tl_ops_utils_func:gen_node_key(tl_ops_constant_health.cache_key.failed, node.service, node_id))
-        if not failed_cache then
-            failed_cache = 0 ----"failed cache nil"
+        local health_node_failed_cache = shared:get(tl_ops_utils_func:gen_node_key(tl_ops_constant_health.cache_key.failed, node.service, node_id))
+        if not health_node_failed_cache then
+            health_node_failed_cache = 0 ----"failed cache nil"
         end
-        local success_cache = shared:get(tl_ops_utils_func:gen_node_key(tl_ops_constant_health.cache_key.success, node.service, node_id))
-        if not success_cache then
-            success_cache = 0 ----"success cache nil"
+        local health_node_success_cache = shared:get(tl_ops_utils_func:gen_node_key(tl_ops_constant_health.cache_key.success, node.service, node_id))
+        if not health_node_success_cache then
+            health_node_success_cache = 0 ----"success cache nil"
         end
+
+        local limit_node_state_cache = shared:get(tl_ops_utils_func:gen_node_key(tl_ops_constant_limit.fuse.cache_key.service_state, node.service, node_id))
+        if not limit_node_state_cache then
+            limit_node_state_cache = 0 ----"state cache nil"
+        end
+
+		local limit_node_success_cache = shared:get(tl_ops_utils_func:gen_node_key(tl_ops_constant_limit.fuse.cache_key.req_succ, node.service, node_id))
+		if not limit_node_success_cache then
+			limit_node_success_cache = 0 ----"success cache nil"
+		end
+
+		local limit_node_failed_cache = shared:get(tl_ops_utils_func:gen_node_key(tl_ops_constant_limit.fuse.cache_key.req_fail,  node.service, node_id))
+		if not limit_node_failed_cache then
+			limit_node_failed_cache = 0 ----"failed cache nil"
+		end
 
         local count_name = "tl-ops-balance-count-" .. tl_ops_constant_balance.count.interval;
         local cache_balance_count = require("cache.tl_ops_cache"):new(count_name);
@@ -74,12 +112,13 @@ for service_name, nodes in pairs(service_list) do
             balance_success_cache = "{}"
         end
 
-        cache_state.service[service_name][node.name] = {
-            state = state_cache,
-            failed = failed_cache,
-            success = success_cache,
-            lock = lock_cache,
-            version = version_cache,
+        cache_state.service[service_name].nodes[node.name] = {
+            health_state = health_node_state_cache,
+            health_failed = health_node_failed_cache,
+            health_success = health_node_success_cache,
+            limit_state = limit_node_state_cache,
+            limit_success = limit_node_success_cache,
+            limit_failed = limit_node_failed_cache,
             balance_success =  cjson.decode(balance_success_cache),
         }
     end
@@ -89,12 +128,12 @@ end
 
 
 ---- 健康检查相关状态
-local options_str, _ = cache_service:get(tl_ops_constant_health.cache_key.options_list);
-if not options_str or options_str == nil then
+local health_options_str, _ = cache_service:get(tl_ops_constant_health.cache_key.options_list);
+if not health_options_str or health_options_str == nil then
     tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.not_found, "not found list", _);
     return;
 end
-local options_list = cjson.decode(options_str)
+local health_options_list = cjson.decode(health_options_str)
 
 local service_options_version_cache, _ = shared:get(tl_ops_constant_health.cache_key.service_options_version)
 if not service_options_version_cache then
@@ -109,11 +148,18 @@ local timer_list = cjson.decode(timers_str)
 
 cache_state.health['timer_list'] = timer_list
 cache_state.health['options_version'] = service_options_version_cache
-cache_state.health['options_list'] = options_list
+cache_state.health['options_list'] = health_options_list
 
 
 
 ---- 限流相关状态
+local limit_options_str, _ = cache_service:get(tl_ops_constant_limit.fuse.cache_key.options_list);
+if not limit_options_str or limit_options_str == nil then
+    tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.not_found, "not found list", _);
+    return;
+end
+local limit_options_list = cjson.decode(limit_options_str)
+
 local pre_time = shared:get(tl_ops_constant_limit.global_token.cache_key.pre_time)
 if not pre_time then
     pre_time = "nil" ----"pre_time nil"
@@ -134,8 +180,8 @@ cache_state.limit['pre_time'] = pre_time
 cache_state.limit['token_bucket'] = token_bucket
 cache_state.limit['warm'] = warm
 cache_state.limit['lock'] = lock
+cache_state.limit['option_list'] = limit_options_list
 -- cache_state.limit['token'] = tl_ops_limit_token_bucket:tl_ops_limit_token( 10 * 1024 )
-
 
 
 ---- 路由相关

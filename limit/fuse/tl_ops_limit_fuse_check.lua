@@ -9,7 +9,7 @@ local cjson = require("cjson");
 local tlog = require("utils.tl_ops_utils_log"):new("tl_ops_limit_fuse");
 local tl_ops_utils_func = require("utils.tl_ops_utils_func");
 
-local tl_ops_limit_token_bucket = require("limit.tl_ops_limit_token_bucket");
+local tl_ops_limit_token_bucket = require("limit.fuse.tl_ops_limit_fuse_token_bucket");
 
 local tl_ops_limit_fuse_check_dynamic_conf = require("limit.fuse.tl_ops_limit_fuse_check_dynamic_conf")
 local tl_ops_limit_fuse_check_version = require("limit.fuse.tl_ops_limit_fuse_check_version")
@@ -32,7 +32,7 @@ local _STATE = {
 }
 
 local _M = {
-    _VERSION = '0.01'
+    _VERSION = '0.02'
 }
 local mt = { __index = _M }
 
@@ -96,7 +96,7 @@ end
 tl_ops_limit_fuse_default_confs = function(options, services)
 	local confs = new_tab(#options, 0)
 	
-	-- tlog:dbg("tl_ops_limit_fuse_default_confs start")
+	tlog:dbg("tl_ops_limit_fuse_default_confs start")
 
 	for _, opt in pairs(options) do
 		local interval = opt.interval
@@ -165,19 +165,6 @@ tl_ops_limit_fuse_default_confs = function(options, services)
 			return nil
 		end
 
-		-- bucket conf
-		local service_token_bucket = tl_ops_limit_token_bucket:new(
-			tl_ops_constant_limit.service_token.options, tl_ops_constant_limit.service_token_cache_key(service_name)
-		)
-		for i = 1, #nodes do
-			local node_id = i - 1
-			local node_token_bucket = tl_ops_limit_token_bucket:new(
-				tl_ops_constant_limit.node_token.options, tl_ops_constant_limit.node_token_cache_key(service_name, node_id)
-			)
-			nodes[i].bucket = node_token_bucket		---- 节点桶
-			nodes[i].state = _STATE.LIMIT_FUSE_CLOSE	---- 节点熔断/限流状态
-		end
-
 		table.insert(confs, {
 	        service_version = 0,					---- 配置版本号
 			nodes = nodes,							---- 服务节点信息
@@ -193,7 +180,7 @@ tl_ops_limit_fuse_default_confs = function(options, services)
 		})
 	end
 
-	-- tlog:dbg("tl_ops_limit_fuse_default_confs end")
+	tlog:dbg("tl_ops_limit_fuse_default_confs end")
 
 	return confs
 end
@@ -204,7 +191,7 @@ tl_ops_limit_fuse = function(premature, conf)
 		return
 	end
 
-	-- tlog:dbg("tl_ops_limit_fuse start ",ngx.timer.running_count(), ",",ngx.timer.pending_count())
+	tlog:dbg("tl_ops_limit_fuse start ",ngx.timer.running_count(), ",",ngx.timer.pending_count())
 
 	local ok, _ = pcall(tl_ops_limit_fuse_main, conf)
 	if not ok then
@@ -225,13 +212,13 @@ tl_ops_limit_fuse = function(premature, conf)
 		end
 	end
 
-	-- tlog:dbg("tl_ops_limit_fuse end")
+	tlog:dbg("tl_ops_limit_fuse end, conf.state=",conf.state,",conf.interval=",conf.interval,",conf.recover=",conf.recover)
 
 end
 
 
 tl_ops_limit_fuse_main = function( conf )
-	-- tlog:dbg("tl_ops_limit_fuse_main start")
+	tlog:dbg("tl_ops_limit_fuse_main start")
 
 	----同步配置
 	tl_ops_limit_fuse_check_dynamic_conf.dynamic_conf_change_start( conf )
@@ -242,26 +229,26 @@ tl_ops_limit_fuse_main = function( conf )
 		tl_ops_limit_fuse_check_nodes( conf )
 	end
 
-    -- tlog:dbg("tl_ops_limit_fuse_main end")
+    tlog:dbg("tl_ops_limit_fuse_main end")
 end
 
 
 tl_ops_limit_fuse_get_lock = function(conf)
 	local key = tl_ops_utils_func:gen_node_key(tl_ops_constant_limit.fuse.cache_key.lock,conf.service_name)
 
-	-- tlog:dbg("tl_ops_limit_fuse_get_lock start : key=", key)
+	tlog:dbg("tl_ops_limit_fuse_get_lock start : key=", key)
 
 	local ok, _ = shared:add(key, true, conf.interval - 0.01)
 	if not ok then
 		if _ == "exists" then
-			-- tlog:dbg("tl_ops_limit_fuse_get_lock key exists : key=", key)
+			tlog:dbg("tl_ops_limit_fuse_get_lock key exists : key=", key)
 			return nil
 		end
-		-- tlog:err("tl_ops_limit_fuse_get_lock failed to add key, get lock failed, key=" ,key)
+		tlog:err("tl_ops_limit_fuse_get_lock failed to add key, get lock failed, key=" ,key)
 		return nil
 	end
 	
-	-- tlog:dbg("tl_ops_limit_fuse_get_lock done : key=", key, ",service_name=" , conf.service_name)
+	tlog:dbg("tl_ops_limit_fuse_get_lock done : key=", key, ",service_name=" , conf.service_name)
 
 	return true
 end
@@ -270,8 +257,6 @@ end
 ---- 对配置的机器节点依次检测负载失败比例，以此决定node/service限流或熔断
 tl_ops_limit_fuse_check_nodes = function ( conf )
 	local service_name = conf.service_name
-	local recover = conf.recover
-	local interval = conf.interval
 	local node_threshold = conf.node_threshold
 	local service_threshold = conf.service_threshold
 	local nodes = conf.nodes
@@ -291,35 +276,32 @@ tl_ops_limit_fuse_check_nodes = function ( conf )
 		local node_id = i-1
 
 		local success_count_key = tl_ops_utils_func:gen_node_key(tl_ops_constant_limit.fuse.cache_key.req_succ, service_name, node_id)
+		shared:set(success_count_key, math.random(1,100))
 		local success_count = shared:get(success_count_key)
 		if not success_count then
 			success_count = 0
 		end
 
 		local failed_count_key = tl_ops_utils_func:gen_node_key(tl_ops_constant_limit.fuse.cache_key.req_fail, service_name, node_id)
+		shared:set(failed_count_key, math.random(1,100))
 		local failed_count = shared:get(failed_count_key)
 		if not failed_count then
 			failed_count = 0
 		end
-
-		success_count = math.random(1,100)
-		failed_count = math.random(1,100)
 
 		local total_count = success_count + failed_count
 		if total_count == 0 then
 			total_count = -1 	---- can not be 0
 		end
 
-		-- tlog:dbg("tl_ops_limit_fuse_check_nodes, node=", nodes[i].name, ",succ=",success_count, ",fail=",failed_count, ",total=",total_count)
-
 		---- 超过阈值
 		if failed_count / total_count >= node_threshold then
 			upgrade_count = upgrade_count + 1
-			tlog:dbg("节点状态升级 : service_name=",service_name, ",node_name=",nodes[i].name, ",node_threshold=",(failed_count / total_count))
+			tlog:dbg("iamtsm节点状态升级 : service_name=",service_name, ",node_name=",nodes[i].name, ",node_threshold=",(failed_count / total_count),',state=',nodes[i].state)
 			tl_ops_limit_fuse_node_upgrade( conf, node_id )
 		else
 			degrade_count = degrade_count + 1
-			tlog:dbg("节点状态降级 : service_name=",service_name, ",node_name=",nodes[i].name,",node_threshold=",(failed_count / total_count))
+			tlog:dbg("iamtsm节点状态降级 : service_name=",service_name, ",node_name=",nodes[i].name,",node_threshold=",(failed_count / total_count),',state=',nodes[i].state)
 			tl_ops_limit_fuse_node_degrade( conf, node_id )
 		end
 	end
@@ -331,26 +313,22 @@ tl_ops_limit_fuse_check_nodes = function ( conf )
 	end
 	---- 节点状态升级比率超过阈值，对服务进行状态升级
 	if upgrade_count / service_total_count >= service_threshold then
-		tlog:dbg("服务状态升级 : service_name=",service_name,",upgrade_count=",upgrade_count,
-		",service_total_count=",service_total_count,",service_threshold=",(upgrade_count / service_total_count))
+		tlog:dbg("iamtsm服务状态升级 : service_name=",service_name,",upgrade_count=",upgrade_count, ",service_total_count=",service_total_count,",service_threshold=",(upgrade_count / service_total_count),",state=",conf.state)
 
 		tl_ops_limit_fuse_service_upgrade( conf )
 	else
-		tlog:dbg("服务状态降级 : service_name=",service_name,",upgrade_count=",upgrade_count,
-		",service_total_count=",service_total_count,",service_threshold=",(upgrade_count / service_total_count))
+		tlog:dbg("iamtsm服务状态降级 : service_name=",service_name,",upgrade_count=",upgrade_count, ",service_total_count=",service_total_count,",service_threshold=",(upgrade_count / service_total_count),",state=",conf.state)
 		
 		tl_ops_limit_fuse_service_degrade( conf )
 	end
 
-	-- tlog:dbg("tl_ops_limit_fuse_check_nodes done : state=",conf.state,",bucket=", conf.bucket.options.capacity)
-
-	tl_ops_limit_fuse_reset_count( conf )
+	tlog:dbg("tl_ops_limit_fuse_check_nodes done")
 end
 
 
 -- 节点state降级
 tl_ops_limit_fuse_node_degrade = function ( conf, node_id )
-	-- tlog:dbg("tl_ops_limit_fuse_node_degrade start")
+	tlog:dbg("tl_ops_limit_fuse_node_degrade start")
 
 	local node = conf.nodes[node_id + 1]
 	local name = node.name
@@ -360,18 +338,21 @@ tl_ops_limit_fuse_node_degrade = function ( conf, node_id )
 
 	---- node处于限流状态, 节点桶扩容
 	if state == _STATE.LIMIT_FUSE_HALF then
-		local expand = node_bucket:tl_pos_limit_token_expand()
+		local expand = tl_ops_limit_token_bucket.tl_ops_limit_token_expand(service_name, node_id)
 		if not expand or expand == false then
 			tlog:err("tl_ops_limit_fuse_node_degrade expand err ,",expand)
 			return
 		end
 
-		tlog:dbg("tl_ops_limit_fuse_node_degrade expand ok, node=",name,", node_bucket=",node_bucket.options.capacity)
+		local key = tl_ops_utils_func:gen_node_key(tl_ops_constant_limit.node_token.cache_key.capacity, service_name, node_id)
+		local capacity, _ = shared:get(key)
+
+		tlog:dbg("tl_ops_limit_fuse_node_degrade expand ok, node=",name,", capacity=",capacity)
 	end
 
 	---- 同步state, 通知worker更新
 	if state > _STATE.LIMIT_FUSE_CLOSE then
-		local key = tl_ops_utils_func:gen_node_key(tl_ops_constant_limit.fuse.cache_key.service_node_state, service_name, id)
+		local key = tl_ops_utils_func:gen_node_key(tl_ops_constant_limit.fuse.cache_key.service_state, service_name, node_id)
 		local ok, _ = shared:get(key);
 		if not ok then
 			local res, _ = shared:set(key, _STATE.LIMIT_FUSE_OPEN);
@@ -391,11 +372,12 @@ tl_ops_limit_fuse_node_degrade = function ( conf, node_id )
 		conf.service_version = tl_ops_limit_fuse_check_version.incr_service_version(service_name);
 	end
 
-	-- tlog:dbg("tl_ops_limit_fuse_node_degrade done")
+	tlog:dbg("tl_ops_limit_fuse_node_degrade done")
 end
+
 -- 节点state升级
 tl_ops_limit_fuse_node_upgrade = function ( conf, node_id )
-	-- tlog:dbg("tl_ops_limit_fuse_node_upgrade start")
+	tlog:dbg("tl_ops_limit_fuse_node_upgrade start")
 
 	local node = conf.nodes[node_id + 1]
 	local name = node.name
@@ -405,18 +387,21 @@ tl_ops_limit_fuse_node_upgrade = function ( conf, node_id )
 
 	---- node处于限流状态, 节点桶缩容
 	if state == _STATE.LIMIT_FUSE_HALF then
-		local shrink = node_bucket:tl_pos_limit_token_shrink()
+		local shrink = tl_ops_limit_token_bucket.tl_ops_limit_token_shrink(service_name, node_id)
 		if not shrink or shrink == false then
-			tlog:err("tl_ops_limit_fuse_node_upgrade shrink err ,",shrink)
+			tlog:err("tl_ops_limit_fuse_node_upgrade shrink err, shrink=",shrink)
 			return
 		end
 
-		tlog:dbg("tl_ops_limit_fuse_node_upgrade shrink ok  node=",name,",node_bucket=",node_bucket.options.capacity)
+		local key = tl_ops_utils_func:gen_node_key(tl_ops_constant_limit.node_token.cache_key.capacity, service_name, node_id)
+		local capacity, _ = shared:get(key)
+
+		tlog:dbg("tl_ops_limit_fuse_node_upgrade shrink ok, node=",name,", capacity=",capacity,",key=",key)
 	end
 
 	---- 同步state, 通知worker更新
 	if state < _STATE.LIMIT_FUSE_OPEN then
-		local key = tl_ops_utils_func:gen_node_key(tl_ops_constant_limit.fuse.cache_key.service_node_state, service_name, id)
+		local key = tl_ops_utils_func:gen_node_key(tl_ops_constant_limit.fuse.cache_key.service_state, service_name, node_id)
 		local ok, _ = shared:get(key);
 		if not ok then
 			local res, _ = shared:set(key, _STATE.LIMIT_FUSE_CLOSE);
@@ -436,27 +421,29 @@ tl_ops_limit_fuse_node_upgrade = function ( conf, node_id )
 		conf.service_version = tl_ops_limit_fuse_check_version.incr_service_version(service_name);
 	end
 
-	-- tlog:dbg("tl_ops_limit_fuse_node_upgrade done")
+	tlog:dbg("tl_ops_limit_fuse_node_upgrade done")
 end
 
 
 -- 服务state降级
 tl_ops_limit_fuse_service_degrade = function ( conf )
-	-- tlog:dbg("tl_ops_limit_fuse_service_degrade start")
+	tlog:dbg("tl_ops_limit_fuse_service_degrade start")
 
 	local state = conf.state
-	local service_bucket = conf.bucket
 	local service_name = conf.service_name
 
-	---- node处于限流状态, 节点桶扩容
+	-- node处于限流状态, 节点桶扩容
 	if state == _STATE.LIMIT_FUSE_HALF then
-		local expand = service_bucket:tl_pos_limit_token_expand()
+		local expand = tl_ops_limit_token_bucket.tl_ops_limit_token_expand(service_name)
 		if not expand or expand == false then
 			tlog:err("tl_ops_limit_fuse_service_degrade expand err ,",expand)
 			return
 		end
 
-		tlog:dbg("tl_ops_limit_fuse_service_degrade expand ok , service_name=",service_name,", service_bucket=",service_bucket.options.capacity)
+		local key = tl_ops_utils_func:gen_node_key(tl_ops_constant_limit.node_token.cache_key.capacity, service_name)
+		local capacity, _ = shared:get(key)
+
+		tlog:dbg("tl_ops_limit_fuse_service_degrade expand ok, service_name=",service_name,", capacity=",capacity,",key=",key)
 	end
 
 	---- 同步state, 通知worker更新
@@ -481,25 +468,28 @@ tl_ops_limit_fuse_service_degrade = function ( conf )
 		conf.service_version = tl_ops_limit_fuse_check_version.incr_service_version(service_name);
 	end
 
-	-- tlog:dbg("tl_ops_limit_fuse_service_degrade done")
+	tlog:dbg("tl_ops_limit_fuse_service_degrade done")
 end
+
 -- 服务state升级
 tl_ops_limit_fuse_service_upgrade = function ( conf )
-	-- tlog:dbg("tl_ops_limit_fuse_service_upgrade start")
+	tlog:dbg("tl_ops_limit_fuse_service_upgrade start")
 
 	local state = conf.state
-	local service_bucket = conf.bucket
 	local service_name = conf.service_name
 
-	---- node处于限流状态, 节点桶扩容
+	-- node处于限流状态, 节点桶扩容
 	if state == _STATE.LIMIT_FUSE_HALF then
-		local shrink = service_bucket:tl_pos_limit_token_shrink()
+		local shrink = tl_ops_limit_token_bucket.tl_ops_limit_token_shrink(service_name)
 		if not shrink or shrink == false then
 			tlog:err("tl_ops_limit_fuse_service_upgrade shrink err ,",shrink)
 			return
 		end
 
-		tlog:dbg("tl_ops_limit_fuse_service_upgrade shrink ok service_name=",service_name,", service_bucket=",service_bucket.options.capacity)
+		local key = tl_ops_utils_func:gen_node_key(tl_ops_constant_limit.node_token.cache_key.capacity, service_name)
+		local capacity, _ = shared:get(key)
+
+		tlog:dbg("tl_ops_limit_fuse_service_upgrade shrink ok, service_name=",service_name,", capacity=",capacity,",key=",key)
 	end
 
 	---- 同步state, 通知worker更新
@@ -524,7 +514,39 @@ tl_ops_limit_fuse_service_upgrade = function ( conf )
 		conf.service_version = tl_ops_limit_fuse_check_version.incr_service_version(service_name);
 	end
 
-	-- tlog:dbg("tl_ops_limit_fuse_service_upgrade done")
+	tlog:dbg("tl_ops_limit_fuse_service_upgrade done")
+end
+
+
+---- 全熔断自动恢复
+tl_ops_limit_fuse_auto_recover = function( conf )
+	local nodes = conf.nodes
+	local service_state = conf.state
+	local service_name = conf.service_name
+
+	tl_ops_limit_fuse_reset_count( conf )
+
+	---- 服务熔断自动恢复
+	if service_state == _STATE.LIMIT_FUSE_OPEN then
+		tl_ops_limit_fuse_service_degrade( conf )
+		tlog:dbg("tl_ops_limit_fuse_auto_recover service done : service=", service_name, ",state=",service_state)
+	end
+
+	if nodes == nil then
+		tlog:err("tl_ops_limit_fuse_auto_recover nodes nil")
+		return
+	end
+
+	---- 节点熔断自动恢复
+	for i = 1, #nodes do
+		local node_id = i-1
+		local node_state = nodes[i].state
+		if node_state == _STATE.LIMIT_FUSE_OPEN then
+			tl_ops_limit_fuse_node_degrade( conf, node_id)
+		end
+		tlog:dbg("tl_ops_limit_fuse_auto_recover node done : node=", nodes[i].name, ",state=",node_state)
+	end
+
 end
 
 
@@ -553,33 +575,5 @@ tl_ops_limit_fuse_reset_count = function ( conf )
 end
 
 
----- 全熔断自动恢复
-tl_ops_limit_fuse_auto_recover = function( conf )
-	local nodes = conf.nodes
-	local service_state = conf.state
-	local service_name = conf.service_name
-
-	---- 服务熔断自动恢复
-	if service_state == _STATE.LIMIT_FUSE_OPEN then
-		tl_ops_limit_fuse_service_degrade( conf )
-		tlog:dbg("tl_ops_limit_fuse_auto_recover service done : service=", service_name, ",state=",service_state)
-	end
-
-	if nodes == nil then
-		tlog:err("tl_ops_limit_fuse_auto_recover nodes nil")
-		return
-	end
-
-	---- 节点熔断自动恢复
-	for i = 1, #nodes do
-		local node_id = i-1
-		local node_state = nodes[i].state
-		if node_state == _STATE.LIMIT_FUSE_OPEN then
-			tl_ops_limit_fuse_node_degrade( conf, node_id)
-		end
-		tlog:dbg("tl_ops_limit_fuse_auto_recover node done : node=", nodes[i].name, ",state=",node_state)
-	end
-
-end
 
 return _M

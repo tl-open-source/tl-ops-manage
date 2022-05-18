@@ -77,6 +77,9 @@ const tl_ops_web_health_edit = function (name) {
             }
         },
     });
+    if(parent.window.tl_side_screen() < 1){
+        layer.full(index);
+    }
 };
 
 

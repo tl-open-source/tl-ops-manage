@@ -25,7 +25,7 @@ local tl_ops_constant_balance = {
     },
     count = {
         ---- 统计周期 单位/s, 默认:5min
-        interval = 5
+        interval = 5 * 60
     }
 }
 

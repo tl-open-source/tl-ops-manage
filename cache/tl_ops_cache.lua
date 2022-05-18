@@ -18,7 +18,7 @@ if not ok or type(new_tab) ~= "function" then
 end
  
 local _M = new_tab(0, 50)
-_M._VERSION = '0.01'
+_M._VERSION = '0.02'
 local mt = { __index = _M }
 
 

@@ -21,6 +21,13 @@
         color: darkorchid;
         font-weight: 700;
     }
+    .tl-icon-font{
+        border-radius: 23px;
+        padding: 2px;
+        font-size: 12px;
+        background: burlywood;
+        cursor: pointer;
+    }
 </style>
 <body>
 
@@ -48,11 +55,15 @@
             </div>
         </div>
         <div class="layui-form-item">
-            <label class="layui-form-label">时间间隔 (ms)</label>
+            <label class="layui-form-label">
+                <i class="layui-icon layui-icon-help tl-icon-font" id="tl-tips-interval-help" onmouseleave="tl_mouse_leave_tips()"
+                onmouseenter="tl_mouse_enter_tips('tl-tips-interval-help','该值修改后重启nginx生效')"></i>  
+                时间间隔 (ms)
+            </label>
             <div class="layui-input-block">
                 <input type="number" name="check_interval" class="layui-input" placeholder="请输入时间间隔"
                     id="tl-tips-interval" onmouseleave="tl_mouse_leave_tips()"
-                    onmouseenter="tl_mouse_enter_tips('tl-tips-interval','循环自检服务一个周期的时间间隔，该值修改后重启生效')">
+                    onmouseenter="tl_mouse_enter_tips('tl-tips-interval','循环自检服务一个周期的时间间隔')">
             </div>
         </div>
         <div class="layui-form-item">

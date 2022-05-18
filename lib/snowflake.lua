@@ -25,7 +25,7 @@ local TIMESTAMP_SINCE_YEAR = 2015 -- 时间戳起始年份
 local SECONDS_OF_YEAR      = 365 * 24 * 60 * 60 -- 1年的总秒数
 
 
-local _M = { _VERSION = '0.01' }
+local _M = { _VERSION = '0.02' }
 
 
 local inc = 0

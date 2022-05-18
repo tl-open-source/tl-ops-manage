@@ -17,7 +17,7 @@ local tl_ops_constant_health = require("constant.tl_ops_constant_health")
 local shared = ngx.shared.tlopsbalance
 
 local _M = {
-	_VERSION = '0.01'
+	_VERSION = '0.02'
 }
 local mt = { __index = _M }
 
@@ -106,29 +106,51 @@ function _M:tl_ops_balance_api_balance()
     local node, node_state, check_service_node = tl_ops_balance_api_service_matcher()
 
     if not node then
-        ngx.header['Tl-Proxy-Server'] = "nil";
-        ngx.exit(503)
-    end
-
-    -- offline
-    if not node_state or node_state == false then 
-        -- incr failed balance count
         local balance_req_fail_count_key = tl_ops_utils_func:gen_node_key(tl_ops_constant_balance.cache_key.req_fail, node['service'], check_service_node)
         shared:incr(balance_req_fail_count_key, 1)
 
         local limit_req_fail_count_key = tl_ops_utils_func:gen_node_key(tl_ops_constant_limit.fuse.cache_key.req_fail, node['service'], check_service_node)
         shared:incr(limit_req_fail_count_key, 1)
 
+        ngx.header['Tl-Proxy-Server'] = "nil";
+        ngx.exit(503)
+    end
+
+    -- offline
+    if not node_state or node_state == false then 
+        -- incr failed count
+        local balance_req_fail_count_key = tl_ops_utils_func:gen_node_key(tl_ops_constant_balance.cache_key.req_fail, node['service'], check_service_node)
+        local failed_count = shared:get(balance_req_fail_count_key)
+		if not failed_count then
+			shared:set(balance_req_fail_count_key, 0);
+        end
+        shared:incr(balance_req_fail_count_key, 1)
+
+        local limit_req_fail_count_key = tl_ops_utils_func:gen_node_key(tl_ops_constant_limit.fuse.cache_key.req_fail, node['service'], check_service_node)
+        failed_count = shared:get(limit_req_fail_count_key)
+		if not failed_count then
+			shared:set(limit_req_fail_count_key, 0);
+        end
+        shared:incr(limit_req_fail_count_key, 1)
+        
         ngx.header['Tl-Proxy-Server'] = node['service'];
         ngx.header['Tl-Proxy-Node'] = node['name'];
         ngx.header['Tl-Proxy-State'] = "offline"
         ngx.exit(503)
     else
-        -- incr success balance count
+        -- incr success count
         local balance_req_succ_count_key = tl_ops_utils_func:gen_node_key(tl_ops_constant_balance.cache_key.req_succ, node['service'], check_service_node)
+        local success_count = shared:get(balance_req_succ_count_key)
+		if not success_count then
+			shared:set(balance_req_succ_count_key, 0);
+        end
         shared:incr(balance_req_succ_count_key, 1)
 
         local limit_req_succ_count_key = tl_ops_utils_func:gen_node_key(tl_ops_constant_limit.fuse.cache_key.req_succ, node['service'], check_service_node)
+        success_count = shared:get(limit_req_succ_count_key)
+		if not success_count then
+			shared:set(limit_req_succ_count_key, 0);
+        end
         shared:incr(limit_req_succ_count_key, 1)
 
         ngx.var.node = node['protocol'] .. node["ip"] .. ':' .. node["port"];

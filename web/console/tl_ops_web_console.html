@@ -66,7 +66,7 @@
                         <div class="layui-card">
                             <div class="layui-card-header">
                                 <span class="layui-badge layui-bg-blue layuiadmin-badge">{{service.name}}</span>
-                                服务状态
+                                服务健康状态
                             </div>
                             <div class="layui-card-body layuiadmin-card-list" style="padding: 9px;">
                                 <div style="display: inline-flex">
@@ -95,12 +95,9 @@
 
 
             <div class="tl-inspector">
-                <div class="tl-inspector-span tl-inspector-span-active" onclick="tl_ops_web_console_change_nav('health')" id="health-nav" style="margin-right: 16px;">健康监测</div>
-                <div class="tl-inspector-span" onclick="tl_ops_web_console_change_nav('balance')" id="balance-nav" style="margin-right: 16px;">负载监测</div>
-                <div class="tl-inspector-span" onclick="tl_ops_web_console_change_nav('fuselimit')" id="fuselimit-nav" 
-                    onmouseleave="tl_mouse_leave_tips()"
-                    onmouseenter="tl_mouse_enter_tips('fuselimit-nav','暂不支持')"
-                >熔断监测</div>
+                <div class="tl-inspector-span tl-inspector-span-active" onclick="tl_ops_web_console_change_nav('balance')" id="balance-nav" style="margin-right: 16px;">负载监测</div>
+                <div class="tl-inspector-span" onclick="tl_ops_web_console_change_nav('health')" id="health-nav" style="margin-right: 16px;">健康监测</div>
+                <div class="tl-inspector-span" onclick="tl_ops_web_console_change_nav('fuselimit')" id="fuselimit-nav">熔断监测</div>
             </div>
             
             <div style="float: right;display: none;" id="tl-balance-span">
@@ -119,10 +116,16 @@
                     {{#  } else { }}
                     {{#  layui.each(d, function(index, service){ }}
                     <div class="layui-col-sm6">
-                        <div class="layui-card">
-                            <div class="layui-card-header">{{service}}服务状态</div>
+                        <div class="layui-card" style="border-radius: 24px;">
+                            <div class="layui-card-header">{{service.id}}服务</div>
                             <div class="layui-card-body">
-                                <div style="height:300px;" id="{{service}}"> </div>
+                                {{#  if(service.nodes) { }}
+                                    {{#  layui.each(service.nodes, function(index, node){ }}
+                                    <div style="height: 200px;margin-top: 20px; margin-bottom: 20px;" id="{{service.id}}-{{node.id}}"> </div>
+                                    {{#  }); }}
+                                {{#  }else {}}
+                                    <div style="height:300px;" id="{{service.id}}"> </div>
+                                {{#  } }}
                             </div>
                         </div>
                     </div>

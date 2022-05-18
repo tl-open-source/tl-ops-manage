@@ -12,7 +12,7 @@ local tl_ops_constant_limit = require("constant.tl_ops_constant_limit")
 local cache_dict = ngx.shared.tlopsbalance;
 
 local _M = {
-	_VERSION = '0.01'
+	_VERSION = '0.02'
 }
 
 

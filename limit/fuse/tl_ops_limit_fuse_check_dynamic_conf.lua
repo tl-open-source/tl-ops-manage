@@ -15,6 +15,10 @@ local shared = ngx.shared.tlopsbalance
 local tl_ops_limit_fuse_check_dynamic_conf_add_timer_check;
 
 
+--[[
+	以下是同步worker conf新增接口
+]]
+
 ---- 校验service是否已有对应的 limit fuse option
 local tl_ops_limit_fuse_check_dynamic_conf_all_service_option_asynced = function( options, services )
 	local service_has_options = {}; 
@@ -158,9 +162,149 @@ end
 
 
 
+
+
+--[[
+	以下是同步worker conf变更接口
+]]
+
+
+---- 是否是新增的节点
+local tl_ops_limit_fuse_check_dynamic_conf_exsit_node = function(nodes, name)
+	for i = 1, #nodes do
+		local node = nodes[i]
+		if node.name == name then
+			return true
+		end
+	end
+
+	return false;
+end
+
+
+---- 同步state
+local tl_ops_limit_fuse_dynamic_conf_change_state_async = function( conf )
+    local nodes = conf.nodes;
+	if nodes == nil then
+		tlog:err("[change-check] nodes nil")
+		return
+	end
+	for i = 1, #nodes do
+		local node_id = i - 1
+		local key = tl_ops_utils_func:gen_node_key(tl_ops_constant_limit.fuse.cache_key.service_state, conf.service_name, node_id)
+		local node_state, _ = shared:get(key)
+
+		tlog:dbg("[change-check] node state, key=",key,",state=",node_state)
+
+		if not node_state then
+			nodes[i].state = 0
+		else
+			nodes[i].state = node_state
+		end
+	end
+
+	local key = tl_ops_utils_func:gen_node_key(tl_ops_constant_limit.fuse.cache_key.service_state, conf.service_name)
+	local state, _ = shared:get(key)
+	if not state then
+		conf.state = 0
+	else
+		conf.state = state
+	end
+end
+
+---- 同步limit fuse check option
+local tl_ops_limit_fuse_dynamic_conf_change_service_options_async = function( conf )
+    local options_str, _ = cache_limit:get(tl_ops_constant_limit.fuse.cache_key.options_list)
+	if not options_str then
+		tlog:err("[change-check] load dynamic options failed , options_str=",options_str)
+		return
+	end
+    local dynamic_options = cjson.decode(options_str)
+    
+	if not dynamic_options then
+		tlog:err("[change-check] load dynamic options decode failed , options_str=",options_str)
+		return
+	end
+
+	
+	local matcher_options = tl_ops_limit_fuse_check_dynamic_conf_get_option( dynamic_options, conf.service_name )
+
+	if matcher_options and matcher_options[1] then
+		local option = matcher_options[1]
+		
+		local node_threshold = option.node_threshold
+		if not tonumber(node_threshold) then
+		    node_threshold = 0.3
+		end
+
+		local service_threshold = option.service_threshold
+		if not tonumber(service_threshold) then
+		    service_threshold = 0.5
+		end
+
+		local recover = option.recover
+		if not tonumber(recover) then
+		    recover = 3000
+		else
+			if recover < 1000 then  
+				recover = 1000
+			end
+		end
+		recover = recover / 1000; 	---- 配置是ms格式, 使用是s格式
+
+		conf.node_threshold = node_threshold         
+		conf.service_threshold = service_threshold
+		conf.recover = recover
+		conf.depend = option.depend
+		conf.level = option.level
+	end
+end
+
+---- 同步service node配置
+local tl_ops_limit_fuse_dynamic_conf_change_service_node_async = function( conf )
+	local cache_service = require("cache.tl_ops_cache"):new("tl-ops-service");
+	local service_str, _ = cache_service:get(tl_ops_constant_service.cache_key.service_list)
+	if not service_str then
+		tlog:err("[change-check] load dynamic service failed , service_str=",service_str)
+		return
+	end
+	local dynamic_service = cjson.decode(service_str)
+    
+	if dynamic_service then
+		conf.nodes = dynamic_service[conf.service_name]
+	end
+end
+
+---- 同步变更的service信息
+local tl_ops_limit_fuse_check_dynamic_conf_change_core = function( conf, service_version )
+
+	-- 保证更新顺序，service/options > service.nodes > node.state 
+    tl_ops_limit_fuse_dynamic_conf_change_service_options_async(conf)
+    tl_ops_limit_fuse_dynamic_conf_change_service_node_async(conf)
+    tl_ops_limit_fuse_dynamic_conf_change_state_async(conf)
+	conf.service_version = service_version
+
+end
+
 ---- 校验是否需要同步conf变更
 local tl_ops_limit_fuse_check_dynamic_conf_change_check = function( conf )
-	
+	local key = tl_ops_utils_func:gen_node_key(tl_ops_constant_limit.fuse.cache_key.service_version, conf.service_name)
+	local service_version, _ = shared:get(key)
+
+	tlog:dbg("[change-check] start check conf_version=",conf.service_version,",service_version=" , service_version, ",key=",key)
+
+	if not service_version then
+		local ok ,_ = shared:add(key, 1)
+		if not ok then
+			tlog:err("[change-check] failed to init service_version key, " , _)
+		end
+		return
+	end
+
+	if service_version > conf.service_version then
+		tlog:dbg("[change-check] conf need update, service_version=", service_version, ",conf.service_version=",conf.service_version)
+		tl_ops_limit_fuse_check_dynamic_conf_change_core( conf, service_version )
+    end
 end
 
 ---- 动态配置加载器启动

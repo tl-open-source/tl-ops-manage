@@ -24,7 +24,7 @@ function _M:init(  )
     tl_ops_limit_fuse_check_dynamic_conf.dynamic_conf_add_start()
     
 
-    -- 默认初始化一次version
+    -- 默认初始化一次version, 启动时读取最新数据
     for i = 1, #tl_ops_constant_limit.fuse.options do
         local option = tl_ops_constant_limit.fuse.options[i]
         local service_name = option.service_name
@@ -34,7 +34,7 @@ function _M:init(  )
     end
     
     -- 启动动态检测配置版本
-	tl_ops_limit_fuse_check_version.incr_service_option_version()
+    tl_ops_limit_fuse_check_version.incr_service_option_version()
 
 end
 

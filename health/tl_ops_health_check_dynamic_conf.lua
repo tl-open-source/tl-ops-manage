@@ -194,16 +194,18 @@ local tl_ops_health_check_dynamic_conf_change_service_options_async = function( 
 	end
     local dynamic_options = cjson.decode(options_str)
     
-    if dynamic_options then
-		local matcher_options = tl_ops_health_check_dynamic_conf_get_option( dynamic_options, conf.check_service_name )
-		if matcher_options and matcher_options[1] then
-			local option = matcher_options[1]
-			conf.check_content = option.check_content
-			conf.check_timeout = option.check_timeout
-			conf.check_failed_max_count = option.check_failed_max_count
-			conf.check_success_max_count = option.check_success_max_count
-		end
-		
+	if not dynamic_options then
+		tlog:err("[change-check] load dynamic options decode failed , options_str=",options_str)
+		return
+	end
+
+	local matcher_options = tl_ops_health_check_dynamic_conf_get_option( dynamic_options, conf.check_service_name )
+	if matcher_options and matcher_options[1] then
+		local option = matcher_options[1]
+		conf.check_content = option.check_content
+		conf.check_timeout = option.check_timeout
+		conf.check_failed_max_count = option.check_failed_max_count
+		conf.check_success_max_count = option.check_success_max_count
 	end
 end
 
@@ -249,7 +251,7 @@ local tl_ops_health_check_dynamic_conf_change_check = function( conf )
 	end
 
 	if service_version > conf.service_version then
-		tlog:dbg("[change-check] conf need update, service_version=", service_version, "conf.service_version=",conf.service_version)
+		tlog:dbg("[change-check] conf need update, service_version=", service_version, ",conf.service_version=",conf.service_version)
 		tl_ops_health_check_dynamic_conf_change_core( conf, service_version )
     end
 end

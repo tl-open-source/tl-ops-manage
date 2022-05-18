@@ -57,7 +57,7 @@ const tl_ajax_failed_handler = function (data) {
 
 //获取参数
 const tl_request_get_param = function (variable) {
-    let query = window.location.search.substring(1);
+    let query = decodeURIComponent(window.location.search.substring(1));
     let vars = query.split("&");
     for (let i = 0; i < vars.length; i++) {
         let pair = vars[i].split("=");

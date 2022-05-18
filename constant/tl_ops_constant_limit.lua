@@ -51,20 +51,6 @@ local node_token = {   ----节点令牌桶配置
     }
 }
 
-local global_leak = { ----全局漏桶配置
-    cache_key = {
-        capacity = "tl_ops_limit_leak_capacity",
-        rate = "tl_ops_limit_leak_rate",
-        pre_time = "tl_ops_limit_leak_pre_time",
-        leak_bucket = "tl_ops_limit_leak_bucket",
-        lock = "tl_ops_limit_leak_lock"
-    },
-    options = {
-        capacity = 10 * 1024 * 1024,      ---- 最大容量 10M (按字节为单位，可做字节整型流控)
-        rate = 1024,                      ---- 漏桶流速/秒 (每秒 1KB)
-    }
-}
-
 
 
 ---- 服务桶 cache key
@@ -99,7 +85,6 @@ local fuse = {
         
         options_list = "tl_ops_limit_fuse_options_list",                        ---- list       配置缓存
         service_state = "tl_ops_limit_fuse_service_state",                      ---- int        服务熔断状态
-        service_node_state = "tl_ops_limit_fuse_service_node_state",            ---- int        节点熔断状态
         service_version = "tl_ops_limit_fuse_service_version",                  ---- int        服务配置变动
         service_options_version = "tl_ops_limit_fuse_service_options_version",  ---- boolean    服务新增变动
         timers = "tl_ops_limit_fuse_timers",                                    ---- list       当前开启自检的服务
@@ -107,16 +92,16 @@ local fuse = {
     options = {
         {
             service_name = "service1",
-            interval = 10 * 1000,      ---- 检测时间间隔 单位/ms
+            interval = 5 * 1000,       ---- 检测时间间隔 单位/ms
             node_threshold = 0.3,      ---- 切换状态阈值 （node失败占比）
             service_threshold = 0.5,   ---- 切换状态阈值 （service切换阈值，取决于node失败状态占比）
             recover = 3 * 1000,        ---- 全熔断恢复时间 单位/ms
             depend = "token",          ---- 默认依赖组件 ：token_bucket
-            level = "service"          ---- 默认组件级别，服务层级 [限流熔断针对的层级], 暂不支持服务级别
+            level = "service"          ---- 默认组件级别，服务层级 [限流熔断针对的层级]
         },
         {
             service_name = "service2",
-            interval = 10 * 1000,
+            interval = 5 * 1000,
             node_threshold = 0.3,           
             service_threshold = 0.5,
             recover = 3 * 1000,
