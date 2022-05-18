@@ -31,26 +31,26 @@ tl-ops-manage is positioned for service management
 
 Customize url routing strategy, random routing strategy
 
-- [x] [balance doc](doc/tl-ops-balance.md)
+- [x] [balance doc](tl-ops-balance.md)
 
 ## Health-check
 
 Service node health check is automated and configurable，Support dynamic addition and modification of configuration
 
-- [x] [health doc](doc/tl-ops-health.md)
+- [x] [health doc](tl-ops-health.md)
 
 
 ## Limit-fuse
 
 Automatic current limiting and fusing strategy, dynamic configuration content
 
-- [x] [limit doc](doc/tl-ops-limit.md)
+- [x] [limit doc](tl-ops-limit.md)
 
 ## Store
 
 Support data storage, traceability of operation records, and complete logging
 
-- [x] [store doc](doc/tl-ops-store.md)
+- [x] [store doc](tl-ops-store.md)
 
 
 # usage
