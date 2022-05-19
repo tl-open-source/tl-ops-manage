@@ -106,12 +106,6 @@ function _M:tl_ops_balance_api_balance()
     local node, node_state, check_service_node = tl_ops_balance_api_service_matcher()
 
     if not node then
-        local balance_req_fail_count_key = tl_ops_utils_func:gen_node_key(tl_ops_constant_balance.cache_key.req_fail, node['service'], check_service_node)
-        shared:incr(balance_req_fail_count_key, 1)
-
-        local limit_req_fail_count_key = tl_ops_utils_func:gen_node_key(tl_ops_constant_limit.fuse.cache_key.req_fail, node['service'], check_service_node)
-        shared:incr(limit_req_fail_count_key, 1)
-
         ngx.header['Tl-Proxy-Server'] = "nil";
         ngx.exit(503)
     end

@@ -202,6 +202,18 @@ local tl_ops_health_check_dynamic_conf_change_service_options_async = function( 
 	local matcher_options = tl_ops_health_check_dynamic_conf_get_option( dynamic_options, conf.check_service_name )
 	if matcher_options and matcher_options[1] then
 		local option = matcher_options[1]
+		
+		local check_interval = option.check_interval
+		if not tonumber(check_interval) then
+			check_interval = 1000
+		else ---- 最小 2ms
+			if check_interval < 2 then  
+				check_interval = 2
+			end
+		end
+		check_interval = check_interval / 1000; 	---- 配置是ms格式, 使用是s格式
+
+		conf.check_interval = check_interval
 		conf.check_content = option.check_content
 		conf.check_timeout = option.check_timeout
 		conf.check_failed_max_count = option.check_failed_max_count

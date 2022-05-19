@@ -231,7 +231,17 @@ local tl_ops_limit_fuse_dynamic_conf_change_service_options_async = function( co
 
 	if matcher_options and matcher_options[1] then
 		local option = matcher_options[1]
-		
+
+		local interval = option.interval
+		if not tonumber(interval) then
+			interval = 1000
+		else ---- 最小 2ms
+			if interval < 2 then  
+				interval = 2
+			end
+		end
+		interval = interval / 1000; 	---- 配置是ms格式, 使用是s格式
+
 		local node_threshold = option.node_threshold
 		if not tonumber(node_threshold) then
 		    node_threshold = 0.3
@@ -252,6 +262,7 @@ local tl_ops_limit_fuse_dynamic_conf_change_service_options_async = function( co
 		end
 		recover = recover / 1000; 	---- 配置是ms格式, 使用是s格式
 
+		conf.interval = interval
 		conf.node_threshold = node_threshold         
 		conf.service_threshold = service_threshold
 		conf.recover = recover
@@ -281,7 +292,8 @@ local tl_ops_limit_fuse_check_dynamic_conf_change_core = function( conf, service
 	-- 保证更新顺序，service/options > service.nodes > node.state 
     tl_ops_limit_fuse_dynamic_conf_change_service_options_async(conf)
     tl_ops_limit_fuse_dynamic_conf_change_service_node_async(conf)
-    tl_ops_limit_fuse_dynamic_conf_change_state_async(conf)
+	tl_ops_limit_fuse_dynamic_conf_change_state_async(conf)
+	
 	conf.service_version = service_version
 
 end

@@ -352,8 +352,6 @@ const tl_ops_web_console_balance_time_list_caculate_days = function (data) {
 }
 
 
-
-
 //fuselimit echarts
 const tl_ops_web_console_echarts_fuselimit_render = function (data) {
     let serviceList = [];

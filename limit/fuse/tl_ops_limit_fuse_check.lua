@@ -522,10 +522,11 @@ tl_ops_limit_fuse_auto_recover = function( conf )
 	local service_state = conf.state
 	local service_name = conf.service_name
 
-	tl_ops_limit_fuse_reset_count( conf )
+	local has_limit_fuse_open_state = false;
 
 	---- 服务熔断自动恢复
 	if service_state == _STATE.LIMIT_FUSE_OPEN then
+		has_limit_fuse_open_state = true
 		tl_ops_limit_fuse_service_degrade( conf )
 		tlog:dbg("tl_ops_limit_fuse_auto_recover service done : service=", service_name, ",state=",service_state)
 	end
@@ -540,9 +541,14 @@ tl_ops_limit_fuse_auto_recover = function( conf )
 		local node_id = i-1
 		local node_state = nodes[i].state
 		if node_state == _STATE.LIMIT_FUSE_OPEN then
+			has_limit_fuse_open_state = true
 			tl_ops_limit_fuse_node_degrade( conf, node_id)
 		end
 		tlog:dbg("tl_ops_limit_fuse_auto_recover node done : node=", nodes[i].name, ",state=",node_state)
+	end
+
+	if has_limit_fuse_open_state then
+		tl_ops_limit_fuse_reset_count( conf )
 	end
 
 end
