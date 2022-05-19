@@ -8,10 +8,15 @@
 [![](https://img.shields.io/badge/dynamic%20conf-green)](https://github.com/iamtsm/tl-ops-manage)
 
 
+[EN DOC](doc/README_EN.md) 
+
 # 基于openresty的轻量级服务管理功能集合实现
 
-![image](doc/tl-ops-manage.png)
-[EN](doc/README_EN.md)
+![image](doc/balance_console.png)
+
+![image](doc/health_console.png)
+
+![image](doc/limit_console.png)
 
 ## 规划/进度
 
@@ -71,7 +76,9 @@
 ---------
 
 
-## 模块说明文档
+## 说明文档
+
+- [x] [详细使用说明文档](https://blog.iamtsm.cn/detail.html?id=90)
 
 - [x] [路由模块](doc/tl-ops-balance.md)
 
