@@ -14,6 +14,7 @@ local tl_ops_constant_limit = require("constant.tl_ops_constant_limit");
 local tl_ops_rt = require("constant.tl_ops_constant_comm").tl_ops_rt;
 local tl_ops_utils_func = require("utils.tl_ops_utils_func");
 local tl_ops_health_check_version = require("health.tl_ops_health_check_version")
+local tl_ops_limit_fuse_check_version = require("limit.fuse.tl_ops_limit_fuse_check_version")
 
 
 local tl_ops_service_rule,_ = tl_ops_utils_func:get_req_post_args_by_name(tl_ops_constant_service.cache_key.service_rule, 1);
@@ -68,11 +69,13 @@ local is_add_service , _ = tl_ops_utils_func:get_req_post_args_by_name(tl_ops_co
 if is_add_service and is_add_service == true then
     ---- 对service_options_version更新，通知timer检查是否有新增service
     tl_ops_health_check_version.incr_service_option_version();
+    tl_ops_limit_fuse_check_version.incr_service_option_version();
 end
 
 ---- 对service version更新，通知worker更新所有conf
 for service_name , _ in pairs(tl_ops_service_list) do
     tl_ops_health_check_version.incr_service_version(service_name);
+    tl_ops_limit_fuse_check_version.incr_service_version(service_name);
 end
 
 
@@ -86,9 +89,8 @@ if has_new_service_name == true and new_service_name ~= '' then
         return;
     end
     local health_list_table = cjson.decode(health_list_str);
-    local new_service_health_option = tl_ops_constant_health.options[1];
-    new_service_health_option.check_service_name = new_service_name
-    table.insert(health_list_table, new_service_health_option)
+    tl_ops_constant_health.demo.check_service_name = new_service_name
+    table.insert(health_list_table, tl_ops_constant_health.demo)
 
     local health_res, _ = cache_health:set(tl_ops_constant_health.cache_key.options_list, cjson.encode(health_list_table));
     if not health_res then
@@ -104,9 +106,8 @@ if has_new_service_name == true and new_service_name ~= '' then
         return;
     end
     local limit_list_table = cjson.decode(limit_list_str);
-    local new_service_limit_option = tl_ops_constant_limit.fuse.options[1];
-    new_service_limit_option.service_name = new_service_name
-    table.insert(limit_list_table, new_service_limit_option)
+    tl_ops_constant_limit.fuse.demo.service_name = new_service_name
+    table.insert(limit_list_table, tl_ops_constant_limit.fuse.demo)
 
     local limit_res, _ = cache_limit:set(tl_ops_constant_limit.fuse.cache_key.options_list, cjson.encode(limit_list_table));
     if not limit_res then

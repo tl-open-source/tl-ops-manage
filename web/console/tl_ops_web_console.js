@@ -20,7 +20,7 @@ const tl_ops_web_console_main = function () {
             res_data = res.data
             let service_data = res.data.service
             //渲染dom
-            tl_ops_web_console_echarts_health_render(service_data)
+            tl_ops_web_console_echarts_balance_render(service_data)
             tl_ops_web_console_service_state_render(service_data)
         }
     }).then((res) => {

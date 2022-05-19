@@ -90,24 +90,16 @@ local fuse = {
         timers = "tl_ops_limit_fuse_timers",                                    ---- list       当前开启自检的服务
     },
     options = {
-        {
-            service_name = "service1",
-            interval = 5 * 1000,       ---- 检测时间间隔 单位/ms
-            node_threshold = 0.3,      ---- 切换状态阈值 （node失败占比）
-            service_threshold = 0.5,   ---- 切换状态阈值 （service切换阈值，取决于node失败状态占比）
-            recover = 3 * 1000,        ---- 全熔断恢复时间 单位/ms
-            depend = "token",          ---- 默认依赖组件 ：token_bucket
-            level = "service"          ---- 默认组件级别，服务层级 [限流熔断针对的层级]
-        },
-        {
-            service_name = "service2",
-            interval = 5 * 1000,
-            node_threshold = 0.3,           
-            service_threshold = 0.5,
-            recover = 3 * 1000,
-            depend = "token",
-            level = "service"
-        }
+
+    },
+    demo = {
+        service_name = "tlops-demo",
+        interval = 5 * 1000,       ---- 检测时间间隔 单位/ms
+        node_threshold = 0.3,      ---- 切换状态阈值 （node失败占比）
+        service_threshold = 0.5,   ---- 切换状态阈值 （service切换阈值，取决于node失败状态占比）
+        recover = 8 * 1000,        ---- 全熔断恢复时间 单位/ms
+        depend = "token",          ---- 默认依赖组件 ：token_bucket
+        level = "service"          ---- 默认组件级别，服务层级 [限流熔断针对的层级]
     },
     service = tl_ops_constant_service.list
 }

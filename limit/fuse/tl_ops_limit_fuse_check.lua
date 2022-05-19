@@ -212,7 +212,7 @@ tl_ops_limit_fuse = function(premature, conf)
 		end
 	end
 
-	tlog:dbg("tl_ops_limit_fuse end, conf.state=",conf.state,",conf.interval=",conf.interval,",conf.recover=",conf.recover)
+	tlog:dbg("tl_ops_limit_fuse end, service_name=",conf.service_name,",state=",conf.state,",interval=",conf.interval,",recover=",conf.recover)
 
 end
 

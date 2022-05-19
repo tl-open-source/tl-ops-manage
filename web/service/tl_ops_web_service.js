@@ -221,9 +221,13 @@ const tl_ops_service_data_add_filter = function( data ) {
             return false;
         }
     }
-    res_data.tl_ops_service_list[data.field.service] = [];
+    if(res_data.tl_ops_service_list && res_data.tl_ops_service_list.length === 0){
+        res_data.tl_ops_service_list = {}
+    }
+    res_data.tl_ops_service_list[data.field.service] = {};
     res_data.tl_ops_health_service_options_version = true
     res_data.new_service_name = data.field.service
     res_data.has_new_service_name = true
+
     return true
 }

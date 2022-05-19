@@ -6,25 +6,27 @@
     <title>tl-ops-manage后台</title>
     <meta name="renderer" content="webkit">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
     <script src="../lib/axios.js"></script>
-    <script src="../lib/echarts.min.js"></script>    
+    <script src="../lib/echarts.min.js"></script>
     <script src="https://im.iamtsm.cn/lay/dist/layuiadmin/layui/layui.js" v="layui" e="layui"></script>
     <link rel="stylesheet" type="text/css" href="https://im.iamtsm.cn/lay/dist/layuiadmin/layui/css/layui.css" />
     <link rel="stylesheet" type="text/css" href="https://im.iamtsm.cn/lay/dist/layuiadmin/style/admin.css" />
-    
+
 </head>
 
 <style>
-    .tl-inspector{
+    .tl-inspector {
         display: flex;
         width: 272px;
         height: 27px;
         margin: 10px auto;
         border-radius: 6px;
-        background-color: rgba(0,0,0,.04);
+        background-color: rgba(0, 0, 0, .04);
     }
-    .tl-inspector-span{
+
+    .tl-inspector-span {
         cursor: pointer;
         width: 128px;
         line-height: 30px;
@@ -37,25 +39,26 @@
         background-color: transparent;
         transition: background 0.5s;
     }
-    .tl-inspector-span-active{
+
+    .tl-inspector-span-active {
         color: #df0606;
         font-weight: 800;
         background-color: #fff;
         box-shadow: 0 2px 4px rgb(0 0 0 / 8%), 0 0 4px rgb(0 0 0 / 8%);
     }
-    .tl-no-service{
+
+    .tl-no-service {
         line-height: 300px;
         text-align: center;
         font-weight: 800;
         color: brown;
     }
-
 </style>
 
 <body>
     <div class="layui-fluid">
-        <div class="layui-row layui-col-space15" >
-            <div class="layui-col-sm12" style="margin-bottom: 15px;"> 
+        <div class="layui-row layui-col-space15">
+            <div class="layui-col-sm12" style="margin-bottom: 15px;">
                 <div class="layui-row layui-col-space15" id="tl-ops-web-console-service-view"> </div>
                 <script id="tl-ops-web-console-service-tpl" type="text/html">
                     {{#  if(d.length === 0) { }}
@@ -70,7 +73,8 @@
                             </div>
                             <div class="layui-card-body layuiadmin-card-list" style="padding: 9px;">
                                 <div style="display: inline-flex">
-                                    <svg viewBox="0 0 1024 1024" width="24" height="24"><path d="M512 
+                                    <svg viewBox="0 0 1024 1024" width="24" height="24">
+                                        <path d="M512 
                                         298.666667c117.333333 0 213.333333 96 213.333333 213.333333s-96 
                                         213.333333-213.333333 213.333333-213.333333-96-213.333333-213.333333S394.666667 
                                         298.666667 512 298.666667z" p-id="1332" fill="#78fa85"></path>
@@ -78,7 +82,8 @@
                                     <div style="color:#78fa85;font-weight:800">{{service.online_count}}个节点</div>
                                 </div>
                                 <div style="display: inline-flex;float: right;">
-                                    <svg viewBox="0 0 1024 1024" width="24" height="24"><path d="M512 
+                                    <svg viewBox="0 0 1024 1024" width="24" height="24">
+                                        <path d="M512 
                                         298.666667c117.333333 0 213.333333 96 213.333333 213.333333s-96 
                                         213.333333-213.333333 213.333333-213.333333-96-213.333333-213.333333S394.666667 
                                         298.666667 512 298.666667z" p-id="1251" fill="#bfbfbf"></path>
@@ -95,17 +100,21 @@
 
 
             <div class="tl-inspector">
-                <div class="tl-inspector-span tl-inspector-span-active" onclick="tl_ops_web_console_change_nav('balance')" id="balance-nav" style="margin-right: 16px;">负载监测</div>
-                <div class="tl-inspector-span" onclick="tl_ops_web_console_change_nav('health')" id="health-nav" style="margin-right: 16px;">健康监测</div>
-                <div class="tl-inspector-span" onclick="tl_ops_web_console_change_nav('fuselimit')" id="fuselimit-nav">熔断监测</div>
+                <div class="tl-inspector-span tl-inspector-span-active"
+                    onclick="tl_ops_web_console_change_nav('balance')" id="balance-nav" style="margin-right: 16px;">负载监测
+                </div>
+                <div class="tl-inspector-span" onclick="tl_ops_web_console_change_nav('health')" id="health-nav"
+                    style="margin-right: 16px;">健康监测</div>
+                <div class="tl-inspector-span" onclick="tl_ops_web_console_change_nav('fuselimit')" id="fuselimit-nav">
+                    熔断监测</div>
             </div>
-            
+
             <div style="float: right;display: none;" id="tl-balance-span">
                 <span class="layui-badge layui-bg-blue " style="padding: 4px 14px 4px 14px;cursor: pointer;">当天</span>
-                <span class="layui-badge layui-bg-red layui-btn-disabled" style="padding: 4px 14px 4px 14px;cursor: pointer;"
-                    id="tl-balance-span-all" onmouseleave="tl_mouse_leave_tips()"
-                    onmouseenter="tl_mouse_enter_tips('tl-balance-span-all','暂不支持')"
-                >全部</span>
+                <span class="layui-badge layui-bg-red layui-btn-disabled"
+                    style="padding: 4px 14px 4px 14px;cursor: pointer;" id="tl-balance-span-all"
+                    onmouseleave="tl_mouse_leave_tips()"
+                    onmouseenter="tl_mouse_enter_tips('tl-balance-span-all','暂不支持')">全部</span>
             </div>
 
             <div class="layui-col-sm12">
@@ -114,27 +123,38 @@
                     {{#  if(d.length === 0) { }}
                     <p class="tl-no-service">暂无SERVICE</p>
                     {{#  } else { }}
-                    {{#  layui.each(d, function(index, service){ }}
-                    <div class="layui-col-sm6">
-                        <div class="layui-card" style="border-radius: 24px;">
-                            <div class="layui-card-header">{{service.id}}服务</div>
-                            <div class="layui-card-body">
-                                {{#  if(service.nodes) { }}
-                                    {{#  layui.each(service.nodes, function(index, node){ }}
-                                    <div style="height: 200px;margin-top: 20px; margin-bottom: 20px;" id="{{service.id}}-{{node.id}}"> </div>
-                                    {{#  }); }}
-                                {{#  }else {}}
-                                    <div style="height:300px;" id="{{service.id}}"> </div>
-                                {{#  } }}
-                            </div>
-                        </div>
-                    </div>
-                    {{#  }); }}
+                        {{#  layui.each(d, function(index, service){ }}
+                            {{#  if(service.nodes) { }}
+                                {{#  layui.each(service.nodes, function(index, node){ }}
+                                <div class="layui-col-sm6">
+                                    <div class="layui-card" style="border-radius: 24px;">
+                                        <div class="layui-card-header">{{service.id}}服务</div>
+                                        <div class="layui-card-body">
+                                            <div style="height: 200px;margin-top: 20px; margin-bottom: 20px;"
+                                                id="{{service.id}}-{{node.id}}"> </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                {{#  }); }}
+                            {{#  }else { }}
+                                <div class="layui-col-sm6">
+                                    <div class="layui-card" style="border-radius: 24px;">
+                                        <div class="layui-card-header">{{service.id}}服务</div>
+                                        <div class="layui-card-body">
+                                            <div style="height:300px;" id="{{service.id}}"> </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            {{#  } }}
+                        {{#  }); }}
                     {{#  } }}
                 </script>
             </div>
         </div>
     </div>
+
+
+    
 
     <script src="../tl_ops_web_comm.js"></script>
     <script src="tl_ops_web_console.js"></script>
