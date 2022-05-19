@@ -197,3 +197,18 @@
             |-- tl_ops_web_store_view.html
 
 
+## 引用致谢
+
+### [openresty](https://github.com/openresty/openresty)
+
+### [layui](https://github.com/layui/layui)
+
+### [iredis](https://github.com/membphis/lua-resty-iredis)
+
+### [snowflake](https://github.com/yunfengmeng/lua-resty-snowflake)
+
+### [echarts](https://github.com/apache/echarts)
+
+## License
+
+### Apache License 2.0
