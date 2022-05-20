@@ -18,6 +18,9 @@
 
 ![image](doc/limit_console.png)
 
+
+---------
+
 ## 规划/进度
 
 - [x] 路由策略 
@@ -46,6 +49,22 @@
 
 ##### 持续更新中 ...
 
+**qq交流群 : 624214498**
+
+---------
+
+
+## 说明文档
+
+- [x] [详细使用说明文档](https://blog.iamtsm.cn/detail.html?id=90)
+
+- [x] [路由模块](doc/tl-ops-balance.md)
+
+- [x] [健康检查模块](doc/tl-ops-health.md)
+
+- [x] [熔断限流模块](doc/tl-ops-limit.md)
+
+- [x] [数据模块](doc/tl-ops-store.md)
 
 ---------
 
@@ -74,19 +93,6 @@
     http://localhost/tlops/tl_ops_web_index.html  管理后台
 
 ---------
-
-
-## 说明文档
-
-- [x] [详细使用说明文档](https://blog.iamtsm.cn/detail.html?id=90)
-
-- [x] [路由模块](doc/tl-ops-balance.md)
-
-- [x] [健康检查模块](doc/tl-ops-health.md)
-
-- [x] [熔断限流模块](doc/tl-ops-limit.md)
-
-- [x] [数据模块](doc/tl-ops-store.md)
 
 
 ## 目录结构
@@ -203,6 +209,7 @@
             |-- tl_ops_web_store.js
             |-- tl_ops_web_store_view.html
 
+---------
 
 ## 引用致谢
 
@@ -215,6 +222,7 @@
 ### [snowflake](https://github.com/yunfengmeng/lua-resty-snowflake)
 
 ### [echarts](https://github.com/apache/echarts)
+
 
 ## License
 
