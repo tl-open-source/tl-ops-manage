@@ -10,6 +10,10 @@
 
 [EN DOC](doc/README_EN.md) 
 
+
+体验demo : https://tlops.iamtsm.cn/tlops/tl_ops_web_index.html
+
+
 # 基于openresty的轻量级服务管理功能集合实现
 
 ![image](doc/balance_console.png)
