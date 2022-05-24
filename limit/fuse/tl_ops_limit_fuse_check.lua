@@ -9,12 +9,11 @@ local cjson = require("cjson");
 local tlog = require("utils.tl_ops_utils_log"):new("tl_ops_limit_fuse");
 local tl_ops_utils_func = require("utils.tl_ops_utils_func");
 
-local tl_ops_limit_token_bucket = require("limit.fuse.tl_ops_limit_fuse_token_bucket");
-
 local tl_ops_limit_fuse_check_dynamic_conf = require("limit.fuse.tl_ops_limit_fuse_check_dynamic_conf")
 local tl_ops_limit_fuse_check_version = require("limit.fuse.tl_ops_limit_fuse_check_version")
-local tl_ops_constant_limit = require("constant.tl_ops_constant_limit")
+local tl_ops_limit_token_bucket = require("limit.fuse.tl_ops_limit_fuse_token_bucket");
 
+local tl_ops_constant_limit = require("constant.tl_ops_constant_limit")
 local tl_ops_constant_service = require("constant.tl_ops_constant_service");
 
 local shared = ngx.shared.tlopsbalance
@@ -176,7 +175,6 @@ tl_ops_limit_fuse_default_confs = function(options, services)
 	        depend = depend,						---- 自检依赖的模式
 			level = level,							---- 自检层级 
 			state = _STATE.LIMIT_FUSE_CLOSE,		---- 服务熔断/限流状态
-			bucket = service_token_bucket,			---- 服务桶
 		})
 	end
 
@@ -331,7 +329,6 @@ tl_ops_limit_fuse_node_degrade = function ( conf, node_id )
 	local node = conf.nodes[node_id + 1]
 	local name = node.name
 	local state = node.state
-	local node_bucket = node.bucket
 	local service_name = conf.service_name
 
 	---- node处于限流状态, 节点桶扩容
@@ -380,7 +377,6 @@ tl_ops_limit_fuse_node_upgrade = function ( conf, node_id )
 	local node = conf.nodes[node_id + 1]
 	local name = node.name
 	local state = node.state
-	local node_bucket = node.bucket
 	local service_name = conf.service_name
 
 	---- node处于限流状态, 节点桶缩容

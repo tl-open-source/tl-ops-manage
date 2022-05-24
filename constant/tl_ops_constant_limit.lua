@@ -15,7 +15,8 @@ local global_token = {   ----全局令牌桶配置
         capacity = 10 * 1024 * 1024,      ---- 最大容量 10M (按字节为单位，可做字节整型流控)
         rate = 1024,                      ---- 令牌生成速率/秒 (每秒 1KB)
         warm = 100 * 1024,                ---- 预热令牌数量 (预热100KB)
-        half_capacity = 2                 ---- 限流状态令牌最大容量
+        half_capacity = 2,                ---- 限流状态令牌最大容量
+        block = 1024,                     ---- 流控以1024为单位
     }
 }
 local service_token = {   ----服务令牌桶配置
@@ -31,7 +32,8 @@ local service_token = {   ----服务令牌桶配置
         capacity = 10 * 1024 * 1024,
         rate = 1024,
         warm = 100 * 1024,
-        half_capacity = 2
+        half_capacity = 2,
+        block = 1024,
     }
 }
 local node_token = {   ----节点令牌桶配置
@@ -47,7 +49,8 @@ local node_token = {   ----节点令牌桶配置
         capacity = 10 * 1024 * 1024,
         rate = 1024,
         warm = 100 * 1024,
-        half_capacity = 2
+        half_capacity = 2,
+        block = 1024,
     }
 }
 

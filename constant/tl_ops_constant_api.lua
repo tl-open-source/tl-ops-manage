@@ -12,10 +12,13 @@ local tl_ops_constant_api_list = {
 
     },
     demo = {
-        id = snowflake.generate_id( 100 ),  ---- default snow id
-        url = "/*",                         ---- 当前url匹配规则
-        service = "tlops-demo",             ---- 当前url路由到的service
-        node = 0                            ---- 当前url路由到的service下的node的索引
+        {
+            id = snowflake.generate_id( 100 ),  ---- default snow id
+            url = "/*",                         ---- 当前url匹配规则
+            service = "tlops-demo",             ---- 当前url路由到的service
+            node = 0,                           ---- 当前url路由到的service下的node的索引
+            host = "tlops1.com",                ---- 当前url处理的域名范围
+        }
     },
     rule = {---- api rule 策略
         url = "url",            ---- url路由可指定到具体节点

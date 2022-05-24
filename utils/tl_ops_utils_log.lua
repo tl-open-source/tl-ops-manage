@@ -98,7 +98,7 @@ function _M:new(module)
   	return setmetatable({
 		level = _M.debug,
 		module = module,
-		dir = tl_ops_constant_log.dir,
+		dir = tl_ops_constant_log.log_dir,
 		format_json = tl_ops_constant_log.format_json
 	}, self)
 end

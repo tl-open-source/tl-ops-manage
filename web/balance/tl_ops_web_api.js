@@ -58,12 +58,14 @@ const tl_ops_web_api_url_cols = function () {
     return [[
         {
             field: 'id', title: 'ID',width:"15%"
+        },  {
+            field: 'host', title: 'HOST',width:"15%"
         }, {
-            field: 'url', title: '请求的API', width:"30%"
+            field: 'url', title: 'API', width:"20%"
         },  {
-            field: 'service', title: '路由的SERVICE名称',width:"15%"
+            field: 'service', title: '所属SERVICE',width:"15%"
         },  {
-            field: 'node', title: '具体的NODE索引',width:"15%"
+            field: 'node', title: 'NODE索引',width:"10%"
         },  {
             field: 'updatetime', title: '更新时间',width:"15%",
         }, {
@@ -81,14 +83,16 @@ const tl_ops_web_api_random_cols = function () {
     return [[
         {
             field: 'id', title: 'ID', width:"15%"
-        }, {
-            field: 'url', title: '请求的API', width:"30%"
         },  {
-            field: 'service', title: '路由的SERVICE',width:"25%"
+            field: 'host', title: 'HOST',width:"15%"
+        }, {
+            field: 'url', title: '请求的API', width:"20%"
+        },  {
+            field: 'service', title: '所属SERVICE',width:"15%"
         },  {
             field: 'updatetime', title: '更新时间',width:"20%",
         }, {
-            width: "10%",
+            width: "15%",
             align: 'center',
             fixed: 'right',
             title: '操作',

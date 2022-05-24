@@ -9,13 +9,13 @@ cjson.encode_empty_table_as_object(false)
 
 local tl_ops_rt = require("constant.tl_ops_constant_comm").tl_ops_rt;
 local tl_ops_utils_func = require("utils.tl_ops_utils_func");
+local tl_ops_constant_log = require("constant.tl_ops_constant_log")
 local tlog = require("utils.tl_ops_utils_log"):new("tl_ops_api_store");
 
 
 -- 读取文件
 local read = function( filename )
-    local path = tl_ops_utils_func:get_current_dir_path('/utils', '/store/')
-	local store_file_name = path .. filename
+	local store_file_name = tl_ops_constant_log.store_dir .. filename
 	local store_file_io, _ = io.open(store_file_name, "r")
     if not store_file_io then
     	tlog:err("failed to open file in read: " .. store_file_name)

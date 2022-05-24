@@ -8,6 +8,7 @@ local ngx = require "ngx"
 local cjson = require("cjson.safe")
 local tlog = require("utils.tl_ops_utils_log"):new("tl_ops_utils_store");
 local tl_ops_utils_func = require("utils.tl_ops_utils_func");
+local tl_ops_constant_log = require("constant.tl_ops_constant_log")
 local tl_ops_rt = require("constant.tl_ops_constant_comm").tl_ops_rt;
 
 local _M = {}
@@ -119,9 +120,8 @@ end
 
 
 function _M:new(business)
-	local current_path = tl_ops_utils_func:get_current_dir_path('/utils', '/store/');
 	local store_conf = {
-		path = current_path,
+		path = tl_ops_constant_log.store_dir,
 		business = business
 	}
  	setmetatable(store_conf, self)
