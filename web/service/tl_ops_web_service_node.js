@@ -223,9 +223,17 @@ const tl_ops_service_node_data_add_filter = function( data ) {
     if(res_data.tl_ops_service_list[data.field.service].length === undefined){
         res_data.tl_ops_service_list[data.field.service] = [];
     }
+
+    data.field.change = true;
     res_data.tl_ops_service_list[data.field.service].push(data.field);
     res_data.has_new_service_name = false
 
+    res_data.tl_ops_service_list[data.field.service].forEach(item=>{
+        if( item.LAY_TABLE_INDEX !== undefined){
+            delete item.LAY_TABLE_INDEX
+        }
+    })
+    
     return true;
 }
 
@@ -251,12 +259,19 @@ const tl_ops_service_node_data_edit_filter = function( data ) {
     let cur_list = []
     res_data.tl_ops_service_list[data.field.service].forEach((item)=>{
         if(item.id === data.field.id){
+            data.field.change = true;
             item = data.field;
         }
         cur_list.push(item)
     })
     res_data.tl_ops_service_list[data.field.service] = cur_list;
     res_data.has_new_service_name = false
+
+    res_data.tl_ops_service_list[data.field.service].forEach(item=>{
+        if( item.LAY_TABLE_INDEX !== undefined){
+            delete item.LAY_TABLE_INDEX
+        }
+    })
 
     return true;
 }

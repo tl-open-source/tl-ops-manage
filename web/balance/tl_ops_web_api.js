@@ -226,7 +226,6 @@ const tl_ops_web_api_edit = function (evtdata) {
 
 //过滤新增数据
 const tl_ops_api_data_add_filter = function( data ) {
-    console.log(data, rule)
     if(rule === 'random'){
         delete data.field.node
     }
@@ -243,6 +242,12 @@ const tl_ops_api_data_add_filter = function( data ) {
         }
     }
     res_data.tl_ops_api_list[rule].push(data.field)
+
+    res_data.tl_ops_api_list[rule].forEach(item=>{
+        if( item.LAY_TABLE_INDEX !== undefined){
+            delete item.LAY_TABLE_INDEX
+        }
+    })
 
     return true
 }
@@ -265,11 +270,18 @@ const tl_ops_api_data_edit_filter = function( data ) {
     let cur_list = []
     res_data.tl_ops_api_list[rule].forEach((item)=>{
         if(item.id === data.field.id){
+            data.field.change = true;
             item = data.field;
         }
         cur_list.push(item)
     })
     res_data.tl_ops_api_list[rule] = cur_list;
+
+    res_data.tl_ops_api_list[rule].forEach(item=>{
+        if( item.LAY_TABLE_INDEX !== undefined){
+            delete item.LAY_TABLE_INDEX
+        }
+    })
 
     return true
 }

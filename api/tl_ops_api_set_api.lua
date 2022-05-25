@@ -32,11 +32,21 @@ if not tl_ops_api_list_single or tl_ops_api_list_single == nil then
     tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.args_error ,"args err3", _);
     return;
 end
+
 ---- 更新生成id
 for _, api in ipairs(tl_ops_api_list_single) do
-    api.id = snowflake.generate_id( 100 )
-    api.updatetime = ngx.localtime()
+    if not api.id or api.id == nil or api.id == '' then
+        api.id = snowflake.generate_id( 100 )
+    end
+    if not api.updatetime or api.updatetime == nil or api.updatetime == '' then
+        api.updatetime = ngx.localtime()
+    end
+    if api.change and api.change == true then
+        api.updatetime = ngx.localtime()
+        api.change = nil
+    end
 end
+
 ---- 放回
 tl_ops_api_list[tl_ops_api_rule] = tl_ops_api_list_single;
 

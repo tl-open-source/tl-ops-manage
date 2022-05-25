@@ -35,18 +35,38 @@ if has_new_service_name == nil then
     return;
 end
 
-
 local new_service_name ,_ = tl_ops_utils_func:get_req_post_args_by_name('new_service_name', 1);
 if has_new_service_name == true and new_service_name == nil then
     tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.args_error ,"args err4", _);
     return;
 end
 
+---- 是否存在service name
+if has_new_service_name == true then
+    for key,_ in pairs(tl_ops_service_list) do
+        if key == new_service_name then
+            tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.args_error ,"service exsit");
+            return;
+        end
+    end
+    tl_ops_service_list[new_service_name] = {}
+end
+
+
+
 ---- 更新生成id
 for key,_ in pairs(tl_ops_service_list) do
-    for _, service in ipairs(tl_ops_service_list[key]) do
-        service.id = snowflake.generate_id( 100 )
-        service.updatetime = ngx.localtime()
+    for _, node in ipairs(tl_ops_service_list[key]) do
+        if not node.id or node.id == nil or node.id == '' then
+            node.id = snowflake.generate_id( 100 )
+        end
+        if not node.updatetime or node.updatetime == nil or node.updatetime == '' then
+            node.updatetime = ngx.localtime()
+        end
+        if node.change and node.change == true then
+            node.updatetime = ngx.localtime()
+            node.change = nil
+        end
     end
 end
 
@@ -64,9 +84,7 @@ if not cache_rule then
     return;
 end
 
-
-local is_add_service , _ = tl_ops_utils_func:get_req_post_args_by_name(tl_ops_constant_health.cache_key.service_options_version, 1);
-if is_add_service and is_add_service == true then
+if has_new_service_name and has_new_service_name == true then
     ---- 对service_options_version更新，通知timer检查是否有新增service
     tl_ops_health_check_version.incr_service_option_version();
     tl_ops_limit_fuse_check_version.incr_service_option_version();

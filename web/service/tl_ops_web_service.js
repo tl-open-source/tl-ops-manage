@@ -224,10 +224,16 @@ const tl_ops_service_data_add_filter = function( data ) {
     if(res_data.tl_ops_service_list && res_data.tl_ops_service_list.length === 0){
         res_data.tl_ops_service_list = {}
     }
-    res_data.tl_ops_service_list[data.field.service] = {};
-    res_data.tl_ops_health_service_options_version = true
+    
     res_data.new_service_name = data.field.service
     res_data.has_new_service_name = true
+
+    for(let service in res_data.tl_ops_service_list){
+        if (service === data.field.service){
+            layer.msg("“"+service+"” 名称已存在")
+            return false;
+        }
+    }
 
     return true
 }
