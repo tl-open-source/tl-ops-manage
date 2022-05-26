@@ -28,7 +28,7 @@
 ## 规划 / 进度
 
 
-- [x] API路由
+- [x] API路由负载
 
 - [x] 健康检查
 
@@ -40,7 +40,7 @@
 
 - [x] 数据持久
 
-- [x] 管理界面
+- [x] 管理操作界面
 
 - [x] 支持域名负载
 
@@ -48,7 +48,7 @@
 
 - [x] 管理端请求优化
 
-- [ ] 配置数据管理
+- [ ] 持久数据管理
 
 - [ ] 支持配置删除
 
@@ -61,6 +61,8 @@
 - [ ] 支持实时服务监控
 
 - [ ] 支持配置发布回滚
+
+- [ ] ShareDict操作台
 
 
 ##### 持续更新中 ...
@@ -113,135 +115,110 @@
 ---------
 
 
-## 目录结构
-
-    |-- .gitignore
-    |-- LICENSE
-    |-- README.md
-    |-- api
-    |   |-- tl_ops_api_get_api.lua
-    |   |-- tl_ops_api_get_health.lua
-    |   |-- tl_ops_api_get_limit.lua
-    |   |-- tl_ops_api_get_service.lua
-    |   |-- tl_ops_api_get_state.lua
-    |   |-- tl_ops_api_get_store.lua
-    |   |-- tl_ops_api_reset_all.lua
-    |   |-- tl_ops_api_set_api.lua
-    |   |-- tl_ops_api_set_health.lua
-    |   |-- tl_ops_api_set_limit.lua
-    |   |-- tl_ops_api_set_service.lua
-    |-- balance
-    |   |-- tl_ops_balance.lua
-    |   |-- tl_ops_balance_core.lua
-    |   |-- tl_ops_balance_count.lua
-    |   |-- tl_ops_balance_count_core.lua
-    |-- cache
-    |   |-- tl_ops_cache.lua
-    |   |-- tl_ops_cache_dict.lua
-    |   |-- tl_ops_cache_redis.lua
-    |   |-- tl_ops_cache_store.lua
-    |-- conf
-    |   |-- tl_ops_manage.conf
-    |-- constant
-    |   |-- tl_ops_constant_api.lua
-    |   |-- tl_ops_constant_balance.lua
-    |   |-- tl_ops_constant_comm.lua
-    |   |-- tl_ops_constant_health.lua
-    |   |-- tl_ops_constant_limit.lua
-    |   |-- tl_ops_constant_log.lua
-    |   |-- tl_ops_constant_service.lua
-    |-- doc
-    |   |-- README_EN.md
-    |   |-- tl-ops-balance.md
-    |   |-- tl-ops-health.md
-    |   |-- tl-ops-limit.md
-    |   |-- tl-ops-manage.png
-    |   |-- tl-ops-store.md
-    |-- health
-    |   |-- tl_ops_health.lua
-    |   |-- tl_ops_health_check.lua
-    |   |-- tl_ops_health_check_dynamic_conf.lua
-    |   |-- tl_ops_health_check_version.lua
-    |-- lib
-    |   |-- iredis.lua
-    |   |-- lock.lua
-    |   |-- snowflake.lua
-    |-- limit
-    |   |-- tl_ops_limit_leak_bucket.lua
-    |   |-- tl_ops_limit_sliding_window.lua
-    |   |-- tl_ops_limit_token_bucket.lua
-    |   |-- tl_ops_limit_warm.lua
-    |   |-- fuse
-    |       |-- tl_ops_limit_fuse.lua
-    |       |-- tl_ops_limit_fuse_check.lua
-    |       |-- tl_ops_limit_fuse_check_dynamic_conf.lua
-    |       |-- tl_ops_limit_fuse_check_version.lua
-    |       |-- tl_ops_limit_fuse_token_bucket.lua
-    |-- store
-    |   |-- example
-    |   |-- tl-ops-api.tlindex
-    |   |-- tl-ops-api.tlstore
-    |   |-- tl-ops-balance-count-300.tlindex
-    |   |-- tl-ops-balance-count-300.tlstore
-    |   |-- tl-ops-health.tlindex
-    |   |-- tl-ops-health.tlstore
-    |   |-- tl-ops-limit.tlindex
-    |   |-- tl-ops-limit.tlstore
-    |   |-- tl-ops-service.tlindex
-    |   |-- tl-ops-service.tlstore
-    |-- utils
-    |   |-- tl_ops_utils_func.lua
-    |   |-- tl_ops_utils_log.lua
-    |   |-- tl_ops_utils_store.lua
-    |-- web
-        |-- tl_ops_web_comm.js
-        |-- tl_ops_web_index.html
-        |-- balance
-        |   |-- tl_ops_web_api.html
-        |   |-- tl_ops_web_api.js
-        |   |-- tl_ops_web_api_form.html
-        |   |-- tl_ops_web_api_form.js
-        |-- console
-        |   |-- tl_ops_web_console.html
-        |   |-- tl_ops_web_console.js
-        |-- health
-        |   |-- tl_ops_web_health.html
-        |   |-- tl_ops_web_health.js
-        |   |-- tl_ops_web_health_form.html
-        |-- lib
-        |   |-- axios.js
-        |   |-- echarts.min.js
-        |-- limit
-        |   |-- tl_ops_web_limit.html
-        |   |-- tl_ops_web_limit.js
-        |   |-- tl_ops_web_limit_form.html
-        |-- service
-        |   |-- tl_ops_web_service.html
-        |   |-- tl_ops_web_service.js
-        |   |-- tl_ops_web_service_form.html
-        |   |-- tl_ops_web_service_node.html
-        |   |-- tl_ops_web_service_node.js
-        |   |-- tl_ops_web_service_node_form.html
-        |-- store
-            |-- tl_ops_web_store.html
-            |-- tl_ops_web_store.js
-            |-- tl_ops_web_store_view.html
-
----------
-
 ## 引用致谢
 
-### [openresty](https://github.com/openresty/openresty)
+#### [openresty](https://github.com/openresty/openresty)
 
-### [layui](https://github.com/layui/layui)
+#### [layui](https://github.com/layui/layui)
 
-### [iredis](https://github.com/membphis/lua-resty-iredis)
+#### [iredis](https://github.com/membphis/lua-resty-iredis)
 
-### [snowflake](https://github.com/yunfengmeng/lua-resty-snowflake)
+#### [snowflake](https://github.com/yunfengmeng/lua-resty-snowflake)
 
-### [echarts](https://github.com/apache/echarts)
+#### [echarts](https://github.com/apache/echarts)
 
 
 ## License
 
-### Apache License 2.0
+#### Apache License 2.0
+
+
+## 事务日程
+
+2022-05-25
+
+    1. 优化管理端请求
+    2. 修复单个时间变动的bug
+    3. 修复添加数据时多余字段
+    4. 修复可添加重复服务名称
+    5. 补充部分说明文档
+    6. fix bugs
+
+-----------
+
+2022-05-24
+
+    1. 支持域名负载
+    2. 路由负载令牌桶流控接入
+    3. 优化不同系统下的路径问题
+    4. 优化多余代码
+    5. 补充部分说明文档
+    6. fix bugs
+
+-----------
+
+2022-05-19
+
+    1. 移除配置示例数据，提供DEMO数据
+    2. 支持实时修改检查时间间隔
+    3. 优化管理端展示
+    4. 优化配置不同步的问题
+    5. 补充部分说明文档
+    6. fix bugs
+
+-----------
+
+2022-05-18
+
+    1. 支持熔断限状态概览
+    2. 支持熔断限流动态配置文件同步
+    3. 路由负载优化
+    4. 补充部分说明文档
+    5. fix bugs
+
+-----------
+
+2022-02-28
+
+    1. 支持部分熔断限流动态配置文件
+    2. 拆分路由，服务，节点模块
+    3. 支持查看持久化store数据文件
+    4. 补充部分说明文档
+    5. fix bugs
+
+-----------
+
+2022-02-18
+
+    1. 支持熔断限流（支持令牌桶限流）
+    2. 管理后台优化
+    3. 路由负载优化
+    4. 健康检查优化
+    5. 补充部分说明文档
+    6. fix bugs
+
+-----------
+
+2022-01-15
+
+    1. 补充api
+    2. 优化代码
+    3. 优化体验
+    4. 优化负载模块
+    5. 完善熔断限流部分模块
+
+-----------
+
+2022-01-11
+
+    1. 健康检查支持动态配置加载
+    2. 支持路由负载配置管理
+    3. 支持健康检查配置管理
+    4. 支持管理控制台服务概览
+    5. 优化路由负载模块
+
+-----------
+
+2021-12-22
+
+    1. 初始化项目
