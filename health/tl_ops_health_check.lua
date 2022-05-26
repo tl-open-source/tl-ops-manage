@@ -129,6 +129,11 @@ tl_ops_health_check_default_confs = function (options, services)
 			return nil
 		end
 
+		local check_success_status = opt.check_success_status
+		if not check_success_status then
+			check_success_status = {200}
+		end
+
 		local nodes = services[check_service_name]
 		if not nodes then
 			tlog:err("tl_ops_health_check_default_confs warp default nodes nil ")
@@ -141,7 +146,8 @@ tl_ops_health_check_default_confs = function (options, services)
 			check_service_name = check_service_name,
 	        check_content = check_content,
 	        check_timeout = check_timeout,
-	        check_interval = check_interval,
+			check_interval = check_interval,
+			check_success_status = check_success_status,
 	        check_failed_max_count = check_failed_max_count,
 			check_success_max_count = check_success_max_count,
 		})
@@ -214,6 +220,7 @@ end
 tl_ops_health_check_nodes = function (conf)
 	local check_content = conf.check_content
 	local check_timeout = conf.check_timeout
+	local check_success_status = conf.check_success_status
 	local nodes = conf.nodes
 
 	tlog:dbg("tl_ops_health_check_nodes start" , ",nodes=",nodes)
@@ -282,9 +289,15 @@ tl_ops_health_check_nodes = function (conf)
 			local status = tonumber(string.sub(receive_line, from, to))
 
 			tlog:dbg("tl_ops_health_check_nodes get status ok ,name=" ,name, ", status=" , status)
+			local statusPass = false;
+			for j = 1, #check_success_status do
+				if check_success_status[j] == status then
+					statusPass = true
+				end
+			end
 
-			if status ~= 200 then
-				tlog:err("tl_ops_health_check_nodes status ~= 200: ")
+			if statusPass == false then
+				tlog:err("tl_ops_health_check_nodes status not pass ,name=" ,name, ", status=" , status)
 				tl_ops_health_check_node_failed(conf, node_id, node)
 				sock:close()
 				break

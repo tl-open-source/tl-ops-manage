@@ -54,38 +54,23 @@ local node_token = {   ----节点令牌桶配置
     }
 }
 
+---- 依赖限流组件
+local depend = {
+    token = "token",
+    leak = "leak"
+}
 
+---- 组件级别
+local level = {
+    service = "service"
+}
 
----- 服务桶 cache key
-local tl_ops_limit_service_token_bucket_keys = function( serivce_name )
-    local service_token_bucket_conf = {}
-
-	for key, value in pairs( service_token.cache_key ) do
-        service_token_bucket_conf[key] = tl_ops_utils_func:gen_node_key(value, serivce_name)
-	end
-    
-    return service_token_bucket_conf
-end
-
-
----- 节点桶 cache key
-local tl_ops_limit_node_token_bucket_keys = function( serivce_name , id)
-    local node_token_bucket_conf = {}
-
-	for key, value in pairs( node_token.cache_key ) do
-        node_token_bucket_conf[key] = tl_ops_utils_func:gen_node_key(value, serivce_name, id)
-	end
-
-    return node_token_bucket_conf
-end
-
-
+---- 熔断配置
 local fuse = {
     cache_key = {
         lock = "tl_ops_limit_fuse_lock",
-        req_succ = "tl_ops_limit_fuse_req_succ",
-        req_fail = "tl_ops_limit_fuse_req_fail",
-        
+        req_succ = "tl_ops_limit_fuse_req_succ",                                ---- int        周期内路由成功次数
+        req_fail = "tl_ops_limit_fuse_req_fail",                                ---- int        周期内路由失败次数
         options_list = "tl_ops_limit_fuse_options_list",                        ---- list       配置缓存
         service_state = "tl_ops_limit_fuse_service_state",                      ---- int        服务熔断状态
         service_version = "tl_ops_limit_fuse_service_version",                  ---- int        服务配置变动
@@ -97,16 +82,15 @@ local fuse = {
     },
     demo = {
         service_name = "tlops-demo",
-        interval = 5 * 1000,       ---- 检测时间间隔 单位/ms
-        node_threshold = 0.3,      ---- 切换状态阈值 （node失败占比）
-        service_threshold = 0.5,   ---- 切换状态阈值 （service切换阈值，取决于node失败状态占比）
-        recover = 8 * 1000,        ---- 全熔断恢复时间 单位/ms
-        depend = "token",          ---- 默认依赖组件 ：token_bucket
-        level = "service"          ---- 默认组件级别，服务层级 [限流熔断针对的层级]
+        interval = 10 * 1000,         ---- 检测时间间隔 单位/ms
+        node_threshold = 0.3,         ---- 切换状态阈值 （node失败占比）
+        service_threshold = 0.5,      ---- 切换状态阈值 （service切换阈值，取决于node失败状态占比）
+        recover = 15 * 1000,          ---- 全熔断恢复时间 单位/ms
+        depend = depend.token,        ---- 默认依赖组件 ：token_bucket
+        level = level.service,        ---- 默认组件级别，服务层级 [限流熔断针对的层级]
     },
     service = tl_ops_constant_service.list
 }
-
 
 ---- 限流/熔断配置
 local tl_ops_constant_limit = {
@@ -114,17 +98,9 @@ local tl_ops_constant_limit = {
     global_token = global_token,
     node_token = node_token,
     service_token = service_token,
-    depend = {
-        token = "token",
-        leak = "leak"
-    },
-    level = {
-        service = "service"
-    },
-    node_token_cache_key = tl_ops_limit_service_token_bucket_keys,
-    service_token_cache_key = tl_ops_limit_node_token_bucket_keys
+    depend = depend,
+    level = level,
 }
-
 
 
 return tl_ops_constant_limit

@@ -20,7 +20,7 @@ local shared = ngx.shared.tlopsbalance
 
 ----返回的cache state
 local cache_state = {
-    service = {}, health = {}, limit = {}, balance = {}
+    service = {}, health = {}, limit = {}, balance = {}, other = {}
 }
 
 local limit_options_str, _ = cache_service:get(tl_ops_constant_limit.fuse.cache_key.options_list);
@@ -125,8 +125,6 @@ for service_name, nodes in pairs(service_list) do
 
 end
 
-
-
 ---- 健康检查相关状态
 local health_options_str, _ = cache_service:get(tl_ops_constant_health.cache_key.options_list);
 if not health_options_str or health_options_str == nil then
@@ -181,7 +179,6 @@ cache_state.limit['token_bucket'] = token_bucket
 cache_state.limit['warm'] = warm
 cache_state.limit['lock'] = lock
 cache_state.limit['option_list'] = limit_options_list
--- cache_state.limit['token'] = tl_ops_limit_token_bucket:tl_ops_limit_token( 10 * 1024 )
 
 
 ---- 路由相关
@@ -190,8 +187,10 @@ if not balance_pre_time then
     balance_pre_time = "nil" ----"balance_pre_time nil"
 end
 cache_state.balance['pre_time'] = balance_pre_time
-cache_state.balance['dict_keys'] = shared:get_keys(1024)
 cache_state.balance['count_interval'] = tl_ops_constant_balance.count.interval
 
+
+---- 其他
+cache_state.other['dict_keys'] = shared:get_keys(1024)
 
 tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.ok, "success", cache_state);

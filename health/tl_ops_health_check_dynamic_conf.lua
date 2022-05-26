@@ -216,6 +216,7 @@ local tl_ops_health_check_dynamic_conf_change_service_options_async = function( 
 		conf.check_interval = check_interval
 		conf.check_content = option.check_content
 		conf.check_timeout = option.check_timeout
+		conf.check_success_status = option.check_success_status
 		conf.check_failed_max_count = option.check_failed_max_count
 		conf.check_success_max_count = option.check_success_max_count
 	end

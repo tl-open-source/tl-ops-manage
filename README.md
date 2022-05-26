@@ -28,17 +28,17 @@
 ## 规划 / 进度
 
 
-- [x] API路由负载
+- [x] 支持API路由负载
 
-- [x] 健康检查
+- [x] 支持健康检查
 
-- [x] 限流熔断
+- [x] 支持限流熔断
 
-- [x] 动态增量配置
+- [x] 支持动态增量配置
 
-- [x] 动态节点扩展
+- [x] 支持动态节点扩展
 
-- [x] 数据持久
+- [x] 支持数据持久
 
 - [x] 管理操作界面
 
@@ -48,7 +48,7 @@
 
 - [x] 管理端请求优化
 
-- [ ] 持久数据管理
+- [ ] 支持持久数据管理
 
 - [ ] 支持配置删除
 
@@ -62,7 +62,15 @@
 
 - [ ] 支持配置发布回滚
 
-- [ ] ShareDict操作台
+- [ ] 支持ShareDict操作台
+
+- [ ] 支持手动操作自检
+
+- [ ] 支持动态更改路由策略
+
+- [ ] 支持自定义心跳包回包成功状态
+
+- [ ] 支持健康状态统计
 
 
 ##### 持续更新中 ...
@@ -72,6 +80,33 @@
 
 
 ---------
+
+
+## 使用方式
+
+### 1. 安装环境
+
+安装openresty，安装redis
+
+### 2. 修改配置
+
+nginx.conf引入本项目lua包  `lua_package_path "/xxx/tl-ops-manage/?.lua;;"`
+
+修改nginx.conf引入/conf/tl_ops_manage.conf  `include "/xxx/tl-ops-manage/conf/*.conf;"`
+
+修改tl_ops_manage.conf中的路径
+
+修改/constant/tl_ops_constant_log.lua中的路径
+
+### 3. 启动nginx/openresty
+
+如果是首次启动，先访问 `http://127.0.0.1/tlops/reset` 初始化项目
+
+http://localhost/tlops/tl_ops_web_index.html  管理后台
+
+
+
+-----------
 
 
 ## 说明文档
@@ -86,54 +121,20 @@
 
 - [x] [数据模块](doc/tl-ops-store.md)
 
----------
 
-## 使用方式
-
-### 1. 安装环境
-
-    安装openresty，安装redis
-
-### 2. 修改nginx.conf引入本项目lua包
-
-    lua_package_path "/xxx/tl-ops-manage/?.lua;;"
-
-### 3. 修改nginx.conf引入/conf/tl_ops_manage.conf
-
-    1. include "/xxx/tl-ops-manage/conf/*.conf;"
-
-    2. 修改tl_ops_manage.conf中的路径
-
-### 4. 修改/constant/下配置
-
-    tl_ops_constant_log.lua 修改dir路径
-
-### 5. 启动nginx/openresty，如果是首次启动，先访问 `http://127.0.0.1/tlops/reset` 初始化项目
-
-    http://localhost/tlops/tl_ops_web_index.html  管理后台
-
----------
-
-
-## 引用致谢
-
-#### [openresty](https://github.com/openresty/openresty)
-
-#### [layui](https://github.com/layui/layui)
-
-#### [iredis](https://github.com/membphis/lua-resty-iredis)
-
-#### [snowflake](https://github.com/yunfengmeng/lua-resty-snowflake)
-
-#### [echarts](https://github.com/apache/echarts)
-
-
-## License
-
-#### Apache License 2.0
-
+-----------
 
 ## 事务日程
+
+2022-05-26
+
+    1. 支持健康检查成功状态自定义
+    2. 即将支持sharedDict管理
+    3. 配置说明调整优化
+    4. 事务日程规划调整
+    5. fix bugs
+
+-----------
 
 2022-05-25
 
@@ -222,3 +223,23 @@
 2021-12-22
 
     1. 初始化项目
+
+-----------
+
+
+## 引用致谢
+
+#### [openresty](https://github.com/openresty/openresty)
+
+#### [layui](https://github.com/layui/layui)
+
+#### [iredis](https://github.com/membphis/lua-resty-iredis)
+
+#### [snowflake](https://github.com/yunfengmeng/lua-resty-snowflake)
+
+#### [echarts](https://github.com/apache/echarts)
+
+
+## 开源协议
+
+#### Apache License 2.0

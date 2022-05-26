@@ -112,6 +112,18 @@ const tl_ops_health_data_edit_filter = function( data ) {
             layer.msg("请求内容长度超过500")
             return false;
         }
+        if(key === 'check_success_status'){
+            let statusList = data.field[key].split(",");
+            if(statusList.length > 50){
+                layer.msg("状态码定义过多")
+                return false
+            }
+            let statusIntList = [];
+            for(let statusIndex in statusList){
+                statusIntList.push(parseInt(statusList[statusIndex]))
+            }
+            data.field[key] = statusIntList
+        }
     }
     let cur_list = []
     res_data.tl_ops_health_options_list.forEach((item)=>{

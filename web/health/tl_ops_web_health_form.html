@@ -75,6 +75,14 @@
             </div>
         </div>
         <div class="layui-form-item">
+            <label class="layui-form-label">成功回包状态</label>
+            <div class="layui-input-block">
+                <input type="text" name="check_success_status" class="layui-input"  placeholder="成功回包状态"
+                    id="tl-tips-success-status" onmouseleave="tl_mouse_leave_tips()"
+                    onmouseenter="tl_mouse_enter_tips('tl-tips-success-status','自检时，接收服务方的判定自检成功的状态码，如有多个，逗号相隔即可')">
+            </div>
+        </div>
+        <div class="layui-form-item">
             <div  id="tl-tips-content" onmouseleave="tl_mouse_leave_tips()"
                 onmouseenter="tl_mouse_enter_tips('tl-tips-content','自检时，发送到服务方的请求数据')" >
                 <textarea name="check_content" id="check_content"  class="layui-textarea" lay-verify="check_content"> </textarea>
