@@ -22,9 +22,9 @@
             </div>
         </div>
         <div class="layui-form-item">
-            <label class="layui-form-label">HOST</label>
+            <label class="layui-form-label">域名</label>
             <div class="layui-input-block">
-                <input type="text" name="host" id="host" maxlength="100" placeholder="请输入HOST" autocomplete="off" class="layui-input">
+                <input type="text" name="host" id="host" maxlength="100" placeholder="请输入域名" autocomplete="off" class="layui-input">
             </div>
         </div>
         <div class="layui-form-item">
@@ -37,15 +37,15 @@
         <div class="layui-form-item" id="tl-ops-web-api-form-service-view"></div>
         <script id="tl-ops-web-api-form-service-tpl" type="text/html">
             {{#  if(d.length === 0) { }}
-            <label class="layui-form-label">SERVICE</label>
+            <label class="layui-form-label">服务</label>
             <div class="layui-input-block">
-                <p style="line-height: 37px;">暂无SERVICE</p>
+                <p style="line-height: 37px;">暂无服务</p>
             </div>
             {{#  } else { }}
-            <label class="layui-form-label">SERVICE</label>
+            <label class="layui-form-label">服务</label>
             <div class="layui-input-block">
                 <select name="service" lay-verify="tl-ops-web-api-form-service" id="tl-ops-web-api-form-service">
-                    <option value="">请选择SERVICE</option>
+                    <option value="">请选择服务</option>
                 {{#  layui.each(d, function(index, service){ }}
                     <option value="{{index}}">{{index}}</option>
                 {{#  }); }}
@@ -57,15 +57,15 @@
         <div class="layui-form-item" id="tl-ops-web-api-form-service-node-view"></div>
         <script id="tl-ops-web-api-form-service-node-tpl" type="text/html">
             {{#  if(d.length === 0) { }}
-            <label class="layui-form-label">NODE</label>
+            <label class="layui-form-label">节点</label>
             <div class="layui-input-block">
-                <p style="line-height: 37px;">暂无NODE</p>
+                <p style="line-height: 37px;">暂无节点</p>
             </div>
             {{#  } else { }}
-            <label class="layui-form-label">NODE</label>
+            <label class="layui-form-label">节点</label>
             <div class="layui-input-block">
                 <select name="node" lay-verify="tl-ops-web-api-form-service-node" id="tl-ops-web-api-form-service-node">
-                    <option value="">请选择NODE</option>
+                    <option value="">请选择节点</option>
                 {{#  layui.each(d, function(index, node){ }}
                     <option value="{{index}}">{{node.name}}:{{node.protocol}}:{{node.ip}}:{{node.port}}</option>
                 {{#  }); }}

@@ -26,10 +26,15 @@ if not tl_ops_api_list or tl_ops_api_list == nil then
     return;
 end
 
+if tl_ops_api_rule ~= tl_ops_constant_api.rule.url and tl_ops_api_rule ~= tl_ops_constant_api.rule.random then
+    tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.args_error ,"args err3", _);
+    return;
+end
+
 ---- 获取当前策略
 local tl_ops_api_list_single, _ = tl_ops_api_list[tl_ops_api_rule];
 if not tl_ops_api_list_single or tl_ops_api_list_single == nil then
-    tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.args_error ,"args err3", _);
+    tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.args_error ,"args err4", _);
     return;
 end
 

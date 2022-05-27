@@ -73,13 +73,13 @@ const tl_ops_web_service_cols = function () {
         {
             field: 'name', title: '服务名称', width:"45%"
         },  {
-            field: 'node', title: '节点列表',width:"40%",
+            field: 'node', title: '节点列表',width:"35%",
             templet : (d)=>{
                 return `<p style='text-decoration: underline;color:red;font-weight:700;cursor: pointer;' onclick='tl_ops_web_service_node_manage("${d.name}")'>${d.node.length}个节点</p>`;
             }
         }, 
         {
-            field: 'oper', title: '服务集群健康管理',width:"15%",
+            field: 'oper', title: '服务健康',width:"20%",
             templet : (d)=>{
                 let isNodeEmpty = d.node.length === 0;
                 let isChecking = health_timer_list.includes(d.name);
@@ -113,6 +113,7 @@ const tl_ops_web_service_render = function () {
         totalRow: true, //开启合计行
         parseData: function(res){
             res_data = res.data;
+            rule = res.data.tl_ops_service_rule;
             let datas = [], keys = Object.keys(res.data.tl_ops_service_list);
             for(key in keys){
                 datas.push({
@@ -145,6 +146,7 @@ const tl_ops_web_service_reload = function (matcher) {
         totalRow: true, //开启合计行
         parseData: function(res){
             res_data = res.data;
+            rule = res.data.tl_ops_service_rule;
             let datas = [], keys = Object.keys(res.data.tl_ops_service_list);
             for(key in keys){
                 datas.push({
@@ -153,6 +155,14 @@ const tl_ops_web_service_reload = function (matcher) {
                             ? res.data.tl_ops_service_list[keys[key]] : []
                 })
             }
+            $('#tl-ops-web-service-cur-rule')[0].innerHTML = `
+                <b style='color:red;font-size:16px;cursor: pointer;' class="layui-badge layui-bg-red" 
+                    id="tl-service-rule" onmouseleave="tl_mouse_leave_tips()"
+                    onmouseenter="tl_mouse_enter_tips('tl-service-rule','暂不支持修改, 后续支持手动自检模式 “cus_load” ')">
+                    ${rule}
+                </b> 
+                <b> ( ${rule==='auto_load' ? '系统启动时开启自检' : '手动启动某次自检'} )</b>
+            `;
             return {
                 "code": res.code,
                 "msg": res.msg,
@@ -167,7 +177,7 @@ const tl_ops_web_service_reload = function (matcher) {
 const tl_ops_web_service_add = function () {
     layer.open({
         type: 2
-        ,title: '添加SERVICE服务'
+        ,title: '添加服务服务'
         ,content: 'tl_ops_web_service_form.html'
         ,maxmin: true
         ,minStack:false

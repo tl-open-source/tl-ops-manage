@@ -19,10 +19,10 @@ const tl_ops_web_api_main = function (){
             tl_ops_web_api_render();
 
             $('#tl-ops-web-api-cur-rule')[0].innerHTML = `<b style='color:red;font-size:16px;cursor: pointer;' class="layui-badge layui-bg-red" 
-                id="tl-api-rule" onmouseleave="tl_mouse_leave_tips()"
-                onmouseenter="tl_mouse_enter_tips('tl-api-rule','修改tl_ops_constant_balance.lua配置可调整策略')">
+                id="tl-api-rule" onmouseleave="tl_mouse_leave_tips()" onclick="tl_ops_web_api_change_rule()" 
+                onmouseenter="tl_mouse_enter_tips('tl-api-rule','点击切换策略，切换将实时生效')">
                 ${rule}
-            </b><b> ( ${rule==='random' ? '随机NODE路由' : '指定NODE路由'} )</b>`;
+            </b><b> ( ${rule==='random' ? '随机节点路由' : '指定节点路由'} )</b>`;
 
             //表格外部事件操作
             $('.layui-btn.layuiadmin-btn-useradmin').on('click', function(){
@@ -59,13 +59,13 @@ const tl_ops_web_api_url_cols = function () {
         {
             field: 'id', title: 'ID',width:"15%"
         },  {
-            field: 'host', title: 'HOST',width:"15%"
+            field: 'host', title: '域名',width:"15%"
         }, {
-            field: 'url', title: 'API', width:"20%"
+            field: 'url', title: 'API', width:"15%"
         },  {
-            field: 'service', title: '所属SERVICE',width:"15%"
+            field: 'service', title: '所属服务',width:"15%"
         },  {
-            field: 'node', title: 'NODE索引',width:"10%"
+            field: 'node', title: '节点索引',width:"15%"
         },  {
             field: 'updatetime', title: '更新时间',width:"15%",
         }, {
@@ -84,11 +84,11 @@ const tl_ops_web_api_random_cols = function () {
         {
             field: 'id', title: 'ID', width:"15%"
         },  {
-            field: 'host', title: 'HOST',width:"15%"
+            field: 'host', title: '域名',width:"15%"
         }, {
-            field: 'url', title: '请求的API', width:"20%"
+            field: 'url', title: 'API', width:"20%"
         },  {
-            field: 'service', title: '所属SERVICE',width:"15%"
+            field: 'service', title: '所属服务',width:"15%"
         },  {
             field: 'updatetime', title: '更新时间',width:"20%",
         }, {
@@ -114,6 +114,7 @@ const tl_ops_web_api_render = function () {
         totalRow: true, //开启合计行
         parseData: function(res){
             res_data = res.data;
+            rule = res_data.tl_ops_api_rule
             return {
                 "code": res.code,
                 "msg": res.msg,
@@ -138,6 +139,12 @@ const tl_ops_web_api_reload = function (matcher) {
         totalRow: true, //开启合计行
         parseData: function(res){
             res_data = res.data;
+            rule = res_data.tl_ops_api_rule;
+            $('#tl-ops-web-api-cur-rule')[0].innerHTML = `<b style='color:red;font-size:16px;cursor: pointer;' class="layui-badge layui-bg-red" 
+                id="tl-api-rule" onmouseleave="tl_mouse_leave_tips()" onclick="tl_ops_web_api_change_rule()" 
+                onmouseenter="tl_mouse_enter_tips('tl-api-rule','点击切换策略，切换将实时生效')">
+                ${rule}
+            </b><b> ( ${rule==='random' ? '随机节点路由' : '指定节点路由'} )</b>`;
             return {
                 "code": res.code,
                 "msg": res.msg,
@@ -147,6 +154,32 @@ const tl_ops_web_api_reload = function (matcher) {
         }
     }));
 };
+
+
+//更新api路由策略
+const tl_ops_web_api_change_rule = function () {
+    if(rule === undefined || rule === ''){
+        layer.msg("路由策略有误，刷新页面重试")
+        return;
+    }
+
+    if(rule === 'url'){
+        rule = 'random';
+    }else if(rule === 'random'){
+        rule = 'url';
+    }
+
+    res_data.tl_ops_api_rule = rule;
+
+    $.ajax(tl_ajax_data({
+        url: '/tlops/api/set',
+        data : JSON.stringify(res_data),
+        contentType : "application/json",
+        success : (res)=>{
+            tl_ops_web_api_reload()
+        }
+    }));
+}
 
 
 //添加

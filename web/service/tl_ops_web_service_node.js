@@ -61,7 +61,7 @@ const tl_ops_web_service_node_cols = function () {
         },  {
             field: 'protocol', title: '节点请求协议',width:"10%"
         },  {
-            field: 'ip', title: 'ip地址',width:"15%"
+            field: 'ip', title: 'IP地址',width:"15%"
         },  {
             field: 'port', title: '端口号',width:"10%"
         },{
@@ -130,7 +130,7 @@ const tl_ops_web_service_node_reload = function (matcher) {
 const tl_ops_web_service_node_add = function () {
     layer.open({
         type: 2
-        ,title: '添加SERVICE-NODE节点'
+        ,title: '添加服务节点'
         ,content: 'tl_ops_web_service_node_form.html?&service='+service
         ,maxmin: true
         ,minStack:false
@@ -163,7 +163,7 @@ const tl_ops_web_service_node_add = function () {
 const tl_ops_web_service_node_edit = function (evtdata) {
     layer.open({
         type: 2
-        ,title: '编辑SERVICE-NODE节点'
+        ,title: '编辑服务节点'
         ,content: 'tl_ops_web_service_node_form.html?&service='+service
         ,maxmin: true
         ,minStack:false
