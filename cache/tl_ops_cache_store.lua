@@ -63,7 +63,7 @@ function _M:del(key)
         return nil;
     end
 
-    ---- set seek to 4GB 等价删除索引
+    -- set seek to 4GB 等价删除索引
     cache_store:store_index(key, 4 * 1024 * 1024 * 1024) 
 
     tlog:dbg("del cache store ok key=" .. key)

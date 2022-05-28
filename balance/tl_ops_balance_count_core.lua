@@ -24,7 +24,7 @@ local tl_ops_balance_count_timer
 
 
 
----- 统计器加锁
+-- 统计器加锁
 local tl_ops_balance_count_lock = function()
 	local ok, _ = shared:add(tl_ops_constant_balance.cache_key.lock, true, tl_ops_constant_balance.count.interval - 0.01)
 	if not ok then
@@ -38,7 +38,7 @@ local tl_ops_balance_count_lock = function()
 end
 
 
----- 统计器 ： 持久化数据
+-- 统计器 ： 持久化数据
 local tl_ops_balance_count = function()
     if not tl_ops_balance_count_lock() then
         return
@@ -48,7 +48,7 @@ local tl_ops_balance_count = function()
     local service_list_str, _ = cache_service:get(tl_ops_constant_service.cache_key.service_list);
     if not service_list_str then
         -- use default
-        service_list = tl_ops_constant_balance.service.list
+        service_list = tl_ops_constant_service.list
     else
         service_list = cjson.decode(service_list_str);
     end
@@ -101,7 +101,7 @@ end
 
 
 
----- 统计balance次数周期为 5min
+-- 统计balance次数周期为 5min
 tl_ops_balance_count_timer = function(premature, args)
 	if premature then
 		return
@@ -119,7 +119,7 @@ tl_ops_balance_count_timer = function(premature, args)
 
 end
 
----- 启动
+-- 启动
 function _M:tl_ops_balance_count_timer_start() 
 	local ok, _ = ngx.timer.at(0, tl_ops_balance_count_timer, nil)
 	if not ok then

@@ -28,7 +28,7 @@ end
 
 
 
----- bucket init
+-- bucket init
 function _M:init()
 
 
@@ -36,7 +36,7 @@ end
 
 
 
----- leaking?
+-- leaking?
 function _M:tl_ops_limit_leak( )
     
 end

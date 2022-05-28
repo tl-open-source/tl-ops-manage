@@ -1,4 +1,4 @@
----- file name: resty/redis_iresty.lua
+-- file name: resty/redis_iresty.lua
 local redis_c = require "resty.redis"
  
  
@@ -26,14 +26,14 @@ local commands = {
     "strlen",   "sunionstore",  "ttl",          "type",         "watch",        "zcount",
     "zrange",   "zrem",         "zrevrange",    "zscan",        "zscore",       "hmset",
     "hvals",    "incrbyfloat",  "lindex",       "lpop",         "lrange",       "ltrim",
-    "move",     "multi",        "pexpire",      "psetex",       ----[[ "punsubscribe", ]]
+    "move",     "multi",        "pexpire",      "psetex",       --[[ "punsubscribe", ]]
     "rename",   "info",         "linsert",      "lpush",        "lrem",         "mget",
     "mset",     "object",       "pexpireat",    "psubscribe",   "pubsub",       "renamenx",
     "rpush",    "save",         "script",       "setbit",       "setrange",     "sinterstore",
     "slowlog",  "sort",         "srem",         "sunion",       "time",         "rpoplpush",
     "sadd",     "scard",        "sdiffstore",   "set",          "setnx",        "sinter",
-    "slaveof",  "smove",        "srandmember",  ----[[ "subscribe",  ]]           "sync",
-    ----[[ "unsubscribe", ]]      "zunionstore",  "evalsha",      "decrby",       "dump",
+    "slaveof",  "smove",        "srandmember",  --[[ "subscribe",  ]]           "sync",
+    --[[ "unsubscribe", ]]      "zunionstore",  "evalsha",      "decrby",       "dump",
     "exists",   "flushall",     "getbit",       "hdel",         "hgetall",      "hkeys",
     "hscan",    "incr",         "zadd",         "zincrby",      "zrangebyscore","zrank",
     "zremrangebyrank",          "zremrangebyscore",             "zrevrangebyscore", 
@@ -61,7 +61,7 @@ local function is_redis_null( res )
     return false
 end
  
----- change connect address as you need
+-- change connect address as you need
 function _M.connect_mod( self, redis )
     redis:set_timeout(self.check_timeout)
     local ok, err = redis:connect("127.0.0.1", 6379)
@@ -74,7 +74,7 @@ function _M.connect_mod( self, redis )
 end
  
 function _M.set_keepalive_mod( redis )
-    ---- put it into the connection pool of size 100, with 60 seconds max idle time
+    -- put it into the connection pool of size 100, with 60 seconds max idle time
     return redis:set_keepalive(60000, 1000)
 end
  
@@ -204,7 +204,7 @@ end
  
 function _M.new(self, opts)
     opts = opts or {}
-    local check_timeout = (opts.check_timeout and opts.check_timeout * 1000) or 1000  ----1s
+    local check_timeout = (opts.check_timeout and opts.check_timeout * 1000) or 1000  --1s
     local db_index= opts.db_index or 0
     return setmetatable({
             check_timeout = check_timeout,

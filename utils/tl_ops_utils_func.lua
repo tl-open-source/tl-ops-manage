@@ -8,9 +8,9 @@ local cjson, _ = require("cjson");
 local _M = {}
 
 
----- 获取当前路径
----- @split : 截取的路径字符
----- @appent : 补充的路径字符
+-- 获取当前路径
+-- @split : 截取的路径字符
+-- @appent : 补充的路径字符
 function _M:get_current_dir_path ( split, append )
     local function sum(a, b)
         return a + b
@@ -33,8 +33,8 @@ function _M:get_current_dir_path ( split, append )
 end
 
 
----- table所有属性转lua table格式string
----- @table数据
+-- table所有属性转lua table格式string
+-- @table数据
 function _M:table_data_to_string ( t )
 	local content = "["
 	for k, v in pairs(t) do
@@ -49,8 +49,8 @@ function _M:table_data_to_string ( t )
 	return content .. "]"
 end
 
----- table转json string
----- @t table数据
+-- table转json string
+-- @t table数据
 function _M:data_to_string ( t )
 	local content = ""
 	for _, v in pairs(t) do
@@ -64,7 +64,7 @@ function _M:data_to_string ( t )
 end
 
 
----- 获取tablev的value
+-- 获取tablev的value
 function _M:get_table_value_deep_one(table, key)
     for k,v in pairs(table) do
         if k == key then
@@ -73,7 +73,7 @@ function _M:get_table_value_deep_one(table, key)
     end
 end
 
----- 获取tablev的value, 嵌套一级
+-- 获取tablev的value, 嵌套一级
 function _M:get_table_value_deep_two(table, key)
     for k,v in pairs(table) do
         if type(v) == 'table' and v then
@@ -86,7 +86,7 @@ function _M:get_table_value_deep_two(table, key)
     end
 end
 
----- 获取tablev的value, 嵌套二级
+-- 获取tablev的value, 嵌套二级
 function _M:get_table_value_deep_three (table, key)
     for k,v in pairs(table) do
         if type(v) == 'table' and v then
@@ -103,7 +103,7 @@ function _M:get_table_value_deep_three (table, key)
     end
 end
 
----- 获取tablev的value
+-- 获取tablev的value
 function _M:get_table_value_by_deep (table, key, deep)
     if deep == 1 then
         return self:get_table_value_deep_one(table,key);
@@ -114,7 +114,7 @@ function _M:get_table_value_by_deep (table, key, deep)
     end
 end
 
----- 获取post数据table格式， name : 参数名， deep : 在table中处于的层级
+-- 获取post数据table格式， name : 参数名， deep : 在table中处于的层级
 function _M:get_req_post_args_by_name (name, deep)
     ngx.req.read_body()
     local post_args_tab,_ = ngx.req.get_body_data()
@@ -128,7 +128,7 @@ function _M:get_req_post_args_by_name (name, deep)
     return self:get_table_value_by_deep(post_args_tab, name, deep);
 end
 
----- 返回str匹配结果
+-- 返回str匹配结果
 function _M:get_str_matcher (reg, str)
     local res = ngx.re.match(str, reg , 'jo');
     if not res or res == nil then 
@@ -138,7 +138,7 @@ function _M:get_str_matcher (reg, str)
     end    
 end
 
----- 返回table内key匹配结果
+-- 返回table内key匹配结果
 function _M:get_str_matcher (reg, table)
     local res_tb = {};
 
@@ -152,7 +152,7 @@ function _M:get_str_matcher (reg, table)
     return true, res_tb;
 end
 
-----返回lua文件内的table格式数据
+--返回lua文件内的table格式数据
 function _M:get_str_table_by_lua_file (filename)
     local res, _ = require(filename);
     if not res or res == nil then
@@ -162,7 +162,7 @@ function _M:get_str_table_by_lua_file (filename)
     end
 end    
 
-----返回lua文件内的json格式数据
+--返回lua文件内的json格式数据
 function _M:get_str_json_by_lua_file (filename)
     local res,_ = require(filename);
     if not res or str == nil then
@@ -177,24 +177,24 @@ function _M:get_str_json_by_lua_file (filename)
     return true, str;
 end    
 
----- 设置response为text
+-- 设置response为text
 function _M:set_ngx_response_type_text ()
     ngx.header['Access-Control-Allow-Origin'] = '*';
     ngx.header['Content-Type'] = 'text/plant';
 end
 
----- 设置response为json
+-- 设置response为json
 function _M:set_ngx_response_type_json ()
     ngx.header['Access-Control-Allow-Origin'] = '*';
     ngx.header['Content-Type'] = 'application/json';
 end
 
----- 获取uri
+-- 获取uri
 function _M:get_req_uri()
     return ngx.var.request_uri;
 end
 
-----返回json返回值
+--返回json返回值
 function _M:get_str_json_by_return_arg (code, msg, data)
     local res_json = cjson.encode({
         code = code,
@@ -205,7 +205,7 @@ function _M:get_str_json_by_return_arg (code, msg, data)
     return res_json;
 end
 
-----成功返回
+--成功返回
 function _M:set_ngx_req_return_ok (code, msg, data)
     self:set_ngx_response_type_json();
     ngx.status = 200;
@@ -213,7 +213,7 @@ function _M:set_ngx_req_return_ok (code, msg, data)
     ngx.flush();
 end
 
-----返回正则的str
+--返回正则的str
 function _M:get_str_matcher_str (str, reg)
     if str == "" or reg == "" then
         return nil, "args empty";
@@ -227,7 +227,7 @@ function _M:get_str_matcher_str (str, reg)
     return mather;
 end
 
----- 返回table中value正则匹配上的str，返回匹配的结果
+-- 返回table中value正则匹配上的str，返回匹配的结果
 function _M:get_table_matcher_str (table, key, str)
     local matcher_list = {};
     local count = 0;
@@ -245,7 +245,7 @@ function _M:get_table_matcher_str (table, key, str)
     return matcher_list;
 end
 
-----返回table中value正则匹配上的最长str，返回匹配的结果
+--返回table中value正则匹配上的最长str，返回匹配的结果
 function _M:get_table_matcher_longer_str (table, key, str) 
     local longer_str = "";
 
@@ -265,7 +265,7 @@ function _M:get_table_matcher_longer_str (table, key, str)
     return longer_str, matcher;
 end
 
----- 返回table中value正则匹配上的str 给apiList用， 返回匹配的{ip : '', url : ''}
+-- 返回table中value正则匹配上的str 给apiList用， 返回匹配的{ip : '', url : ''}
 function _M:get_table_matcher_str_for_api_list (table, key, str)
     local matcher_list = {};
     local count = 0;
@@ -283,7 +283,7 @@ function _M:get_table_matcher_str_for_api_list (table, key, str)
     return matcher_list;
 end
 
-----返回table中value正则匹配上的最长str    给apiList用， 返回匹配的{ip : '', url : ''}
+--返回table中value正则匹配上的最长str    给apiList用， 返回匹配的{ip : '', url : ''}
 function _M:get_table_matcher_longer_str_for_api_list (table, key, str) 
     local longer_str = "";
     local res_obj_index = 0;
@@ -307,7 +307,7 @@ function _M:get_table_matcher_longer_str_for_api_list (table, key, str)
 end
 
 
----- 返回table中是否存在该元素
+-- 返回table中是否存在该元素
 function _M:get_table_element_exsit ( tables,  element )
     if not str then
         return nil
@@ -326,7 +326,7 @@ function _M:get_table_element_exsit ( tables,  element )
 end
 
 
----- 生成 '服务-节点' , '服务' key
+-- 生成 '服务-节点' , '服务' key
 function _M:gen_node_key(prefix, node, node_id)
     if not node_id then
         return prefix .. "_" .. node;

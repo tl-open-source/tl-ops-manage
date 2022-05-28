@@ -85,8 +85,8 @@ function _M:new( options, keys )
 end
 
 
----- get token with lazy generate
----- block 取用令牌数量
+-- get token with lazy generate
+-- block 取用令牌数量
 local tl_ops_limit_token_bucket = function( block )
     local capacity = shared:get(self.keys.capacity)
     if not capacity then
@@ -139,7 +139,7 @@ local tl_ops_limit_token_bucket = function( block )
 end
 
 
----- get token api
+-- get token api
 function _M:tl_ops_limit_token( block )
     if not block or type(block) ~= 'number' then
         return false
@@ -175,7 +175,7 @@ function _M:tl_ops_limit_token( block )
 end
 
 
----- 扩容
+-- 扩容
 function _M:tl_pos_limit_token_expand( )
     if self.options.capacity <= 0 then
         return false
@@ -212,7 +212,7 @@ function _M:tl_pos_limit_token_expand( )
 end
 
 
----- 缩容
+-- 缩容
 function _M:tl_pos_limit_token_shrink( )
     if self.options.capacity <= 0 then
         return false

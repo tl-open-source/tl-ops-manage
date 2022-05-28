@@ -54,12 +54,12 @@ local function log(self, level,  ... )
         return
 	end
 	
-	if not self.format_json then ---- 一行输出log
+	if not self.format_json then -- 一行输出log
 		local log_line_inline = cjson_safe.encode({
 			time = time,module = self.module,level = level,msg = msg
 		})
 		log_file:write(log_line_inline .. ",\n")
-	else ---- json格式化输出log
+	else -- json格式化输出log
 		local log_line_json = "{\n\t'time':" .. cjson_safe.encode(time) .. ",'module':" .. cjson_safe.encode(self.module) .. 
 							",'level':" .. cjson_safe.encode(level) .. ",\n\t'msg':" .. cjson_safe.encode(msg) .. "\n},\n";
 		log_file:write(log_line_json)
@@ -70,13 +70,13 @@ local function log(self, level,  ... )
 end
 
 
----- 输出log到ngx中
+-- 输出log到ngx中
 function _M:ngx_debug( ... )
 	ngx.log(ngx.DEBUG, self.module, ...)
 end
 
 
----- 输出log到自定义文件中
+-- 输出log到自定义文件中
 function _M:dbg(...)
 	if self.level > _M.debug then
 		return

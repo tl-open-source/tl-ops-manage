@@ -85,15 +85,17 @@ const tl_ops_web_service_cols = function () {
                 let isChecking = health_timer_list.includes(d.name);
                 let isAutoLoad = rule === 'auto_load'
                 return `
-                <i class="layui-icon layui-icon-play tl-ops-web-service-oper" 
-                    style="${(!isChecking && isAutoLoad)?'display:block;':'display:none;'} ${isNodeEmpty ? 'color: #d0d9d0;cursor: no-drop;' : ''}"
-                    id="tl-service-check-${d.name}" onmouseleave="tl_mouse_leave_tips()"
-                    onmouseenter="tl_mouse_enter_tips('tl-service-check-${d.name}','${isNodeEmpty ? '暂无节点': '开启自检'}')"
-                ><span style="font-size:14px;margin-left: 10px;line-height: 29px;position: absolute;">开启自检</span></i>
-                <i class="layui-icon layui-icon-pause tl-ops-web-service-oper" style="cursor: no-drop;color: #40ed40;${isChecking?'display:block':'display:none'}"
-                    id="tl-service-check-done-${d.name}" onmouseleave="tl_mouse_leave_tips()" disabled
-                    onmouseenter="tl_mouse_enter_tips('tl-service-check-done-${d.name}','${d.name}已开启自检')"
-                ><span style="font-size:14px;margin-left: 10px;line-height: 29px;position: absolute;">自检中..</span></i>
+                <div id="tl-service-check-${d.name}" onmouseleave="tl_mouse_leave_tips()" style="${(!isChecking && isAutoLoad)?'display: inline-flex;':'display:none;'}"
+                    onmouseenter="tl_mouse_enter_tips('tl-service-check-${d.name}','${isNodeEmpty ? '暂无节点': '开启自检'}')"> 
+                    <i class="layui-icon layui-icon-play tl-ops-web-service-oper"  style="${isNodeEmpty ? 'color: #d0d9d0;cursor: no-drop;' : ''}"> </i>
+                     <b style="margin-left: 8px;">开启自检</b>
+                </div>
+                <div id="tl-service-check-done-${d.name}" onmouseleave="tl_mouse_leave_tips()" disabled style="${isChecking?'display: inline-flex;':'display:none'}"
+                    onmouseenter="tl_mouse_enter_tips('tl-service-check-done-${d.name}','${d.name}已开启自检')">
+                    <i class="layui-icon layui-icon-loading tl-ops-web-service-oper layui-anim layui-anim-rotate layui-anim-loop" 
+                    style="cursor: no-drop;color: #40ed40;" ></i>
+                    <b style="margin-left: 8px;color: #40ed40;cursor: no-drop;">自检中..</b>
+                </div>
                 `;
             }
         }
@@ -122,6 +124,7 @@ const tl_ops_web_service_render = function () {
                             ? res.data.tl_ops_service_list[keys[key]] : []
                 })
             }
+            datas = datas.sort(function(a, b){return a.name.localeCompare(b.name,'zh-CN')})
             return {
                 "code": res.code,
                 "msg": res.msg,
@@ -155,6 +158,7 @@ const tl_ops_web_service_reload = function (matcher) {
                             ? res.data.tl_ops_service_list[keys[key]] : []
                 })
             }
+            datas = datas.sort(function(a, b){return a.name.localeCompare(b.name,'zh-CN')})
             $('#tl-ops-web-service-cur-rule')[0].innerHTML = `
                 <b style='color:red;font-size:16px;cursor: pointer;' class="layui-badge layui-bg-red" 
                     id="tl-service-rule" onmouseleave="tl_mouse_leave_tips()"

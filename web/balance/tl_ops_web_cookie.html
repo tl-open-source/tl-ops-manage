@@ -10,14 +10,6 @@
     <script src="https://im.iamtsm.cn/lay/dist/layuiadmin/layui/layui.js" v="layui" e="layui"></script>
     <link rel="stylesheet" type="text/css" href="https://im.iamtsm.cn/lay/dist/layuiadmin/layui/css/layui.css" />
 </head>
-
-<style>
-    .tl-ops-web-service-oper{
-        cursor: pointer;
-        font-size: 22px;
-    }
-</style>
-
 <body>
 
 <div class="layui-fluid" style="padding: 20px;">
@@ -25,23 +17,27 @@
         <div class="layui-card-body">
             <div style="padding-bottom: 10px;">
                 <button class="layui-btn layuiadmin-btn-useradmin" data-type="add">添加</button>
+                <button class="layui-btn layuiadmin-btn-useradmin" data-type="delete">删除</button>
             </div>
 
-            <script type="text/html" id="tl-ops-web-service-toolbar">
+            <script type="text/html" id="tl-ops-web-cookie-toolbar">
                 <div>
-                    <span>当前SERVICE自检策略 : </span>
-                    <span id="tl-ops-web-service-cur-rule"></span>
+                    <span>当前cookie路由策略 : </span> 
+                    <span id="tl-ops-web-cookie-cur-rule"></span>
                 </div>
             </script>
-            <table id="tl-ops-web-service-table" lay-filter="tl-ops-web-service-table" ></table>
+            <table id="tl-ops-web-cookie-table" lay-filter="tl-ops-web-cookie-table" ></table>
+            <script type="text/html" id="tl-ops-web-cookie-operate">
+                <a class="layui-btn layui-btn-xs" lay-event="edit" ><i class="layui-icon layui-icon-edit"></i>编辑</a>
+            </script>
         </div>
     </div>
 </div>
 
-<script src="tl_ops_web_service.js"></script>
+<script src="tl_ops_web_cookie.js"></script>
 <script src="../tl_ops_web_comm.js"></script>
 <script>
-    layui.use(['table','form','layedit'], tl_ops_web_service_main);
+    layui.use(['table','form','layedit'], tl_ops_web_cookie_main);
 </script>
 </body>
 </html>

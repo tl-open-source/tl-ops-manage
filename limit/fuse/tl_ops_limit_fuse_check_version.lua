@@ -16,7 +16,7 @@ local _M = {
 }
 
 
----- 更新当前service的状态版本，用于通知其他worker进程同步最新conf
+-- 更新当前service的状态版本，用于通知其他worker进程同步最新conf
 local tl_ops_limit_fuse_version_incr_service_version = function( service_name )
     if not service_name then
         tlog:err(" service_name nil ")
@@ -43,7 +43,7 @@ local tl_ops_limit_fuse_version_incr_service_version = function( service_name )
 end
 
 
----- 对service_options_version更新，通知timer检查是否有新增service
+-- 对service_options_version更新，通知timer检查是否有新增service
 local tl_ops_limit_fuse_version_incr_service_option_version = function(  )
     local res, _ = cache_dict:set(tl_ops_constant_limit.fuse.cache_key.service_options_version, true)
 

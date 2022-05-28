@@ -1,6 +1,6 @@
 -- tl_ops_limit
 -- en : token bucket
--- zn : 令牌桶
+-- zn : 令牌桶-熔断限流用
 -- @author iamtsm
 -- @email 1905333456@qq.com
 
@@ -17,7 +17,7 @@ local _M = {
 local mt = { __index = _M }
 
 
----- 模式
+-- 模式
 local tl_ops_limit_token_mode = function( service_name, node_id )
     local token_mode = nil
 
@@ -32,8 +32,8 @@ local tl_ops_limit_token_mode = function( service_name, node_id )
 end
 
 
----- get token with lazy generate
----- block 取用令牌数量
+-- get token with lazy generate
+-- block 取用令牌数量
 local tl_ops_limit_token = function( service_name, node_id,  block )
 
     if not block or type(block) ~= 'number' then
@@ -118,7 +118,7 @@ local tl_ops_limit_token = function( service_name, node_id,  block )
     return true
 end
 
----- 扩容
+-- 扩容
 local tl_ops_limit_token_expand = function( service_name, node_id )
 
     local token_mode = tl_ops_limit_token_mode( service_name, node_id)
@@ -151,7 +151,7 @@ local tl_ops_limit_token_expand = function( service_name, node_id )
 end
 
 
----- 缩容
+-- 缩容
 local tl_ops_limit_token_shrink = function( service_name, node_id )
 
     local token_mode = tl_ops_limit_token_mode( service_name, node_id)

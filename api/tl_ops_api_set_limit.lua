@@ -26,7 +26,7 @@ if not cache_list then
     return;
 end
 
----- 对service version更新，通知worker更新所有conf
+-- 对service version更新，通知worker更新所有conf
 for _, option in ipairs(tl_ops_limit_list) do
     tl_ops_limit_fuse_check_version.incr_service_version(option.service_name);
 end

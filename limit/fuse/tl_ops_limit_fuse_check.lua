@@ -25,9 +25,9 @@ end
 
 
 local _STATE = {
-	LIMIT_FUSE_CLOSE = 0,  ---- 熔断器关闭
-	LIMIT_FUSE_HALF = 1,	 ---- 半熔断/限流
-	LIMIT_FUSE_OPEN = 2,	 ---- 全熔断开启
+	LIMIT_FUSE_CLOSE = 0,  -- 熔断器关闭
+	LIMIT_FUSE_HALF = 1,	 -- 半熔断/限流
+	LIMIT_FUSE_OPEN = 2,	 -- 全熔断开启
 }
 
 local _M = {
@@ -53,7 +53,7 @@ function _M:new( options , services)
 end
 
 
----- 限流熔断检测启动器
+-- 限流熔断检测启动器
 function _M:tl_ops_limit_fuse_start()
 
     if not self.options or not self.services then
@@ -102,12 +102,12 @@ tl_ops_limit_fuse_default_confs = function(options, services)
 		if not tonumber(interval) then
 			tlog:dbg("tl_ops_limit_fuse_default_confs warp default interval")
 			interval = 1000
-		else ---- 最小 2ms
+		else -- 最小 2ms
 			if interval < 2 then  
 				interval = 2
 			end
 		end
-		interval = interval / 1000; 	---- 配置是ms格式, 使用是s格式
+		interval = interval / 1000; 	-- 配置是ms格式, 使用是s格式
 
 		local node_threshold = opt.node_threshold
 		if not tonumber(node_threshold) then
@@ -130,7 +130,7 @@ tl_ops_limit_fuse_default_confs = function(options, services)
 				recover = 1000
 			end
 		end
-		recover = recover / 1000; 	---- 配置是ms格式, 使用是s格式
+		recover = recover / 1000; 	-- 配置是ms格式, 使用是s格式
 
 		local depend = opt.depend
 		if not depend then
@@ -165,16 +165,16 @@ tl_ops_limit_fuse_default_confs = function(options, services)
 		end
 
 		table.insert(confs, {
-	        service_version = 0,					---- 配置版本号
-			nodes = nodes,							---- 服务节点信息
-			service_name = service_name,			---- 服务名称
-			interval = interval,					---- 服务单次循环周期时间
-			node_threshold = node_threshold,		---- 节点限流/熔断阈值
-			service_threshold = service_threshold,	---- 服务限流/熔断阈值
-	        recover = recover,						---- 熔断后自动恢复时间
-	        depend = depend,						---- 自检依赖的模式
-			level = level,							---- 自检层级 
-			state = _STATE.LIMIT_FUSE_CLOSE,		---- 服务熔断/限流状态
+	        service_version = 0,					-- 配置版本号
+			nodes = nodes,							-- 服务节点信息
+			service_name = service_name,			-- 服务名称
+			interval = interval,					-- 服务单次循环周期时间
+			node_threshold = node_threshold,		-- 节点限流/熔断阈值
+			service_threshold = service_threshold,	-- 服务限流/熔断阈值
+	        recover = recover,						-- 熔断后自动恢复时间
+	        depend = depend,						-- 自检依赖的模式
+			level = level,							-- 自检层级 
+			state = _STATE.LIMIT_FUSE_CLOSE,		-- 服务熔断/限流状态
 		})
 	end
 
@@ -196,14 +196,14 @@ tl_ops_limit_fuse = function(premature, conf)
 		tlog:err("tl_ops_limit_fuse failed to pcall : " ,  _)
 	end
 
-	---- 全熔断周期结束
+	-- 全熔断周期结束
 	if conf.state == _STATE.LIMIT_FUSE_OPEN then
 		local ok, _ = ngx.timer.at(conf.recover, tl_ops_limit_fuse, conf)
 		if not ok then
 			tlog:err("tl_ops_limit_fuse failed to create timer recover: " , _)
 		end
 	else
-	---- 半熔断/关闭 状态周期结束
+	-- 半熔断/关闭 状态周期结束
 		local ok, _ = ngx.timer.at(conf.interval, tl_ops_limit_fuse, conf)
 		if not ok then
 			tlog:err("tl_ops_limit_fuse failed to create timer interval: " , _)
@@ -218,10 +218,10 @@ end
 tl_ops_limit_fuse_main = function( conf )
 	tlog:dbg("tl_ops_limit_fuse_main start")
 
-	----同步配置
+	--同步配置
 	tl_ops_limit_fuse_check_dynamic_conf.dynamic_conf_change_start( conf )
 
-	---- 自动熔断/恢复
+	-- 自动熔断/恢复
 	if tl_ops_limit_fuse_get_lock( conf ) then
 		tl_ops_limit_fuse_auto_recover( conf )
 		tl_ops_limit_fuse_check_nodes( conf )
@@ -252,7 +252,7 @@ tl_ops_limit_fuse_get_lock = function(conf)
 end
 
 
----- 对配置的机器节点依次检测负载失败比例，以此决定node/service限流或熔断
+-- 对配置的机器节点依次检测负载失败比例，以此决定node/service限流或熔断
 tl_ops_limit_fuse_check_nodes = function ( conf )
 	local service_name = conf.service_name
 	local node_threshold = conf.node_threshold
@@ -269,7 +269,7 @@ tl_ops_limit_fuse_check_nodes = function ( conf )
 		return
 	end
 
-	---- node层级
+	-- node层级
 	for i = 1, #nodes do
 		local node_id = i-1
 
@@ -287,10 +287,10 @@ tl_ops_limit_fuse_check_nodes = function ( conf )
 
 		local total_count = success_count + failed_count
 		if total_count == 0 then
-			total_count = -1 	---- can not be 0
+			total_count = -1 	-- can not be 0
 		end
 
-		---- 超过阈值
+		-- 超过阈值
 		if failed_count / total_count >= node_threshold then
 			upgrade_count = upgrade_count + 1
 			tlog:dbg("iamtsm节点状态升级 : service_name=",service_name, ",node_name=",nodes[i].name, ",node_threshold=",(failed_count / total_count),',state=',nodes[i].state)
@@ -302,12 +302,12 @@ tl_ops_limit_fuse_check_nodes = function ( conf )
 		end
 	end
 
-	---- service层级
+	-- service层级
 	local service_total_count = upgrade_count + degrade_count
 	if service_total_count == 0 then
-		service_total_count = -1 	---- can not be 0
+		service_total_count = -1 	-- can not be 0
 	end
-	---- 节点状态升级比率超过阈值，对服务进行状态升级
+	-- 节点状态升级比率超过阈值，对服务进行状态升级
 	if upgrade_count / service_total_count >= service_threshold then
 		tlog:dbg("iamtsm服务状态升级 : service_name=",service_name,",upgrade_count=",upgrade_count, ",service_total_count=",service_total_count,",service_threshold=",(upgrade_count / service_total_count),",state=",conf.state)
 
@@ -331,7 +331,7 @@ tl_ops_limit_fuse_node_degrade = function ( conf, node_id )
 	local state = node.state
 	local service_name = conf.service_name
 
-	---- node处于限流状态, 节点桶扩容
+	-- node处于限流状态, 节点桶扩容
 	if state == _STATE.LIMIT_FUSE_HALF then
 		local expand = tl_ops_limit_token_bucket.tl_ops_limit_token_expand(service_name, node_id)
 		if not expand or expand == false then
@@ -345,7 +345,7 @@ tl_ops_limit_fuse_node_degrade = function ( conf, node_id )
 		tlog:dbg("tl_ops_limit_fuse_node_degrade expand ok, node=",name,", capacity=",capacity)
 	end
 
-	---- 同步state, 通知worker更新
+	-- 同步state, 通知worker更新
 	if state > _STATE.LIMIT_FUSE_CLOSE then
 		local key = tl_ops_utils_func:gen_node_key(tl_ops_constant_limit.fuse.cache_key.service_state, service_name, node_id)
 		local ok, _ = shared:get(key);
@@ -379,7 +379,7 @@ tl_ops_limit_fuse_node_upgrade = function ( conf, node_id )
 	local state = node.state
 	local service_name = conf.service_name
 
-	---- node处于限流状态, 节点桶缩容
+	-- node处于限流状态, 节点桶缩容
 	if state == _STATE.LIMIT_FUSE_HALF then
 		local shrink = tl_ops_limit_token_bucket.tl_ops_limit_token_shrink(service_name, node_id)
 		if not shrink or shrink == false then
@@ -393,7 +393,7 @@ tl_ops_limit_fuse_node_upgrade = function ( conf, node_id )
 		tlog:dbg("tl_ops_limit_fuse_node_upgrade shrink ok, node=",name,", capacity=",capacity,",key=",key)
 	end
 
-	---- 同步state, 通知worker更新
+	-- 同步state, 通知worker更新
 	if state < _STATE.LIMIT_FUSE_OPEN then
 		local key = tl_ops_utils_func:gen_node_key(tl_ops_constant_limit.fuse.cache_key.service_state, service_name, node_id)
 		local ok, _ = shared:get(key);
@@ -440,7 +440,7 @@ tl_ops_limit_fuse_service_degrade = function ( conf )
 		tlog:dbg("tl_ops_limit_fuse_service_degrade expand ok, service_name=",service_name,", capacity=",capacity,",key=",key)
 	end
 
-	---- 同步state, 通知worker更新
+	-- 同步state, 通知worker更新
 	if state > _STATE.LIMIT_FUSE_CLOSE then
 		local key = tl_ops_utils_func:gen_node_key(tl_ops_constant_limit.fuse.cache_key.service_state, service_name)
 		local ok, _ = shared:get(key);
@@ -486,7 +486,7 @@ tl_ops_limit_fuse_service_upgrade = function ( conf )
 		tlog:dbg("tl_ops_limit_fuse_service_upgrade shrink ok, service_name=",service_name,", capacity=",capacity,",key=",key)
 	end
 
-	---- 同步state, 通知worker更新
+	-- 同步state, 通知worker更新
 	if state < _STATE.LIMIT_FUSE_OPEN then
 		local key = tl_ops_utils_func:gen_node_key(tl_ops_constant_limit.fuse.cache_key.service_state, service_name)
 		local ok, _ = shared:get(key);
@@ -512,7 +512,7 @@ tl_ops_limit_fuse_service_upgrade = function ( conf )
 end
 
 
----- 全熔断自动恢复
+-- 全熔断自动恢复
 tl_ops_limit_fuse_auto_recover = function( conf )
 	local nodes = conf.nodes
 	local service_state = conf.state
@@ -520,7 +520,7 @@ tl_ops_limit_fuse_auto_recover = function( conf )
 
 	local has_limit_fuse_open_state = false;
 
-	---- 服务熔断自动恢复
+	-- 服务熔断自动恢复
 	if service_state == _STATE.LIMIT_FUSE_OPEN then
 		has_limit_fuse_open_state = true
 		tl_ops_limit_fuse_service_degrade( conf )
@@ -532,7 +532,7 @@ tl_ops_limit_fuse_auto_recover = function( conf )
 		return
 	end
 
-	---- 节点熔断自动恢复
+	-- 节点熔断自动恢复
 	for i = 1, #nodes do
 		local node_id = i-1
 		local node_state = nodes[i].state
@@ -550,7 +550,7 @@ tl_ops_limit_fuse_auto_recover = function( conf )
 end
 
 
----- 单个周期内请求次数统计，周期结束清除
+-- 单个周期内请求次数统计，周期结束清除
 tl_ops_limit_fuse_reset_count = function ( conf )
 	local service_name = conf.service_name
 	local nodes = conf.nodes

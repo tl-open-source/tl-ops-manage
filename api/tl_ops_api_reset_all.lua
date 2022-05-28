@@ -10,22 +10,24 @@ cjson.encode_empty_table_as_object(false)
 local tl_ops_constant_balance = require("constant.tl_ops_constant_balance");
 local tl_ops_constant_service = require("constant.tl_ops_constant_service");
 local tl_ops_constant_api = require("constant.tl_ops_constant_api");
+local tl_ops_constant_cookie = require("constant.tl_ops_constant_cookie");
+local tl_ops_constant_param = require("constant.tl_ops_constant_param");
 local tl_ops_constant_health = require("constant.tl_ops_constant_health")
 local tl_ops_constant_limit = require("constant.tl_ops_constant_limit")
 local tl_ops_rt = require("constant.tl_ops_constant_comm").tl_ops_rt;
 local tl_ops_utils_func = require("utils.tl_ops_utils_func");
 
--- init api
+-- init balance api
 local function rest_init_api()
     local cache_api = require("cache.tl_ops_cache"):new("tl-ops-api");
 
-    local cache_api_rule, _ = cache_api:set(tl_ops_constant_api.cache_key.api_rule, tl_ops_constant_balance.api.rule);
+    local cache_api_rule, _ = cache_api:set(tl_ops_constant_api.cache_key.rule, tl_ops_constant_balance.api.rule);
     if not cache_api_rule then
         tl_ops_utils_func:get_str_json_by_return_arg(tl_ops_rt.error, "api init err", _)
         return;
     end
     
-    local cache_api_list, _ = cache_api:set(tl_ops_constant_api.cache_key.api_list, cjson.encode(
+    local cache_api_list, _ = cache_api:set(tl_ops_constant_api.cache_key.list, cjson.encode(
         tl_ops_constant_balance.api.list
     ));
     if not cache_api_list then
@@ -34,18 +36,59 @@ local function rest_init_api()
     end    
 end
 
+
+-- init balance cookie
+local function rest_init_cookie()
+    local cache_cookie = require("cache.tl_ops_cache"):new("tl-ops-cookie");
+
+    local cache_cookie_rule, _ = cache_cookie:set(tl_ops_constant_cookie.cache_key.rule, tl_ops_constant_balance.cookie.rule);
+    if not cache_cookie_rule then
+        tl_ops_utils_func:get_str_json_by_return_arg(tl_ops_rt.error, "cookie init err", _)
+        return;
+    end
+    
+    local cache_cookie_list, _ = cache_cookie:set(tl_ops_constant_cookie.cache_key.list, cjson.encode(
+        tl_ops_constant_balance.cookie.list
+    ));
+    if not cache_cookie_list then
+        tl_ops_utils_func:get_str_json_by_return_arg(tl_ops_rt.error, "cookie list init err", _)
+        return;
+    end    
+end
+
+
+-- init balance param
+local function rest_init_param()
+    local cache_param = require("cache.tl_ops_cache"):new("tl-ops-param");
+
+    local cache_param_rule, _ = cache_param:set(tl_ops_constant_param.cache_key.rule, tl_ops_constant_balance.param.rule);
+    if not cache_param_rule then
+        tl_ops_utils_func:get_str_json_by_return_arg(tl_ops_rt.error, "param init err", _)
+        return;
+    end
+    
+    local cache_param_list, _ = cache_param:set(tl_ops_constant_param.cache_key.list, cjson.encode(
+        tl_ops_constant_balance.param.list
+    ));
+    if not cache_param_list then
+        tl_ops_utils_func:get_str_json_by_return_arg(tl_ops_rt.error, "param list init err", _)
+        return;
+    end    
+end
+
+
 -- init service
 local function rest_init_service()
     local cache_service = require("cache.tl_ops_cache"):new("tl-ops-service");
 
-    local cache_service_rule, _ = cache_service:set(tl_ops_constant_service.cache_key.service_rule, tl_ops_constant_balance.service.rule);
+    local cache_service_rule, _ = cache_service:set(tl_ops_constant_service.cache_key.service_rule, tl_ops_constant_service.rule.auto_load);
     if not cache_service_rule then
         tl_ops_utils_func:get_str_json_by_return_arg(tl_ops_rt.error, "servie init err", _)
         return;
     end
     
     local cache_service_list, _ = cache_service:set(tl_ops_constant_service.cache_key.service_list, cjson.encode(
-        tl_ops_constant_balance.service.list
+        tl_ops_constant_service.list
     ));
     if not cache_service_list then
         tl_ops_utils_func:get_str_json_by_return_arg(tl_ops_rt.error, "servie list init err", _)
@@ -103,6 +146,10 @@ end
 
 
 rest_init_api();
+
+rest_init_cookie();
+
+rest_init_param();
 
 rest_init_service();
 

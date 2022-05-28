@@ -41,7 +41,7 @@ if has_new_service_name == true and new_service_name == nil then
     return;
 end
 
----- 是否存在service name
+-- 是否存在service name
 if has_new_service_name == true then
     for key,_ in pairs(tl_ops_service_list) do
         if key == new_service_name then
@@ -54,7 +54,7 @@ end
 
 
 
----- 更新生成id
+-- 更新生成id
 for key,_ in pairs(tl_ops_service_list) do
     for _, node in ipairs(tl_ops_service_list[key]) do
         if not node.id or node.id == nil or node.id == '' then
@@ -85,21 +85,21 @@ if not cache_rule then
 end
 
 if has_new_service_name and has_new_service_name == true then
-    ---- 对service_options_version更新，通知timer检查是否有新增service
+    -- 对service_options_version更新，通知timer检查是否有新增service
     tl_ops_health_check_version.incr_service_option_version();
     tl_ops_limit_fuse_check_version.incr_service_option_version();
 end
 
----- 对service version更新，通知worker更新所有conf
+-- 对service version更新，通知worker更新所有conf
 for service_name , _ in pairs(tl_ops_service_list) do
     tl_ops_health_check_version.incr_service_version(service_name);
     tl_ops_limit_fuse_check_version.incr_service_version(service_name);
 end
 
 
----- 新增service逻辑分支
+-- 新增service逻辑分支
 if has_new_service_name == true and new_service_name ~= '' then
-    ---- 同步健康检查配置
+    -- 同步健康检查配置
     local cache_health = require("cache.tl_ops_cache"):new("tl-ops-health");
     local health_list_str, _ = cache_health:get(tl_ops_constant_health.cache_key.options_list);
     if not health_list_str or health_list_str == nil then
@@ -116,7 +116,7 @@ if has_new_service_name == true and new_service_name ~= '' then
         return;
     end
 
-    ---- 同步熔断限流配置
+    -- 同步熔断限流配置
     local cache_limit = require("cache.tl_ops_cache"):new("tl-ops-limit");
     local limit_list_str, _ = cache_limit:get(tl_ops_constant_limit.fuse.cache_key.options_list);
     if not limit_list_str or limit_list_str == nil then

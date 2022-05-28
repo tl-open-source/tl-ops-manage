@@ -8,20 +8,7 @@ const tl_ops_web_store_main = function (){
     window.table = layui.table;
     window.layedit = layui.layedit;
 
-    axios.get("/tlops/store/list").then((res)=>{
-        res = res.data;
-        if(res.code === 0){
-            //渲染
-            tl_ops_web_store_render();
-
-            //行事件操作
-            table.on('tool('+_table_id_name+')', function(obj) {
-                let type = obj.event;
-                let data = obj.data;
-                tl_ops_web_store_event()[type] ? tl_ops_web_store_event()[type].call(this, data) : '';
-            });
-        }
-    })
+    tl_ops_web_store_render();
 };
 
 //事件监听定义
@@ -53,6 +40,8 @@ const tl_ops_web_store_cols = function () {
         }
     ]];
 };
+
+
 //表格render
 const tl_ops_web_store_render = function () {
     table.render(tl_ajax_data({
@@ -82,6 +71,15 @@ const tl_ops_web_store_render = function () {
                 res.data[key].list = newList;
                 data.push(res.data[key])
             }
+            data = data.sort(function(a, b){return new Date(a.id) - new Date(b.id)})
+
+            //行事件操作
+            table.on('tool('+_table_id_name+')', function(obj) {
+                let type = obj.event;
+                let data = obj.data;
+                tl_ops_web_store_event()[type] ? tl_ops_web_store_event()[type].call(this, data) : '';
+            });
+
             return {
                 "code": res.code,
                 "msg": res.msg,
@@ -121,6 +119,7 @@ const tl_ops_web_store_reload = function (matcher) {
                 res.data[key].list = newList;
                 data.push(res.data[key])
             }
+            data = data.sort(function(a, b){return new Date(a.id) - new Date(b.id)})
             return {
                 "code": res.code,
                 "msg": res.msg,

@@ -29,7 +29,7 @@ end
 
 
 
----- sliding init
+-- sliding init
 function _M:init()
 
 
@@ -37,7 +37,7 @@ end
 
 
 
----- sliding?
+-- sliding?
 function _M:tl_ops_limit_sliding( )
     
 end

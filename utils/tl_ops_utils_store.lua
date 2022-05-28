@@ -13,15 +13,15 @@ local tl_ops_rt = require("constant.tl_ops_constant_comm").tl_ops_rt;
 
 local _M = {}
 
----- store json index file
----- 写索引文件
+-- store json index file
+-- 写索引文件
 function _M:store_index( key , seek)
-	---- 最大支持4GB
+	-- 最大支持4GB
 	if seek > 4 * 1024 * 1024 * 1024 then
 		tlog:err("not allowed seek store-index : " .. seek)
 		return
 	end
-	---- add index
+	-- add index
 	local content = self:read_index();
 	if not content or content == nil then
 		content = {}
@@ -29,7 +29,7 @@ function _M:store_index( key , seek)
 	content[key] = seek;
 
 	local store_file_name = self.path .. self.business .. ".tlindex"
-    local store_file_io, _ = io.open(store_file_name, "w+")  ---- 覆盖index
+    local store_file_io, _ = io.open(store_file_name, "w+")  -- 覆盖index
     if not store_file_io then
     	tlog:err("failed to open file in store-index: " .. store_file_name)
         return
@@ -42,17 +42,17 @@ function _M:store_index( key , seek)
 end
 
 
----- store json file
----- 写内容文件
+-- store json file
+-- 写内容文件
 function _M:store( key,  ... )
 	local store_file_name = self.path .. self.business .. ".tlstore"
-	local store_file_io, _ = io.open(store_file_name, "a+")  ---- 追加内容
+	local store_file_io, _ = io.open(store_file_name, "a+")  -- 追加内容
     if not store_file_io then
     	tlog:err("failed to open file in store: " .. store_file_name)
         return
 	end
 
-	---- store index
+	-- store index
 	local file_size = store_file_io:seek("end");
 	if file_size == 0 then
 		self:store_index(key ,0)
@@ -73,8 +73,8 @@ function _M:store( key,  ... )
 end
 
 
----- read json index file
----- 读索引文件
+-- read json index file
+-- 读索引文件
 function _M:read_index( key )
 	local store_file_name = self.path .. self.business .. ".tlindex"
 	local store_file_io, _ = io.open(store_file_name, "r")
@@ -83,21 +83,21 @@ function _M:read_index( key )
         return
 	end
 
-	local content_json = store_file_io:read('*all')	---- 所有内容
+	local content_json = store_file_io:read('*all')	-- 所有内容
 	
 	local content = cjson.decode(content_json);
 
-	if key and type(key) == 'string' and key ~= '' then  ---- 返回 seek
+	if key and type(key) == 'string' and key ~= '' then  -- 返回 seek
 		return content[key] ,nil
 	end
 
 	store_file_io:close()
-    return content	----返回 {key:seek,...}
+    return content	--返回 {key:seek,...}
 end
 
 
----- read json file
----- 写内容文件
+-- read json file
+-- 写内容文件
 function _M:read( key )
 	local store_file_name = self.path .. self.business .. ".tlstore"
 	local store_file_io, _ = io.open(store_file_name, "r")
@@ -110,7 +110,7 @@ function _M:read( key )
 
 	store_file_io:seek("set", key_seek);
 
-	local content_json = store_file_io:read('*l')	---- 读一行
+	local content_json = store_file_io:read('*l')	-- 读一行
 	local content = cjson.decode(content_json);
 
 	store_file_io:close()

@@ -45,7 +45,7 @@ function _M:new(options, services)
 end
 
 
----- 创建健康检查启动器
+-- 创建健康检查启动器
 function _M:tl_ops_health_check_start()
 	if not self.options or not self.services then
 		tlog:err("tl_ops_health_check_start no default args ")
@@ -81,7 +81,7 @@ function _M:tl_ops_health_check_start()
 	return true
 end
 
----- 对给定配置内容进行初始化，对配置进行默认值给定和过滤
+-- 对给定配置内容进行初始化，对配置进行默认值给定和过滤
 tl_ops_health_check_default_confs = function (options, services)
 	local confs = new_tab(#options, 0)
 	
@@ -104,12 +104,12 @@ tl_ops_health_check_default_confs = function (options, services)
 		if not tonumber(check_interval) then
 			tlog:dbg("tl_ops_health_check_default_confs warp default check_interval")
 			check_interval = 1000
-		else ---- 最小 2ms
+		else -- 最小 2ms
 			if check_interval < 2 then  
 				check_interval = 2
 			end
 		end
-		check_interval = check_interval / 1000; 	---- 配置是ms格式, 使用是s格式
+		check_interval = check_interval / 1000; 	-- 配置是ms格式, 使用是s格式
 
 		local check_failed_max_count = opt.check_failed_max_count
 		if not tonumber(check_failed_max_count) then
@@ -141,8 +141,8 @@ tl_ops_health_check_default_confs = function (options, services)
 		end
 
 		table.insert(confs, {
-	        service_version = 0,		---- 当前conf对应的version
-	        nodes = nodes,				---- 当前conf对应的service配置
+	        service_version = 0,		-- 当前conf对应的version
+	        nodes = nodes,				-- 当前conf对应的service配置
 			check_service_name = check_service_name,
 	        check_content = check_content,
 	        check_timeout = check_timeout,
@@ -158,7 +158,7 @@ tl_ops_health_check_default_confs = function (options, services)
 	return confs
 end
 
----- 创建健康检查定时器
+-- 创建健康检查定时器
 tl_ops_health_check = function(premature, conf)
 	if premature then
 		return
@@ -179,14 +179,14 @@ tl_ops_health_check = function(premature, conf)
 	tlog:dbg("tl_ops_health_check end")
 end
 
----- 健康检查主逻辑
+-- 健康检查主逻辑
 tl_ops_health_check_main = function (conf)
 	tlog:dbg("tl_ops_health_check_main start")
 
-	----同步配置
+	--同步配置
 	tl_ops_health_check_dynamic_conf.dynamic_conf_change_start( conf )
 
-	---- 心跳包
+	-- 心跳包
 	if tl_ops_health_check_get_lock(conf) then
 		tl_ops_health_check_nodes(conf)
 	end
@@ -194,8 +194,8 @@ tl_ops_health_check_main = function (conf)
 	tlog:dbg("tl_ops_health_check_main end")
 end
 
----- 由于ngx是多worker进程，当前实现为只允许一个拿到锁的worker才能执行检查即可。
----- key : tl_ops_health_check_lock + _service1，value :  true代表拿到锁，false则失败
+-- 由于ngx是多worker进程，当前实现为只允许一个拿到锁的worker才能执行检查即可。
+-- key : tl_ops_health_check_lock + _service1，value :  true代表拿到锁，false则失败
 tl_ops_health_check_get_lock = function(conf)
 	local key = tl_ops_utils_func:gen_node_key(tl_ops_constant_health.cache_key.lock,conf.check_service_name)
 
@@ -216,7 +216,7 @@ tl_ops_health_check_get_lock = function(conf)
 	return true
 end
 
----- 对配置的路由机器依次发送心跳包
+-- 对配置的路由机器依次发送心跳包
 tl_ops_health_check_nodes = function (conf)
 	local check_content = conf.check_content
 	local check_timeout = conf.check_timeout
@@ -245,7 +245,7 @@ tl_ops_health_check_nodes = function (conf)
 			end
 			sock:settimeout(check_timeout)
 
-			---- 心跳socket
+			-- 心跳socket
 			local ok, _ = sock:connect(node.ip, node.port)
 			if not ok then
 				tlog:err("tl_ops_health_check_nodes failed to connect socket: ", _)
@@ -264,7 +264,7 @@ tl_ops_health_check_nodes = function (conf)
 
 			tlog:dbg("tl_ops_health_check_nodes send socket ok : byte=", bytes)
 
-			---- socket反馈
+			-- socket反馈
 			local receive_line, _ = sock:receive()
 			if not receive_line then
 				if _ == "check_timeout" then
@@ -285,7 +285,7 @@ tl_ops_health_check_nodes = function (conf)
 				break
 			end
 
-			---- 心跳状态
+			-- 心跳状态
 			local status = tonumber(string.sub(receive_line, from, to))
 
 			tlog:dbg("tl_ops_health_check_nodes get status ok ,name=" ,name, ", status=" , status)
@@ -303,7 +303,7 @@ tl_ops_health_check_nodes = function (conf)
 				break
 			end
 
-			---- 心跳成功
+			-- 心跳成功
 			tl_ops_health_check_node_ok(conf, node_id, node)
 
 			tlog:dbg("tl_ops_health_check_nodes node ok")
@@ -316,14 +316,14 @@ tl_ops_health_check_nodes = function (conf)
 	tlog:dbg("tl_ops_health_check_nodes end ,conf=" , conf, ",nodes=",nodes)
 end
 
----- 心跳检查失败
+-- 心跳检查失败
 tl_ops_health_check_node_failed = function (conf, node_id, node)
 	tlog:dbg("tl_ops_health_check_node_failed start ,conf=" , conf, ",node=" , node)
 
 	local check_failed_max_count = conf.check_failed_max_count
 	local check_service_name = conf.check_service_name
 
-	---- key=tl_ops_health_check_failed_count:resin-site0 (health check not ok)
+	-- key=tl_ops_health_check_failed_count:resin-site0 (health check not ok)
 	local key = tl_ops_utils_func:gen_node_key(tl_ops_constant_health.cache_key.failed, check_service_name, node_id)
 	local cur_failed_count, _ = shared:get(key)
 
@@ -343,7 +343,7 @@ tl_ops_health_check_node_failed = function (conf, node_id, node)
 		end
 	end
 
-	---- 心跳包失败后，重置之前有过累计的成功次数
+	-- 心跳包失败后，重置之前有过累计的成功次数
 	if cur_failed_count == 1 then
 		key = tl_ops_utils_func:gen_node_key(tl_ops_constant_health.cache_key.success, check_service_name, node_id)
 		local succ, _ = shared:get(key)
@@ -360,8 +360,8 @@ tl_ops_health_check_node_failed = function (conf, node_id, node)
 		end
 	end
 
-	---- 该机器当前状态:在线 && 心跳包失败次数 > 配置的次数，将shareDict中该机器的状态置为下线，
-	---- {tl_ops_health_check_donw_state:resin-site0:true}
+	-- 该机器当前状态:在线 && 心跳包失败次数 > 配置的次数，将shareDict中该机器的状态置为下线，
+	-- {tl_ops_health_check_donw_state:resin-site0:true}
 	if node.state and cur_failed_count > check_failed_max_count then
 		local name =  node.ip .. ":" .. node.port
 
@@ -383,7 +383,7 @@ tl_ops_health_check_node_failed = function (conf, node_id, node)
 
 end
 
----- 心跳检查成功
+-- 心跳检查成功
 tl_ops_health_check_node_ok = function (conf, node_id, node)
 	tlog:dbg("tl_ops_health_check_node_ok start ,conf=" , conf, ",node=" , node)
 
@@ -410,7 +410,7 @@ tl_ops_health_check_node_ok = function (conf, node_id, node)
 		end
 	end
 
-	---- 心跳包成功后，重置之前有过累计的失败次数
+	-- 心跳包成功后，重置之前有过累计的失败次数
 	if cur_success_count == 1 then
 		key = tl_ops_utils_func:gen_node_key(tl_ops_constant_health.cache_key.failed, check_service_name, node_id)
 		local fails, _ = shared:get(key)
@@ -429,8 +429,8 @@ tl_ops_health_check_node_ok = function (conf, node_id, node)
 		end
 	end
 
-	---- 该机器当前状态:下线 && 心跳包成功次数 > 配置的次数，将shareDict中该机器的状态置为上线，
-	---- {tl_ops_health_check_donw_state:resin-site0:nil}
+	-- 该机器当前状态:下线 && 心跳包成功次数 > 配置的次数，将shareDict中该机器的状态置为上线，
+	-- {tl_ops_health_check_donw_state:resin-site0:nil}
 	if not node.state and cur_success_count >= check_success_max_count then
 		local name = node.port .. ":" .. node.ip
 

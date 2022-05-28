@@ -21,7 +21,7 @@ local tl_ops_health_check_dynamic_conf_add_timer_check;
 	以下是同步worker conf新增接口
 ]]
 
----- 校验service是否已有对应的health check option
+-- 校验service是否已有对应的health check option
 local tl_ops_health_check_dynamic_conf_all_service_option_asynced = function( options, services )
 	local service_has_options = {}; 
 
@@ -43,7 +43,7 @@ local tl_ops_health_check_dynamic_conf_all_service_option_asynced = function( op
 	return true
 end
 
----- 通过service name获取对于的option
+-- 通过service name获取对于的option
 local tl_ops_health_check_dynamic_conf_get_option = function( options, name )
 	for i = 1, #options do
 		local service_name = options[i].check_service_name
@@ -54,7 +54,7 @@ local tl_ops_health_check_dynamic_conf_get_option = function( options, name )
 	return nil
 end
 
----- 获取当前健康检查的所有service，并对新增的service启动定时器，key : tl_ops_health_timers，value : ['service1','service2',...]
+-- 获取当前健康检查的所有service，并对新增的service启动定时器，key : tl_ops_health_timers，value : ['service1','service2',...]
 local tl_ops_health_check_dynamic_conf_add_core = function(options, services)
 
 	-- 暂时还有service的option未同步对应的，先不执行，等到option准备完毕再执行后续逻辑
@@ -94,9 +94,9 @@ local tl_ops_health_check_dynamic_conf_add_core = function(options, services)
 	end
 end
 
----- 同步新增的service option
----- key : tl_ops_health_version
----- value : true/false
+-- 同步新增的service option
+-- key : tl_ops_health_version
+-- value : true/false
 local tl_ops_health_check_dynamic_conf_add_check = function()
 	tlog:dbg("[add-check] loop check cus options version start")
 
@@ -128,7 +128,7 @@ local tl_ops_health_check_dynamic_conf_add_check = function()
 	end
 end
 
----- 加载新增配置的周期为10s
+-- 加载新增配置的周期为10s
 tl_ops_health_check_dynamic_conf_add_timer_check = function(premature, args)
 	if premature then
 		return
@@ -147,7 +147,7 @@ tl_ops_health_check_dynamic_conf_add_timer_check = function(premature, args)
 	end
 end
 
----- 动态配置加载器启动
+-- 动态配置加载器启动
 local tl_ops_health_check_dynamic_conf_add_start = function() 
 	local ok, _ = ngx.timer.at(0, tl_ops_health_check_dynamic_conf_add_timer_check, nil)
 	if not ok then
@@ -163,7 +163,7 @@ end
 	以下是同步worker conf变更接口
 ]]
 
----- 同步state
+-- 同步state
 local tl_ops_health_check_dynamic_conf_change_state_async = function( conf )
     local nodes = conf.nodes;
 	if nodes == nil then
@@ -185,7 +185,7 @@ local tl_ops_health_check_dynamic_conf_change_state_async = function( conf )
 	end
 end
 
----- 同步health check option
+-- 同步health check option
 local tl_ops_health_check_dynamic_conf_change_service_options_async = function( conf )
     local options_str, _ = cache_health:get(tl_ops_constant_health.cache_key.options_list)
 	if not options_str then
@@ -206,12 +206,12 @@ local tl_ops_health_check_dynamic_conf_change_service_options_async = function( 
 		local check_interval = option.check_interval
 		if not tonumber(check_interval) then
 			check_interval = 1000
-		else ---- 最小 2ms
+		else -- 最小 2ms
 			if check_interval < 2 then  
 				check_interval = 2
 			end
 		end
-		check_interval = check_interval / 1000; 	---- 配置是ms格式, 使用是s格式
+		check_interval = check_interval / 1000; 	-- 配置是ms格式, 使用是s格式
 
 		conf.check_interval = check_interval
 		conf.check_content = option.check_content
@@ -222,7 +222,7 @@ local tl_ops_health_check_dynamic_conf_change_service_options_async = function( 
 	end
 end
 
----- 同步service配置
+-- 同步service配置
 local tl_ops_health_check_dynamic_conf_change_service_node_async = function( conf )
 	local cache_service = require("cache.tl_ops_cache"):new("tl-ops-service");
 	local service_str, _ = cache_service:get(tl_ops_constant_service.cache_key.service_list)
@@ -237,7 +237,7 @@ local tl_ops_health_check_dynamic_conf_change_service_node_async = function( con
 	end
 end
 
----- 同步变更的service信息
+-- 同步变更的service信息
 local tl_ops_health_check_dynamic_conf_change_core = function( conf, service_version )
 
 	-- 保证更新顺序，service/options > service.nodes > node.state 
@@ -248,7 +248,7 @@ local tl_ops_health_check_dynamic_conf_change_core = function( conf, service_ver
 
 end
 
----- 校验是否需要同步conf变更
+-- 校验是否需要同步conf变更
 local tl_ops_health_check_dynamic_conf_change_check = function( conf )
 	local key = tl_ops_utils_func:gen_node_key(tl_ops_constant_health.cache_key.service_version, conf.check_service_name)
 	local service_version, _ = shared:get(key)
@@ -269,7 +269,7 @@ local tl_ops_health_check_dynamic_conf_change_check = function( conf )
     end
 end
 
----- 动态配置加载器启动
+-- 动态配置加载器启动
 local tl_ops_health_check_dynamic_conf_change_start = function( conf ) 
 
     if not conf then
