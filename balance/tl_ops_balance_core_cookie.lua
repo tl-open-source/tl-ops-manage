@@ -8,7 +8,6 @@ local cjson = require("cjson");
 local cache_cookie = require("cache.tl_ops_cache"):new("tl-ops-cookie");
 local tl_ops_rt = require("constant.tl_ops_constant_comm").tl_ops_rt;
 local tl_ops_utils_func = require("utils.tl_ops_utils_func");
-local cookie_utils = require("lib.cookie"):new();
 
 local tl_ops_constant_cookie = require("constant.tl_ops_constant_cookie");
 local tl_ops_constant_service = require("constant.tl_ops_constant_service");
@@ -18,6 +17,8 @@ local shared = ngx.shared.tlopsbalance
 
 -- 获取命中的cookie路由项
 local tl_ops_balance_cookie_get_matcher_cookie = function(cookie_list_table, rule)
+    local cookie_utils = require("lib.cookie"):new();
+    
     local matcher_list = cookie_list_table[rule]
 
     if not matcher_list then
