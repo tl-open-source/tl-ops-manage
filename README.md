@@ -8,10 +8,17 @@
 [![](https://img.shields.io/badge/dynamic%20conf-green)](https://github.com/iamtsm/tl-ops-manage)
 
 
-[EN DOC](doc/README_EN.md) 
-
-
 体验demo : https://tlops.iamtsm.cn/tlops/tl_ops_web_index.html
+
+
+
+#### 欢迎有兴趣的童鞋提交RP, 持续更新中 ....
+
+
+**qq交流群 : 624214498**
+
+
+[EN DOC](doc/README_EN.md) 
 
 
 # 基于openresty的轻量级服务管理功能集合实现
@@ -81,15 +88,6 @@
 - [ ] 管理端界面/请求优化
 
 - [ ] 分离管理端项目
-
-
-##### 持续更新中 ....
-
-
-欢迎有兴趣的童鞋提交RP
-
-
-**qq交流群 : 624214498**
 
 
 
