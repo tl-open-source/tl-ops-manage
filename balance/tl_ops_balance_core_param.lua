@@ -91,7 +91,7 @@ local tl_ops_balance_param_service_matcher = function(service_list_table)
     end
 
     -- 获取当前节点健康状态
-    local key = tl_ops_utils_func:gen_node_key(tl_ops_constant_health.cache_key.state, matcher.service, matcher.node)
+    local key = tl_ops_utils_func:gen_node_key(tl_ops_constant_health.cache_key.state, matcher.service, node_id)
     local node_state , _ = shared:get(key)
     
 

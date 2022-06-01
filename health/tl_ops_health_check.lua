@@ -188,6 +188,15 @@ tl_ops_health_check_main = function (conf)
 
 	-- 心跳包
 	if tl_ops_health_check_get_lock(conf) then
+
+		-- 是否主动关闭自检
+		local uncheck_key = tl_ops_utils_func:gen_node_key(tl_ops_constant_health.cache_key.uncheck, conf.check_service_name)
+		local uncheck, _ = shared:get(uncheck_key)
+		if uncheck and uncheck == true then
+			tlog:dbg("tl_ops_health_check_main is uncheck check_service_name=",conf.check_service_name)
+			return
+		end
+
 		tl_ops_health_check_nodes(conf)
 	end
 

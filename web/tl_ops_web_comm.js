@@ -2,10 +2,12 @@
 const tl_ajax_data = function (data) {
     //全局请求成功处理
     $(document).ajaxSuccess(function (event, xhr, settings) {
-        let res = JSON.parse(xhr.responseText);
-        if (res && res.code === -10004){
-            layer.msg("请先登录")
-            return
+        if(xhr.responseText){
+            let res = JSON.parse(xhr.responseText);
+            if (res && res.code === -10004){
+                layer.msg("请先登录")
+                return
+            }
         }
     });
 

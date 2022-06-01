@@ -50,6 +50,11 @@ for service_name, nodes in pairs(service_list) do
     if not health_version_cache then
         health_version_cache = 0 --"version cache nil"
     end
+    local health_uncheck_cache = shared:get(tl_ops_utils_func:gen_node_key(tl_ops_constant_health.cache_key.uncheck, service_name))
+    if not health_uncheck_cache then
+        health_uncheck_cache = false --"uncheck cache nil"
+    end
+
 
     local limit_state_cache = shared:get(tl_ops_utils_func:gen_node_key(tl_ops_constant_limit.fuse.cache_key.service_state, service_name))
     if not limit_state_cache then
@@ -63,6 +68,7 @@ for service_name, nodes in pairs(service_list) do
     cache_state.service[service_name] = {
         health_lock = health_lock_cache,
         health_version = health_version_cache,
+        health_uncheck = health_uncheck_cache,
         limit_state = limit_state_cache,
         limit_version = limit_version_cache,
     }

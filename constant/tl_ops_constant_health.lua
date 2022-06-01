@@ -11,6 +11,7 @@ local tl_ops_constant_health_check = {
         service_version = "tl_ops_health_service_version",                  -- int        服务配置变动
         service_options_version = "tl_ops_health_service_options_version",  -- boolean    服务新增变动
         timers = "tl_ops_health_timers",                                    -- list       当前开启自检的服务
+        uncheck = "tl_ops_health_check_uncheck",                            -- boolean    服务/节点是否关闭自检
         history_state = "tl_ops_health_history_state",                      -- list       TODO 未实现
     },
     options = { 

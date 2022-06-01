@@ -53,6 +53,11 @@
         font-weight: 800;
         color: brown;
     }
+
+    #tl-console-load-sync .layui-form-switch{
+        margin-top: 0px;
+        margin-right: 5px;
+    }
 </style>
 
 <body>
@@ -109,12 +114,10 @@
                     熔断监测</div>
             </div>
 
-            <div style="float: right;display: none;" id="tl-balance-span">
-                <span class="layui-badge layui-bg-blue " style="padding: 4px 14px 4px 14px;cursor: pointer;">当天</span>
-                <span class="layui-badge layui-bg-red layui-btn-disabled"
-                    style="padding: 4px 14px 4px 14px;cursor: pointer;" id="tl-balance-span-all"
-                    onmouseleave="tl_mouse_leave_tips()"
-                    onmouseenter="tl_mouse_enter_tips('tl-balance-span-all','暂不支持')">全部</span>
+            <div style="float: right;" class="layui-form" id="tl-console-load-sync" onmouseleave="tl_mouse_leave_tips()"
+                onmouseenter="tl_mouse_enter_tips('tl-console-load-sync','开启后, 每2秒刷新一次数据')">
+                <input type="checkbox" name="switch" lay-skin="switch" lay-text="实时同步|非实时同步" >
+                <i style="display: none" class="layui-icon layui-icon-loading layui-anim layui-anim-rotate layui-anim-loop" id="tl-console-load-sync-icon"></i>
             </div>
 
             <div class="layui-col-sm12">
@@ -128,7 +131,7 @@
                                 {{#  layui.each(service.nodes, function(index, node){ }}
                                 <div class="layui-col-sm6">
                                     <div class="layui-card" style="border-radius: 24px;">
-                                        <div class="layui-card-header">{{service.id}}服务</div>
+                                        <div class="layui-card-header"> {{service.id}}服务 </div>
                                         <div class="layui-card-body">
                                             <div style="height: 200px;margin-top: 20px; margin-bottom: 20px;"
                                                 id="{{service.id}}-{{node.id}}"> </div>
@@ -139,7 +142,31 @@
                             {{#  }else { }}
                                 <div class="layui-col-sm6">
                                     <div class="layui-card" style="border-radius: 24px;">
-                                        <div class="layui-card-header">{{service.id}}服务</div>
+                                        <div class="layui-card-header">
+                                            {{service.id}}服务
+                                            {{#  if(service.type === 'balance') { }}
+                                            <div style="float: right;" class="layui-form">
+                                                <span class="layui-badge layui-bg-blue " style="padding: 4px 14px 4px 14px;cursor: pointer;">当天</span>
+                                                <span class="layui-badge layui-bg-red layui-btn-disabled"
+                                                    style="padding: 4px 14px 4px 14px;cursor: pointer;" id="tl-balance-span-all-{{service.id}}"
+                                                    onmouseleave="tl_mouse_leave_tips()"
+                                                    onmouseenter="tl_mouse_enter_tips('tl-balance-span-all-{{service.id}}','暂不支持')">全部</span>
+                                            </div>
+                                            {{#  } }}
+                                            {{#  if(service.type === 'health') { }}
+                                            <div style="float: right;" class="layui-form">
+                                                {{#  if(service.uncheck === false) { }}
+                                                <i class="layui-icon layui-icon-loading layui-anim layui-anim-rotate layui-anim-loop" style="font-weight: bold;color: #52db49;"
+                                                    id="tl-health-span-loading-{{service.id}}" onmouseleave="tl_mouse_leave_tips()" 
+                                                    onmouseenter="tl_mouse_enter_tips('tl-health-span-loading-{{service.id}}','当前自检中')"></i>
+                                                {{#  } else{}}
+                                                <i style="font-weight: bold;color: #52db49;" class="layui-icon layui-icon-play" id="tl-health-span-play-{{service.id}}" 
+                                                    onmouseleave="tl_mouse_leave_tips()" onmouseenter="tl_mouse_enter_tips('tl-health-span-play-{{service.id}}','自检已暂停')">
+                                                </i>
+                                                {{#  } }}
+                                            </div>
+                                            {{#  } }}
+                                        </div>
                                         <div class="layui-card-body">
                                             <div style="height:300px;" id="{{service.id}}"> </div>
                                         </div>

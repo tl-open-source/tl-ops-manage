@@ -5,6 +5,7 @@ const _console_view_id_name = "tl-ops-web-console-service-view";
 const _console_tlp_id_name = "tl-ops-web-console-service-tpl";
 
 let res_data = {};
+let cur_type = 'balance';
 
 const tl_ops_web_console_main = function () {
     window.$ = layui.$;
@@ -13,80 +14,69 @@ const tl_ops_web_console_main = function () {
     window.laytpl = layui.laytpl;
 
     window.consoleEchartsList = [];
+    window.syncDataInterId = 0;
 
-    axios.get("/tlops/health/state").then((res) => {
+
+    form.on('switch()', function(data){
+        if(data.elem.checked){ //实时刷数据
+            syncDataInterId = setInterval(tl_ops_web_console_reflush, 2000)
+            $("#tl-console-load-sync-icon").css("display","inline-block")
+        }else{
+            clearInterval(syncDataInterId);
+            $("#tl-console-load-sync-icon").css("display","none")
+        }
+    });  
+
+    axios.get("/tlops/state/get").then((res) => {
         res = res.data;
         if (res.code === 0) {
             res_data = res.data
             let service_data = res.data.service
             //渲染dom
-            tl_ops_web_console_echarts_balance_render(service_data)
+            if(cur_type === 'balance'){
+                tl_ops_web_console_echarts_balance_render(service_data)
+            }else if(cur_type === 'fuselimit'){
+                tl_ops_web_console_echarts_fuselimit_render(service_data)
+            }else if(cur_type === 'health'){
+                tl_ops_web_console_echarts_health_render(service_data)
+            }
+            
             tl_ops_web_console_service_state_render(service_data)
         }
     }).then((res) => {
         window.onresize = function () {
             consoleEchartsList.forEach((item) => {
-                item.resize();
+                item.echart.resize();
             })
         };
     })
 };
 
 
-//service state render
-const tl_ops_web_console_service_state_render = function (data) {
-    laytpl(document.getElementById(_console_tlp_id_name).innerHTML).render((() => {
-        let serviceList = [];
-        for (let sKey in data) {
-            let online_count = 0
-            let offine_count = 0
-            let nodes = data[sKey].nodes;
-            for (let nKey in nodes) {
-                if (typeof (nodes[nKey].health_state) === 'boolean' && nodes[nKey].health_state) {
-                    online_count += 1;
-                } else {
-                    offine_count += 1;
-                }
+// 实时刷数据
+const tl_ops_web_console_reflush = function(){
+    axios.get("/tlops/state/get").then((res) => {
+        res = res.data;
+        if (res.code === 0) {
+            res_data = res.data
+            let service_data = res.data.service
+            //渲染dom
+            if(cur_type === 'balance'){
+                tl_ops_web_console_echarts_balance_render_reflush(service_data);
+            }else if(cur_type === 'fuselimit'){
+                tl_ops_web_console_echarts_fuselimit_render_reflush(service_data);
+            }else if(cur_type === 'health'){
+                tl_ops_web_console_echarts_health_render_reflush(service_data);
             }
-            serviceList.push({
-                name: sKey,
-                online_count: online_count,
-                offine_count: offine_count
-            })
+            tl_ops_web_console_service_state_render(service_data)
         }
-        return serviceList
-    })(), (html) => {
-        document.getElementById(_console_view_id_name).innerHTML = html;
-    });
-    form.render()
-}
-
-
-
-
-//health echarts 
-const tl_ops_web_console_echarts_health_render = function (data) {
-    let serviceList = [];
-    for(let serviceName in data){
-        serviceList.push({
-            id : serviceName
-        })
-    }
-    laytpl(document.getElementById(_console_echarts_tlp_id_name).innerHTML).render((() => {
-        return serviceList
-    })(), (html) => {
-        document.getElementById(_console_echarts_view_id_name).innerHTML = html;
-    });
-    form.render()
-
-    //渲染echarts
-    tl_ops_web_console_health_state_caculate(data).forEach((item) => {
-        tl_ops_web_console_echarts_health_options(item)
     })
+    
 }
 
-//health echarts option
-const tl_ops_web_console_echarts_health_options = function (data) {
+
+//health get option
+const tl_ops_web_console_echarts_health_get_option = function(data){
     var option = {
         title: {
             text: `${data.id}-在线节点:${data.online_count}-下线节点:${data.offine_count}`,
@@ -181,10 +171,8 @@ const tl_ops_web_console_echarts_health_options = function (data) {
             }
         ]
     };
-    var consoleEchart = echarts.init(document.getElementById(data.id));
-    consoleEchart.setOption(option);
 
-    consoleEchartsList.push(consoleEchart);
+    return option;
 }
 
 //health 统计数量
@@ -221,17 +209,32 @@ const tl_ops_web_console_health_state_caculate = function (data) {
     return config
 }
 
+//health echarts 初始化
+const tl_ops_web_console_echarts_health_options = function (data) {
+    var option = tl_ops_web_console_echarts_health_get_option(data)
 
+    var consoleEchart = echarts.init(document.getElementById(data.id));
+    consoleEchart.setOption(option);
 
+    consoleEchartsList.push({
+        id : data.id,
+        type : cur_type,
+        echart : consoleEchart
+    });
+}
 
-//balance echarts 
-const tl_ops_web_console_echarts_balance_render = function (data) {
+//health echarts 初始化渲染
+const tl_ops_web_console_echarts_health_render = function (data) {
     let serviceList = [];
     for(let serviceName in data){
         serviceList.push({
-            id : serviceName
+            id : serviceName,
+            type : 'health',
+            uncheck : data[serviceName].health_uncheck
         })
     }
+    serviceList = serviceList.sort(function(a, b){return a.id.localeCompare(b.id,'zh-CN')})
+
     laytpl(document.getElementById(_console_echarts_tlp_id_name).innerHTML).render((() => {
         return serviceList
     })(), (html) => {
@@ -240,13 +243,36 @@ const tl_ops_web_console_echarts_balance_render = function (data) {
     form.render()
 
     //渲染echarts
-    tl_ops_web_console_balance_time_list_caculate_days(data).forEach((item) => {
-        tl_ops_web_console_echarts_balance_options(item)
+    tl_ops_web_console_health_state_caculate(data).forEach((item) => {
+        tl_ops_web_console_echarts_health_options(item)
     })
 }
 
-//balance echarts option
-const tl_ops_web_console_echarts_balance_options = function (data) {
+//health echarts option 刷新
+const tl_ops_web_console_echarts_health_options_reflush = function (data){
+    var option = tl_ops_web_console_echarts_health_get_option(data)
+
+    consoleEchartsList.filter((item)=>{
+        if(item.type === 'health' && item.id === data.id){
+            item.echart.setOption(option)
+        }
+    })
+}
+
+//health echarts 刷新渲染
+const tl_ops_web_console_echarts_health_render_reflush = function (data) {
+    //渲染echarts
+    tl_ops_web_console_health_state_caculate(data).forEach((item) => {
+        tl_ops_web_console_echarts_health_options_reflush(item)
+    })
+}
+
+
+
+
+
+//balance get option
+const tl_ops_web_console_echarts_balance_get_option = function(data){
     var option = {
         title: {
             text: `${data.id}-负载总量:${data.balance_count}`,
@@ -299,10 +325,7 @@ const tl_ops_web_console_echarts_balance_options = function (data) {
         },
         series: data.seriesBalanceList
     };
-    var consoleEchart = echarts.init(document.getElementById(data.id));
-    consoleEchart.setOption(option);
-
-    consoleEchartsList.push(consoleEchart);
+    return option;
 }
 
 //balance 统计数量 (以当天为单位)
@@ -351,22 +374,31 @@ const tl_ops_web_console_balance_time_list_caculate_days = function (data) {
     return config
 }
 
+//balance echarts 初始化
+const tl_ops_web_console_echarts_balance_options = function (data) {
+    var option = tl_ops_web_console_echarts_balance_get_option(data);
 
-//fuselimit echarts
-const tl_ops_web_console_echarts_fuselimit_render = function (data) {
+    var consoleEchart = echarts.init(document.getElementById(data.id));
+    consoleEchart.setOption(option);
+
+    consoleEchartsList.push({
+        id : data.id,
+        type : cur_type,
+        echart : consoleEchart
+    });
+}
+
+//balance echarts 初始化渲染
+const tl_ops_web_console_echarts_balance_render = function (data) {
     let serviceList = [];
     for(let serviceName in data){
-        let nodeList = [];
-        for(let nodeName in data[serviceName].nodes){
-            nodeList.push({
-                id : nodeName
-            })
-        }
         serviceList.push({
             id : serviceName,
-            nodes : nodeList
+            type : 'balance',
         })
     }
+    serviceList = serviceList.sort(function(a, b){return a.id.localeCompare(b.id,'zh-CN')})
+
     laytpl(document.getElementById(_console_echarts_tlp_id_name).innerHTML).render((() => {
         return serviceList
     })(), (html) => {
@@ -375,15 +407,36 @@ const tl_ops_web_console_echarts_fuselimit_render = function (data) {
     form.render()
 
     //渲染echarts
-    tl_ops_web_console_fuselimit_state_caculate().forEach((item) => {
-        item.nodeList.forEach(node=>{
-            tl_ops_web_console_echarts_fuselimit_options(node)
-        })
+    tl_ops_web_console_balance_time_list_caculate_days(data).forEach((item) => {
+        tl_ops_web_console_echarts_balance_options(item)
     })
 }
 
-//fuselimit options
-const tl_ops_web_console_echarts_fuselimit_options = function (data) {
+//balance echarts 刷新
+const tl_ops_web_console_echarts_balance_options_reflush = function (data) {
+    var option = tl_ops_web_console_echarts_balance_get_option(data);
+
+    consoleEchartsList.filter((item)=>{
+        if(item.type === 'balance' && item.id === data.id){
+            item.echart.setOption(option)
+        }
+    })
+}
+
+//balance echarts 刷新渲染
+const tl_ops_web_console_echarts_balance_render_reflush = function (data) {
+    //渲染echarts
+    tl_ops_web_console_balance_time_list_caculate_days(data).forEach((item) => {
+        tl_ops_web_console_echarts_balance_options_reflush(item)
+    })
+}
+
+
+
+
+
+//fuselimit get option
+const tl_ops_web_console_echarts_fuselimit_get_option = function(data){
     var option = {
         legend: {
             orient: 'vertical',
@@ -627,10 +680,7 @@ const tl_ops_web_console_echarts_fuselimit_options = function (data) {
         ],
     }
 
-    var consoleEchart = echarts.init(document.getElementById(data.id));
-    consoleEchart.setOption(option);
-
-    consoleEchartsList.push(consoleEchart);
+    return option;
 }
 
 //fuselimit 统计数量
@@ -724,15 +774,114 @@ const tl_ops_web_console_fuselimit_state_caculate = function () {
     return config
 }
 
+//fuselimit options 初始化
+const tl_ops_web_console_echarts_fuselimit_options = function (data) {
+    var option = tl_ops_web_console_echarts_fuselimit_get_option(data)
+
+    var consoleEchart = echarts.init(document.getElementById(data.id));
+    consoleEchart.setOption(option);
+
+    consoleEchartsList.push({
+        id : data.id,
+        type : cur_type,
+        echart : consoleEchart
+    });
+}
+
+//fuselimit echarts  初始化渲染
+const tl_ops_web_console_echarts_fuselimit_render = function (data) {
+    let serviceList = [];
+    for(let serviceName in data){
+        let nodeList = [];
+        for(let nodeName in data[serviceName].nodes){
+            nodeList.push({
+                id : nodeName
+            })
+        }
+        serviceList.push({
+            id : serviceName,
+            type : 'fuselimit',
+            nodes : nodeList
+        })
+    }
+    serviceList = serviceList.sort(function(a, b){return a.id.localeCompare(b.id,'zh-CN')})
+
+    laytpl(document.getElementById(_console_echarts_tlp_id_name).innerHTML).render((() => {
+        return serviceList
+    })(), (html) => {
+        document.getElementById(_console_echarts_view_id_name).innerHTML = html;
+    });
+    form.render()
+
+    //渲染echarts
+    tl_ops_web_console_fuselimit_state_caculate().forEach((item) => {
+        item.nodeList.forEach(node=>{
+            tl_ops_web_console_echarts_fuselimit_options(node)
+        })
+    })
+}
+
+//fuselimit options 刷新
+const tl_ops_web_console_echarts_fuselimit_options_reflush = function (data) {
+    var option = tl_ops_web_console_echarts_fuselimit_get_option(data)
+
+    consoleEchartsList.filter((item)=>{
+        if(item.type === 'fuselimit' && item.id === data.id){
+            item.echart.setOption(option)
+        }
+    })
+}
+
+//fuselimit echarts 刷新渲染
+const tl_ops_web_console_echarts_fuselimit_render_reflush = function (data) {
+    //渲染echarts
+    tl_ops_web_console_fuselimit_state_caculate().forEach((item) => {
+        item.nodeList.forEach(node=>{
+            tl_ops_web_console_echarts_fuselimit_options(node)
+        })
+    })
+}
+
+
+
+//service state render
+const tl_ops_web_console_service_state_render = function (data) {
+    laytpl(document.getElementById(_console_tlp_id_name).innerHTML).render((() => {
+        let serviceList = [];
+        for (let sKey in data) {
+            let online_count = 0
+            let offine_count = 0
+            let nodes = data[sKey].nodes;
+            for (let nKey in nodes) {
+                if (typeof (nodes[nKey].health_state) === 'boolean' && nodes[nKey].health_state) {
+                    online_count += 1;
+                } else {
+                    offine_count += 1;
+                }
+            }
+            serviceList.push({
+                name: sKey,
+                online_count: online_count,
+                offine_count: offine_count
+            })
+        }
+        serviceList = serviceList.sort(function(a, b){return a.name.localeCompare(b.name,'zh-CN')})
+
+        return serviceList
+    })(), (html) => {
+        document.getElementById(_console_view_id_name).innerHTML = html;
+    });
+    form.render()
+}
+
 
 
 const tl_ops_web_console_change_nav = function (type) {
+    cur_type = type;
     if (type == 'health') {
         document.getElementById("health-nav").className = 'tl-inspector-span tl-inspector-span-active'
         document.getElementById("balance-nav").className = 'tl-inspector-span '
         document.getElementById("fuselimit-nav").className = 'tl-inspector-span '
-
-        document.getElementById("tl-balance-span").style.display = "none"
 
         tl_ops_web_console_echarts_health_render(res_data.service)
     } else if (type === 'balance') {
@@ -740,15 +889,11 @@ const tl_ops_web_console_change_nav = function (type) {
         document.getElementById("health-nav").className = 'tl-inspector-span '
         document.getElementById("fuselimit-nav").className = 'tl-inspector-span '
 
-        document.getElementById("tl-balance-span").style.display = "block"
-
         tl_ops_web_console_echarts_balance_render(res_data.service)
     } else if (type === 'fuselimit') {
         document.getElementById("fuselimit-nav").className = 'tl-inspector-span tl-inspector-span-active'
         document.getElementById("balance-nav").className = 'tl-inspector-span '
         document.getElementById("health-nav").className = 'tl-inspector-span '
-
-        document.getElementById("tl-balance-span").style.display = "none"
 
         tl_ops_web_console_echarts_fuselimit_render(res_data.service)
     }
