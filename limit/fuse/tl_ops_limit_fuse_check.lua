@@ -274,14 +274,12 @@ tl_ops_limit_fuse_check_nodes = function ( conf )
 		local node_id = i-1
 
 		local success_count_key = tl_ops_utils_func:gen_node_key(tl_ops_constant_limit.fuse.cache_key.req_succ, service_name, node_id)
-		shared:set(success_count_key, math.random(100))
 		local success_count = shared:get(success_count_key)
 		if not success_count then
 			success_count = 0
 		end
 
 		local failed_count_key = tl_ops_utils_func:gen_node_key(tl_ops_constant_limit.fuse.cache_key.req_fail, service_name, node_id)
-		shared:set(failed_count_key, math.random(100))
 		local failed_count = shared:get(failed_count_key)
 		if not failed_count then
 			failed_count = 0
