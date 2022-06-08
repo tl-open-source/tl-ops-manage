@@ -161,7 +161,7 @@ local tl_ops_limit_token_expand = function( service_name, node_id )
         capacity = token_mode.options.capacity
     end
 
-    if capacity <= 0 then
+    if capacity <= 1 then
         return false
     end
     
@@ -193,12 +193,13 @@ local tl_ops_limit_token_shrink = function( service_name, node_id )
         capacity = token_mode.options.capacity
     end
 
-    if capacity <= 0 then
+    if capacity <= 1 then
         return false
     end
     
     -- 暂定缩容量 = -当前桶容量 * 0.5
     local shrink_capacity = capacity * 0.5
+
     
     local res ,_ = shared:incr(capacity_key, -shrink_capacity)
     if not res or res == false then
