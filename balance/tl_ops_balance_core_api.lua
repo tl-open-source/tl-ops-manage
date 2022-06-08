@@ -1,6 +1,6 @@
 -- tl_ops_balance_core_api
 -- en : balance core api impl
--- zn : 根据api路由的具体实现
+-- zn : 根据api匹配路由的具体实现
 -- @author iamtsm
 -- @email 1905333456@qq.com
 

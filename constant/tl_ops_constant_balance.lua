@@ -1,5 +1,6 @@
 local tl_ops_constant_api = require("constant.tl_ops_constant_api");
 local tl_ops_constant_cookie = require("constant.tl_ops_constant_cookie");
+local tl_ops_constant_header = require("constant.tl_ops_constant_header");
 local tl_ops_constant_param = require("constant.tl_ops_constant_param");
 local tl_ops_constant_service = require("constant.tl_ops_constant_service");
 
@@ -27,6 +28,13 @@ local tl_ops_constant_balance = {
             random = tl_ops_constant_cookie.random
         },
         rule = tl_ops_constant_cookie.rule.point
+    },
+    header = {
+        list = {
+            point = tl_ops_constant_header.point,
+            random = tl_ops_constant_header.random
+        },
+        rule = tl_ops_constant_header.rule.point
     },
     param = {
         list = {

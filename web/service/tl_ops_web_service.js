@@ -13,6 +13,35 @@ const tl_ops_web_service_main = function (){
     window.layedit = layui.layedit;
 
     tl_ops_web_service_render();
+
+    form.on('switch()', function(data){
+        let service = data.elem.name;
+        let nodes = res_data.tl_ops_service_list[data.elem.name];
+        if(data.elem.checked){
+            tl_ops_web_service_online_all_node(service, nodes, data)
+        }else{
+            tl_ops_web_service_offline_all_node(service, nodes, data)
+        }
+    });  
+
+    //表格外部事件操作
+    $('.layui-btn.layuiadmin-btn-useradmin').on('click', function(){
+        let type = $(this).data('type');
+        tl_ops_web_service_event()[type] ? tl_ops_web_service_event()[type].call(this) : '';
+    });
+
+    //搜索
+    form.on('submit('+_search_id_name+')', function(data){
+        tl_ops_web_service_reload(data.field);
+    });
+
+    //行事件操作
+    table.on('tool('+_table_id_name+')', function(obj) {
+        let type = obj.event;
+        let data = obj.data;
+        tl_ops_web_service_event()[type] ? tl_ops_web_service_event()[type].call(this, data) : '';
+    });
+
 };
 
 //事件监听定义
@@ -27,15 +56,40 @@ const tl_ops_web_service_cols = function () {
     let health_timer_list = state_data ? state_data.health.timer_list || [] : false
     return [[
         {
-            field: 'name', title: '服务名称', width:"45%"
+            field: 'name', title: '服务名称', width:"25%"
         },  {
-            field: 'node', title: '节点列表',width:"25%",
+            field: 'node', title: '节点列表', width:"25%",
             templet : (d)=>{
                 return `<p style='text-decoration: underline;color:red;font-weight:700;cursor: pointer;' onclick='tl_ops_web_service_node_manage("${d.name}")'>${d.node.length}个节点</p>`;
             }
-        }, 
-        {
-            field: 'oper', title: '服务健康',width:"30%",
+        },  {
+            field: 'online', title: '服务状态', width:"25%",
+            templet : (d)=>{
+                let allNodeOnline = true;
+                if (state_data.service[d.name]){
+                    let nodes = state_data.service[d.name].nodes;
+                    if (nodes && nodes.length >= 0){
+                        for(let nodeName in nodes){
+                            if (!nodes[nodeName].health_state){
+                                allNodeOnline = false;
+                            }
+                        }
+                    }
+                }
+                
+                if( allNodeOnline ){
+                    return `<div id="tl-service-change-state-${d.name}" onmouseleave="tl_mouse_leave_tips()"
+                                onmouseenter="tl_mouse_enter_tips('tl-service-change-state-${d.name}','点击关闭，将${d.name}服务下所有节点下线，且关闭服务自检')"> 
+                                <input type="checkbox" name="${d.name}" lay-skin="switch" lay-text="全部上线|全部下线" checked> 
+                            </div>`; 
+                }
+                return `<div id="tl-service-change-state-${d.name}" onmouseleave="tl_mouse_leave_tips()"
+                            onmouseenter="tl_mouse_enter_tips('tl-service-change-state-${d.name}','点击开启，将${d.name}服务下所有节点上线，且开启服务自检')">
+                            <input type="checkbox" name="${d.name}" lay-skin="switch" lay-text="全部上线|全部下线" >
+                        </div>`;
+            }
+        },  {
+            field: 'oper', title: '服务健康',width:"25%",
             templet : (d)=>{
                 let isNodeEmpty = d.node.length === 0;
                 let isChecking = health_timer_list.includes(d.name) && !state_data.service[d.name].health_uncheck;
@@ -44,17 +98,18 @@ const tl_ops_web_service_cols = function () {
                 <div onclick="tl_ops_web_service_open_health('${d.name}',${isNodeEmpty})" id="tl-service-check-${d.name}" onmouseleave="tl_mouse_leave_tips()" 
                     style="${(!isChecking && isAutoLoad)?'display: inline-flex;':'display:none;'}"
                     onmouseenter="tl_mouse_enter_tips('tl-service-check-${d.name}','${isNodeEmpty ? '暂无节点': '点击可开启自检'}')"> 
-                    <i class="layui-icon layui-icon-play tl-ops-web-service-oper"  style="${isNodeEmpty ? 'color: #d0d9d0;cursor: no-drop;' : ''}"> </i>
+                    <i class="layui-icon layui-icon-play tl-ops-web-service-oper" style="${isNodeEmpty ? 'color: #d0d9d0;cursor: no-drop;' : ''}"> </i>
                      <b style="margin-left: 8px;">开启自检</b>
                 </div>
                 <div onclick="tl_ops_web_service_pause_health('${d.name}',${isNodeEmpty})" id="tl-service-check-done-${d.name}" onmouseleave="tl_mouse_leave_tips()" 
                     style="${isChecking?'display: inline-flex;':'display:none'}"
                     onmouseenter="tl_mouse_enter_tips('tl-service-check-done-${d.name}','${d.name}已开启自检，点击可暂停自检')">
-                    <i class="layui-icon layui-icon-pause tl-ops-web-service-oper" style="color: #40ed40;margin-right: 10px;" ></i>
-
+                    
                     <i class="layui-icon layui-icon-loading tl-ops-web-service-oper layui-anim layui-anim-rotate layui-anim-loop" 
                         style="cursor: no-drop;color: #40ed40;" ></i>
                     <b style="margin-left: 8px;color: #40ed40;cursor: no-drop;">自检中..</b>
+
+                    <i class="layui-icon layui-icon-pause tl-ops-web-service-oper" style="color: #40ed40;margin-left: 10px;" ></i>
                 </div>
                 `;
             }
@@ -63,7 +118,7 @@ const tl_ops_web_service_cols = function () {
 };
 
 
-//开启自检
+//重启自检
 const tl_ops_web_service_open_health = function (name, isNodeEmpty) {
     if(isNodeEmpty){
         layer.msg("当前服务暂无节点")
@@ -72,11 +127,12 @@ const tl_ops_web_service_open_health = function (name, isNodeEmpty) {
     $.ajax(tl_ajax_data({
         url: '/tlops/state/set',
         data : JSON.stringify({
-            tl_ops_state_cmd : 'un-pause-health-check',
-            tl_ops_state_service : name
+            cmd : 'un-pause-health-check',
+            service : name
         }),
         contentType : "application/json",
         success : (res)=>{
+            layer.msg(name+"自检重启成功")
             tl_ops_web_service_render();
         }
     }));
@@ -87,14 +143,71 @@ const tl_ops_web_service_pause_health = function (name, isNodeEmpty) {
     $.ajax(tl_ajax_data({
         url: '/tlops/state/set',
         data : JSON.stringify({
-            tl_ops_state_cmd : 'pause-health-check',
-            tl_ops_state_service : name
+            cmd : 'pause-health-check',
+            service : name
         }),
         contentType : "application/json",
         success : (res)=>{
+            layer.msg(name+"自检暂停成功")
             tl_ops_web_service_render();
         }
     }));
+}
+
+//下线服务所有节点
+const tl_ops_web_service_offline_all_node = function (name, nodes, data) {
+    if(!nodes || nodes.length === 0){
+        layer.msg("当前服务暂无节点")
+        return
+    }
+    for(let i = 0; i < nodes.length; i++){
+        $.ajax(tl_ajax_data({
+            url: '/tlops/state/set',
+            data : JSON.stringify({
+                cmd : 'offline-service-node',
+                service : name,
+                node_index : i,
+            }),
+            async : false,
+            contentType : "application/json",
+            success : (res)=>{
+                if(res.code !== 0){
+                    layer.msg(nodes[i].name + " 下线失败")
+                }else{
+                    layer.msg(nodes[i].name + " 下线成功")
+                }
+            }
+        }));
+    }
+    tl_ops_web_service_render();
+}
+
+//上线服务所有节点
+const tl_ops_web_service_online_all_node = function (name, nodes, data) {
+    if(!nodes || nodes.length === 0){
+        layer.msg("当前服务暂无节点")
+        return
+    }
+    for(let i = 0; i < nodes.length; i++){
+        $.ajax(tl_ajax_data({
+            url: '/tlops/state/set',
+            data : JSON.stringify({
+                cmd : 'online-service-node',
+                service : name,
+                node_index : i,
+            }),
+            async : false,
+            contentType : "application/json",
+            success : (res)=>{
+                if(res.code !== 0){
+                    layer.msg(nodes[i].name + " 上线失败")
+                }else{
+                    layer.msg(nodes[i].name + " 上线成功")
+                }
+            }
+        }));
+    }
+    tl_ops_web_service_render();
 }
 
 //表格render
@@ -136,25 +249,7 @@ const tl_ops_web_service_render = function () {
                     </b> 
                     <b> ( ${rule==='auto_load' ? '系统启动时开启自检' : '手动启动某次自检'} )</b>
                 `;
-    
-                //表格外部事件操作
-                $('.layui-btn.layuiadmin-btn-useradmin').on('click', function(){
-                    let type = $(this).data('type');
-                    tl_ops_web_service_event()[type] ? tl_ops_web_service_event()[type].call(this) : '';
-                });
-    
-                //搜索
-                form.on('submit('+_search_id_name+')', function(data){
-                    tl_ops_web_service_reload(data.field);
-                });
-    
-                //行事件操作
-                table.on('tool('+_table_id_name+')', function(obj) {
-                    let type = obj.event;
-                    let data = obj.data;
-                    tl_ops_web_service_event()[type] ? tl_ops_web_service_event()[type].call(this, data) : '';
-                });
-    
+
                 return {
                     "code": res.code,
                     "msg": res.msg,

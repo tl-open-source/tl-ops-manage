@@ -1,6 +1,6 @@
 -- tl_ops_balance_core_param
 -- en : balance core param impl
--- zn : 根据param路由的具体实现
+-- zn : 根据请求参数匹配路由的具体实现
 -- @author iamtsm
 -- @email 1905333456@qq.com
 

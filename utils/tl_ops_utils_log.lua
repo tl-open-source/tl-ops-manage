@@ -6,7 +6,7 @@
 
 local ngx = require "ngx"
 local cjson_safe = require("cjson.safe")
-local tl_ops_constant_log = require("constant.tl_ops_constant_log")
+local tl_ops_env = require("tl_ops_manage_env")
 
 local _M = {
 	debug = 1,
@@ -98,8 +98,8 @@ function _M:new(module)
   	return setmetatable({
 		level = _M.debug,
 		module = module,
-		dir = tl_ops_constant_log.log_dir,
-		format_json = tl_ops_constant_log.format_json
+		dir = tl_ops_env.log.log_dir,
+		format_json = tl_ops_env.log.format_json
 	}, self)
 end
 

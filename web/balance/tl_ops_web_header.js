@@ -1,60 +1,60 @@
-const _table_id_name = "tl-ops-web-param-table";
-const _search_id_name = "tl-ops-web-param-search";
-const _add_form_btn_id_name = "tl-ops-web-param-form-submit";
-const _add_form_id_name = "tl-ops-web-param-form";
+const _table_id_name = "tl-ops-web-header-table";
+const _search_id_name = "tl-ops-web-header-search";
+const _add_form_btn_id_name = "tl-ops-web-header-form-submit";
+const _add_form_id_name = "tl-ops-web-header-form";
 let rule = '';
 let res_data = {};
 
-const tl_ops_web_param_main = function (){
+const tl_ops_web_header_main = function (){
     window.$ = layui.$;
     window.form = layui.form;
     window.table = layui.table;
     window.layedit = layui.layedit;
 
-    tl_ops_web_param_render();
+    tl_ops_web_header_render();
 
     //表格外部事件操作
     $('.layui-btn.layuiadmin-btn-useradmin').on('click', function(){
         let type = $(this).data('type');
-        tl_ops_web_param_event()[type] ? tl_ops_web_param_event()[type].call(this) : '';
+        tl_ops_web_header_event()[type] ? tl_ops_web_header_event()[type].call(this) : '';
     });
 
     //搜索
     form.on('submit('+_search_id_name+')', function(data){
-        tl_ops_web_param_reload(data.field);
+        tl_ops_web_header_reload(data.field);
     });
 
     //行事件操作
     table.on('tool('+_table_id_name+')', function(obj) {
         let type = obj.event;
         let data = obj.data;
-        tl_ops_web_param_event()[type] ? tl_ops_web_param_event()[type].call(this, data) : '';
+        tl_ops_web_header_event()[type] ? tl_ops_web_header_event()[type].call(this, data) : '';
     });
 
 };
 
 //事件监听定义
-const tl_ops_web_param_event = function () {
+const tl_ops_web_header_event = function () {
     return {
-        add:  tl_ops_web_param_add,
-        edit : tl_ops_web_param_edit,
-        delete : tl_ops_web_param_delete
+        add:  tl_ops_web_header_add,
+        edit : tl_ops_web_header_edit,
+        delete : tl_ops_web_header_delete
     }
 };
 
 //表格cols -- point策略
-const tl_ops_web_param_point_cols = function () {
+const tl_ops_web_header_point_cols = function () {
     return [[
         {
             type:'checkbox',fixed : 'left', width: "5%"
         }, {
             field: 'id', title: 'ID',width:"10%"
-        },  {
+        }, {
             field: 'host', title: '域名',width:"15%"
         }, {
-            field: 'key', title: '请求参数键', width:"10%"
+            field: 'key', title: 'header键', width:"10%"
         }, {
-            field: 'value', title: '请求参数值', width:"10%"
+            field: 'value', title: 'header值', width:"10%"
         }, {
             field: 'service', title: '所属服务',width:"15%"
         }, {
@@ -66,13 +66,13 @@ const tl_ops_web_param_point_cols = function () {
             align: 'center',
             fixed: 'right',
             title: '操作',
-            toolbar: '#tl-ops-web-param-operate'
+            toolbar: '#tl-ops-web-header-operate'
         }
     ]];
 };
 
 //表格cols -- random策略
-const tl_ops_web_param_random_cols = function () {
+const tl_ops_web_header_random_cols = function () {
     return [[
         {
             type:'checkbox',fixed : 'left', width: "5%"
@@ -81,9 +81,9 @@ const tl_ops_web_param_random_cols = function () {
         }, {
             field: 'host', title: '域名',width:"15%"
         }, {
-            field: 'key', title: '请求参数键', width:"10%"
+            field: 'key', title: 'header键', width:"10%"
         }, {
-            field: 'value', title: '请求参数值', width:"10%"
+            field: 'value', title: 'header值', width:"10%"
         }, {
             field: 'service', title: '所属服务',width:"15%"
         },  {
@@ -93,82 +93,82 @@ const tl_ops_web_param_random_cols = function () {
             align: 'center',
             fixed: 'right',
             title: '操作',
-            toolbar: '#tl-ops-web-param-operate'
+            toolbar: '#tl-ops-web-header-operate'
         }
     ]];
 };
 
 //表格render
-const tl_ops_web_param_render = function () {
+const tl_ops_web_header_render = function () {
     table.render(tl_ajax_data({
         elem: '#'+_table_id_name,
-        url: '/tlops/param/list',
-        cols: rule === 'random' ? tl_ops_web_param_random_cols() : tl_ops_web_param_point_cols(),
+        url: '/tlops/header/list',
+        cols: rule === 'random' ? tl_ops_web_header_random_cols() : tl_ops_web_header_point_cols(),
         page:true,
         needReloadMsg : false,
-        toolbar: '#tl-ops-web-param-toolbar',
+        toolbar: '#tl-ops-web-header-toolbar',
         defaultToolbar: ['filter', 'print', 'exports'],
         totalRow: true, //开启合计行
         parseData: function(res){
             res_data = res.data;
-            rule = res_data.tl_ops_param_rule
-
-            let datas = res_data.tl_ops_param_list[rule];
+            rule = res_data.tl_ops_header_rule
+            let datas = res_data.tl_ops_header_list[rule];
             if (datas === undefined){ datas = []; }
             datas = datas.sort(function(a, b){return b.id - a.id})
 
-            $('#tl-ops-web-param-cur-rule')[0].innerHTML = `<b style='color:red;font-size:16px;cursor: pointer;' class="layui-badge layui-bg-red" 
-                id="tl-param-rule" onmouseleave="tl_mouse_leave_tips()" onclick="tl_ops_web_param_change_rule()" 
-                onmouseenter="tl_mouse_enter_tips('tl-param-rule','点击切换策略，切换将实时生效')">
+            $('#tl-ops-web-header-cur-rule')[0].innerHTML = `<b style='color:red;font-size:16px;cursor: pointer;' class="layui-badge layui-bg-red" 
+                id="tl-header-rule" onmouseleave="tl_mouse_leave_tips()" onclick="tl_ops_web_header_change_rule()" 
+                onmouseenter="tl_mouse_enter_tips('tl-header-rule','点击切换策略，切换将实时生效')">
                 ${rule}
             </b><b> ( ${rule==='random' ? '随机节点路由' : '指定节点路由'} )</b>`;
 
             return {
                 "code": res.code,
                 "msg": res.msg,
-                "count": res.data.tl_ops_param_list[rule].length,
-                "data": res.data.tl_ops_param_list[rule]
+                "count": datas.length,
+                "data": datas
             };
         }
     }));
 };
 
 //表格reload
-const tl_ops_web_param_reload = function (matcher) {
+const tl_ops_web_header_reload = function (matcher) {
     table.render(tl_ajax_data({
         elem: '#'+_table_id_name,
-        url: '/tlops/param/list',
+        url: '/tlops/header/list',
         where : matcher,
-        cols: rule === 'random' ? tl_ops_web_param_random_cols() : tl_ops_web_param_point_cols(),
+        cols: rule === 'random' ? tl_ops_web_header_random_cols() : tl_ops_web_header_point_cols(),
         page:true,
         needReloadMsg : false,
-        toolbar: '#tl-ops-web-param-toolbar',
+        toolbar: '#tl-ops-web-header-toolbar',
         defaultToolbar: ['filter', 'print', 'exports'],
         totalRow: true, //开启合计行
         parseData: function(res){
             res_data = res.data;
-            rule = res_data.tl_ops_param_rule;
-            let datas = res_data.tl_ops_param_list[rule];
+            rule = res_data.tl_ops_header_rule;
+            let datas = res_data.tl_ops_header_list[rule];
             if (datas === undefined){ datas = []; }
             datas = datas.sort(function(a, b){return b.id - a.id})
-            
-            $('#tl-ops-web-param-cur-rule')[0].innerHTML = `<b style='color:red;font-size:16px;cursor: pointer;' class="layui-badge layui-bg-red" 
-                id="tl-param-rule" onmouseleave="tl_mouse_leave_tips()" onclick="tl_ops_web_param_change_rule()" 
-                onmouseenter="tl_mouse_enter_tips('tl-param-rule','点击切换策略，切换将实时生效')">
+            $('#tl-ops-web-header-cur-rule')[0].innerHTML = `<b style='color:red;font-size:16px;cursor: pointer;' class="layui-badge layui-bg-red" 
+                id="tl-header-rule" onmouseleave="tl_mouse_leave_tips()" onclick="tl_ops_web_header_change_rule()" 
+                onmouseenter="tl_mouse_enter_tips('tl-header-rule','点击切换策略，切换将实时生效')">
                 ${rule}
             </b><b> ( ${rule==='random' ? '随机节点路由' : '指定节点路由'} )</b>`;
             return {
                 "code": res.code,
                 "msg": res.msg,
-                "count": res.data.tl_ops_param_list[rule].length,
-                "data": res.data.tl_ops_param_list[rule]
+                "count": datas.length,
+                "data": datas
             };
         }
     }));
 };
 
-//删除param路由
-const tl_ops_web_param_delete = function () {
+
+
+//删除header路由
+const tl_ops_web_header_delete = function () {
     let checkStatus = table.checkStatus(_table_id_name)
         ,checkData = checkStatus.data; //得到选中的数据
 
@@ -182,25 +182,26 @@ const tl_ops_web_param_delete = function () {
         idList.push(checkData[i].id);
     }
 
-    let new_list = res_data.tl_ops_param_list[rule].filter(item=>{
+    let new_list = res_data.tl_ops_header_list[rule].filter(item=>{
         return !idList.includes(item.id);
     })
 
-    res_data.tl_ops_param_list[rule] = new_list;
+    res_data.tl_ops_header_list[rule] = new_list;
 
     $.ajax(tl_ajax_data({
-        url: '/tlops/param/set',
+        url: '/tlops/header/set',
         data : JSON.stringify(res_data),
         contentType : "application/json",
         success : (res)=>{
-            tl_ops_web_param_reload()
+            tl_ops_web_header_reload()
         }
     }));
 }
 
 
-//更新param路由策略
-const tl_ops_web_param_change_rule = function () {
+
+//更新header路由策略
+const tl_ops_web_header_change_rule = function () {
     if(rule === undefined || rule === ''){
         layer.msg("路由策略有误，刷新页面重试")
         return;
@@ -212,25 +213,25 @@ const tl_ops_web_param_change_rule = function () {
         rule = 'point';
     }
 
-    res_data.tl_ops_param_rule = rule;
+    res_data.tl_ops_header_rule = rule;
 
     $.ajax(tl_ajax_data({
-        url: '/tlops/param/set',
+        url: '/tlops/header/set',
         data : JSON.stringify(res_data),
         contentType : "application/json",
         success : (res)=>{
-            tl_ops_web_param_reload()
+            tl_ops_web_header_reload()
         }
     }));
 }
 
 
 //添加
-const tl_ops_web_param_add = function () {
+const tl_ops_web_header_add = function () {
     layer.open({
         type: 2
-        ,title: '添加自定义请求参数路由'
-        ,content: 'tl_ops_web_param_form.html?rule='+rule
+        ,title: '添加自定义header路由'
+        ,content: 'tl_ops_web_header_form.html?rule='+rule
         ,maxmin: true
         ,minStack:false
         ,area: ['700px', '600px']
@@ -240,15 +241,15 @@ const tl_ops_web_param_add = function () {
                 ,submit = layero.find('iframe').contents().find('#'+ _add_form_btn_id_name);
 
             iframeWindow.layui.form.on('submit('+ _add_form_btn_id_name +')', function(data){
-                if(!tl_ops_param_data_add_filter(data)){
+                if(!tl_ops_header_data_add_filter(data)){
                     return;
                 }
                 $.ajax(tl_ajax_data({
-                    url: '/tlops/param/set',
+                    url: '/tlops/header/set',
                     data : JSON.stringify(res_data),
                     contentType : "application/json",
                     success : (res)=>{
-                        tl_ops_web_param_reload()
+                        tl_ops_web_header_reload()
                     }
                 }));
                 layer.close(index);
@@ -260,11 +261,11 @@ const tl_ops_web_param_add = function () {
 
 
 //编辑
-const tl_ops_web_param_edit = function (evtdata) {
+const tl_ops_web_header_edit = function (evtdata) {
     layer.open({
         type: 2
-        ,title: '编辑请求参数自定义配置'
-        ,content: 'tl_ops_web_param_form.html?rule='+rule+"&service="+evtdata.service+"&node="+evtdata.node
+        ,title: '编辑header自定义配置'
+        ,content: 'tl_ops_web_header_form.html?rule='+rule+"&service="+evtdata.service+"&node="+evtdata.node
         ,maxmin: true
         ,minStack:false
         ,area: ['700px', '600px']
@@ -273,15 +274,15 @@ const tl_ops_web_param_edit = function (evtdata) {
             let iframeWindow = window['layui-layer-iframe'+ index]
                 ,submit = dom.find('iframe').contents().find('#'+ _add_form_btn_id_name);
             iframeWindow.layui.form.on('submit('+ _add_form_btn_id_name +')', function(data){
-                if(!tl_ops_param_data_edit_filter(data)){
+                if(!tl_ops_header_data_edit_filter(data)){
                     return;
                 }
                 $.ajax(tl_ajax_data({
-                    url: '/tlops/param/set',
+                    url: '/tlops/header/set',
                     data : JSON.stringify(res_data),
                     contentType : "application/json",
                     success : (res)=>{
-                        tl_ops_web_param_reload()
+                        tl_ops_web_header_reload()
                     }
                 }));
                 layer.close(index);
@@ -301,7 +302,7 @@ const tl_ops_web_param_edit = function (evtdata) {
 
 
 //过滤新增数据
-const tl_ops_param_data_add_filter = function( data ) {
+const tl_ops_header_data_add_filter = function( data ) {
     if(rule === 'random'){
         delete data.field.node
     }
@@ -318,17 +319,17 @@ const tl_ops_param_data_add_filter = function( data ) {
         }
     }
 
-    for(let i = 0; i < res_data.tl_ops_param_list[rule].length; i++){
-        let obj = res_data.tl_ops_param_list[rule][i];
+    for(let i = 0; i < res_data.tl_ops_header_list[rule].length; i++){
+        let obj = res_data.tl_ops_header_list[rule][i];
         if (obj.key === data.field.key && obj.value === data.field.value && obj.id !== data.field.id){
-            layer.msg("请求参数键值对 “"+obj.key+"” 已存在")
+            layer.msg("header键值对 “"+obj.key+"” 已存在")
             return false;
         }
     }
 
-    res_data.tl_ops_param_list[rule].push(data.field)
+    res_data.tl_ops_header_list[rule].push(data.field)
 
-    res_data.tl_ops_param_list[rule].forEach(item=>{
+    res_data.tl_ops_header_list[rule].forEach(item=>{
         if( item.LAY_TABLE_INDEX !== undefined){
             delete item.LAY_TABLE_INDEX
         }
@@ -339,7 +340,7 @@ const tl_ops_param_data_add_filter = function( data ) {
 
 
 //过滤编辑数据
-const tl_ops_param_data_edit_filter = function( data ) {
+const tl_ops_header_data_edit_filter = function( data ) {
     if(rule === 'random'){
         delete data.field.node
     }
@@ -353,7 +354,7 @@ const tl_ops_param_data_edit_filter = function( data ) {
         }
     }
     let cur_list = []
-    res_data.tl_ops_param_list[rule].forEach((item)=>{
+    res_data.tl_ops_header_list[rule].forEach((item)=>{
         if(item.id === data.field.id){
             data.field.change = true;
             item = data.field;
@@ -361,17 +362,17 @@ const tl_ops_param_data_edit_filter = function( data ) {
         cur_list.push(item)
     })
 
-    for(let i = 0; i < res_data.tl_ops_param_list[rule].length; i++){
-        let obj = res_data.tl_ops_param_list[rule][i];
+    for(let i = 0; i < res_data.tl_ops_header_list[rule].length; i++){
+        let obj = res_data.tl_ops_header_list[rule][i];
         if (obj.key === data.field.key && obj.value === data.field.value && obj.id !== data.field.id){
-            layer.msg("请求参数键值对 “"+obj.key+"” 已存在")
+            layer.msg("header键值对 “"+obj.key+"” 已存在")
             return false;
         }
     }
 
-    res_data.tl_ops_param_list[rule] = cur_list;
+    res_data.tl_ops_header_list[rule] = cur_list;
 
-    res_data.tl_ops_param_list[rule].forEach(item=>{
+    res_data.tl_ops_header_list[rule].forEach(item=>{
         if( item.LAY_TABLE_INDEX !== undefined){
             delete item.LAY_TABLE_INDEX
         }

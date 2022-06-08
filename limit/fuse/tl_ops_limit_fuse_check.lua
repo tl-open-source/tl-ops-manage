@@ -274,12 +274,14 @@ tl_ops_limit_fuse_check_nodes = function ( conf )
 		local node_id = i-1
 
 		local success_count_key = tl_ops_utils_func:gen_node_key(tl_ops_constant_limit.fuse.cache_key.req_succ, service_name, node_id)
+		shared:set(success_count_key, math.random(100))
 		local success_count = shared:get(success_count_key)
 		if not success_count then
 			success_count = 0
 		end
 
 		local failed_count_key = tl_ops_utils_func:gen_node_key(tl_ops_constant_limit.fuse.cache_key.req_fail, service_name, node_id)
+		shared:set(failed_count_key, math.random(100))
 		local failed_count = shared:get(failed_count_key)
 		if not failed_count then
 			failed_count = 0
@@ -339,7 +341,7 @@ tl_ops_limit_fuse_node_degrade = function ( conf, node_id )
 			return
 		end
 
-		local key = tl_ops_utils_func:gen_node_key(tl_ops_constant_limit.node_token.cache_key.capacity, service_name, node_id)
+		local key = tl_ops_utils_func:gen_node_key(tl_ops_constant_limit.token.cache_key.capacity, service_name, node_id)
 		local capacity, _ = shared:get(key)
 
 		tlog:dbg("tl_ops_limit_fuse_node_degrade expand ok, node=",name,", capacity=",capacity)
@@ -387,7 +389,7 @@ tl_ops_limit_fuse_node_upgrade = function ( conf, node_id )
 			return
 		end
 
-		local key = tl_ops_utils_func:gen_node_key(tl_ops_constant_limit.node_token.cache_key.capacity, service_name, node_id)
+		local key = tl_ops_utils_func:gen_node_key(tl_ops_constant_limit.token.cache_key.capacity, service_name, node_id)
 		local capacity, _ = shared:get(key)
 
 		tlog:dbg("tl_ops_limit_fuse_node_upgrade shrink ok, node=",name,", capacity=",capacity,",key=",key)
@@ -434,7 +436,7 @@ tl_ops_limit_fuse_service_degrade = function ( conf )
 			return
 		end
 
-		local key = tl_ops_utils_func:gen_node_key(tl_ops_constant_limit.node_token.cache_key.capacity, service_name)
+		local key = tl_ops_utils_func:gen_node_key(tl_ops_constant_limit.token.cache_key.capacity, service_name)
 		local capacity, _ = shared:get(key)
 
 		tlog:dbg("tl_ops_limit_fuse_service_degrade expand ok, service_name=",service_name,", capacity=",capacity,",key=",key)
@@ -480,7 +482,7 @@ tl_ops_limit_fuse_service_upgrade = function ( conf )
 			return
 		end
 
-		local key = tl_ops_utils_func:gen_node_key(tl_ops_constant_limit.node_token.cache_key.capacity, service_name)
+		local key = tl_ops_utils_func:gen_node_key(tl_ops_constant_limit.token.cache_key.capacity, service_name)
 		local capacity, _ = shared:get(key)
 
 		tlog:dbg("tl_ops_limit_fuse_service_upgrade shrink ok, service_name=",service_name,", capacity=",capacity,",key=",key)

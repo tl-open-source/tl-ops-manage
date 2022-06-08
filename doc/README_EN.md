@@ -78,14 +78,7 @@ You need to modify the path of the content in the tl_ops_manage.conf to your own
 		content_by_lua_file "/ your path /tl-open-source/tl-ops-manage/api/tl_ops_api_set_service.lua";
 	}
     #...
-
-And you need to modify the path of the content in the tl_ops_constant_log.lua to your own path
-
-    local tl_ops_constant_log = {
-        dir = [[/your path/]],
-        format_json = true
-    }
-
+    
 Finallyinaly start nginx，if it is the first time start ，visit `http://127.0.0.1/tlops/reset` to init project
     
     

@@ -116,11 +116,11 @@ if has_new_service_name == true and new_service_name ~= '' then
         return;
     end
 
-    -- 同步熔断限流配置
+    -- 同步熔断配置
     local cache_limit = require("cache.tl_ops_cache"):new("tl-ops-limit");
     local limit_list_str, _ = cache_limit:get(tl_ops_constant_limit.fuse.cache_key.options_list);
     if not limit_list_str or limit_list_str == nil then
-        tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.not_found, "not found limit list", _);
+        tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.not_found, "not found limit fuse list", _);
         return;
     end
     local limit_list_table = cjson.decode(limit_list_str);
@@ -129,7 +129,39 @@ if has_new_service_name == true and new_service_name ~= '' then
 
     local limit_res, _ = cache_limit:set(tl_ops_constant_limit.fuse.cache_key.options_list, cjson.encode(limit_list_table));
     if not limit_res then
-        tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.error, "init limit conf err ", _)
+        tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.error, "init limit fuse conf err ", _)
+        return;
+    end
+
+    -- 同步令牌桶配置
+    local token_limit_list_str, _ = cache_limit:get(tl_ops_constant_limit.token.cache_key.options_list);
+    if not token_limit_list_str or token_limit_list_str == nil then
+        tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.not_found, "not found limit token list", _);
+        return;
+    end
+    local token_limit_list_table = cjson.decode(token_limit_list_str);
+    tl_ops_constant_limit.token.demo.service_name = new_service_name
+    table.insert(token_limit_list_table, tl_ops_constant_limit.token.demo)
+
+    local limit_res, _ = cache_limit:set(tl_ops_constant_limit.token.cache_key.options_list, cjson.encode(token_limit_list_table));
+    if not limit_res then
+        tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.error, "init limit token conf err ", _)
+        return;
+    end
+
+    -- 同步漏桶配置
+    local leak_limit_list_str, _ = cache_limit:get(tl_ops_constant_limit.leak.cache_key.options_list);
+    if not leak_limit_list_str or leak_limit_list_str == nil then
+        tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.not_found, "not found limit leak list", _);
+        return;
+    end
+    local leak_limit_list_table = cjson.decode(leak_limit_list_str);
+    tl_ops_constant_limit.leak.demo.service_name = new_service_name
+    table.insert(leak_limit_list_table, tl_ops_constant_limit.leak.demo)
+
+    local limit_res, _ = cache_limit:set(tl_ops_constant_limit.leak.cache_key.options_list, cjson.encode(leak_limit_list_table));
+    if not limit_res then
+        tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.error, "init limit leak conf err ", _)
         return;
     end
 end

@@ -33,8 +33,7 @@
     .tl-ops-limit-change-btn{
         color:black;
         background: #f7f9fa;
-        width: 100%;
-        padding: 0 10px;
+        width: 50%;
     }
     .tl-ops-limit-change-btn:hover{
         background: #e3e4e5;
@@ -88,9 +87,12 @@
                             <span style="color: rgba(0,0,0,.45);">自动恢复时间 (ms)：</span><span class="tl-limit-option-value">{{option.recover}}</span>
                         </div>      
                     </div>
-                    <div>
-                        <button  class="layui-btn layui-icon layui-icon-set tl-ops-limit-change-btn" onclick="tl_ops_web_limit_edit('{{option.service_name}}')">
-                            <b style="margin-left: 10px;">修改</b>
+                    <div class="layui-btn-group" style="width:100%;overflow: hidden;">
+                        <button class="layui-btn layui-icon layui-icon-set tl-ops-limit-change-btn" onclick="tl_ops_web_limit_edit('{{option.service_name}}','{{option.depend}}')">
+                            <b style="margin-left: 10px;">修改熔断</b>
+                        </button>
+                        <button  class="layui-btn layui-icon layui-icon-set tl-ops-limit-change-btn" onclick="tl_ops_web_limit_bucket_edit('{{option.service_name}}','{{option.depend}}')">
+                            <b style="margin-left: 10px;">修改限流</b>
                         </button>
                     </div>                               
                 </div>

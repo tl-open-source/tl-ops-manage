@@ -11,6 +11,7 @@ local tl_ops_constant_balance = require("constant.tl_ops_constant_balance");
 local tl_ops_constant_service = require("constant.tl_ops_constant_service");
 local tl_ops_constant_api = require("constant.tl_ops_constant_api");
 local tl_ops_constant_cookie = require("constant.tl_ops_constant_cookie");
+local tl_ops_constant_header = require("constant.tl_ops_constant_header");
 local tl_ops_constant_param = require("constant.tl_ops_constant_param");
 local tl_ops_constant_health = require("constant.tl_ops_constant_health")
 local tl_ops_constant_limit = require("constant.tl_ops_constant_limit")
@@ -52,6 +53,26 @@ local function rest_init_cookie()
     ));
     if not cache_cookie_list then
         tl_ops_utils_func:get_str_json_by_return_arg(tl_ops_rt.error, "cookie list init err", _)
+        return;
+    end    
+end
+
+
+-- init balance header
+local function rest_init_header()
+    local cache_header = require("cache.tl_ops_cache"):new("tl-ops-header");
+
+    local cache_header_rule, _ = cache_header:set(tl_ops_constant_header.cache_key.rule, tl_ops_constant_balance.header.rule);
+    if not cache_header_rule then
+        tl_ops_utils_func:get_str_json_by_return_arg(tl_ops_rt.error, "header init err", _)
+        return;
+    end
+    
+    local cache_header_list, _ = cache_header:set(tl_ops_constant_header.cache_key.list, cjson.encode(
+        tl_ops_constant_balance.header.list
+    ));
+    if not cache_header_list then
+        tl_ops_utils_func:get_str_json_by_return_arg(tl_ops_rt.error, "header list init err", _)
         return;
     end    
 end
@@ -127,7 +148,7 @@ local function rest_init_limit_fuse()
         tl_ops_constant_limit.fuse.options
     ));
     if not options_list then
-        tl_ops_utils_func:get_str_json_by_return_arg(tl_ops_rt.error, "health options init err", _)
+        tl_ops_utils_func:get_str_json_by_return_arg(tl_ops_rt.error, "limit options init err", _)
         return;
     end
 
@@ -141,13 +162,28 @@ local function rest_init_limit_fuse()
         end
     end
 
+    local token_options_list, _ = cache_limit:set(tl_ops_constant_limit.token.cache_key.options_list, cjson.encode(
+        tl_ops_constant_limit.token.options
+    ));
+    if not token_options_list then
+        tl_ops_utils_func:get_str_json_by_return_arg(tl_ops_rt.error, "token options init err", _)
+        return;
+    end
+
+    local leak_options_list, _ = cache_limit:set(tl_ops_constant_limit.leak.cache_key.options_list, cjson.encode(
+        tl_ops_constant_limit.leak.options
+    ));
+    if not leak_options_list then
+        tl_ops_utils_func:get_str_json_by_return_arg(tl_ops_rt.error, "leak options init err", _)
+        return;
+    end
 end
-
-
 
 rest_init_api();
 
 rest_init_cookie();
+
+rest_init_header();
 
 rest_init_param();
 

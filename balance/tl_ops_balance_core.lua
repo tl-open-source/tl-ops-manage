@@ -1,7 +1,7 @@
 -- tl_ops_balance
 -- en : balance core impl
 -- zn : 路由的具体实现，根据用户自定义的service , 自动检查服务节点状态，
---      根据自定义的url, 请求参数，请求cookie，以及选中的路由策略，路由到合适的服务节点。
+--      根据自定义的url, 请求参数，请求cookie，请求头，以及选中的路由策略，路由到合适的服务节点。
 -- @author iamtsm
 -- @email 1905333456@qq.com
 
@@ -12,6 +12,7 @@ local tl_ops_constant_service = require("constant.tl_ops_constant_service");
 
 local tl_ops_balance_core_api = require("balance.tl_ops_balance_core_api");
 local tl_ops_balance_core_cookie = require("balance.tl_ops_balance_core_cookie");
+local tl_ops_balance_core_header = require("balance.tl_ops_balance_core_header");
 local tl_ops_balance_core_param = require("balance.tl_ops_balance_core_param");
 
 local cjson = require("cjson");
@@ -61,11 +62,17 @@ function _M:tl_ops_balance_api_balance()
 
             node, node_state, node_id, host = tl_ops_balance_core_cookie.tl_ops_balance_cookie_service_matcher(service_list_table)
             if not node then
-                -- 无匹配
-                ngx.header['Tl-Proxy-Server'] = "";
-                ngx.header['Tl-Proxy-State'] = "empty"
-                ngx.header['Tl-Proxy-Mode'] = balance_mode
-                ngx.exit(503)
+                -- cookie不匹配，走header负载
+                balance_mode = "header"
+
+                node, node_state, node_id, host = tl_ops_balance_core_header.tl_ops_balance_header_service_matcher(service_list_table)
+                if not node then
+                    -- 无匹配
+                    ngx.header['Tl-Proxy-Server'] = "";
+                    ngx.header['Tl-Proxy-State'] = "empty"
+                    ngx.header['Tl-Proxy-Mode'] = balance_mode
+                    ngx.exit(503)
+                end
             end
         end
     end
@@ -78,16 +85,16 @@ function _M:tl_ops_balance_api_balance()
         ngx.exit(503)
     end
 
-    if host ~= ngx.var.host then
+    -- 域名匹配
+    if host ~= "*" and host ~= ngx.var.host then
         ngx.header['Tl-Proxy-Server'] = "";
         ngx.header['Tl-Proxy-State'] = "pass"
         ngx.header['Tl-Proxy-Mode'] = balance_mode
         ngx.exit(503)
     end
 
-    -- 流控介入
-    local block = tl_ops_constant_limit.node_token.options.block 
-    local token_result = tl_ops_limit_fuse_token_bucket.tl_ops_limit_token( node.service, node_id, block )
+    -- 令牌桶流控介入
+    local token_result = tl_ops_limit_fuse_token_bucket.tl_ops_limit_token( node.service, node_id)
     if not token_result or token_result == false then
         ngx.header['Tl-Proxy-Server'] = "";
         ngx.header['Tl-Proxy-State'] = "limit"
@@ -96,7 +103,7 @@ function _M:tl_ops_balance_api_balance()
     end
 
     -- 节点下线
-    if not node_state or node_state == false then 
+    if not node_state or node_state == false then
         -- incr failed count
         local balance_req_fail_count_key = tl_ops_utils_func:gen_node_key(tl_ops_constant_balance.cache_key.req_fail, node.service, node_id)
         local failed_count = shared:get(balance_req_fail_count_key)

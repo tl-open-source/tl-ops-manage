@@ -9,6 +9,14 @@ const tl_ops_web_store_main = function (){
     window.layedit = layui.layedit;
 
     tl_ops_web_store_render();
+
+    //行事件操作
+    table.on('tool('+_table_id_name+')', function(obj) {
+        let type = obj.event;
+        let data = obj.data;
+        tl_ops_web_store_event()[type] ? tl_ops_web_store_event()[type].call(this, data) : '';
+    });
+
 };
 
 //事件监听定义
@@ -67,18 +75,12 @@ const tl_ops_web_store_render = function () {
                         newList.push(item)
                     }
                 })
+                res.data[key].version = parseInt(res.data[key].version)
                 res.data[key].updatetime = updatetime.toLocaleString()
                 res.data[key].list = newList;
                 data.push(res.data[key])
             }
             data = data.sort(function(a, b){return new Date(a.id) - new Date(b.id)})
-
-            //行事件操作
-            table.on('tool('+_table_id_name+')', function(obj) {
-                let type = obj.event;
-                let data = obj.data;
-                tl_ops_web_store_event()[type] ? tl_ops_web_store_event()[type].call(this, data) : '';
-            });
 
             return {
                 "code": res.code,

@@ -8,6 +8,8 @@ local cjson = require("cjson");
 local tlog = require("utils.tl_ops_utils_log"):new("tl_ops_limit_fuse_token_bucket");
 local tl_ops_utils_func = require("utils.tl_ops_utils_func");
 local tl_ops_constant_limit = require("constant.tl_ops_constant_limit")
+local cache_limit = require("cache.tl_ops_cache"):new("tl-ops-limit");
+
 local shared = ngx.shared.tlopsbalance
 
 
@@ -17,14 +19,38 @@ local _M = {
 local mt = { __index = _M }
 
 
+-- 通过service name获取对于的option
+local tl_ops_limit_token_get_option = function( options, name )
+	for i = 1, #options do
+		local service_name = options[i].service_name
+		if name == service_name then
+			return options[i]
+		end
+	end
+	return nil
+end
+
+
 -- 模式
 local tl_ops_limit_token_mode = function( service_name, node_id )
     local token_mode = nil
 
     if service_name then
-        token_mode = tl_ops_constant_limit.service_token
-        if node_id then
-            token_mode = tl_ops_constant_limit.node_token
+        local options_str = cache_limit:get(tl_ops_constant_limit.token.cache_key.options_list)
+        if not options_str then
+            tlog:err("tl_ops_limit_token_mode err, options_str=",options_str)
+            return nil
+        end
+        local options_list = cjson.decode(options_str)
+        local matcher_option = tl_ops_limit_token_get_option(options_list, service_name)
+
+        token_mode = { 
+            cache_key = tl_ops_constant_limit.token.cache_key,
+            options = matcher_option
+        }
+
+        if node_id then -- 暂不支持节点级别配置
+            
         end  
     end
 
@@ -34,7 +60,11 @@ end
 
 -- get token with lazy generate
 -- block 取用令牌数量
-local tl_ops_limit_token = function( service_name, node_id,  block )
+local tl_ops_limit_token = function( service_name, node_id )
+
+    local token_mode = tl_ops_limit_token_mode( service_name , node_id)
+
+    local block = token_mode.options.block
 
     if not block or type(block) ~= 'number' then
         return false
@@ -43,8 +73,6 @@ local tl_ops_limit_token = function( service_name, node_id,  block )
     if block <= 0 then
         return false
     end
-    
-    local token_mode = tl_ops_limit_token_mode( service_name , node_id)
 
     local capacity_key = tl_ops_utils_func:gen_node_key(token_mode.cache_key.capacity, service_name, node_id)
     local capacity = shared:get(capacity_key)
@@ -140,7 +168,6 @@ local tl_ops_limit_token_expand = function( service_name, node_id )
     -- 暂定扩容量 = 当前桶容量 * 0.5
     local expand_capacity = capacity * 0.5
 
-
     local capacity_key = tl_ops_utils_func:gen_node_key(token_mode.cache_key.capacity, service_name, node_id)
     local res ,_ = shared:incr(capacity_key, expand_capacity)
     if not res or res == false then
@@ -164,7 +191,6 @@ local tl_ops_limit_token_shrink = function( service_name, node_id )
             return false
         end
         capacity = token_mode.options.capacity
-        
     end
 
     if capacity <= 0 then

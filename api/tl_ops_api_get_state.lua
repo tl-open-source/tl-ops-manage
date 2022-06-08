@@ -7,29 +7,23 @@
 
 local cjson = require("cjson");
 cjson.encode_empty_table_as_object(false)
-local cache_service = require("cache.tl_ops_cache"):new("tl-ops-service");
 local tl_ops_constant_balance = require("constant.tl_ops_constant_balance");
 local tl_ops_constant_service = require("constant.tl_ops_constant_service");
 local tl_ops_constant_health = require("constant.tl_ops_constant_health")
 local tl_ops_constant_limit = require("constant.tl_ops_constant_limit");
 local tl_ops_rt = require("constant.tl_ops_constant_comm").tl_ops_rt;
 local tl_ops_utils_func = require("utils.tl_ops_utils_func");
-local tlog = require("utils.tl_ops_utils_log"):new("tl_ops_health_state");
+local tlog = require("utils.tl_ops_utils_log"):new("tl_ops_state");
 local shared = ngx.shared.tlopsbalance
 
+local cache_service = require("cache.tl_ops_cache"):new("tl-ops-service");
+local cache_limit = require("cache.tl_ops_cache"):new("tl-ops-limit");
+local cache_health = require("cache.tl_ops_cache"):new("tl-ops-health");
 
 --返回的cache state
 local cache_state = {
     service = {}, health = {}, limit = {}, balance = {}, other = {}
 }
-
-local limit_options_str, _ = cache_service:get(tl_ops_constant_limit.fuse.cache_key.options_list);
-if not limit_options_str or limit_options_str == nil then
-    tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.not_found, "not found list", _);
-    return;
-end
-local limit_options_list = cjson.decode(limit_options_str)
-
 
 -- 服务相关状态
 local list_str, _ = cache_service:get(tl_ops_constant_service.cache_key.service_list);
@@ -75,9 +69,9 @@ for service_name, nodes in pairs(service_list) do
     cache_state.service[service_name].nodes = { }
 
     if nodes == nil then
-		nodes = cjson.encode("{}")
-	end
- 
+        nodes = cjson.encode("{}")
+    end
+    
     -- node级别cache
     for i = 1, #nodes do
         local node_id = i-1
@@ -101,15 +95,15 @@ for service_name, nodes in pairs(service_list) do
             limit_node_state_cache = 0 --"state cache nil"
         end
 
-		local limit_node_success_cache = shared:get(tl_ops_utils_func:gen_node_key(tl_ops_constant_limit.fuse.cache_key.req_succ, node.service, node_id))
-		if not limit_node_success_cache then
-			limit_node_success_cache = 0 --"success cache nil"
-		end
+        local limit_node_success_cache = shared:get(tl_ops_utils_func:gen_node_key(tl_ops_constant_limit.fuse.cache_key.req_succ, node.service, node_id))
+        if not limit_node_success_cache then
+            limit_node_success_cache = 0 --"success cache nil"
+        end
 
-		local limit_node_failed_cache = shared:get(tl_ops_utils_func:gen_node_key(tl_ops_constant_limit.fuse.cache_key.req_fail,  node.service, node_id))
-		if not limit_node_failed_cache then
-			limit_node_failed_cache = 0 --"failed cache nil"
-		end
+        local limit_node_failed_cache = shared:get(tl_ops_utils_func:gen_node_key(tl_ops_constant_limit.fuse.cache_key.req_fail,  node.service, node_id))
+        if not limit_node_failed_cache then
+            limit_node_failed_cache = 0 --"failed cache nil"
+        end
 
         local count_name = "tl-ops-balance-count-" .. tl_ops_constant_balance.count.interval;
         local cache_balance_count = require("cache.tl_ops_cache"):new(count_name);
@@ -129,10 +123,10 @@ for service_name, nodes in pairs(service_list) do
         }
     end
 
-end
+end    
 
 -- 健康检查相关状态
-local health_options_str, _ = cache_service:get(tl_ops_constant_health.cache_key.options_list);
+local health_options_str, _ = cache_health:get(tl_ops_constant_health.cache_key.options_list);
 if not health_options_str or health_options_str == nil then
     tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.not_found, "not found list", _);
     return;
@@ -152,39 +146,41 @@ local timer_list = cjson.decode(timers_str)
 
 cache_state.health['timer_list'] = timer_list
 cache_state.health['options_version'] = service_options_version_cache
-cache_state.health['options_list'] = health_options_list
+cache_state.health['options_list'] = health_options_list    
 
 
 
 -- 限流相关状态
-local limit_options_str, _ = cache_service:get(tl_ops_constant_limit.fuse.cache_key.options_list);
+
+local limit_options_str, _ = cache_limit:get(tl_ops_constant_limit.fuse.cache_key.options_list);
 if not limit_options_str or limit_options_str == nil then
     tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.not_found, "not found list", _);
     return;
 end
 local limit_options_list = cjson.decode(limit_options_str)
 
-local pre_time = shared:get(tl_ops_constant_limit.global_token.cache_key.pre_time)
-if not pre_time then
-    pre_time = "nil" --"pre_time nil"
-end
-local token_bucket = shared:get(tl_ops_constant_limit.global_token.cache_key.token_bucket)
-if not token_bucket then
-    token_bucket = "nil" --"token_bucket nil"
-end
-local warm = shared:get(tl_ops_constant_limit.global_token.cache_key.warm)
-if not warm then
-    warm = "nil" --"warm nil"
-end
-local lock = shared:get(tl_ops_constant_limit.global_token.cache_key.lock)
-if not lock then
-    lock = "nil" --"lock nil"
-end
-cache_state.limit['pre_time'] = pre_time
-cache_state.limit['token_bucket'] = token_bucket
-cache_state.limit['warm'] = warm
-cache_state.limit['lock'] = lock
+-- local pre_time = shared:get(tl_ops_constant_limit.global_token.cache_key.pre_time)
+-- if not pre_time then
+--     pre_time = "nil" --"pre_time nil"
+-- end
+-- local token_bucket = shared:get(tl_ops_constant_limit.global_token.cache_key.token_bucket)
+-- if not token_bucket then
+--     token_bucket = "nil" --"token_bucket nil"
+-- end
+-- local warm = shared:get(tl_ops_constant_limit.global_token.cache_key.warm)
+-- if not warm then
+--     warm = "nil" --"warm nil"
+-- end
+-- local lock = shared:get(tl_ops_constant_limit.global_token.cache_key.lock)
+-- if not lock then
+--     lock = "nil" --"lock nil"
+-- end
+-- cache_state.limit['pre_time'] = pre_time
+-- cache_state.limit['token_bucket'] = token_bucket
+-- cache_state.limit['warm'] = warm
+-- cache_state.limit['lock'] = lock
 cache_state.limit['option_list'] = limit_options_list
+    
 
 
 -- 路由相关
@@ -198,8 +194,6 @@ cache_state.balance['count_interval'] = tl_ops_constant_balance.count.interval
 
 -- 其他
 -- cache_state.other['dict_keys'] = shared:get_keys(1024)
-
-
 
 
 tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.ok, "success", cache_state);

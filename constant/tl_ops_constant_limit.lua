@@ -1,26 +1,10 @@
 local tl_ops_constant_service = require("constant.tl_ops_constant_service");
 local tl_ops_utils_func = require("utils.tl_ops_utils_func");
 
--- 桶配置 （全局桶，服务桶，节点桶）,global, service, node
-local global_token = {   --全局令牌桶配置
+-- 令牌桶配置
+local token = {   --服务令牌桶配置
     cache_key = {
-        capacity = "tl_ops_limit_token_capacity_global",
-        rate = "tl_ops_limit_token_rate_global",
-        pre_time = "tl_ops_limit_token_pre_time_global",
-        token_bucket = "tl_ops_limit_token_bucket_global",
-        warm = "tl_ops_limit_token_warm_global",
-        lock = "tl_ops_limit_token_lock_global"
-    },
-    options = {
-        capacity = 10 * 1024 * 1024,      -- 最大容量 10M (按字节为单位，可做字节整型流控)
-        rate = 1024,                      -- 令牌生成速率/秒 (每秒 1KB)
-        warm = 100 * 1024,                -- 预热令牌数量 (预热100KB)
-        half_capacity = 2,                -- 限流状态令牌最大容量
-        block = 1024,                     -- 流控以1024为单位
-    }
-}
-local service_token = {   --服务令牌桶配置
-    cache_key = {
+        options_list = "tl_ops_limit_token_options_list",
         capacity = "tl_ops_limit_token_capacity_service",
         rate = "tl_ops_limit_token_rate_service",
         pre_time = "tl_ops_limit_token_pre_time_service",
@@ -29,30 +13,38 @@ local service_token = {   --服务令牌桶配置
         lock = "tl_ops_limit_token_lock_service"
     },
     options = {
-        capacity = 10 * 1024 * 1024,
-        rate = 1024,
-        warm = 100 * 1024,
-        half_capacity = 2,
-        block = 1024,
+
+    },
+    demo = {
+        service_name = "tlops-demo",      -- 令牌桶配置所属服务 
+        capacity = 10 * 1024 * 1024,      -- 最大容量 10M (按字节为单位，可做字节整型流控)
+        rate = 1024,                      -- 令牌生成速率/秒 (每秒 1KB)
+        warm = 100 * 1024,                -- 预热令牌数量 (预热100KB)
+        block = 1024,                     -- 流控以1024为单位
     }
 }
-local node_token = {   --节点令牌桶配置
+
+-- 漏桶配置
+local leak = {   --服务漏桶配置
     cache_key = {
-        capacity = "tl_ops_limit_token_capacity_node",
-        rate = "tl_ops_limit_token_rate_node",
-        pre_time = "tl_ops_limit_token_pre_time_node",
-        token_bucket = "tl_ops_limit_token_bucket_node",
-        warm = "tl_ops_limit_token_warm_node",
-        lock = "tl_ops_limit_token_lock_node"
+        options_list = "tl_ops_limit_leak_options_list",
+        capacity = "tl_ops_limit_leak_capacity_service",
+        rate = "tl_ops_limit_leak_rate_service",
+        pre_time = "tl_ops_limit_leak_pre_time_service",
+        leak_bucket = "tl_ops_limit_leak_bucket_service",
+        lock = "tl_ops_limit_leak_lock_service"
     },
     options = {
-        capacity = 10 * 1024 * 1024,
-        rate = 1024,
-        warm = 100 * 1024,
-        half_capacity = 2,
-        block = 1024,
+
+    },
+    demo = {
+        service_name = "tlops-demo",      -- 漏桶配置所属服务 
+        capacity = 10 * 1024 * 1024,      -- 最大容量 10M (按字节为单位，可做字节整型流控)
+        rate = 1024 * 10,                 -- 漏桶流速/秒 (每秒 10KB)
+        block = 1024,                     -- 流控以1024为单位
     }
 }
+
 
 -- 依赖限流组件
 local depend = {
@@ -95,9 +87,8 @@ local fuse = {
 -- 限流/熔断配置
 local tl_ops_constant_limit = {
     fuse = fuse,
-    global_token = global_token,
-    node_token = node_token,
-    service_token = service_token,
+    token = token,
+    leak = leak,
     depend = depend,
     level = level,
 }

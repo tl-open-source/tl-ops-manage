@@ -13,15 +13,29 @@ local tl_ops_rt = require("constant.tl_ops_constant_comm").tl_ops_rt;
 local tl_ops_utils_func = require("utils.tl_ops_utils_func");
 
 
-local list_str, _ = cache:get(tl_ops_constant_limit.fuse.cache_key.options_list);
-if not list_str or list_str == nil then
-    tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.not_found, "not found list", _);
+local fuse_list_str, _ = cache:get(tl_ops_constant_limit.fuse.cache_key.options_list);
+if not fuse_list_str or fuse_list_str == nil then
+    tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.not_found, "fuse not found list", _);
+    return;
+end
+
+local token_list_str, _ = cache:get(tl_ops_constant_limit.token.cache_key.options_list);
+if not token_list_str or token_list_str == nil then
+    tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.not_found, "token not found list", _);
+    return;
+end
+
+local leak_list_str, _ = cache:get(tl_ops_constant_limit.leak.cache_key.options_list);
+if not leak_list_str or leak_list_str == nil then
+    tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.not_found, "leak not found list", _);
     return;
 end
 
 
 local res_data = {}
-res_data[tl_ops_constant_limit.fuse.cache_key.options_list] = cjson.decode(list_str)
+res_data[tl_ops_constant_limit.fuse.cache_key.options_list] = cjson.decode(fuse_list_str)
+res_data[tl_ops_constant_limit.leak.cache_key.options_list] = cjson.decode(leak_list_str)
+res_data[tl_ops_constant_limit.token.cache_key.options_list] = cjson.decode(token_list_str)
 
 
 tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.ok, "success", res_data);

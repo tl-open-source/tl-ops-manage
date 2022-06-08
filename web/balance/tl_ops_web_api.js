@@ -12,6 +12,25 @@ const tl_ops_web_api_main = function (){
     window.layedit = layui.layedit;
 
     tl_ops_web_api_render();
+
+    //表格外部事件操作
+    $('.layui-btn.layuiadmin-btn-useradmin').on('click', function(){
+        let type = $(this).data('type');
+        tl_ops_web_api_event()[type] ? tl_ops_web_api_event()[type].call(this) : '';
+    });
+
+    //搜索
+    form.on('submit('+_search_id_name+')', function(data){
+        tl_ops_web_api_reload(data.field);
+    });
+
+    //行事件操作
+    table.on('tool('+_table_id_name+')', function(obj) {
+        let type = obj.event;
+        let data = obj.data;
+        tl_ops_web_api_event()[type] ? tl_ops_web_api_event()[type].call(this, data) : '';
+    });
+
 };
 
 //事件监听定义
@@ -98,24 +117,6 @@ const tl_ops_web_api_render = function () {
                 onmouseenter="tl_mouse_enter_tips('tl-api-rule','点击切换策略，切换将实时生效')">
                 ${rule}
             </b><b> ( ${rule==='random' ? '随机节点路由' : '指定节点路由'} )</b>`;
-
-            //表格外部事件操作
-            $('.layui-btn.layuiadmin-btn-useradmin').on('click', function(){
-                let type = $(this).data('type');
-                tl_ops_web_api_event()[type] ? tl_ops_web_api_event()[type].call(this) : '';
-            });
-
-            //搜索
-            form.on('submit('+_search_id_name+')', function(data){
-                tl_ops_web_api_reload(data.field);
-            });
-
-            //行事件操作
-            table.on('tool('+_table_id_name+')', function(obj) {
-                let type = obj.event;
-                let data = obj.data;
-                tl_ops_web_api_event()[type] ? tl_ops_web_api_event()[type].call(this, data) : '';
-            });
 
             return {
                 "code": res.code,

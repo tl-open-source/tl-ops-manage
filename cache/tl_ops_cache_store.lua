@@ -5,7 +5,6 @@
 -- @email 1905333456@qq.com
 
 
-local cache_store = nil;
 local tlog = require("utils.tl_ops_utils_log"):new("tl_ops_cache_store");
 
 
@@ -20,8 +19,11 @@ local mt = { __index = _M }
 
 
 function _M:new(business)
-    cache_store = require("utils.tl_ops_utils_store"):new(business);
-    return setmetatable({}, mt)
+    local cache_store = require("utils.tl_ops_utils_store"):new(business);
+    return setmetatable({
+        business = business,
+        cache_store = cache_store
+    }, mt)
 end
 
 
@@ -31,7 +33,7 @@ function _M:get( key )
         return nil;
     end
 
-    local store = cache_store:read( key );
+    local store = self.cache_store:read( key );
 	
 	if not store or store == nil then
 		return nil, "failed to get " .. key  .. " from store";
@@ -49,7 +51,7 @@ function _M:set(key, value)
         return nil;
     end
     
-    cache_store:store(key , value);
+    self.cache_store:store(key , value);
 
     tlog:dbg("set cache store ok key=" .. key)
 
@@ -64,7 +66,7 @@ function _M:del(key)
     end
 
     -- set seek to 4GB 等价删除索引
-    cache_store:store_index(key, 4 * 1024 * 1024 * 1024) 
+    self.cache_store:store_index(key, 4 * 1024 * 1024 * 1024) 
 
     tlog:dbg("del cache store ok key=" .. key)
 

@@ -11,9 +11,9 @@
 体验demo : https://tlops.iamtsm.cn/tlops/tl_ops_web_index.html
 
 
+**欢迎有兴趣的童鞋提交RP, 持续更新中 ....**
 
-#### 欢迎有兴趣的童鞋提交RP, （喜欢的大佬点个start支持下） 持续更新中 ....
-
+**喜欢的大佬点个start支持下**
 
 **qq交流群 : 624214498**
 
@@ -28,6 +28,46 @@
 ![image](doc/health_console.png)
 
 ![image](doc/limit_console.png)
+
+
+
+## 使用方式
+
+### 1. 安装环境
+
+安装openresty，按需安装redis
+
+### 2. 修改配置
+
+nginx.conf引入本项目lua包  `lua_package_path "/xxx/tl-ops-manage/?.lua;;"`
+
+nginx.conf引入本项目tl_ops_manage.conf  `include "/xxx/tl-ops-manage/conf/*.conf;"`
+
+修改tl_ops_manage.conf中的路径
+
+修改tl_ops_manage_env.lua中的配置
+
+### 3. 启动nginx/openresty
+
+如果是首次启动，先访问 `http://127.0.0.1/tlops/reset` 初始化项目
+
+http://localhost/tlops/tl_ops_web_index.html  管理后台
+
+
+
+## 说明文档
+
+- [x] [详细使用说明文档](https://blog.iamtsm.cn/detail.html?id=90)
+
+- [x] [源码实现说明文档](https://blog.iamtsm.cn/detail.html?id=91)
+
+- [x] [路由模块简要文档](doc/tl-ops-balance.md)
+
+- [x] [健康检查模块简要文档](doc/tl-ops-health.md)
+
+- [x] [熔断限流模块简要文档](doc/tl-ops-limit.md)
+
+- [x] [数据模块简要文档](doc/tl-ops-store.md)
 
 
 
@@ -57,25 +97,31 @@
 
 - [x] 支持cookie负载
 
+- [x] 支持header负载
+
 - [x] 支持请求参数负载
 
 - [x] 支持实时服务监控
 
 - [x] 支持暂停健康检查
 
-- [ ] 支持调整健康状态
+- [x] 支持调整健康状态
 
-- [ ] 支持漏桶流控选项
+- [x] 支持漏桶流控选项
 
-- [ ] 支持持久数据管理
+- [x] 支持令牌桶配置管理
 
-- [ ] 支持配置发布回滚
+- [x] 支持令牌桶预热配置
+
+- [ ] 支持负载配置管理
 
 - [ ] 支持服务灰度标签
 
+- [ ] 支持配置发布回滚
+
 - [ ] 支持服务告警通知
 
-- [ ] 支持配置动态删除
+- [ ] 支持服务节点删除
 
 - [ ] 支持ShareDict展示台
 
@@ -90,218 +136,9 @@
 - [ ] 拆分出tl-ops-manage-admin管理端项目
 
 
+## 更新日志
 
-## 使用方式
-
-### 1. 安装环境
-
-安装openresty，安装redis
-
-### 2. 修改配置
-
-nginx.conf引入本项目lua包  `lua_package_path "/xxx/tl-ops-manage/?.lua;;"`
-
-修改nginx.conf引入/conf/tl_ops_manage.conf  `include "/xxx/tl-ops-manage/conf/*.conf;"`
-
-修改tl_ops_manage.conf中的路径
-
-修改/constant/tl_ops_constant_log.lua中的路径
-
-### 3. 启动nginx/openresty
-
-如果是首次启动，先访问 `http://127.0.0.1/tlops/reset` 初始化项目
-
-http://localhost/tlops/tl_ops_web_index.html  管理后台
-
-
-
-## 说明文档
-
-- [x] [详细使用说明文档](https://blog.iamtsm.cn/detail.html?id=90)
-
-- [x] [源码实现说明文档](https://blog.iamtsm.cn/detail.html?id=91)
-
-- [x] [路由模块简要文档](doc/tl-ops-balance.md)
-
-- [x] [健康检查模块简要文档](doc/tl-ops-health.md)
-
-- [x] [熔断限流模块简要文档](doc/tl-ops-limit.md)
-
-- [x] [数据模块简要文档](doc/tl-ops-store.md)
-
-
-## 事务日程
-
-2022-06-01
-
-    1. 支持实时查看概况
-
-    2. 支持手动更改服务自检
-
-    3. 优化健康健康展示图标
-
-    4. 优化管理端样式图标
-
-    5. 修复负载模块节点id判断有误
-
-    6. 事务日程规划调整
-
-    7. fix bugs
-
-
-2022-05-28
-
-    1. 路由负载配置统一化
-
-    2. 支持cookie负载规则
-
-    3. 支持请求参数负载规则
-
-    4. 优化管理端样式图标
-
-    5. 支持路由配置删除
-
-    6. 优化路由默认配置
-
-    7. 优化重复请求
-
-    8. 事务日程规划调整
-
-    9. fix bugs
-
-
-2022-05-26
-
-    1. 支持健康检查成功状态自定义
-    
-    2. 即将支持sharedDict管理
-
-    3. 支持实时切换路由负载策略
-
-    4. 配置说明、管理端文案调整优化
-
-    5. 事务日程规划调整
-
-    5. fix bugs
-
-
-2022-05-25
-
-    1. 优化管理端请求
-
-    2. 修复单个时间变动的bug
-
-    3. 修复添加数据时多余字段
-
-    4. 修复可添加重复服务名称
-
-    5. 补充部分说明文档
-
-    6. fix bugs
-
-
-2022-05-24
-
-    1. 支持域名负载
-
-    2. 路由负载令牌桶流控接入
-
-    3. 优化不同系统下的路径问题
-
-    4. 优化多余代码
-
-    5. 补充部分说明文档
-
-    6. fix bugs
-
-
-2022-05-19
-
-    1. 移除配置示例数据，提供DEMO数据
-
-    2. 支持实时修改检查时间间隔
-
-    3. 优化管理端展示
-
-    4. 优化配置不同步的问题
-
-    5. 补充部分说明文档
-
-    6. fix bugs
-
-
-2022-05-18
-
-    1. 支持熔断限状态概览
-
-    2. 支持熔断限流动态配置文件同步
-
-    3. 路由负载优化
-
-    4. 补充部分说明文档
-
-    5. fix bugs
-
-
-2022-02-28
-
-    1. 支持部分熔断限流动态配置文件
-
-    2. 拆分路由，服务，节点模块
-
-    3. 支持查看持久化store数据文件
-
-    4. 补充部分说明文档
-
-    5. fix bugs
-
-
-2022-02-18
-
-    1. 支持熔断限流（支持令牌桶限流）
-
-    2. 管理后台优化
-
-    3. 路由负载优化
-
-    4. 健康检查优化
-
-    5. 补充部分说明文档
-
-    6. fix bugs
-
-
-2022-01-15
-
-    1. 补充api
-
-    2. 优化代码
-
-    3. 优化体验
-
-    4. 优化负载模块
-
-    5. 完善熔断限流部分模块
-
-
-
-2022-01-11
-
-    1. 健康检查支持动态配置加载
-
-    2. 支持路由负载配置管理
-
-    3. 支持健康检查配置管理
-
-    4. 支持管理控制台服务概览
-
-    5. 优化路由负载模块
-
-
-2021-12-22
-
-    1. 初始化项目
-
+- [x] [CHNAGE-LOG](doc/change.md)
 
 
 ## 引用致谢
