@@ -35,7 +35,9 @@
 
 ### 1. 安装环境
 
-安装openresty，按需安装redis
+安装openresty
+
+按需安装redis，如果不想使用redis，需要在tl_ops_manage_env.lua中将redis选项置为false
 
 ### 2. 修改配置
 
