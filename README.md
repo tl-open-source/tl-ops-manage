@@ -32,33 +32,45 @@
 |![health](doc/health.png "health")|![store](doc/store.png "store")|![store_view](doc/store_view.png "store_view")
 
 
-## 使用方式
+# 使用方式
 
-### 1. 安装环境
+## 1. 安装环境
 
 安装openresty
 
-### 2. 修改配置
+## 2. 修改配置
 
-nginx.conf引入本项目lua包  `lua_package_path "/xxx/tl-ops-manage/?.lua;;"`
+- 复制以下两行到nginx.conf到http块中
 
-nginx.conf引入本项目tl_ops_manage.conf  `include "/xxx/tl-ops-manage/conf/*.conf;"`
+    ````
+    http {
+        ...
+        # 引入tl_ops_manage.conf
+        include "/path/to/tl-ops-manage/conf/*.conf;
 
-修改tl_ops_manage.conf中的路径
+        # 引入lua包
+        lua_package_path "/path/to/tl-ops-manage/?.lua;;"
+        ...
+        
+    }
+    ````
 
-修改tl_ops_manage_env.lua中的配置
+- 修改/path/to/tl-ops-manage/conf/tl_ops_manage.conf文件中的路径
 
-按需安装redis，如果不想使用redis，需要在tl_ops_manage_env.lua中将redis选项置为false
+- 修改/path/to/tl-ops-manage/constant/tl_ops_manage_env.lua文件中的路径
 
-### 3. 启动nginx/openresty
+- 由于默认启用redis，所以需要安装redis，如果不想使用redis，可以在tl_ops_manage_env.lua中将redis选项置为false
 
-如果是首次启动，先访问 `http://127.0.0.1/tlops/reset` 初始化项目
+## 3. 启动nginx/openresty
 
 http://localhost/tlops/tl_ops_web_index.html  管理后台
 
+如果是首次启动，先访问 `http://127.0.0.1/tlops/reset` 初始化项目
 
 
-## 说明文档
+
+
+# 说明文档
 
 - [x] [详细使用说明文档](https://blog.iamtsm.cn/detail.html?id=90)
 
@@ -73,8 +85,7 @@ http://localhost/tlops/tl_ops_web_index.html  管理后台
 - [x] [数据模块简要文档](doc/tl-ops-store.md)
 
 
-
-## 规划 / 进度
+# 规划 / 进度
 
 - [x] 支持API规则负载
 
@@ -137,12 +148,12 @@ http://localhost/tlops/tl_ops_web_index.html  管理后台
 - [ ] 拆分出tl-ops-manage-admin管理端项目
 
 
-## 更新日志
+# 更新日志
 
 - [x] [CHNAGE-LOG](doc/change.md)
 
 
-## 引用致谢
+# 引用致谢
 
 #### [openresty](https://github.com/openresty/openresty)
 
@@ -155,6 +166,6 @@ http://localhost/tlops/tl_ops_web_index.html  管理后台
 #### [echarts](https://github.com/apache/echarts)
 
 
-## 开源协议
+# 开源协议
 
 #### Apache License 2.0
