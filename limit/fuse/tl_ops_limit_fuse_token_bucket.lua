@@ -61,18 +61,9 @@ end
 -- get token with lazy generate
 -- block 取用令牌数量
 local tl_ops_limit_token = function( service_name, node_id )
-
     local token_mode = tl_ops_limit_token_mode( service_name , node_id)
 
     local block = token_mode.options.block
-
-    if not block or type(block) ~= 'number' then
-        return false
-    end
-
-    if block <= 0 then
-        return false
-    end
 
     local capacity_key = tl_ops_utils_func:gen_node_key(token_mode.cache_key.capacity, service_name, node_id)
     local capacity = shared:get(capacity_key)
@@ -121,6 +112,7 @@ local tl_ops_limit_token = function( service_name, node_id )
         if not ok then
             return false
         end
+
         return true
     end
 
@@ -133,7 +125,24 @@ local tl_ops_limit_token = function( service_name, node_id )
     end
 
     local new_token_bucket = math.min(token_bucket + duration_token_bucket, capacity)
-    local ok, _ = shared:set(token_bucket_key, new_token_bucket)
+
+    -- 令牌还是不够
+    if new_token_bucket < block then
+        local ok, _ = shared:set(token_bucket_key, new_token_bucket)
+        if not ok then
+            return false
+        end
+
+        local ok, _ = shared:set(pre_time_key, cur_time)
+        if not ok then
+            return false
+        end
+
+        return false
+    end
+
+    -- 移除一个令牌
+    local ok, _ = shared:set(token_bucket_key, new_token_bucket - block)
     if not ok then
         return false
     end
@@ -146,7 +155,7 @@ local tl_ops_limit_token = function( service_name, node_id )
     return true
 end
 
--- 扩容
+-- 扩容 熔断定时器中保证锁，所以这里不加锁
 local tl_ops_limit_token_expand = function( service_name, node_id )
 
     local token_mode = tl_ops_limit_token_mode( service_name, node_id)
@@ -164,9 +173,21 @@ local tl_ops_limit_token_expand = function( service_name, node_id )
     if capacity <= 1 then
         return false
     end
+
+    local expand_key = tl_ops_utils_func:gen_node_key(token_mode.cache_key.expand, service_name, node_id)
+    local expand = shared:get(expand_key)
+    if not expand then
+        local res, _ = shared:set(expand_key, token_mode.options.expand)
+        if not res then
+            return false
+        end
+        expand = token_mode.options.expand
+    end
+
+    tlog:dbg("token expand=",expand, ",service_name=", service_name, ",node_id=",node_id,",expand_key=", expand_key)
     
-    -- 暂定扩容量 = 当前桶容量 * 0.5
-    local expand_capacity = capacity * 0.5
+    -- 扩容量 = 当前桶容量 * 比例
+    local expand_capacity = capacity * expand
 
     local capacity_key = tl_ops_utils_func:gen_node_key(token_mode.cache_key.capacity, service_name, node_id)
     local res ,_ = shared:incr(capacity_key, expand_capacity)
@@ -178,7 +199,7 @@ local tl_ops_limit_token_expand = function( service_name, node_id )
 end
 
 
--- 缩容
+-- 缩容 熔断定时器中保证锁，所以这里不加锁
 local tl_ops_limit_token_shrink = function( service_name, node_id )
 
     local token_mode = tl_ops_limit_token_mode( service_name, node_id)
@@ -197,9 +218,20 @@ local tl_ops_limit_token_shrink = function( service_name, node_id )
         return false
     end
     
-    -- 暂定缩容量 = -当前桶容量 * 0.5
-    local shrink_capacity = capacity * 0.5
+    local shrink_key = tl_ops_utils_func:gen_node_key(token_mode.cache_key.shrink, service_name, node_id)
+    local shrink = shared:get(shrink_key)
+    if not shrink then
+        local res, _ = shared:set(shrink_key, token_mode.options.shrink)
+        if not res then
+            return false
+        end
+        shrink = token_mode.options.shrink
+    end
 
+    tlog:dbg("token shrink=",shrink, ",service_name=", service_name, ",node_id=",node_id,",shrink_key=", shrink_key)
+
+    -- 缩容量 = -当前桶容量 * 比例
+    local shrink_capacity = capacity * shrink
     
     local res ,_ = shared:incr(capacity_key, -shrink_capacity)
     if not res or res == false then

@@ -15,9 +15,13 @@ local tl_ops_balance_core_cookie = require("balance.tl_ops_balance_core_cookie")
 local tl_ops_balance_core_header = require("balance.tl_ops_balance_core_header");
 local tl_ops_balance_core_param = require("balance.tl_ops_balance_core_param");
 
+local cache_service = require("cache.tl_ops_cache"):new("tl-ops-service");
+local cache_limit = require("cache.tl_ops_cache"):new("tl-ops-limit");
+
 local cjson = require("cjson");
 local tl_ops_utils_func = require("utils.tl_ops_utils_func");
 local tl_ops_limit_fuse_token_bucket = require("limit.fuse.tl_ops_limit_fuse_token_bucket");
+local tl_ops_limit_fuse_leak_bucket = require("limit.fuse.tl_ops_limit_fuse_leak_bucket");
 local shared = ngx.shared.tlopsbalance
 
 local _M = {
@@ -26,11 +30,33 @@ local _M = {
 local mt = { __index = _M }
 
 
--- 负载核心流程
-function _M:tl_ops_balance_api_balance()
+-- 获取限流器
+local tl_ops_balance_core_get_limiter = function( service_name, node_id )
+    -- 服务熔断配置列表
+    local limit_list_str, _ = cache_limit:get(tl_ops_constant_limit.fuse.cache_key.options_list);
+    if not limit_list_str then
+        return nil
+    end
 
+    local limit_list_table = cjson.decode(limit_list_str);
+    if not limit_list_table and type(limit_list_table) ~= 'table' then
+        return nil
+    end
+
+    for _, limit_option in pairs(limit_list_table) do
+        if limit_option.service_name == service_name then
+            if not limit_option.depend then
+                return nil
+            end
+            return limit_option.depend
+        end
+    end
+end
+
+
+-- 负载核心流程
+function _M:tl_ops_balance_core_balance()
     -- 服务节点配置列表
-    local cache_service = require("cache.tl_ops_cache"):new("tl-ops-service");
     local service_list_str, _ = cache_service:get(tl_ops_constant_service.cache_key.service_list);
 
     if not service_list_str then
@@ -93,13 +119,30 @@ function _M:tl_ops_balance_api_balance()
         ngx.exit(503)
     end
 
-    -- 令牌桶流控介入
-    local token_result = tl_ops_limit_fuse_token_bucket.tl_ops_limit_token( node.service, node_id)
-    if not token_result or token_result == false then
-        ngx.header['Tl-Proxy-Server'] = "";
-        ngx.header['Tl-Proxy-State'] = "limit"
-        ngx.header['Tl-Proxy-Mode'] = balance_mode
-        ngx.exit(503)
+    -- 流控介入
+    local depend = tl_ops_balance_core_get_limiter(node.service, node_id)    
+    if depend then
+        -- 令牌桶流控
+        if depend == tl_ops_constant_limit.depend.token then
+            local token_result = tl_ops_limit_fuse_token_bucket.tl_ops_limit_token( node.service, node_id)            
+            if not token_result or token_result == false then
+                ngx.header['Tl-Proxy-Server'] = "";
+                ngx.header['Tl-Proxy-State'] = "t-limit"
+                ngx.header['Tl-Proxy-Mode'] = balance_mode
+                ngx.exit(503)
+            end
+        end
+
+        -- 漏桶流控 
+        if depend == tl_ops_constant_limit.depend.leak then
+            local leak_result = tl_ops_limit_fuse_leak_bucket.tl_ops_limit_leak( node.service, node_id)
+            if not leak_result or leak_result == false then
+                ngx.header['Tl-Proxy-Server'] = "";
+                ngx.header['Tl-Proxy-State'] = "l-limit"
+                ngx.header['Tl-Proxy-Mode'] = balance_mode
+                ngx.exit(503)
+            end
+        end
     end
 
     -- 节点下线

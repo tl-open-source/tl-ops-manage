@@ -14,7 +14,7 @@ function _M:init( )
 
     -- 启动路由
     local balance = tl_ops_balance_core:new();
-    balance:tl_ops_balance_api_balance()
+    balance:tl_ops_balance_core_balance()
 
 end
 

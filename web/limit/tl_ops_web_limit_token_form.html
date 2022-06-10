@@ -75,6 +75,22 @@
                     onmouseenter="tl_mouse_enter_tips('tl-tips-warm','服务启动时，会对令牌桶初始化，并根据设置值进行预生成令牌数')">
             </div>
         </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">令牌桶扩容比例</label>
+            <div class="layui-input-block">
+                <input type="number" name="expand" class="layui-input"  placeholder="请输入令牌桶扩容比例"
+                    id="tl-tips-expand" onmouseleave="tl_mouse_leave_tips()"
+                    onmouseenter="tl_mouse_enter_tips('tl-tips-expand','服务升级时的自动化扩容令牌桶的比例，如0.5')">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">令牌桶缩容比例</label>
+            <div class="layui-input-block">
+                <input type="number" name="shrink" class="layui-input"  placeholder="请输入令牌桶缩容比例"
+                    id="tl-tips-shrink" onmouseleave="tl_mouse_leave_tips()"
+                    onmouseenter="tl_mouse_enter_tips('tl-tips-shrink','服务降级时的自动化缩容令牌桶的比例，如0.5')">
+            </div>
+        </div>
         <div class="layui-form-item layui-hide">
             <input type="button" lay-submit lay-filter="tl-ops-web-limit-form-submit" id="tl-ops-web-limit-form-submit" value="确认">
         </div>

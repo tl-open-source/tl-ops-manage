@@ -8,6 +8,9 @@
 [![](https://img.shields.io/badge/dynamic%20conf-green)](https://github.com/iamtsm/tl-ops-manage)
 
 
+# 基于openresty的轻量级服务管理功能集合实现
+
+
 体验demo : https://tlops.iamtsm.cn/tlops/tl_ops_web_index.html
 
 
@@ -21,14 +24,12 @@
 [EN DOC](doc/README_EN.md) 
 
 
-# 基于openresty的轻量级服务管理功能集合实现
-
-![image](doc/balance_console.png)
-
-![image](doc/health_console.png)
-
-![image](doc/limit_console.png)
-
+| Web | Manage  | UI  | Preview  |
+|:-------------:|:-------:|:-------:|:-------:|
+| ![console_balance](doc/console_balance.png "console_balance") | ![console_health](doc/console_health.png "console_health") | ![console_fuse](doc/console_fuse.png "console_fuse") |![service](doc/service.png "service")
+|![service_node](doc/service_node.png "service_node") |![balance_api](doc/balance_api.png "balance_api")| ![balance_cookie](doc/balance_cookie.png "balance_cookie") | ![balance_header](doc/balance_header.png "balance_header") 
+|![balance_param](doc/balance_param.png "balance_param")|![fuse](doc/fuse.png "fuse")|![fuse_limit_token](doc/fuse_limit_token.png "fuse_limit_token")|![fuse_limit_leak](doc/fuse_limit_leak.png "fuse_limit_leak")
+|![health](doc/health.png "health")|![store](doc/store.png "store")|![store_view](doc/store_view.png "store_view")
 
 
 ## 使用方式
@@ -36,8 +37,6 @@
 ### 1. 安装环境
 
 安装openresty
-
-按需安装redis，如果不想使用redis，需要在tl_ops_manage_env.lua中将redis选项置为false
 
 ### 2. 修改配置
 
@@ -48,6 +47,8 @@ nginx.conf引入本项目tl_ops_manage.conf  `include "/xxx/tl-ops-manage/conf/*
 修改tl_ops_manage.conf中的路径
 
 修改tl_ops_manage_env.lua中的配置
+
+按需安装redis，如果不想使用redis，需要在tl_ops_manage_env.lua中将redis选项置为false
 
 ### 3. 启动nginx/openresty
 
@@ -77,31 +78,31 @@ http://localhost/tlops/tl_ops_web_index.html  管理后台
 
 - [x] 支持API规则负载
 
+- [x] 支持cookie负载
+
+- [x] 支持header负载
+
+- [x] 支持请求参数负载
+
+- [x] 支持域名路由负载
+
 - [x] 支持服务健康检查
 
 - [x] 支持服务限流熔断
-
-- [x] 支持动态增量配置
-
-- [x] 支持动态节点扩展
 
 - [x] 支持配置数据持久
 
 - [x] 支持管理操作界面
 
-- [x] 支持域名路由负载
+- [x] 支持动态增量配置
+
+- [x] 支持动态节点扩展
 
 - [x] 支持令牌桶流控
 
 - [x] 支持变更路由策略
 
 - [x] 支持自定义回包码
-
-- [x] 支持cookie负载
-
-- [x] 支持header负载
-
-- [x] 支持请求参数负载
 
 - [x] 支持实时服务监控
 
@@ -123,9 +124,7 @@ http://localhost/tlops/tl_ops_web_index.html  管理后台
 
 - [ ] 支持服务告警通知
 
-- [ ] 支持服务节点删除
-
-- [ ] 支持ShareDict展示台
+- [ ] 支持移除服务节点
 
 - [ ] 支持健康检查历史数据统计
 

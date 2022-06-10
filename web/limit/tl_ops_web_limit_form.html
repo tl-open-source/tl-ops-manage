@@ -53,9 +53,9 @@
         <div class="layui-form-item">
             <label class="layui-form-label">依赖模式</label>
             <div class="layui-input-block" id="tl-tips-depend" onmouseleave="tl_mouse_leave_tips()"
-                onmouseenter="tl_mouse_enter_tips('tl-tips-depend','依赖什么模式进行自检')">
+                onmouseenter="tl_mouse_enter_tips('tl-tips-depend','依赖什么模式进行自检，点击切换将实时生效')">
                 <input type="radio" name="depend" class="layui-input" value="token"><span class="tl-ops-web-limit-form-span">令牌桶</span>
-                <input type="radio" name="depend" class="layui-input" value="leak"><span class="tl-ops-web-limit-form-span">漏桶（暂未接入流控）</span>
+                <input type="radio" name="depend" class="layui-input" value="leak"><span class="tl-ops-web-limit-form-span">漏桶</span>
             </div>
         </div>
         <div class="layui-form-item">
@@ -76,7 +76,7 @@
         </div>
         <div class="layui-form-item">
             <label class="layui-form-label"><i class="layui-icon layui-icon-help tl-icon-font" id="tl-tips-interval-help" onmouseleave="tl_mouse_leave_tips()"
-                onmouseenter="tl_mouse_enter_tips('tl-tips-interval-help','该值修改后实时生效')"></i>  
+                onmouseenter="tl_mouse_enter_tips('tl-tips-interval-help','该值修改后将动态变更定时器时间间隔')"></i>  
                 时间间隔 (ms)
             </label>
             <div class="layui-input-block">

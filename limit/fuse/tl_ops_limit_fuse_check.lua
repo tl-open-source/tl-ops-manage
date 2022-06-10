@@ -12,6 +12,7 @@ local tl_ops_utils_func = require("utils.tl_ops_utils_func");
 local tl_ops_limit_fuse_check_dynamic_conf = require("limit.fuse.tl_ops_limit_fuse_check_dynamic_conf")
 local tl_ops_limit_fuse_check_version = require("limit.fuse.tl_ops_limit_fuse_check_version")
 local tl_ops_limit_token_bucket = require("limit.fuse.tl_ops_limit_fuse_token_bucket");
+local tl_ops_limit_leak_bucket = require("limit.fuse.tl_ops_limit_fuse_leak_bucket");
 
 local tl_ops_constant_limit = require("constant.tl_ops_constant_limit")
 local tl_ops_constant_service = require("constant.tl_ops_constant_service");
@@ -329,20 +330,36 @@ tl_ops_limit_fuse_node_degrade = function ( conf, node_id )
 	local node = conf.nodes[node_id + 1]
 	local name = node.name
 	local state = node.state
+	local depend = conf.depend
 	local service_name = conf.service_name
 
 	-- node处于限流状态, 节点桶扩容
 	if state == _STATE.LIMIT_FUSE_HALF then
-		local expand = tl_ops_limit_token_bucket.tl_ops_limit_token_expand(service_name, node_id)
-		if not expand or expand == false then
-			tlog:err("tl_ops_limit_fuse_node_degrade expand err ,",expand)
-			return
+		-- 令牌桶模式
+		if depend == tl_ops_constant_limit.depend.token then
+			local expand = tl_ops_limit_token_bucket.tl_ops_limit_token_expand(service_name, node_id)
+			if not expand or expand == false then
+				tlog:err("tl_ops_limit_fuse_node_degrade expand token err ,",expand)
+				return
+			end
+			local key = tl_ops_utils_func:gen_node_key(tl_ops_constant_limit.token.cache_key.capacity, service_name, node_id)
+			local capacity, _ = shared:get(key)
+
+			tlog:dbg("tl_ops_limit_fuse_node_degrade expand token ok, node=",name,", capacity=",capacity)
 		end
+		-- 漏桶模式
+		if depend == tl_ops_constant_limit.depend.leak then
+			local expand = tl_ops_limit_leak_bucket.tl_ops_limit_leak_expand(service_name, node_id)
+			if not expand or expand == false then
+				tlog:err("tl_ops_limit_fuse_node_degrade expand leak err ,",expand)
+				return
+			end
+			local key = tl_ops_utils_func:gen_node_key(tl_ops_constant_limit.leak.cache_key.capacity, service_name, node_id)
+			local capacity, _ = shared:get(key)
 
-		local key = tl_ops_utils_func:gen_node_key(tl_ops_constant_limit.token.cache_key.capacity, service_name, node_id)
-		local capacity, _ = shared:get(key)
-
-		tlog:dbg("tl_ops_limit_fuse_node_degrade expand ok, node=",name,", capacity=",capacity)
+			tlog:dbg("tl_ops_limit_fuse_node_degrade expand leak ok, node=",name,", capacity=",capacity)
+		end
+		
 	end
 
 	-- 同步state, 通知worker更新
@@ -377,20 +394,38 @@ tl_ops_limit_fuse_node_upgrade = function ( conf, node_id )
 	local node = conf.nodes[node_id + 1]
 	local name = node.name
 	local state = node.state
+	local depend = conf.depend
 	local service_name = conf.service_name
 
 	-- node处于限流状态, 节点桶缩容
 	if state == _STATE.LIMIT_FUSE_HALF then
-		local shrink = tl_ops_limit_token_bucket.tl_ops_limit_token_shrink(service_name, node_id)
-		if not shrink or shrink == false then
-			tlog:err("tl_ops_limit_fuse_node_upgrade shrink err, shrink=",shrink)
-			return
+		-- 令牌桶模式
+		if depend == tl_ops_constant_limit.depend.token then
+			local shrink = tl_ops_limit_token_bucket.tl_ops_limit_token_shrink(service_name, node_id)
+			if not shrink or shrink == false then
+				tlog:err("tl_ops_limit_fuse_node_upgrade shrink token err, shrink=",shrink)
+				return
+			end
+	
+			local key = tl_ops_utils_func:gen_node_key(tl_ops_constant_limit.token.cache_key.capacity, service_name, node_id)
+			local capacity, _ = shared:get(key)
+	
+			tlog:dbg("tl_ops_limit_fuse_node_upgrade shrink token ok, node=",name,", capacity=",capacity,",key=",key)
 		end
 
-		local key = tl_ops_utils_func:gen_node_key(tl_ops_constant_limit.token.cache_key.capacity, service_name, node_id)
-		local capacity, _ = shared:get(key)
-
-		tlog:dbg("tl_ops_limit_fuse_node_upgrade shrink ok, node=",name,", capacity=",capacity,",key=",key)
+		-- 漏桶模式
+		if depend == tl_ops_constant_limit.depend.leak then
+			local shrink = tl_ops_limit_leak_bucket.tl_ops_limit_leak_shrink(service_name, node_id)
+			if not shrink or shrink == false then
+				tlog:err("tl_ops_limit_fuse_node_upgrade shrink leak err, shrink=",shrink)
+				return
+			end
+	
+			local key = tl_ops_utils_func:gen_node_key(tl_ops_constant_limit.leak.cache_key.capacity, service_name, node_id)
+			local capacity, _ = shared:get(key)
+	
+			tlog:dbg("tl_ops_limit_fuse_node_upgrade shrink leak ok, node=",name,", capacity=",capacity,",key=",key)
+		end
 	end
 
 	-- 同步state, 通知worker更新
@@ -424,20 +459,38 @@ tl_ops_limit_fuse_service_degrade = function ( conf )
 	tlog:dbg("tl_ops_limit_fuse_service_degrade start")
 
 	local state = conf.state
+	local depend = conf.depend
 	local service_name = conf.service_name
 
 	-- node处于限流状态, 节点桶扩容
 	if state == _STATE.LIMIT_FUSE_HALF then
-		local expand = tl_ops_limit_token_bucket.tl_ops_limit_token_expand(service_name)
-		if not expand or expand == false then
-			tlog:err("tl_ops_limit_fuse_service_degrade expand err ,",expand)
-			return
+		-- 令牌桶模式
+		if depend == tl_ops_constant_limit.depend.token then
+			local expand = tl_ops_limit_token_bucket.tl_ops_limit_token_expand(service_name)
+			if not expand or expand == false then
+				tlog:err("tl_ops_limit_fuse_service_degrade expand token err ,",expand)
+				return
+			end
+	
+			local key = tl_ops_utils_func:gen_node_key(tl_ops_constant_limit.token.cache_key.capacity, service_name)
+			local capacity, _ = shared:get(key)
+	
+			tlog:dbg("tl_ops_limit_fuse_service_degrade expand token ok, service_name=",service_name,", capacity=",capacity,",key=",key)
 		end
 
-		local key = tl_ops_utils_func:gen_node_key(tl_ops_constant_limit.token.cache_key.capacity, service_name)
-		local capacity, _ = shared:get(key)
-
-		tlog:dbg("tl_ops_limit_fuse_service_degrade expand ok, service_name=",service_name,", capacity=",capacity,",key=",key)
+		-- 漏桶模式
+		if depend == tl_ops_constant_limit.depend.leak then
+			local expand = tl_ops_limit_leak_bucket.tl_ops_limit_leak_expand(service_name)
+			if not expand or expand == false then
+				tlog:err("tl_ops_limit_fuse_service_degrade expand leak err ,",expand)
+				return
+			end
+	
+			local key = tl_ops_utils_func:gen_node_key(tl_ops_constant_limit.leak.cache_key.capacity, service_name)
+			local capacity, _ = shared:get(key)
+	
+			tlog:dbg("tl_ops_limit_fuse_service_degrade expand leak ok, service_name=",service_name,", capacity=",capacity,",key=",key)
+		end
 	end
 
 	-- 同步state, 通知worker更新
@@ -470,20 +523,38 @@ tl_ops_limit_fuse_service_upgrade = function ( conf )
 	tlog:dbg("tl_ops_limit_fuse_service_upgrade start")
 
 	local state = conf.state
+	local depend = conf.depend
 	local service_name = conf.service_name
 
 	-- node处于限流状态, 节点桶扩容
 	if state == _STATE.LIMIT_FUSE_HALF then
-		local shrink = tl_ops_limit_token_bucket.tl_ops_limit_token_shrink(service_name)
-		if not shrink or shrink == false then
-			tlog:err("tl_ops_limit_fuse_service_upgrade shrink err ,",shrink)
-			return
+		-- 令牌桶模式
+		if depend == tl_ops_constant_limit.depend.token then
+			local shrink = tl_ops_limit_token_bucket.tl_ops_limit_token_shrink(service_name)
+			if not shrink or shrink == false then
+				tlog:err("tl_ops_limit_fuse_service_upgrade shrink token err ,",shrink)
+				return
+			end
+	
+			local key = tl_ops_utils_func:gen_node_key(tl_ops_constant_limit.token.cache_key.capacity, service_name)
+			local capacity, _ = shared:get(key)
+	
+			tlog:dbg("tl_ops_limit_fuse_service_upgrade shrink token ok, service_name=",service_name,", capacity=",capacity,",key=",key)
 		end
 
-		local key = tl_ops_utils_func:gen_node_key(tl_ops_constant_limit.token.cache_key.capacity, service_name)
-		local capacity, _ = shared:get(key)
-
-		tlog:dbg("tl_ops_limit_fuse_service_upgrade shrink ok, service_name=",service_name,", capacity=",capacity,",key=",key)
+		-- 漏桶模式
+		if depend == tl_ops_constant_limit.depend.leak then
+			local shrink = tl_ops_limit_leak_bucket.tl_ops_limitleak_shrink(service_name)
+			if not shrink or shrink == false then
+				tlog:err("tl_ops_limit_fuse_service_upgrade shrink leak err ,",shrink)
+				return
+			end
+	
+			local key = tl_ops_utils_func:gen_node_key(tl_ops_constant_limit.leak.cache_key.capacity, service_name)
+			local capacity, _ = shared:get(key)
+	
+			tlog:dbg("tl_ops_limit_fuse_service_upgrade shrink leak ok, service_name=",service_name,", capacity=",capacity,",key=",key)
+		end
 	end
 
 	-- 同步state, 通知worker更新

@@ -101,7 +101,6 @@ const tl_ops_web_limit_bucket_edit = function (name, depend) {
                 if(!tl_ops_limit_bucket_data_edit_filter(data, depend)){
                     return;
                 }
-
                 $.ajax(tl_ajax_data({
                     url: '/tlops/limit/set',
                     data : JSON.stringify(res_data),
@@ -182,7 +181,7 @@ const tl_ops_limit_bucket_data_edit_filter = function( data , depend) {
             return false;
         }
         if(key === 'block'){
-            data.field[key] = parseInt(data.field[key])
+            data.field[key] = parseFloat(data.field[key])
         }
         if(key === 'capacity'){
             data.field[key] = parseFloat(data.field[key])
@@ -191,7 +190,13 @@ const tl_ops_limit_bucket_data_edit_filter = function( data , depend) {
             data.field[key] = parseFloat(data.field[key])
         }
         if(key === 'warm'){
-            data.field[key] = parseInt(data.field[key])
+            data.field[key] = parseFloat(data.field[key])
+        }
+        if(key === 'expand'){
+            data.field[key] = parseFloat(data.field[key])
+        }
+        if(key === 'shrink'){
+            data.field[key] = parseFloat(data.field[key])
         }
     }
     if(depend === 'token'){

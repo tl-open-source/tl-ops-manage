@@ -52,6 +52,14 @@
             </div>
         </div>
         <div class="layui-form-item">
+            <label class="layui-form-label">漏桶单位</label>
+            <div class="layui-input-block">
+                <input type="number" name="block" class="layui-input"  placeholder="请输入漏桶单位"
+                    id="tl-tips-block" onmouseleave="tl_mouse_leave_tips()"
+                    onmouseenter="tl_mouse_enter_tips('tl-tips-block','单次流出漏桶数量单位，如 1024，以字节为单位，可做字节整型流控')">
+            </div>
+        </div>
+        <div class="layui-form-item">
             <label class="layui-form-label">漏桶最大容量</label>
             <div class="layui-input-block">
                 <input type="number" name="capacity" class="layui-input" value="service" placeholder="请输入漏桶最大容量"
@@ -65,6 +73,22 @@
                 <input type="number" name="rate" class="layui-input" placeholder="请输入每秒漏桶流出数量"
                     id="tl-tips-rate" onmouseleave="tl_mouse_leave_tips()"
                     onmouseenter="tl_mouse_enter_tips('tl-tips-rate','每秒漏桶流出的数量，如 10240 ')">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">漏桶扩容比例</label>
+            <div class="layui-input-block">
+                <input type="number" name="expand" class="layui-input"  placeholder="请输入漏桶扩容比例"
+                    id="tl-tips-expand" onmouseleave="tl_mouse_leave_tips()"
+                    onmouseenter="tl_mouse_enter_tips('tl-tips-expand','服务升级时的自动化扩容漏桶的比例，如0.5')">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">漏桶缩容比例</label>
+            <div class="layui-input-block">
+                <input type="number" name="shrink" class="layui-input"  placeholder="请输入漏桶缩容比例"
+                    id="tl-tips-shrink" onmouseleave="tl_mouse_leave_tips()"
+                    onmouseenter="tl_mouse_enter_tips('tl-tips-shrink','服务降级时的自动化缩容漏桶的比例，如0.5')">
             </div>
         </div>
         <div class="layui-form-item layui-hide">

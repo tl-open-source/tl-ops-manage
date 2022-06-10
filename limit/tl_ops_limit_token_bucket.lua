@@ -54,6 +54,26 @@ function _M:new( options, keys )
         return
     end
 
+    local expand = tonumber(options.expand)
+    if not expand or expand <= 0 then
+        expand = options.expand
+    end
+    local ok, _ = shared:set(keys.expand, expand)
+    if not ok then
+        tlog:err(" init token bucket expand err, expand=",expand,",err=",_)
+        return
+    end
+
+    local shrink = tonumber(options.shrink)
+    if not shrink or shrink <= 0 then
+        shrink = options.shrink
+    end
+    local ok, _ = shared:set(keys.shrink, shrink)
+    if not ok then
+        tlog:err(" init token bucket shrink err, shrink=",shrink,",err=",_)
+        return
+    end
+
     local token_bucket = 0
     if warm > 0 then
         token_bucket = warm
@@ -125,7 +145,24 @@ local tl_ops_limit_token_bucket = function( block )
     end
 
     local new_token_bucket = math.min(token_bucket + duration_token_bucket, capacity)
-    local ok, _ = shared:set(self.keys.token_bucket, new_token_bucket)
+    
+    -- 令牌还是不够
+    if new_token_bucket < block then
+        local ok, _ = shared:set(self.keys.token_bucket, new_token_bucket)
+        if not ok then
+            return false
+        end
+    
+        local ok, _ = shared:set(self.keys.pre_time, cur_time)
+        if not ok then
+            return false
+        end
+
+        return false
+    end
+
+    -- 移除一个令牌
+    local ok, _ = shared:set(self.keys.token_bucket, new_token_bucket - block)
     if not ok then
         return false
     end
@@ -134,7 +171,7 @@ local tl_ops_limit_token_bucket = function( block )
     if not ok then
         return false
     end
-
+    
     return true
 end
 
@@ -181,8 +218,8 @@ function _M:tl_pos_limit_token_expand( )
         return false
     end
     
-    -- 暂定扩容量 = 当前桶容量 * 0.5
-    local expand_capacity = self.options.capacity * 0.5
+    -- 扩容量 = 当前桶容量 * 比例
+    local expand_capacity = self.options.capacity * self.options.expand
 
     -- lock
     local lock, err = lock:new("tlopsbalance")
@@ -218,8 +255,8 @@ function _M:tl_pos_limit_token_shrink( )
         return false
     end
     
-    -- 暂定缩容量 = -当前桶容量 * 0.5
-    local shrink_capacity = self.options.capacity * 0.5
+    -- 缩容量 = -当前桶容量 * 比例
+    local shrink_capacity = self.options.capacity * self.options.shrink
 
     -- lock
     local lock, err = lock:new("tlopsbalance")
