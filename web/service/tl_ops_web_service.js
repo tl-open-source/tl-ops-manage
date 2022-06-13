@@ -68,7 +68,7 @@ const tl_ops_web_service_cols = function () {
                 let allNodeOnline = true;
                 if (state_data.service[d.name]){
                     let nodes = state_data.service[d.name].nodes;
-                    if (nodes && nodes.length >= 0){
+                    if (nodes && Object.keys(nodes).length >= 0){
                         for(let nodeName in nodes){
                             if (!nodes[nodeName].health_state){
                                 allNodeOnline = false;
