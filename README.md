@@ -14,7 +14,7 @@
 体验demo : https://tlops.iamtsm.cn/tlops/tl_ops_web_index.html
 
 
-**qq交流群 : 624214498，欢迎有兴趣的童鞋提交RP, 持续更新中 ....**
+**qq交流群 : 624214498，欢迎有兴趣的童鞋提交PR, 持续更新中 ....**
 
 
 <p align="center"> <a href="https://github.com/iamtsm/tl-ops-manage/blob/main/doc/README_EN.md"> EN </a> | <a href="https://github.com/iamtsm/tl-ops-manage#readme"> ZN </a>  </p>
