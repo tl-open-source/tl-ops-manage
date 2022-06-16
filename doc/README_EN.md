@@ -17,7 +17,7 @@ Experience demo : https://tlops.iamtsm.cn/tlops/tl_ops_web_index.html
 **QQ : 624214498, welcome to submit RP, we will continue to update ....**
 
 
-<center> <a href="https://github.com/iamtsm/tl-ops-manage/blob/main/doc/README_EN.md"> EN </a> | <a href="https:// github.com/iamtsm/tl-ops-manage#readme"> ZN </a> </center>
+<p align="center"> <a href="https://github.com/iamtsm/tl-ops-manage/blob/main/doc/README_EN.md"> EN </a> | <a href="https:// github.com/iamtsm/tl-ops-manage#readme"> ZN </a> </p>  
 
 
 | Web | Manage | UI | Preview |
