@@ -53,7 +53,13 @@
         font-weight: 800;
         color: brown;
     }
-
+    .tl-icon-font {
+        border-radius: 23px;
+        padding: 2px;
+        font-size: 12px;
+        background: burlywood;
+        cursor: pointer;
+    }
     #tl-console-load-sync .layui-form-switch{
         margin-top: 0px;
         margin-right: 5px;
@@ -114,7 +120,7 @@
                     熔断监测</div>
             </div>
 
-            <div style="float: right;" class="layui-form" id="tl-console-load-sync" onmouseleave="tl_mouse_leave_tips()"
+            <div style="text-align: right;" class="layui-form" id="tl-console-load-sync" onmouseleave="tl_mouse_leave_tips()"
                 onmouseenter="tl_mouse_enter_tips('tl-console-load-sync','开启后, 每2秒刷新一次数据')">
                 <input type="checkbox" name="switch" lay-skin="switch" lay-text="实时同步|非实时同步" >
                 <i style="display: none" class="layui-icon layui-icon-loading layui-anim layui-anim-rotate layui-anim-loop" id="tl-console-load-sync-icon"></i>
@@ -131,10 +137,14 @@
                                 {{#  layui.each(service.nodes, function(index, node){ }}
                                 <div class="layui-col-sm6">
                                     <div class="layui-card" style="border-radius: 24px;">
-                                        <div class="layui-card-header"> {{service.id}}服务 </div>
+                                        <div class="layui-card-header"> 
+                                            <span class="layui-badge layui-bg-blue">{{service.id}}服务</span>
+                                            <i class="layui-icon layui-icon-help tl-icon-font" id="tl-icon-{{service.id}}-{{node.id}}"
+                                            onmouseleave="tl_mouse_leave_tips()" onmouseenter="tl_mouse_enter_tips('tl-icon-{{service.id}}-{{node.id}}','{{node.limit_msg}}')"></i>
+                                        </div>
                                         <div class="layui-card-body">
                                             <div style="height: 200px;margin-top: 20px; margin-bottom: 20px;"
-                                                id="{{service.id}}-{{node.id}}"> </div>
+                                                id="{{service.id}}-{{node.id}}" onmouseleave="tl_mouse_leave_tips()" onmouseenter="tl_mouse_enter_tips('{{service.id}}-{{node.id}}','{{node.fuse_msg}}')"> </div>
                                         </div>
                                     </div>
                                 </div>
@@ -143,7 +153,7 @@
                                 <div class="layui-col-sm6">
                                     <div class="layui-card" style="border-radius: 24px;">
                                         <div class="layui-card-header">
-                                            {{service.id}}服务
+                                            <span class="layui-badge layui-bg-blue">{{service.id}}服务</span>
                                             {{#  if(service.type === 'balance') { }}
                                             <div style="float: right;" class="layui-form">
                                                 <span class="layui-badge layui-bg-blue " style="padding: 4px 14px 4px 14px;cursor: pointer;">当天</span>

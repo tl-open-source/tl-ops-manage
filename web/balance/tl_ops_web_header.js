@@ -317,6 +317,14 @@ const tl_ops_header_data_add_filter = function( data ) {
         if(key === 'node'){
             data.field[key] = parseInt(data.field[key])   
         }
+        if(key === 'value'){
+            let valueList = data.field[key].split(",");
+            if(valueList.length > 50){
+                layer.msg("请求头值定义过多，最多50个")
+                return false
+            }
+            data.field[key] = valueList
+        }
     }
 
     for(let i = 0; i < res_data.tl_ops_header_list[rule].length; i++){
@@ -351,6 +359,14 @@ const tl_ops_header_data_edit_filter = function( data ) {
         }
         if(key === 'node'){
             data.field[key] = parseInt(data.field[key])   
+        }
+        if(key === 'value'){
+            let valueList = data.field[key].split(",");
+            if(valueList.length > 50){
+                layer.msg("请求头值定义过多，最多50个")
+                return false
+            }
+            data.field[key] = valueList
         }
     }
     let cur_list = []

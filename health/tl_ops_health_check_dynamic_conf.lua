@@ -109,7 +109,7 @@ local tl_ops_health_check_dynamic_conf_add_check = function()
 
 	local options_str, _ = cache_health:get(tl_ops_constant_health.cache_key.options_list)
 	if not options_str then
-		tlog:dbg("[add-check] load dynamic options failed , options_str=",options_str)
+		tlog:err("[add-check] load dynamic options failed , options_str=",options_str)
 		return
 	end
 	local dynamic_options = cjson.decode(options_str)
@@ -117,7 +117,7 @@ local tl_ops_health_check_dynamic_conf_add_check = function()
 	local cache_service = require("cache.tl_ops_cache"):new("tl-ops-service");
 	local service_str, _ = cache_service:get(tl_ops_constant_service.cache_key.service_list)
 	if not service_str then
-		tlog:dbg("[add-check] load dynamic service failed , service_str=",service_str)
+		tlog:err("[add-check] load dynamic service failed , service_str=",service_str)
 		return
 	end
 	local dynamic_service = cjson.decode(service_str)
@@ -274,7 +274,8 @@ local tl_ops_health_check_dynamic_conf_change_start = function( conf )
 
     if not conf then
         tlog:err("[change-check] err , conf nil")
-    end
+	end
+	
 	tl_ops_health_check_dynamic_conf_change_check(conf)
 
 end

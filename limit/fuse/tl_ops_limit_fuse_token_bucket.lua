@@ -57,7 +57,6 @@ local tl_ops_limit_token_mode = function( service_name, node_id )
     return token_mode
 end
 
-
 -- get token with lazy generate
 -- block 取用令牌数量
 local tl_ops_limit_token = function( service_name, node_id )
@@ -124,7 +123,7 @@ local tl_ops_limit_token = function( service_name, node_id )
         return false
     end
 
-    local new_token_bucket = math.min(token_bucket + duration_token_bucket, capacity)
+    local new_token_bucket = math.min(token_bucket + duration_token_bucket, capacity)  
 
     -- 令牌还是不够
     if new_token_bucket < block then
@@ -170,10 +169,6 @@ local tl_ops_limit_token_expand = function( service_name, node_id )
         capacity = token_mode.options.capacity
     end
 
-    if capacity <= 1 then
-        return false
-    end
-
     local expand_key = tl_ops_utils_func:gen_node_key(token_mode.cache_key.expand, service_name, node_id)
     local expand = shared:get(expand_key)
     if not expand then
@@ -187,6 +182,7 @@ local tl_ops_limit_token_expand = function( service_name, node_id )
     tlog:dbg("token expand=",expand, ",service_name=", service_name, ",node_id=",node_id,",expand_key=", expand_key)
     
     -- 扩容量 = 当前桶容量 * 比例
+    -- 扩容最大容量暂时不限制大小，理论上扩容前，必定伴随一次缩容，所以不最大容量会超过设置的最大容量
     local expand_capacity = capacity * expand
 
     local capacity_key = tl_ops_utils_func:gen_node_key(token_mode.cache_key.capacity, service_name, node_id)
@@ -203,6 +199,8 @@ end
 local tl_ops_limit_token_shrink = function( service_name, node_id )
 
     local token_mode = tl_ops_limit_token_mode( service_name, node_id)
+    
+    local block = token_mode.options.block
 
     local capacity_key = tl_ops_utils_func:gen_node_key(token_mode.cache_key.capacity, service_name, node_id)
     local capacity = shared:get(capacity_key)
@@ -214,8 +212,9 @@ local tl_ops_limit_token_shrink = function( service_name, node_id )
         capacity = token_mode.options.capacity
     end
 
-    if capacity <= 1 then
-        return false
+    -- 无需缩容
+    if capacity <= block then
+        return true
     end
     
     local shrink_key = tl_ops_utils_func:gen_node_key(token_mode.cache_key.shrink, service_name, node_id)
@@ -231,9 +230,10 @@ local tl_ops_limit_token_shrink = function( service_name, node_id )
     tlog:dbg("token shrink=",shrink, ",service_name=", service_name, ",node_id=",node_id,",shrink_key=", shrink_key)
 
     -- 缩容量 = -当前桶容量 * 比例
-    local shrink_capacity = capacity * shrink
+    -- 最小容量保证可用通过一个单位的请求
+    local shrink_capacity = math.max(capacity * shrink, block)
     
-    local res ,_ = shared:incr(capacity_key, -shrink_capacity)
+    local res ,_ = shared:set(capacity_key, shrink_capacity)
     if not res or res == false then
         return false
     end

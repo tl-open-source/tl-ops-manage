@@ -76,11 +76,10 @@ const tl_ops_web_service_cols = function () {
                         }
                     }
                 }
-                
                 if( allNodeOnline ){
                     return `<div id="tl-service-change-state-${d.name}" onmouseleave="tl_mouse_leave_tips()"
                                 onmouseenter="tl_mouse_enter_tips('tl-service-change-state-${d.name}','点击关闭，将${d.name}服务下所有节点下线，且关闭服务自检')"> 
-                                <input type="checkbox" name="${d.name}" lay-skin="switch" lay-text="全部上线|全部下线" checked> 
+                                <input type="checkbox" name="${d.name}" lay-skin="switch" lay-text="全部上线|全部下线" checked>
                             </div>`; 
                 }
                 return `<div id="tl-service-change-state-${d.name}" onmouseleave="tl_mouse_leave_tips()"

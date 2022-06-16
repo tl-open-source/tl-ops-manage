@@ -18,6 +18,27 @@ local tl_ops_constant_limit = require("constant.tl_ops_constant_limit")
 local tl_ops_rt = require("constant.tl_ops_constant_comm").tl_ops_rt;
 local tl_ops_utils_func = require("utils.tl_ops_utils_func");
 
+
+-- init balance
+local function rest_init_balance()
+    local cache_balance = require("cache.tl_ops_cache"):new("tl-ops-balance");
+
+    local balance_data = { }
+    balance_data[tl_ops_constant_balance.cache_key.service_empty] = tl_ops_constant_balance.code.service_empty;
+    balance_data[tl_ops_constant_balance.cache_key.mode_empty] = tl_ops_constant_balance.code.mode_empty;
+    balance_data[tl_ops_constant_balance.cache_key.host_empty] = tl_ops_constant_balance.code.host_empty;
+    balance_data[tl_ops_constant_balance.cache_key.host_pass] = tl_ops_constant_balance.code.host_pass;
+    balance_data[tl_ops_constant_balance.cache_key.token_limit] = tl_ops_constant_balance.code.token_limit;
+    balance_data[tl_ops_constant_balance.cache_key.leak_limit] = tl_ops_constant_balance.code.leak_limit;
+    balance_data[tl_ops_constant_balance.cache_key.offline] = tl_ops_constant_balance.code.offline;
+
+    local err_code, _ = cache_balance:set(tl_ops_constant_balance.cache_key.err_code, cjson.encode(balance_data));
+    if not err_code then
+        tl_ops_utils_func:get_str_json_by_return_arg(tl_ops_rt.error, "err_code init err", _ )
+        return;
+    end
+end
+
 -- init balance api
 local function rest_init_api()
     local cache_api = require("cache.tl_ops_cache"):new("tl-ops-api");
@@ -179,17 +200,20 @@ local function rest_init_limit_fuse()
     end
 end
 
-rest_init_api();
 
-rest_init_cookie();
+rest_init_balance()
 
-rest_init_header();
+rest_init_api()
 
-rest_init_param();
+rest_init_cookie()
 
-rest_init_service();
+rest_init_header()
 
-rest_init_health();
+rest_init_param()
+
+rest_init_service()
+
+rest_init_health()
 
 rest_init_limit_fuse()
 

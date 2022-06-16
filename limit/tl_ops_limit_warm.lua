@@ -1,5 +1,0 @@
--- tl_ops_limit
--- en : limit warm up
--- zn : 流控预热
--- @author iamtsm
--- @email 1905333456@qq.com

@@ -11,9 +11,17 @@ local tl_ops_constant_service = require("constant.tl_ops_constant_service");
 local tl_ops_constant_balance = {
     cache_key = {
         lock = "tl_ops_balance_lock",
-        req_succ = "tl_ops_balance_req_succ",                   -- 以服务节点为单位路由请求成功次数记录 (区间)  int
-        req_fail = "tl_ops_balance_req_fail",                   -- 以服务节点为单位路由请求失败次数记录 (总量) int
-        balance_5min_success = "tl_ops_balance_5min_success",   -- 以服务节点为单位，5min为周期成功次数集合 list
+        err_code = "tl_ops_balance_err_code",
+        service_empty = "tl_ops_balance_service_empty_err_code",
+        mode_empty = "tl_ops_balance_mode_empty_err_code",
+        host_empty = "tl_ops_balance_host_empty_err_code",
+        host_pass = "tl_ops_balance_host_pass_err_code",
+        token_limit = "tl_ops_balance_token_limit_err_code",
+        leak_limit = "tl_ops_balance_leak_limit_err_code",
+        offline = "tl_ops_balance_offline_err_code",
+        req_succ = "tl_ops_balance_req_succ",                           -- 以服务节点为单位路由请求成功次数记录 (区间)  int
+        req_fail = "tl_ops_balance_req_fail",                           -- 以服务节点为单位路由请求失败次数记录 (总量) int
+        balance_interval_success = "tl_ops_balance_interval_success",   -- 以服务节点为单位，周期内成功次数集合 list
     },
     api = {
         list = {
@@ -45,6 +53,15 @@ local tl_ops_constant_balance = {
     },
     count = {
         interval = 5 * 60       -- 统计周期 单位/s, 默认:5min
+    },
+    code = {
+        service_empty = 503,    -- 路由服务空错误码
+        mode_empty = 503,       -- 路由匹配空错误码
+        host_empty = 503,       -- 路由域名空错误码
+        host_pass = 503,        -- 路由服务不匹配错误码
+        token_limit = 503,      -- 路由令牌桶限流错误码
+        leak_limit = 503,       -- 路由漏桶限流错误码
+        offline = 503,          -- 路由服务下线错误码
     }
 }
 

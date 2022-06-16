@@ -28,10 +28,14 @@ local tl_ops_balance_header_get_matcher_header = function(header_list_table, rul
     for index, obj in pairs(matcher_list) do
         if obj and obj.key then
             local key = obj.key
-            local value = obj.value
+            local values = obj.value
             for header_k ,header_v in pairs(headers) do
-                if header_k and header_k == key and header_v == value then
-                    return obj
+                if header_k and header_k == key then
+                    for _, value in pairs(values) do
+                        if header_v == value then
+                            return obj
+                        end
+                    end
                 end
             end
         end

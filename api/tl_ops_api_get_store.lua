@@ -27,7 +27,7 @@ local read = function( filename )
     local content_json = store_file_io:read('*l')
 
     while content_json do
-        local content = cjson.decode(content_json);
+        local content = cjson.decode(content_json)
         table.insert(data, content)
         content_json = store_file_io:read('*l')
     end
@@ -47,6 +47,7 @@ local param_content, param_size = read("tl-ops-param.tlstore");
 local service_content, service_size = read("tl-ops-service.tlstore");
 local health_content, health_size = read("tl-ops-health.tlstore");
 local limit_content, limit_size = read("tl-ops-limit.tlstore");
+local balance_content, balance_size = read("tl-ops-balance.tlstore");
 
 local res_data = {
     api = {
@@ -94,9 +95,16 @@ local res_data = {
     limit = {
         id = 7,
         name = "tl-ops-limit.tlstore",
-        size = health_size,
+        size = limit_size,
         version = #limit_content/3,
         list = limit_content,
+    },
+    balance = {
+        id = 8,
+        name = "tl-ops-balance.tlstore",
+        size = balance_size,
+        version = #balance_content,
+        list = balance_content,
     },
 }
 

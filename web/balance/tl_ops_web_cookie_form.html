@@ -12,6 +12,13 @@
     <link rel="stylesheet" type="text/css" href="https://im.iamtsm.cn/lay/dist/layuiadmin/layui/css/layui.css" />
 </head>
 
+<style>
+    input {
+        color: darkorchid;
+        font-weight: 700;
+    }
+</style>
+
 <body>
 
     <div class="layui-form" lay-filter="tl-ops-web-cookie-form" id="tl-ops-web-cookie-form" style="padding: 20px 20px 0 0;">
@@ -36,7 +43,8 @@
         <div class="layui-form-item">
             <label class="layui-form-label">cookie值</label>
             <div class="layui-input-block">
-                <input type="text" name="value" id="value" maxlength="100" placeholder="请输入cookie值" autocomplete="off" class="layui-input">
+                <input type="text" name="value" id="value" maxlength="100" placeholder="请输入cookie值" autocomplete="off" class="layui-input"
+                    onmouseleave="tl_mouse_leave_tips()" onmouseenter="tl_mouse_enter_tips('value','cookie路由匹配的值，如有多个，逗号相隔即可')">
             </div>
         </div>
 

@@ -28,10 +28,14 @@ local tl_ops_balance_param_get_matcher_param = function(param_list_table, rule)
     for index, obj in pairs(matcher_list) do
         if obj and obj.key then
             local key = obj.key
-            local value = obj.value
+            local values = obj.value
             for arg_k ,arg_v in pairs(args) do
-                if arg_k and arg_k == key and arg_v == value then
-                    return obj
+                if arg_k and arg_k == key then
+                    for _, value in pairs(values) do
+                        if arg_v == value then
+                            return obj
+                        end
+                    end
                 end
             end
         end

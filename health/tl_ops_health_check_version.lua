@@ -36,7 +36,6 @@ local tl_ops_health_check_version_incr_service_version = function( service_name 
             tlog:err(" failed to publish new service_version:" , _)
         end
     end
-
     
     tlog:dbg("service_version key=" , key, ", service_version=",service_version)
 

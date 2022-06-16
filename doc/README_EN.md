@@ -1,4 +1,6 @@
-# tl-ops-manage
+# tl-ops-manage (tl openresty lua service manage)
+
+# Service management framework based on openresty
 
 [![](https://img.shields.io/badge/base-openresty-blue)](https://openresty.org/cn/)
 [![](https://img.shields.io/badge/webmanage-red)](https://github.com/iamtsm/tl-ops-manage)
@@ -9,82 +11,160 @@
 
 
 
-# service management based on openresty
-
-tl-ops-manage is positioned for service management
-
-![image](tl-ops-manage.png)
+Experience demo : https://tlops.iamtsm.cn/tlops/tl_ops_web_index.html
 
 
-# progress
-
-- [x] router
-- [x] health-check
-- [x] dynamic-conf
-- [x] dynamic-service
-- [x] data-persistence
-- [x] web-manage
-- [x] limit-fuse
+**QQ : 624214498, welcome to submit RP, we will continue to update ....**
 
 
-## Router
-
-Customize url routing strategy, random routing strategy
-
-- [x] [balance doc](tl-ops-balance.md)
-
-## Health-check
-
-Service node health check is automated and configurable，Support dynamic addition and modification of configuration
-
-- [x] [health doc](tl-ops-health.md)
+<center> <a href="https://github.com/iamtsm/tl-ops-manage/blob/main/doc/README_EN.md"> EN </a> | <a href="https:// github.com/iamtsm/tl-ops-manage#readme"> ZN </a> </center>
 
 
-## Limit-fuse
-
-Automatic current limiting and fusing strategy, dynamic configuration content
-
-- [x] [limit doc](tl-ops-limit.md)
-
-## Store
-
-Support data storage, traceability of operation records, and complete logging
-
-- [x] [store doc](tl-ops-store.md)
+| Web | Manage | UI | Preview |
+|:-------------:|:-------:|:-------:|:-------:|
+| ![console_balance](console_balance.png "console_balance") | ![console_health](console_health.png "console_health") | ![console_fuse](console_fuse.png "console_fuse") |![service](service.png "service")
+|![service_node](service_node.png "service_node") |![balance_api](balance_api.png "balance_api")| ![balance_cookie](balance_cookie.png "balance_cookie") | ![balance_header](balance_header.png "balance_header")
+|![balance_param](balance_param.png "balance_param")|![fuse](fuse.png "fuse")|![fuse_limit_token](fuse_limit_token.png "fuse_limit_token")|![fuse_limit_leak](fuse_limit_leak.png "fuse_limit_leak")
+|![health](health.png "health")|![store](store.png "store")|![store_view](store_view.png "store_view")
 
 
-# usage
-
-First you need to install [openresty](https://openresty.org/cn/installation.html)，and [redis](https://redis.io/download)
-
-then modify nginx.conf to introduce `tl-ops-manage lua package` and `/conf/tl_ops_manage.conf ` of the current project
+# Features
 
 
+- [x] Support API rule load
+
+- [x] support cookie payload
+
+- [x] support header payload
+
+- [x] support request parameter payload
+
+- [x] support domain name routing payload
+
+- [x] Support bulk routing strategy
+
+- [x] Support dynamic routing strategy
+
+- [x] Support routing configuration management
+
+
+- [x] Support service health check
+
+- [x] Support custom return code
+
+- [x] support pausing health check
+
+- [x] Support for adjusting health status
+
+
+- [x] Support service fuse current limiting
+
+- [x] support token bucket current limiter
+
+- [x] Support token bucket warm-up
+
+- [x] support leaky bucket restrictor
+
+- [x] Support for dynamically changing current limiter
+
+- [x] Support current limiter configuration management
+
+
+- [x] support configuration data persistence
+
+- [x] support dynamic node expansion
+
+- [x] support dynamic incremental configuration
+
+- [x] Support management interface
+
+- [x] Support real-time service monitoring
+
+- [x] Support multi-level log generation
+
+- [ ] Support docker installation configuration
+
+- [ ] Support for deployment scripts
+
+- [ ] Support health check node log analysis
+
+- [ ] Supports log analysis of fuse current-limiting nodes
+
+- [ ] Support routing load node log analysis
+
+
+
+
+# How to use
+
+## 1. Installation environment
+
+install openresty
+
+## 2. Modify the configuration
+
+- Copy the following two lines into nginx.conf into the http block
+
+    ````
     http {
-        #....
+        ...
+        # Import tl_ops_manage.conf
+        include "/path/to/tl-ops-manage/conf/*.conf;
 
-        include "/xxx/tl-ops-manage/conf/*.conf;"
-
-        lua_package_path "/xxx/tl-ops-manage/?.lua;;"
+        # import lua package
+        lua_package_path "/path/to/tl-ops-manage/?.lua;;"
+        ...
     }
+    ````
 
-You need to modify the path of the content in the tl_ops_manage.conf to your own path
+- Modify the path in the /path/to/tl-ops-manage/conf/tl_ops_manage.conf file
 
-    #...
-    location = /tlops/service/list {
-		content_by_lua_file "/ your path /tl-open-source/tl-ops-manage/api/tl_ops_api_get_service.lua";
-	}
-	location = /tlops/service/set {
-		content_by_lua_file "/ your path /tl-open-source/tl-ops-manage/api/tl_ops_api_set_service.lua";
-	}
-    #...
-    
-Finallyinaly start nginx，if it is the first time start ，visit `http://127.0.0.1/tlops/reset` to init project
-    
-    
-    http://127.0.0.1/tlops/tl_ops_web_index.html (web manage)
+- Modify the path in the /path/to/tl-ops-manage/constant/tl_ops_manage_env.lua file
+
+- Since redis is enabled by default, you need to install redis. If you don't want to use redis, you can set the redis option to false in tl_ops_manage_env.lua
+
+
+## 3. Start nginx/openresty
+
+http://localhost/tlops/tl_ops_web_index.html management background
+
+If it is the first time to start, first visit `http://127.0.0.1/tlops/reset` to initialize the project
 
 
 
+# Documentation
 
-#### More features are in development ..
+- [x] [Detailed instruction document](https://blog.iamtsm.cn/detail.html?id=90)
+
+- [x] [Source code implementation documentation](https://blog.iamtsm.cn/detail.html?id=91)
+
+- [x] [Brief documentation of routing module](doc/tl-ops-balance.md)
+
+- [x] [Brief Documentation of Health Check Module](doc/tl-ops-health.md)
+
+- [x] [Brief Documentation of Fusing Current Limiting Module](doc/tl-ops-limit.md)
+
+- [x] [Data Module Brief Documentation](doc/tl-ops-store.md)
+
+
+# Change log
+
+- [x] [CHNAGE-LOG](doc/change.md)
+
+
+# Thanks
+
+#### [openresty](https://github.com/openresty/openresty)
+
+#### [layui](https://github.com/layui/layui)
+
+#### [iredis](https://github.com/membphis/lua-resty-iredis)
+
+#### [snowflake](https://github.com/yunfengmeng/lua-resty-snowflake)
+
+#### [echarts](https://github.com/apache/echarts)
+
+
+# License
+
+#### Apache License 2.0

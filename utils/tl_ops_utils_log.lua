@@ -96,7 +96,7 @@ function _M:new(module)
 	self.__index = self
 	
   	return setmetatable({
-		level = _M.debug,
+		level = tl_ops_env.log.level,
 		module = module,
 		dir = tl_ops_env.log.log_dir,
 		format_json = tl_ops_env.log.format_json

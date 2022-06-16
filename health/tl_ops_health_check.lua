@@ -164,7 +164,7 @@ tl_ops_health_check = function(premature, conf)
 		return
 	end
 
-	tlog:dbg("tl_ops_health_check start ",ngx.timer.running_count(), ",",ngx.timer.pending_count())
+	tlog:dbg("tl_ops_health_check start")
 
 	local ok, _ = pcall(tl_ops_health_check_main, conf)
 	if not ok then

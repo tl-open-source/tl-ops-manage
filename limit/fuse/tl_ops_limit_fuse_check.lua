@@ -544,7 +544,7 @@ tl_ops_limit_fuse_service_upgrade = function ( conf )
 
 		-- 漏桶模式
 		if depend == tl_ops_constant_limit.depend.leak then
-			local shrink = tl_ops_limit_leak_bucket.tl_ops_limitleak_shrink(service_name)
+			local shrink = tl_ops_limit_leak_bucket.tl_ops_limit_leak_shrink(service_name)
 			if not shrink or shrink == false then
 				tlog:err("tl_ops_limit_fuse_service_upgrade shrink leak err ,",shrink)
 				return
@@ -589,11 +589,8 @@ tl_ops_limit_fuse_auto_recover = function( conf )
 	local service_state = conf.state
 	local service_name = conf.service_name
 
-	local has_limit_fuse_open_state = false;
-
 	-- 服务熔断自动恢复
 	if service_state == _STATE.LIMIT_FUSE_OPEN then
-		has_limit_fuse_open_state = true
 		tl_ops_limit_fuse_service_degrade( conf )
 		tlog:dbg("tl_ops_limit_fuse_auto_recover service done : service=", service_name, ",state=",service_state)
 	end
@@ -608,41 +605,24 @@ tl_ops_limit_fuse_auto_recover = function( conf )
 		local node_id = i-1
 		local node_state = nodes[i].state
 		if node_state == _STATE.LIMIT_FUSE_OPEN then
-			has_limit_fuse_open_state = true
-			tl_ops_limit_fuse_node_degrade( conf, node_id)
+			tl_ops_limit_fuse_reset_count( conf, node_id )
 		end
 		tlog:dbg("tl_ops_limit_fuse_auto_recover node done : node=", nodes[i].name, ",state=",node_state)
 	end
-
-	if has_limit_fuse_open_state then
-		tl_ops_limit_fuse_reset_count( conf )
-	end
-
 end
 
 
--- 单个周期内请求次数统计，周期结束清除
-tl_ops_limit_fuse_reset_count = function ( conf )
+-- 单个周期内请求次数统计，周期结束清除全熔断的统计值
+tl_ops_limit_fuse_reset_count = function ( conf, node_id )
 	local service_name = conf.service_name
-	local nodes = conf.nodes
 
-	if nodes == nil then
-		tlog:err("tl_ops_limit_fuse_reset_count nodes nil")
-		return
-	end
+	local success_count_key = tl_ops_utils_func:gen_node_key(tl_ops_constant_limit.fuse.cache_key.req_succ, service_name, node_id)
+	shared:set(success_count_key, 0)
 
-	for i = 1, #nodes do
-		local node_id = i-1
+	local failed_count_key = tl_ops_utils_func:gen_node_key(tl_ops_constant_limit.fuse.cache_key.req_fail, service_name, node_id)
+	shared:set(failed_count_key, 0)
 
-		local success_count_key = tl_ops_utils_func:gen_node_key(tl_ops_constant_limit.fuse.cache_key.req_succ, service_name, node_id)
-		shared:set(success_count_key, 0)
-
-		local failed_count_key = tl_ops_utils_func:gen_node_key(tl_ops_constant_limit.fuse.cache_key.req_fail, service_name, node_id)
-		shared:set(failed_count_key, 0)
-
-	end
-
-	tlog:dbg("tl_ops_limit_fuse_reset_count done")
+	tlog:dbg("tl_ops_limit_fuse_reset_count done service_name=",service_name,",node_id=",node_id)
 end
 
 

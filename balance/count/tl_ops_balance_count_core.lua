@@ -1,6 +1,6 @@
 -- tl_ops_balance
 -- en : balance count state
--- zn : 路由次数统计
+-- zn : 路由次数统计器
 -- @author iamtsm
 -- @email 1905333456@qq.com
 
@@ -19,9 +19,9 @@ local _M = {
 }
 local mt = { __index = _M }
 
+
 -- 需要提前定义，定时器访问不了
 local tl_ops_balance_count_timer
-
 
 
 -- 统计器加锁
@@ -66,42 +66,56 @@ local tl_ops_balance_count = function()
     
         for i = 1, #nodes do
             local node_id = i-1
-            local cur_count_key = tl_ops_utils_func:gen_node_key(tl_ops_constant_balance.cache_key.req_succ, service_name, node_id)
-            local cur_count = shared:get(cur_count_key)
-            if not cur_count then
-                cur_count = 0
-                shared:set(cur_count_key, cur_count)
+            local cur_succ_count_key = tl_ops_utils_func:gen_node_key(tl_ops_constant_balance.cache_key.req_succ, service_name, node_id)
+            local cur_succ_count = shared:get(cur_succ_count_key)
+            if not cur_succ_count then
+                cur_succ_count = 0
             end
 
-            -- push to list
-            local success_key = tl_ops_utils_func:gen_node_key(tl_ops_constant_balance.cache_key.balance_5min_success, service_name, node_id)
-            local balance_5min_success = cache_balance_count:get001(success_key)
-            if not balance_5min_success then
-                balance_5min_success = {}
+            local cur_fail_count_key = tl_ops_utils_func:gen_node_key(tl_ops_constant_balance.cache_key.req_fail, service_name, node_id)
+            local cur_fail_count = shared:get(cur_fail_count_key)
+            if not cur_fail_count then
+                cur_fail_count = 0
+            end
+
+            local cur_count = cur_succ_count + cur_fail_count
+            if cur_count == 0 then
+                tlog:err("balance count async err , succ=",cur_succ_count,",fail=",cur_fail_count,",service_name=",service_name,",node_id=",node_id)
             else
-                balance_5min_success = cjson.decode(balance_5min_success)
-            end
+                -- push to list
+                local success_key = tl_ops_utils_func:gen_node_key(tl_ops_constant_balance.cache_key.balance_interval_success, service_name, node_id)
+                local balance_interval_success = cache_balance_count:get001(success_key)
+                if not balance_interval_success then
+                    balance_interval_success = {}
+                else
+                    balance_interval_success = cjson.decode(balance_interval_success)
+                end
 
-            balance_5min_success[os.date("%Y-%m-%d %H:%M:%S", ngx.now())] = cur_count
-            local ok, _ = cache_balance_count:set001(success_key, cjson.encode(balance_5min_success))
-            if not ok then
-                tlog:err("balance success count async err ,success_key=",success_key,",cur_count=",cur_count,",err=",_)
-            end
+                balance_interval_success[os.date("%Y-%m-%d %H:%M:%S", ngx.now())] = cur_count
+                local ok, _ = cache_balance_count:set001(success_key, cjson.encode(balance_interval_success))
+                if not ok then
+                    tlog:err("balance success count async err ,success_key=",success_key,",cur_count=",cur_count,",err=",_)
+                end
 
-            -- rest cur_count
-            local ok, _ = shared:set(cur_count_key, 0)
-            if not ok then
-                tlog:err("balance count reset err ,success_key=",success_key,",cur_count=",cur_count)
-            end
+                -- rest cur_count
+                local ok, _ = shared:set(cur_succ_count_key, 0)
+                if not ok then
+                    tlog:err("balance succ count reset err ,success_key=",success_key,",cur_count=",cur_count)
+                end
+                ok, _ = shared:set(cur_fail_count_key, 0)
+                if not ok then
+                    tlog:err("balance fail count reset err ,success_key=",success_key,",cur_count=",cur_count)
+                end
 
-            tlog:dbg("balance count async ok ,success_key=",success_key,",balance_5min_success=",balance_5min_success)
+                tlog:dbg("balance count async ok ,success_key=",success_key,",balance_interval_success=",balance_interval_success)
+            end
         end
     end
 end
 
 
 
--- 统计balance次数周期为 5min
+-- 统计balance次数周期默认为5min，可调整配置
 tl_ops_balance_count_timer = function(premature, args)
 	if premature then
 		return

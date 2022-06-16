@@ -16,7 +16,9 @@ local tl_ops_constant_cookie = {
         {
             id = snowflake.generate_id( 100 ),  -- default snow id
             key = "_tl_session_id",             -- 当前cookie匹配名称
-            value = "ok",                       -- 当前cookie名称对应值                      
+            value = {                           -- 当前cookie名称对应值列表  
+                "ok","ok1","ok2"
+            },                                        
             service = "tlops-demo",             -- 当前cookie路由到的service
             node = 0,                           -- 当前cookie路由到的service下的node的索引
             host = "tlops1.com",                -- 当前cookie处理的域名范围

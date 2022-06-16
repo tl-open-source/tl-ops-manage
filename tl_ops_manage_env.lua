@@ -1,5 +1,6 @@
 return {
     log = {
+        level = 1, -- 1=debug, 2=std, 3=err
         log_dir = [[/path/to/tl-source/tl-ops-manage/]],---- log 路径
         store_dir = [[/path/to/tl-source/tl-ops-manage/store/]],
     

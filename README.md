@@ -1,7 +1,6 @@
-# tl-ops-manage (tl openresty lua manage)
+# tl-ops-manage (tl openresty lua service manage)
 
 # 基于openresty的服务管理框架
-
 
 [![](https://img.shields.io/badge/base-openresty-blue)](https://openresty.org/cn/)
 [![](https://img.shields.io/badge/webmanage-red)](https://github.com/iamtsm/tl-ops-manage)
@@ -14,15 +13,11 @@
 
 体验demo : https://tlops.iamtsm.cn/tlops/tl_ops_web_index.html
 
-**欢迎有兴趣的童鞋提交RP, 持续更新中 ....**
 
-**喜欢的大佬点个start支持下**
-
-**qq交流群 : 624214498**
+**qq交流群 : 624214498，欢迎有兴趣的童鞋提交RP, 持续更新中 ....**
 
 
-[EN DOC](doc/README_EN.md) 
-
+<center> <a href="https://github.com/iamtsm/tl-ops-manage/blob/main/doc/README_EN.md"> EN </a> | <a href="https://github.com/iamtsm/tl-ops-manage#readme"> ZN </a>  </center>
 
 
 | Web | Manage  | UI  | Preview  |
@@ -46,53 +41,61 @@
 
 - [x] 支持域名路由负载
 
+- [x] 支持批量路由策略
+
+- [x] 支持动态路由策略
+
+- [x] 支持路由配置管理
+
+
 - [x] 支持服务健康检查
 
-- [x] 支持服务限流熔断
-
-- [x] 支持配置数据持久
-
-- [x] 支持管理操作界面
-
-- [x] 支持动态增量配置
-
-- [x] 支持动态节点扩展
-
-- [x] 支持令牌桶流控
-
-- [x] 支持变更路由策略
-
 - [x] 支持自定义回包码
-
-- [x] 支持实时服务监控
 
 - [x] 支持暂停健康检查
 
 - [x] 支持调整健康状态
 
-- [x] 支持漏桶流控选项
 
-- [x] 支持令牌桶配置管理
+- [x] 支持服务熔断限流
 
-- [x] 支持令牌桶预热配置
+- [x] 支持令牌桶限流器
 
-- [ ] 支持负载配置管理
+- [x] 支持令牌桶预热
 
-- [ ] 支持服务灰度标签
+- [x] 支持漏桶限流器
 
-- [ ] 支持配置发布回滚
+- [x] 支持动态变更限流器
 
-- [ ] 支持服务告警通知
+- [x] 支持限流器配置管理
 
-- [ ] 支持移除服务节点
 
-- [ ] 支持健康检查历史数据统计
+- [x] 支持配置数据持久
 
-- [ ] 支持查看健康检查节点日志
+- [x] 支持动态节点扩展
 
-- [ ] 支持查看熔断限流节点日志
+- [x] 支持动态增量配置
 
-- [ ] 支持查看路由负载节点日志
+- [x] 支持管理操作界面
+
+- [x] 支持实时服务监控
+
+- [x] 支持多级日志生成
+
+- [ ] 支持版本迭代数据同步
+ 
+- [ ] 支持docker部署
+
+- [ ] 支持部署脚本
+
+- [ ] 支持健康检查节点日志分析
+
+- [ ] 支持熔断限流节点日志分析
+
+- [ ] 支持路由负载节点日志分析
+
+
+
 
 
 # 使用方式
@@ -114,7 +117,6 @@
         # 引入lua包
         lua_package_path "/path/to/tl-ops-manage/?.lua;;"
         ...
-        
     }
     ````
 

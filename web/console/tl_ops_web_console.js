@@ -437,6 +437,7 @@ const tl_ops_web_console_echarts_balance_render_reflush = function (data) {
 
 //fuselimit get option
 const tl_ops_web_console_echarts_fuselimit_get_option = function(data){
+    
     var option = {
         legend: {
             orient: 'vertical',
@@ -455,35 +456,7 @@ const tl_ops_web_console_echarts_fuselimit_get_option = function(data){
                     fill: data.fill,
                     textAlign: 'center',
                     fontSize: 13,
-                },
-            },
-            {
-                type: 'text',
-                right: 0,
-                top: 0,
-                z: 2,
-                zlevel: 100,
-                style: {
-                    text: '路由成功 : '+data.success,
-                    fontWeight: 'bold',
-                    fill: data.fill,
-                    textAlign: 'center',
-                    fontSize: 12,
-                },
-            },
-            {
-                type: 'text',
-                right: 0,
-                top: '10%',
-                z: 2,
-                zlevel: 100,
-                style: {
-                    text: '路由失败 : '+data.failed,
-                    fontWeight: 'bold',
-                    fill: data.fill,
-                    textAlign: 'center',
-                    fontSize: 12,
-                },
+                }
             },
             {
                 type: 'text',
@@ -707,7 +680,7 @@ const tl_ops_web_console_fuselimit_state_caculate = function () {
             serviceFill = "#df2929";
         }else{
             serviceState = "正常";
-            serviceFill = "#5adfae";
+            serviceFill = "#1E9FFF";
         }
 
         let matcherOptions = option_list.filter(option=>{
@@ -738,7 +711,7 @@ const tl_ops_web_console_fuselimit_state_caculate = function () {
                 nodeFill = "#df2929";
             }else{
                 nodeState = "正常";
-                nodeFill = "#5adfae";
+                nodeFill = "#1E9FFF";
             }
 
             nodeList.push({
@@ -794,8 +767,19 @@ const tl_ops_web_console_echarts_fuselimit_render = function (data) {
     for(let serviceName in data){
         let nodeList = [];
         for(let nodeName in data[serviceName].nodes){
+            let fuse_msg = "<div >当前路由成功 : "+data[serviceName].nodes[nodeName].limit_success+"</div>" +
+                           "<div >当前路由失败 : "+data[serviceName].nodes[nodeName].limit_failed+"</div>";
+            let pre_time = data[serviceName].nodes[nodeName].limit_pre_time === 'nil' ? "nil" : 
+                            new Date(data[serviceName].nodes[nodeName].limit_pre_time * 1000).toLocaleString()  
+            let limit_msg = "<div >当前限流策略 : "+data[serviceName].nodes[nodeName].limit_depend+"</div>" +
+                            "<div >当前最大容量 : "+data[serviceName].nodes[nodeName].limit_capacity+"</div>"+
+                            "<div >当前剩余容量 : "+data[serviceName].nodes[nodeName].limit_bucket+"</div>"+
+                            "<div >当前单位大小 : "+data[serviceName].nodes[nodeName].limit_rate+"</div>"+
+                            "<div >最近补充时间 : "+pre_time+"</div>";
             nodeList.push({
-                id : nodeName
+                id : nodeName,
+                fuse_msg : fuse_msg,
+                limit_msg : limit_msg
             })
         }
         serviceList.push({
@@ -834,6 +818,39 @@ const tl_ops_web_console_echarts_fuselimit_options_reflush = function (data) {
 
 //fuselimit echarts 刷新渲染
 const tl_ops_web_console_echarts_fuselimit_render_reflush = function (data) {
+    let serviceList = [];
+    for(let serviceName in data){
+        let nodeList = [];
+        for(let nodeName in data[serviceName].nodes){
+            let fuse_msg = "<div >当前路由成功 : "+data[serviceName].nodes[nodeName].limit_success+"</div>" +
+                           "<div >当前路由失败 : "+data[serviceName].nodes[nodeName].limit_failed+"</div>";
+            let pre_time = data[serviceName].nodes[nodeName].limit_pre_time === 'nil' ? "nil" : 
+                            new Date(data[serviceName].nodes[nodeName].limit_pre_time * 1000).toLocaleString()  
+            let limit_msg = "<div >当前限流策略 : "+data[serviceName].nodes[nodeName].limit_depend+"</div>" +
+                            "<div >当前最大容量 : "+data[serviceName].nodes[nodeName].limit_capacity+"</div>"+
+                            "<div >当前剩余容量 : "+data[serviceName].nodes[nodeName].limit_bucket+"</div>"+
+                            "<div >当前单位大小 : "+data[serviceName].nodes[nodeName].limit_rate+"</div>"+
+                            "<div >最近补充时间 : "+pre_time+"</div>";
+            nodeList.push({
+                id : nodeName,
+                fuse_msg : fuse_msg,
+                limit_msg : limit_msg
+            })
+        }
+        serviceList.push({
+            id : serviceName,
+            type : 'fuselimit',
+            nodes : nodeList
+        })
+    }
+    serviceList = serviceList.sort(function(a, b){return a.id.localeCompare(b.id,'zh-CN')})
+
+    laytpl(document.getElementById(_console_echarts_tlp_id_name).innerHTML).render((() => {
+        return serviceList
+    })(), (html) => {
+        document.getElementById(_console_echarts_view_id_name).innerHTML = html;
+    });
+
     //渲染echarts
     tl_ops_web_console_fuselimit_state_caculate().forEach((item) => {
         item.nodeList.forEach(node=>{

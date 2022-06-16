@@ -28,10 +28,14 @@ local tl_ops_balance_cookie_get_matcher_cookie = function(cookie_list_table, rul
     for index, obj in pairs(matcher_list) do
         if obj and obj.key then
             local key = obj.key
-            local value = obj.value
+            local values = obj.value
             local req_cookie_value, _ = cookie_utils:get(key);
-            if req_cookie_value ~= nil and req_cookie_value == value then
-                return obj
+            if req_cookie_value ~= nil then
+                for _, value in pairs(values) do
+                    if req_cookie_value == value then
+                        return obj
+                    end
+                end
             end
         end
     end
