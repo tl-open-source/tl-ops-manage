@@ -69,6 +69,8 @@ Experience demo : https://tlops.iamtsm.cn/tlops/tl_ops_web_index.html
 
 - [x] Support current limiter configuration management
 
+- [ ] Support circuit breaker policy adjustment
+
 
 - [x] support configuration data persistence
 
@@ -82,15 +84,22 @@ Experience demo : https://tlops.iamtsm.cn/tlops/tl_ops_web_index.html
 
 - [x] Support multi-level log generation
 
-- [ ] Support docker installation configuration
+- [ ] Support permission identity control
 
-- [ ] Support for deployment scripts
+- [ ] Support the introduction of plug-in secondary development
+
+- [ ] Support version iteration data synchronization
+
+- [ ] Support cluster deployment data synchronization
+ 
+- [ ] Support docker one-click deployment
 
 - [ ] Support health check node log analysis
 
 - [ ] Supports log analysis of fuse current-limiting nodes
 
 - [ ] Support routing load node log analysis
+
 
 
 
