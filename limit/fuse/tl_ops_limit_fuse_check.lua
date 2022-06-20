@@ -15,6 +15,7 @@ local tl_ops_limit_token_bucket = require("limit.fuse.tl_ops_limit_fuse_token_bu
 local tl_ops_limit_leak_bucket = require("limit.fuse.tl_ops_limit_fuse_leak_bucket");
 
 local tl_ops_constant_limit = require("constant.tl_ops_constant_limit")
+local tl_ops_constant_health = require("constant.tl_ops_constant_health")
 local tl_ops_constant_service = require("constant.tl_ops_constant_service");
 
 local shared = ngx.shared.tlopsbalance
@@ -143,6 +144,16 @@ tl_ops_limit_fuse_default_confs = function(options, services)
 			return nil
 		end
 
+		local mode = opt.mode
+		if not mode then
+			tlog:err("tl_ops_limit_fuse_default_confs warp default mode nil")
+			return nil
+		end
+		if not tl_ops_constant_limit.mode[mode] then
+			tlog:err("tl_ops_limit_fuse_default_confs warp default mode illegal")
+			return nil
+		end
+
 		local level = opt.level
 		if not level then
 			tlog:err("tl_ops_limit_fuse_default_confs warp default level nil")
@@ -174,6 +185,7 @@ tl_ops_limit_fuse_default_confs = function(options, services)
 			service_threshold = service_threshold,	-- 服务限流/熔断阈值
 	        recover = recover,						-- 熔断后自动恢复时间
 	        depend = depend,						-- 自检依赖的模式
+			mode = mode,							-- 熔断策略
 			level = level,							-- 自检层级 
 			state = _STATE.LIMIT_FUSE_CLOSE,		-- 服务熔断/限流状态
 		})
@@ -258,6 +270,7 @@ tl_ops_limit_fuse_check_nodes = function ( conf )
 	local service_name = conf.service_name
 	local node_threshold = conf.node_threshold
 	local service_threshold = conf.service_threshold
+	local mode = conf.mode
 	local nodes = conf.nodes
 
 	local degrade_count = 0
@@ -273,32 +286,51 @@ tl_ops_limit_fuse_check_nodes = function ( conf )
 	-- node层级
 	for i = 1, #nodes do
 		local node_id = i-1
+		local upgrade = false
 
-		local success_count_key = tl_ops_utils_func:gen_node_key(tl_ops_constant_limit.fuse.cache_key.req_succ, service_name, node_id)
-		local success_count = shared:get(success_count_key)
-		if not success_count then
-			success_count = 0
+		-- 路由失败率策略
+		if mode == tl_ops_constant_limit.mode.balance_fail then
+			local success_count_key = tl_ops_utils_func:gen_node_key(tl_ops_constant_limit.fuse.cache_key.req_succ, service_name, node_id)
+			local success_count = shared:get(success_count_key)
+			if not success_count then
+				success_count = 0
+			end
+	
+			local failed_count_key = tl_ops_utils_func:gen_node_key(tl_ops_constant_limit.fuse.cache_key.req_fail, service_name, node_id)
+			local failed_count = shared:get(failed_count_key)
+			if not failed_count then
+				failed_count = 0
+			end
+
+			local total_count = success_count + failed_count
+			if total_count == 0 then
+				total_count = -1 	-- can not be 0
+			end
+
+			-- 超过阈值
+			if failed_count / total_count >= node_threshold then
+				upgrade = true
+			end
 		end
 
-		local failed_count_key = tl_ops_utils_func:gen_node_key(tl_ops_constant_limit.fuse.cache_key.req_fail, service_name, node_id)
-		local failed_count = shared:get(failed_count_key)
-		if not failed_count then
-			failed_count = 0
-		end
+		-- 健康状态策略
+		if mode == tl_ops_constant_limit.mode.health_state then
+			local health_state_key = tl_ops_utils_func:gen_node_key(tl_ops_constant_health.cache_key.state, service_name, node_id)
+			local health_state = shared:get(health_state_key)
 
-		local total_count = success_count + failed_count
-		if total_count == 0 then
-			total_count = -1 	-- can not be 0
+			-- 节点下线
+			if not health_state then
+				upgrade = true
+			end
 		end
-
-		-- 超过阈值
-		if failed_count / total_count >= node_threshold then
+		
+		if upgrade then
 			upgrade_count = upgrade_count + 1
-			tlog:dbg("iamtsm节点状态升级 : service_name=",service_name, ",node_name=",nodes[i].name, ",node_threshold=",(failed_count / total_count),',state=',nodes[i].state)
+			tlog:dbg("node state upgrade : service_name=",service_name, ",node_name=",nodes[i].name, ",mode=",mode, ",state=",state)
 			tl_ops_limit_fuse_node_upgrade( conf, node_id )
 		else
 			degrade_count = degrade_count + 1
-			tlog:dbg("iamtsm节点状态降级 : service_name=",service_name, ",node_name=",nodes[i].name,",node_threshold=",(failed_count / total_count),',state=',nodes[i].state)
+			tlog:dbg("node state degrade : service_name=",service_name, ",node_name=",nodes[i].name, ",mode=",mode, ",state=",state)
 			tl_ops_limit_fuse_node_degrade( conf, node_id )
 		end
 	end
@@ -310,11 +342,11 @@ tl_ops_limit_fuse_check_nodes = function ( conf )
 	end
 	-- 节点状态升级比率超过阈值，对服务进行状态升级
 	if upgrade_count / service_total_count >= service_threshold then
-		tlog:dbg("iamtsm服务状态升级 : service_name=",service_name,",upgrade_count=",upgrade_count, ",service_total_count=",service_total_count,",service_threshold=",(upgrade_count / service_total_count),",state=",conf.state)
+		tlog:dbg("service state upgrade : service_name=",service_name,",upgrade_count=",upgrade_count, ",service_total_count=",service_total_count,",service_threshold=",(upgrade_count / service_total_count),",state=",conf.state)
 
 		tl_ops_limit_fuse_service_upgrade( conf )
 	else
-		tlog:dbg("iamtsm服务状态降级 : service_name=",service_name,",upgrade_count=",upgrade_count, ",service_total_count=",service_total_count,",service_threshold=",(upgrade_count / service_total_count),",state=",conf.state)
+		tlog:dbg("service state degrade : service_name=",service_name,",upgrade_count=",upgrade_count, ",service_total_count=",service_total_count,",service_threshold=",(upgrade_count / service_total_count),",state=",conf.state)
 		
 		tl_ops_limit_fuse_service_degrade( conf )
 	end
@@ -587,6 +619,7 @@ end
 tl_ops_limit_fuse_auto_recover = function( conf )
 	local nodes = conf.nodes
 	local service_state = conf.state
+	local mode = conf.mode
 	local service_name = conf.service_name
 
 	-- 服务熔断自动恢复
@@ -605,26 +638,27 @@ tl_ops_limit_fuse_auto_recover = function( conf )
 		local node_id = i-1
 		local node_state = nodes[i].state
 		if node_state == _STATE.LIMIT_FUSE_OPEN then
-			tl_ops_limit_fuse_reset_count( conf, node_id )
+			
+			-- 路由失败率熔断模式下 : 单个周期内请求次数统计，周期结束清除全熔断的统计值
+			if mode == tl_ops_constant_limit.mode.balance_fail then
+				local success_count_key = tl_ops_utils_func:gen_node_key(tl_ops_constant_limit.fuse.cache_key.req_succ, service_name, node_id)
+				shared:set(success_count_key, 0)
+
+				local failed_count_key = tl_ops_utils_func:gen_node_key(tl_ops_constant_limit.fuse.cache_key.req_fail, service_name, node_id)
+				shared:set(failed_count_key, 0)
+
+				tlog:dbg("tl_ops_limit_fuse_auto_recover reset count done service_name=",service_name,",node_id=",node_id)
+			end
+
+			-- 健康状态模式下 : 自动状态降级
+			if mode == tl_ops_constant_limit.mode.health_state then
+				tl_ops_limit_fuse_node_degrade( conf , node_id )
+			end
 		end
+
 		tlog:dbg("tl_ops_limit_fuse_auto_recover node done : node=", nodes[i].name, ",state=",node_state)
 	end
 end
-
-
--- 单个周期内请求次数统计，周期结束清除全熔断的统计值
-tl_ops_limit_fuse_reset_count = function ( conf, node_id )
-	local service_name = conf.service_name
-
-	local success_count_key = tl_ops_utils_func:gen_node_key(tl_ops_constant_limit.fuse.cache_key.req_succ, service_name, node_id)
-	shared:set(success_count_key, 0)
-
-	local failed_count_key = tl_ops_utils_func:gen_node_key(tl_ops_constant_limit.fuse.cache_key.req_fail, service_name, node_id)
-	shared:set(failed_count_key, 0)
-
-	tlog:dbg("tl_ops_limit_fuse_reset_count done service_name=",service_name,",node_id=",node_id)
-end
-
 
 
 return _M

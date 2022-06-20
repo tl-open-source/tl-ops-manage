@@ -11,7 +11,7 @@ local tl_ops_constant_service = require("constant.tl_ops_constant_service");
 local tl_ops_constant_balance = {
     cache_key = {
         lock = "tl_ops_balance_lock",
-        err_code = "tl_ops_balance_err_code",
+        options = "tl_ops_balance_options",
         service_empty = "tl_ops_balance_service_empty_err_code",
         mode_empty = "tl_ops_balance_mode_empty_err_code",
         host_empty = "tl_ops_balance_host_empty_err_code",
@@ -52,16 +52,19 @@ local tl_ops_constant_balance = {
         rule = tl_ops_constant_param.rule.point
     },
     count = {
-        interval = 5 * 60       -- 统计周期 单位/s, 默认:5min
+        interval = 10       -- 统计周期 单位/s, 默认:5min
     },
-    code = {
-        service_empty = 503,    -- 路由服务空错误码
-        mode_empty = 503,       -- 路由匹配空错误码
-        host_empty = 503,       -- 路由域名空错误码
-        host_pass = 503,        -- 路由服务不匹配错误码
-        token_limit = 503,      -- 路由令牌桶限流错误码
-        leak_limit = 503,       -- 路由漏桶限流错误码
-        offline = 503,          -- 路由服务下线错误码
+    options = {
+        
+    },
+    demo = {
+        tl_ops_balance_service_empty_err_code = 503,    -- 路由服务空错误码
+        tl_ops_balance_mode_empty_err_code = 503,       -- 路由匹配空错误码
+        tl_ops_balance_host_empty_err_code = 503,       -- 路由域名空错误码
+        tl_ops_balance_host_pass_err_code = 503,        -- 路由服务不匹配错误码
+        tl_ops_balance_token_limit_err_code = 503,      -- 路由令牌桶限流错误码
+        tl_ops_balance_leak_limit_err_code = 503,       -- 路由漏桶限流错误码
+        tl_ops_balance_offline_err_code = 503,          -- 路由服务下线错误码
     }
 }
 

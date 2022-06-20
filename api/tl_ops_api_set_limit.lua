@@ -27,11 +27,6 @@ if not fuse_cache_list then
     return;
 end
 
--- 对service version更新，通知worker更新所有conf
-for _, option in ipairs(tl_ops_limit_fuse_list) do
-    tl_ops_limit_fuse_check_version.incr_service_version(option.service_name);
-end
-
 
 -- leak配置
 local tl_ops_limit_leak_list, _ = tl_ops_utils_func:get_req_post_args_by_name(tl_ops_constant_limit.leak.cache_key.options_list, 1);
@@ -58,6 +53,12 @@ local token_cache_list, _ = cache:set(tl_ops_constant_limit.token.cache_key.opti
 if not token_cache_list then
     tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.error, "set token list err ", _)
     return;
+end
+
+
+-- 对service version更新，通知worker更新所有conf
+for _, option in ipairs(tl_ops_limit_fuse_list) do
+    tl_ops_limit_fuse_check_version.incr_service_version(option.service_name);
 end
 
 

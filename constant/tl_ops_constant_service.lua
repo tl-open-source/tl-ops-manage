@@ -10,14 +10,12 @@ local tl_ops_constant_service = {
         
     },
     demo = {
-        {
-            id = snowflake.generate_id( 100 ),  -- default snow id
-            name = "tlops-demo-node",           -- 当前节点name
-            service = "tlops-demo",             -- 当前节点所属service
-            protocol = "http://",               -- 当前节点协议头
-            ip = "127.0.0.1",                   -- 当前节点ip
-            port = 6666,                        -- 当前节点port
-        }
+        id = snowflake.generate_id( 100 ),  -- default snow id
+        name = "tlops-demo-node",           -- 当前节点name
+        service = "service",                -- 当前节点所属service
+        protocol = "http://",               -- 当前节点协议头
+        ip = "127.0.0.1",                   -- 当前节点ip
+        port = 6666,                        -- 当前节点port
     },
     rule = {-- service rule 自检策略
         auto_load = 'auto_load',

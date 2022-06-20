@@ -98,7 +98,7 @@ end
 
 
 -- read json file
--- 写内容文件
+-- 读内容文件
 function _M:read( key )
 	local store_file_name = self.path .. self.business .. ".tlstore"
 	local store_file_io, _ = io.open(store_file_name, "r")
@@ -108,6 +108,9 @@ function _M:read( key )
 	end
 
 	local key_seek, _ = self:read_index(key);
+	if not key_seek then
+		return
+	end
 
 	store_file_io:seek("set", key_seek);
 

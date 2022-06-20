@@ -1,6 +1,10 @@
-# tl-ops-manage (tl openresty lua service manage)
-
-# Service management framework based on openresty
+      __  .__                                                                                       
+    _/  |_|  |             ____ ______  ______           _____ _____    ____ _____     ____   ____  
+    \   __\  |    ______  /  _ \\____ \/  ___/  ______  /     \\__  \  /    \\__  \   / ___\_/ __ \ 
+    |  | |  |__  /_____/ (  <_> )  |_> >___ \  /_____/ |  Y Y  \/ __ \|   |  \/ __ \_/ /_/  >  ___/ 
+    |__| |____/           \____/|   __/____  >         |__|_|  (____  /___|  (____  /\___  / \___  >
+                                |__|       \/                \/     \/     \/     \//_____/      \/ 
+# Service management framework based on openresty （API Gateway）
 
 [![](https://img.shields.io/badge/base-openresty-blue)](https://openresty.org/cn/)
 [![](https://img.shields.io/badge/webmanage-red)](https://github.com/iamtsm/tl-ops-manage)
@@ -8,7 +12,6 @@
 [![](https://img.shields.io/badge/balance-red)](https://github.com/iamtsm/tl-ops-manage/blob/main/doc/tl-ops-balance.md)
 [![](https://img.shields.io/badge/limitfuse-red)](https://github.com/iamtsm/tl-ops-manage/blob/main/doc/tl-ops-balance.md)
 [![](https://img.shields.io/badge/dynamic%20conf-green)](https://github.com/iamtsm/tl-ops-manage)
-
 
 
 Experience demo : https://tlops.iamtsm.cn/tlops/tl_ops_web_index.html
@@ -30,16 +33,15 @@ Experience demo : https://tlops.iamtsm.cn/tlops/tl_ops_web_index.html
 
 # Features
 
-
 - [x] Support API rule load
 
-- [x] support cookie payload
+- [x] Support cookie payload
 
-- [x] support header payload
+- [x] Support header payload
 
-- [x] support request parameter payload
+- [x] Support request parameter payload
 
-- [x] support domain name routing payload
+- [x] Support domain name routing payload
 
 - [x] Support bulk routing strategy
 
@@ -52,7 +54,7 @@ Experience demo : https://tlops.iamtsm.cn/tlops/tl_ops_web_index.html
 
 - [x] Support custom return code
 
-- [x] support pausing health check
+- [x] Support pausing health check
 
 - [x] Support for adjusting health status
 
@@ -63,20 +65,21 @@ Experience demo : https://tlops.iamtsm.cn/tlops/tl_ops_web_index.html
 
 - [x] Support token bucket warm-up
 
-- [x] support leaky bucket restrictor
+- [x] Support leaky bucket restrictor
 
 - [x] Support for dynamically changing current limiter
 
 - [x] Support current limiter configuration management
 
-- [ ] Support circuit breaker policy adjustment
+- [x] Support circuit breaker policy adjustment
 
 
-- [x] support configuration data persistence
 
-- [x] support dynamic node expansion
+- [x] Support configuration data persistence
 
-- [x] support dynamic incremental configuration
+- [x] Support dynamic node expansion
+
+- [x] Support dynamic incremental configuration
 
 - [x] Support management interface
 
@@ -84,22 +87,47 @@ Experience demo : https://tlops.iamtsm.cn/tlops/tl_ops_web_index.html
 
 - [x] Support multi-level log generation
 
+
+
+- [ ] Support custom WAF policy
+
+- [ ] Support xss prevention rules
+
+- [ ] Support cc prevention rules
+
+- [ ] Support IP black and white list rules
+
+- [ ] Support Url black and white list rules
+
+- [ ] Support Cookie black and white list rules
+
+- [ ] Support parameter black and white list rules
+
+- [ ] Support Header black and white list rules
+
+
+
+- [ ] Support configuring grayscale publishing
+
 - [ ] Support permission identity control
 
 - [ ] Support the introduction of plug-in secondary development
 
-- [ ] Support version iteration data synchronization
+- [x] Support version iteration data synchronization
 
 - [ ] Support cluster deployment data synchronization
  
 - [ ] Support docker one-click deployment
 
-- [ ] Support health check node log analysis
+- [ ] Support multi-language management interface
 
-- [ ] Supports log analysis of fuse current-limiting nodes
 
-- [ ] Support routing load node log analysis
 
+- [ ] Support health check log analysis
+
+- [ ] Supports circuit breaker current limiting log analysis
+
+- [ ] Support routing load log analysis
 
 
 
@@ -135,10 +163,12 @@ install openresty
 
 ## 3. Start nginx/openresty
 
-http://localhost/tlops/tl_ops_web_index.html management background
+visit http://your-domain/tlops/tl_ops_web_index.html management background
 
-If it is the first time to start, first visit `http://127.0.0.1/tlops/reset` to initialize the project
 
+## 4. Version update or first use
+
+visit http://your-domain/tlops/sync for init project / sync version update data
 
 
 # Documentation

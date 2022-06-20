@@ -663,7 +663,7 @@ const tl_ops_web_console_fuselimit_state_caculate = function () {
         return;
     }
     let data = res_data.service;
-    let option_list = res_data.limit.option_list
+    let option_list = res_data && res_data.limit ? res_data.limit.option_list : []
     for (let key in data) {
         let service = data[key];
         let nodeList = [];
@@ -765,12 +765,32 @@ const tl_ops_web_console_echarts_fuselimit_options = function (data) {
 const tl_ops_web_console_echarts_fuselimit_render = function (data) {
     let serviceList = [];
     for(let serviceName in data){
+        let mode = "";
+        
+        if (res_data.limit && res_data.limit.option_list){
+            res_data.limit.option_list.forEach(item=>{
+                if(item.service_name === serviceName){
+                    mode = item.mode
+                }
+            })
+        }
+
         let nodeList = [];
         for(let nodeName in data[serviceName].nodes){
-            let fuse_msg = "<div >当前路由成功 : "+data[serviceName].nodes[nodeName].limit_success+"</div>" +
-                           "<div >当前路由失败 : "+data[serviceName].nodes[nodeName].limit_failed+"</div>";
+            let state = data[serviceName].nodes[nodeName].health_state ? "上线" : "下线";
+
+            let fuse_msg = "";
+            if(mode === 'balance_fail'){
+                fuse_msg = "<div >当前熔断策略 : 路由失败率策略 </div>" +
+                "<div >当前路由成功 : "+data[serviceName].nodes[nodeName].limit_success+"</div>" +
+                "<div >当前路由失败 : "+data[serviceName].nodes[nodeName].limit_failed+"</div>";
+            }else{
+                fuse_msg = "<div >当前熔断策略 : 健康状态策略 </div>" +
+                           "<div >当前节点状态 : "+state+"</div>";
+            }
+
             let pre_time = data[serviceName].nodes[nodeName].limit_pre_time === 'nil' ? "nil" : 
-                            new Date(data[serviceName].nodes[nodeName].limit_pre_time * 1000).toLocaleString()  
+                            new Date(data[serviceName].nodes[nodeName].limit_pre_time * 1000).toLocaleString()
             let limit_msg = "<div >当前限流策略 : "+data[serviceName].nodes[nodeName].limit_depend+"</div>" +
                             "<div >当前最大容量 : "+data[serviceName].nodes[nodeName].limit_capacity+"</div>"+
                             "<div >当前剩余容量 : "+data[serviceName].nodes[nodeName].limit_bucket+"</div>"+
@@ -820,10 +840,30 @@ const tl_ops_web_console_echarts_fuselimit_options_reflush = function (data) {
 const tl_ops_web_console_echarts_fuselimit_render_reflush = function (data) {
     let serviceList = [];
     for(let serviceName in data){
+
+        let mode = "";
+        if (res_data.limit && res_data.limit.option_list){
+            res_data.limit.option_list.forEach(item=>{
+                if(item.service_name === serviceName){
+                    mode = item.mode
+                }
+            })
+        }
+
         let nodeList = [];
         for(let nodeName in data[serviceName].nodes){
-            let fuse_msg = "<div >当前路由成功 : "+data[serviceName].nodes[nodeName].limit_success+"</div>" +
-                           "<div >当前路由失败 : "+data[serviceName].nodes[nodeName].limit_failed+"</div>";
+            let state = data[serviceName].nodes[nodeName].health_state ? "上线" : "下线";
+
+            let fuse_msg = "";
+            if(mode === 'balance_faild'){
+                fuse_msg = "<div >当前熔断策略 : 路由失败率策略 </div>" +
+                "<div >当前路由成功 : "+data[serviceName].nodes[nodeName].limit_success+"</div>" +
+                "<div >当前路由失败 : "+data[serviceName].nodes[nodeName].limit_failed+"</div>";
+            }else{
+                fuse_msg = "<div >当前熔断策略 : 健康状态策略 </div>" +
+                           "<div >当前节点状态 : "+state+"</div>";
+            }
+            
             let pre_time = data[serviceName].nodes[nodeName].limit_pre_time === 'nil' ? "nil" : 
                             new Date(data[serviceName].nodes[nodeName].limit_pre_time * 1000).toLocaleString()  
             let limit_msg = "<div >当前限流策略 : "+data[serviceName].nodes[nodeName].limit_depend+"</div>" +

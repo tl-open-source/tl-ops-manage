@@ -66,17 +66,19 @@ const tl_ops_web_store_render = function () {
             for(let key in res.data){
                 let updatetime = null
                 let newList = []
-                res.data[key].list.forEach((item)=>{
-                    if(new Date(item.time) > updatetime){
-                        updatetime = new Date(item.time)
-                    }
-                    if(item.value.includes("{")){
-                        item.value = eval(`(` + item.value + `)`)
-                        newList.push(item)
-                    }
-                })
+                if (res.data[key].list){
+                    res.data[key].list.forEach((item)=>{
+                        if(new Date(item.time) > updatetime){
+                            updatetime = new Date(item.time)
+                        }
+                        if(item.value.includes("{")){
+                            item.value = eval(`(` + item.value + `)`)
+                            newList.push(item)
+                        }
+                    })
+                }
                 res.data[key].version = parseInt(res.data[key].version)
-                res.data[key].updatetime = updatetime.toLocaleString()
+                res.data[key].updatetime = updatetime ? updatetime.toLocaleString() : null
                 res.data[key].list = newList;
                 data.push(res.data[key])
             }
@@ -108,16 +110,18 @@ const tl_ops_web_store_reload = function (matcher) {
             for(let key in res.data){
                 let updatetime = null
                 let newList = []
-                res.data[key].list.forEach((item)=>{
-                    if(new Date(item.time) > updatetime){
-                        updatetime = new Date(item.time)
-                    }
-                    if(item.value.includes("{")){
-                        item.value = eval(`(` + item.value + `)`)
-                        newList.push(item)
-                    }
-                })
-                res.data[key].updatetime = updatetime.toLocaleString()
+                if (res.data[key].list){
+                    res.data[key].list.forEach((item)=>{
+                        if(new Date(item.time) > updatetime){
+                            updatetime = new Date(item.time)
+                        }
+                        if(item.value.includes("{")){
+                            item.value = eval(`(` + item.value + `)`)
+                            newList.push(item)
+                        }
+                    })
+                }
+                res.data[key].updatetime = updatetime ? updatetime.toLocaleString() : null
                 res.data[key].list = newList;
                 data.push(res.data[key])
             }

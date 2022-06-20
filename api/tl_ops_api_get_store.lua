@@ -41,13 +41,37 @@ end
 
 
 local api_content, api_size = read("tl-ops-api.tlstore");
+if not api_content then
+    api_content = {}
+end
 local cookie_content, cookie_size = read("tl-ops-cookie.tlstore");
+if not cookie_content then
+    cookie_content = {}
+end
 local header_content, header_size = read("tl-ops-header.tlstore");
+if not header_content then
+    header_content = {}
+end
 local param_content, param_size = read("tl-ops-param.tlstore");
+if not param_content then
+    param_content = {}
+end
 local service_content, service_size = read("tl-ops-service.tlstore");
+if not service_content then
+    service_content = ""
+end
 local health_content, health_size = read("tl-ops-health.tlstore");
+if not health_content then
+    health_content = ""
+end
 local limit_content, limit_size = read("tl-ops-limit.tlstore");
+if not limit_content then
+    limit_content = {}
+end
 local balance_content, balance_size = read("tl-ops-balance.tlstore");
+if not balance_content then
+    balance_content = {}
+end
 
 local res_data = {
     api = {

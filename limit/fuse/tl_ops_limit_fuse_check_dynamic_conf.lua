@@ -268,6 +268,7 @@ local tl_ops_limit_fuse_dynamic_conf_change_service_options_async = function( co
 		conf.recover = recover
 		conf.depend = option.depend
 		conf.level = option.level
+		conf.mode = option.mode
 	end
 end
 

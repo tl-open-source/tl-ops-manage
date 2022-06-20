@@ -17,7 +17,7 @@ local tl_ops_constant_health_check = {
     options = { 
 
     }, 
-    demo = { 
+    demo = {
         check_failed_max_count = 5,         -- 自检周期内失败次数 
         check_success_max_count = 2,        -- 自检周期内成功次数
         check_interval = 10 * 1000,         -- 自检服务自检周期

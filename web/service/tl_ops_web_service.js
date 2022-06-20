@@ -53,7 +53,7 @@ const tl_ops_web_service_event = function () {
 
 //表格cols
 const tl_ops_web_service_cols = function () {
-    let health_timer_list = state_data ? state_data.health.timer_list || [] : false
+    let health_timer_list = (state_data && state_data.health) ? state_data.health.timer_list || [] : false
     return [[
         {
             field: 'name', title: '服务名称', width:"25%"
@@ -227,9 +227,16 @@ const tl_ops_web_service_render = function () {
             defaultToolbar: ['filter', 'print', 'exports'],
             totalRow: true, //开启合计行
             parseData: function(res){
+                if (res.code !== 0){
+                    return {
+                        "code": res.code,
+                        "msg": res.msg,
+                        "count": 0,
+                        "data": []
+                    };
+                }
                 res_data = res.data;
                 rule = res.data.tl_ops_service_rule;
-    
                 let datas = [], keys = Object.keys(res.data.tl_ops_service_list);
                 for(key in keys){
                     datas.push({
@@ -273,6 +280,14 @@ const tl_ops_web_service_reload = function (matcher) {
         defaultToolbar: ['filter', 'print', 'exports'],
         totalRow: true, //开启合计行
         parseData: function(res){
+            if (res.code !== 0){
+                return {
+                    "code": res.code,
+                    "msg": res.msg,
+                    "count": 0,
+                    "data": []
+                };
+            }
             res_data = res.data;
             rule = res.data.tl_ops_service_rule;
             let datas = [], keys = Object.keys(res.data.tl_ops_service_list);

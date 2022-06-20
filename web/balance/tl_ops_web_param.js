@@ -110,9 +110,16 @@ const tl_ops_web_param_render = function () {
         defaultToolbar: ['filter', 'print', 'exports'],
         totalRow: true, //开启合计行
         parseData: function(res){
+            if (res.code !== 0){
+                return {
+                    "code": res.code,
+                    "msg": res.msg,
+                    "count": 0,
+                    "data": []
+                };
+            }
             res_data = res.data;
             rule = res_data.tl_ops_param_rule
-
             let datas = res_data.tl_ops_param_list[rule];
             if (datas === undefined){ datas = []; }
             datas = datas.sort(function(a, b){return b.id - a.id})
@@ -146,6 +153,14 @@ const tl_ops_web_param_reload = function (matcher) {
         defaultToolbar: ['filter', 'print', 'exports'],
         totalRow: true, //开启合计行
         parseData: function(res){
+            if (res.code !== 0){
+                return {
+                    "code": res.code,
+                    "msg": res.msg,
+                    "count": 0,
+                    "data": []
+                };
+            }
             res_data = res.data;
             rule = res_data.tl_ops_param_rule;
             let datas = res_data.tl_ops_param_list[rule];

@@ -110,6 +110,14 @@ const tl_ops_web_header_render = function () {
         defaultToolbar: ['filter', 'print', 'exports'],
         totalRow: true, //开启合计行
         parseData: function(res){
+            if (res.code !== 0){
+                return {
+                    "code": res.code,
+                    "msg": res.msg,
+                    "count": 0,
+                    "data": []
+                };
+            }
             res_data = res.data;
             rule = res_data.tl_ops_header_rule
             let datas = res_data.tl_ops_header_list[rule];
@@ -145,6 +153,14 @@ const tl_ops_web_header_reload = function (matcher) {
         defaultToolbar: ['filter', 'print', 'exports'],
         totalRow: true, //开启合计行
         parseData: function(res){
+            if (res.code !== 0){
+                return {
+                    "code": res.code,
+                    "msg": res.msg,
+                    "count": 0,
+                    "data": []
+                };
+            }
             res_data = res.data;
             rule = res_data.tl_ops_header_rule;
             let datas = res_data.tl_ops_header_list[rule];

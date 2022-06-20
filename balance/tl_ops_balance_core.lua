@@ -38,7 +38,7 @@ local mt = { __index = _M }
 -- 负载核心流程
 function _M:tl_ops_balance_core_balance()
     -- 服务错误码配置
-    local code_str = cache_balance:get(tl_ops_constant_balance.cache_key.err_code)
+    local code_str = cache_balance:get(tl_ops_constant_balance.cache_key.options)
     if not code_str then
         ngx.header['Tl-Proxy-Server'] = "";
         ngx.header['Tl-Proxy-State'] = "empty"

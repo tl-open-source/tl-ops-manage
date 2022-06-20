@@ -53,7 +53,6 @@ local leak = {   --服务漏桶配置
     }
 }
 
-
 -- 依赖限流组件
 local depend = {
     token = "token",
@@ -65,10 +64,17 @@ local level = {
     service = "service"
 }
 
+-- 熔断策略
+local mode = {
+    balance_fail = "balance_fail",      -- 节点路由失败率
+    health_state = "health_state"       -- 节点健康状态
+}
+
+
 -- 熔断配置
 local fuse = {
     cache_key = {
-        lock = "tl_ops_limit_fuse_lock",
+        lock = "tl_ops_limit_fuse_lock",                                        -- boolean    熔断定时任务锁
         req_succ = "tl_ops_limit_fuse_req_succ",                                -- int        周期内路由成功次数
         req_fail = "tl_ops_limit_fuse_req_fail",                                -- int        周期内路由失败次数
         options_list = "tl_ops_limit_fuse_options_list",                        -- list       配置缓存
@@ -87,7 +93,8 @@ local fuse = {
         service_threshold = 0.5,      -- 切换状态阈值 （service切换阈值，取决于node失败状态占比）
         recover = 15 * 1000,          -- 全熔断恢复时间 单位/ms
         depend = depend.token,        -- 默认依赖组件 ：token_bucket
-        level = level.service,        -- 默认组件级别，服务层级 [限流熔断针对的层级]
+        level = level.service,        -- 默认组件级别 ：服务层级 [限流熔断针对的层级]
+        mode = mode.balance_fail,     -- 默认策略 ：节点路由失败率
     },
     service = tl_ops_constant_service.list
 }
@@ -99,6 +106,7 @@ local tl_ops_constant_limit = {
     leak = leak,
     depend = depend,
     level = level,
+    mode = mode
 }
 
 

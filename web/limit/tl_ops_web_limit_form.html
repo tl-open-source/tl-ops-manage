@@ -44,6 +44,14 @@
             </div>
         </div>
         <div class="layui-form-item">
+            <label class="layui-form-label">熔断模式</label>
+            <div class="layui-input-block" id="tl-tips-mode" onmouseleave="tl_mouse_leave_tips()"
+                onmouseenter="tl_mouse_enter_tips('tl-tips-mode','熔断依据何种策略进行限流桶的扩缩容')">
+                <input type="radio" name="mode" class="layui-input" value="balance_faild"><span class="tl-ops-web-limit-form-span">路由失败率</span>
+                <input type="radio" name="mode" class="layui-input" value="health_state"><span class="tl-ops-web-limit-form-span">健康状态</span>
+            </div>
+        </div>
+        <div class="layui-form-item">
             <label class="layui-form-label">自检层级</label>
             <div class="layui-input-block" id="tl-tips-level" onmouseleave="tl_mouse_leave_tips()"
                 onmouseenter="tl_mouse_enter_tips('tl-tips-level','针对服务层级进行熔断限流')">
@@ -76,7 +84,7 @@
         </div>
         <div class="layui-form-item">
             <label class="layui-form-label"><i class="layui-icon layui-icon-help tl-icon-font" id="tl-tips-interval-help" onmouseleave="tl_mouse_leave_tips()"
-                onmouseenter="tl_mouse_enter_tips('tl-tips-interval-help','该值修改后将动态变更定时器时间间隔')"></i>  
+                onmouseenter="tl_mouse_enter_tips('tl-tips-interval-help','该值修改后实时生效')"></i>  
                 时间间隔 (ms)
             </label>
             <div class="layui-input-block">

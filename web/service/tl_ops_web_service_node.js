@@ -89,6 +89,14 @@ const tl_ops_web_service_node_render = function () {
         defaultToolbar: ['filter', 'print', 'exports'],
         totalRow: true, //开启合计行
         parseData: function(res){
+            if (res.code !== 0){
+                return {
+                    "code": res.code,
+                    "msg": res.msg,
+                    "count": 0,
+                    "data": []
+                };
+            }
             res_data = res.data;
             return {
                 "code": res.code,
@@ -113,6 +121,14 @@ const tl_ops_web_service_node_reload = function (matcher) {
         defaultToolbar: ['filter', 'print', 'exports'],
         totalRow: true, //开启合计行
         parseData: function(res){
+            if (res.code !== 0){
+                return {
+                    "code": res.code,
+                    "msg": res.msg,
+                    "count": 0,
+                    "data": []
+                };
+            }
             res_data = res.data;
             return {
                 "code": res.code,
