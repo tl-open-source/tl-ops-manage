@@ -91,8 +91,6 @@ Experience demo : https://tlops.iamtsm.cn/tlops/tl_ops_web_index.html
 
 - [ ] Support custom WAF policy
 
-- [ ] Support xss prevention rules
-
 - [ ] Support cc prevention rules
 
 - [ ] Support IP black and white list rules
