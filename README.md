@@ -176,9 +176,7 @@
 
 # 说明文档
 
-- [x] [详细使用说明文档](https://blog.iamtsm.cn/detail.html?id=90)
-
-- [x] [源码实现说明文档](https://blog.iamtsm.cn/detail.html?id=91)
+- [x] [tl-ops-manage详细文档](https://book.iamtsm.cn)
 
 - [x] [路由模块简要文档](doc/tl-ops-balance.md)
 
