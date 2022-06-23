@@ -33,8 +33,41 @@
 |![health](doc/health.png "health")|![store](doc/store.png "store")|![store_view](doc/store_view.png "store_view")
 
 
-# 特性
+# 性能压测
 
+###  版本 : openresty-1.19.3.1
+
+###  机器 : 腾讯云2核4g
+
+ ![图片](https://qnproxy.iamtsm.cn/企业微信截图_16559798756003.png "图片") 
+
+
+### 正常压测结果，执行压测命令 : ab -n 10000 -c 50 http://127.0.0.1/，单个请求耗时约3.7ms
+
+ ![图片](https://qnproxy.iamtsm.cn/16559785692014.png "图片") 
+
+
+### 开启tl-ops-manage网关后 【健康检查，路由统计，熔断限流，负载均衡】，执行压测命令 : ab -n 10000 -c 50 http://127.0.0.1/，单个请求耗时约4.6ms
+
+ ![图片](https://qnproxy.iamtsm.cn/企业微信截图_16559817202461.png "图片") 
+
+
+
+# 说明文档
+
+- [x] [tl-ops-manage详细文档](https://book.iamtsm.cn)
+
+- [x] [路由模块简要文档](doc/tl-ops-balance.md)
+
+- [x] [健康检查模块简要文档](doc/tl-ops-health.md)
+
+- [x] [熔断限流模块简要文档](doc/tl-ops-limit.md)
+
+- [x] [数据模块简要文档](doc/tl-ops-store.md)
+
+
+
+# 特性
 
 - [x] 支持API规则负载
 
@@ -129,62 +162,6 @@
 - [ ] 支持熔断限流日志分析
 
 - [ ] 支持路由负载日志分析
-
-
-
-
-
-# 使用方式
-
-## 1. 安装环境
-
-安装openresty
-
-## 2. 修改配置
-
-- 复制以下两行到nginx.conf到http块中
-
-    ````
-    http {
-        ...
-        # 引入tl_ops_manage.conf
-        include "/path/to/tl-ops-manage/conf/*.conf;
-
-        # 引入lua包
-        lua_package_path "/path/to/tl-ops-manage/?.lua;;"
-        ...
-    }
-    ````
-
-- 修改/path/to/tl-ops-manage/conf/tl_ops_manage.conf文件中的路径
-
-- 修改/path/to/tl-ops-manage/constant/tl_ops_manage_env.lua文件中的路径
-
-- 由于默认启用redis，所以需要安装redis，如果不想使用redis，可以在tl_ops_manage_env.lua中将redis选项置为false
-
-
-## 3. 启动nginx/openresty
-
-访问 http://your-domain/tlops/tl_ops_web_index.html  管理后台
-
-
-## 4. 版本更新或首次使用
-
-访问 http://your-domain/tlops/sync 用于初始化项目 / 同步版本更新数据
-
-
-
-# 说明文档
-
-- [x] [tl-ops-manage详细文档](https://book.iamtsm.cn)
-
-- [x] [路由模块简要文档](doc/tl-ops-balance.md)
-
-- [x] [健康检查模块简要文档](doc/tl-ops-health.md)
-
-- [x] [熔断限流模块简要文档](doc/tl-ops-limit.md)
-
-- [x] [数据模块简要文档](doc/tl-ops-store.md)
 
 
 # 更新日志
