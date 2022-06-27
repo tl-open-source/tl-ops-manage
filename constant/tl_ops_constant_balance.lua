@@ -1,7 +1,7 @@
-local tl_ops_constant_api = require("constant.tl_ops_constant_api");
-local tl_ops_constant_cookie = require("constant.tl_ops_constant_cookie");
-local tl_ops_constant_header = require("constant.tl_ops_constant_header");
-local tl_ops_constant_param = require("constant.tl_ops_constant_param");
+local tl_ops_constant_balance_api = require("constant.tl_ops_constant_balance_api");
+local tl_ops_constant_balance_cookie = require("constant.tl_ops_constant_balance_cookie");
+local tl_ops_constant_balance_header = require("constant.tl_ops_constant_balance_header");
+local tl_ops_constant_balance_param = require("constant.tl_ops_constant_balance_param");
 local tl_ops_constant_service = require("constant.tl_ops_constant_service");
 
 
@@ -25,31 +25,31 @@ local tl_ops_constant_balance = {
     },
     api = {
         list = {
-            point = tl_ops_constant_api.point,
-            random = tl_ops_constant_api.random
+            point = tl_ops_constant_balance_api.point,
+            random = tl_ops_constant_balance_api.random
         },
-        rule = tl_ops_constant_api.rule.point
+        rule = tl_ops_constant_balance_api.rule.point
     },
     cookie = {
         list = {
-            point = tl_ops_constant_cookie.point,
-            random = tl_ops_constant_cookie.random
+            point = tl_ops_constant_balance_cookie.point,
+            random = tl_ops_constant_balance_cookie.random
         },
-        rule = tl_ops_constant_cookie.rule.point
+        rule = tl_ops_constant_balance_cookie.rule.point
     },
     header = {
         list = {
-            point = tl_ops_constant_header.point,
-            random = tl_ops_constant_header.random
+            point = tl_ops_constant_balance_header.point,
+            random = tl_ops_constant_balance_header.random
         },
-        rule = tl_ops_constant_header.rule.point
+        rule = tl_ops_constant_balance_header.rule.point
     },
     param = {
         list = {
-            point = tl_ops_constant_param.point,
-            random = tl_ops_constant_param.random
+            point = tl_ops_constant_balance_param.point,
+            random = tl_ops_constant_balance_param.random
         },
-        rule = tl_ops_constant_param.rule.point
+        rule = tl_ops_constant_balance_param.rule.point
     },
     count = {
         interval = 10       -- 统计周期 单位/s, 默认:5min

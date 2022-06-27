@@ -5,6 +5,7 @@
 -- @email 1905333456@qq.com
 
 local cjson, _ = require("cjson");
+local find = ngx.re.find
 local _M = {}
 
 
@@ -130,7 +131,7 @@ end
 
 -- 返回str匹配结果
 function _M:get_str_matcher (reg, str)
-    local res = ngx.re.match(str, reg , 'jo');
+    local res = find(str, reg , 'jo');
     if not res or res == nil then 
         return false , res;
     else 
@@ -219,7 +220,7 @@ function _M:get_str_matcher_str (str, reg)
         return nil, "args empty";
     end    
 
-    local mather = ngx.re.match(str , reg , 'jo');
+    local mather = find(str , reg , 'jo');
     if not mather or mather == nil then
         return nil, "no matcher";
     end
@@ -324,6 +325,30 @@ function _M:get_table_element_exsit ( tables,  element )
 
     return false
 end
+
+
+-- 获取ip
+function _M:get_req_ip()
+
+    local headers = ngx.req.get_headers()
+
+    local ip = headers["X_real_ip"]
+
+    if not ip then
+        ip = headers["X_Forwarded_For"]
+    end
+
+    if not ip then
+        ip = ngx.var.remote_addr
+    end
+
+    if not ip then
+        return nil
+    end
+
+    return ip
+end
+
 
 
 -- 生成 '服务-节点' , '服务' key

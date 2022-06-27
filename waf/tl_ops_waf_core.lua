@@ -1,0 +1,219 @@
+-- tl_ops_waf
+-- en : waf core impl
+-- zn : waf核心实现， waf流程 : ip > api > cc > header > cookie > param
+-- @author iamtsm
+-- @email 1905333456@qq.com
+
+local tl_ops_waf_core_api = require("waf.tl_ops_waf_core_api");
+local tl_ops_waf_core_ip = require("waf.tl_ops_waf_core_ip");
+local tl_ops_waf_core_cc = require("waf.tl_ops_waf_core_cc");
+local tl_ops_waf_core_header = require("waf.tl_ops_waf_core_header");
+local tl_ops_waf_core_cookie = require("waf.tl_ops_waf_core_cookie");
+local tl_ops_waf_core_param = require("waf.tl_ops_waf_core_param");
+
+local tl_ops_constant_waf = require("constant.tl_ops_constant_waf");
+
+local cache_waf = require("cache.tl_ops_cache"):new("tl-ops-waf");
+
+local cjson = require("cjson");
+local tl_ops_utils_func = require("utils.tl_ops_utils_func");
+local shared = ngx.shared.tlopsbalance
+
+local _M = {
+	_VERSION = '0.01'
+}
+local mt = { __index = _M }
+
+
+-- 全局waf核心流程
+function _M:tl_ops_waf_global_core()
+
+	-- waf错误码配置
+    local code_str = cache_waf:get(tl_ops_constant_waf.cache_key.options)
+    if not code_str then
+        ngx.header['Tl-Waf-Mode'] = "g-empty";
+        ngx.exit(506)
+        return
+    end
+    local code = cjson.decode(code_str);
+    if not code and type(code) ~= 'table' then
+        ngx.header['Tl-Waf-Mode'] = "g-empty";
+        ngx.exit(506)
+        return
+	end
+	
+	local waf = tl_ops_waf_core_ip.tl_ops_waf_core_ip_filter_global_pass()
+	if not waf then
+		ngx.header['Tl-Waf-Mode'] = "g-ip";
+        ngx.exit(code[tl_ops_constant_waf.cache_key.ip])
+        return
+	end
+
+	waf = tl_ops_waf_core_api.tl_ops_waf_core_api_filter_global_pass()
+	if not waf then
+		ngx.header['Tl-Waf-Mode'] = "g-api";
+        ngx.exit(code[tl_ops_constant_waf.cache_key.api])
+        return
+	end
+
+	waf = tl_ops_waf_core_cc.tl_ops_waf_core_cc_filter_global_pass()
+	if not waf then
+		ngx.header['Tl-Waf-Mode'] = "g-cc";
+        ngx.exit(code[tl_ops_constant_waf.cache_key.cc])
+        return
+	end
+
+	waf = tl_ops_waf_core_header.tl_ops_waf_core_header_filter_global_pass()
+	if not waf then
+		ngx.header['Tl-Waf-Mode'] = "g-header";
+        ngx.exit(code[tl_ops_constant_waf.cache_key.header])
+        return
+	end
+
+	waf = tl_ops_waf_core_cookie.tl_ops_waf_core_cookie_filter_global_pass()
+	if not waf then
+		ngx.header['Tl-Waf-Mode'] = "g-cookie";
+        ngx.exit(code[tl_ops_constant_waf.cache_key.cookie])
+        return
+	end
+
+	waf = tl_ops_waf_core_param.tl_ops_waf_core_param_filter_global_pass()
+	if not waf then
+		ngx.header['Tl-Waf-Mode'] = "g-param";
+        ngx.exit(code[tl_ops_constant_waf.cache_key.param])
+        return
+	end
+
+	return true
+end
+
+-- 服务waf核心流程
+function _M:tl_ops_waf_service_core()
+	-- waf错误码配置
+	local code_str = cache_waf:get(tl_ops_constant_waf.cache_key.options)
+	if not code_str then
+		ngx.header['Tl-Waf-Mode'] = "s-empty";
+		ngx.exit(506)
+		return
+	end
+	local code = cjson.decode(code_str);
+	if not code and type(code) ~= 'table' then
+		ngx.header['Tl-Waf-Mode'] = "s-empty";
+		ngx.exit(506)
+		return
+	end
+	
+	local waf = tl_ops_waf_core_ip.tl_ops_waf_core_ip_filter_service_pass()
+	if not waf then
+		ngx.header['Tl-Waf-Mode'] = "s-ip";
+        ngx.exit(code[tl_ops_constant_waf.cache_key.ip])
+        return
+	end
+	
+	waf = tl_ops_waf_core_api.tl_ops_waf_core_api_filter_service_pass()
+	if not waf then
+		ngx.header['Tl-Waf-Mode'] = "s-api";
+        ngx.exit(code[tl_ops_constant_waf.cache_key.api])
+        return
+	end
+
+	waf = tl_ops_waf_core_cc.tl_ops_waf_core_cc_filter_service_pass()
+	if not waf then
+		ngx.header['Tl-Waf-Mode'] = "s-cc";
+        ngx.exit(code[tl_ops_constant_waf.cache_key.cc])
+        return
+	end
+
+	waf = tl_ops_waf_core_header.tl_ops_waf_core_header_filter_service_pass()
+	if not waf then
+		ngx.header['Tl-Waf-Mode'] = "s-header";
+        ngx.exit(code[tl_ops_constant_waf.cache_key.header])
+        return
+	end
+
+	waf = tl_ops_waf_core_cookie.tl_ops_waf_core_cookie_filter_service_pass()
+	if not waf then
+		ngx.header['Tl-Waf-Mode'] = "s-cookie";
+        ngx.exit(code[tl_ops_constant_waf.cache_key.cookie])
+        return
+	end
+
+	waf = tl_ops_waf_core_param.tl_ops_waf_core_param_filter_service_pass()
+	if not waf then
+		ngx.header['Tl-Waf-Mode'] = "s-param";
+        ngx.exit(code[tl_ops_constant_waf.cache_key.param])
+        return
+	end
+
+	return true
+end
+
+-- 节点waf核心流程
+function _M:tl_ops_waf_node_core()
+
+	-- waf错误码配置
+	local code_str = cache_waf:get(tl_ops_constant_waf.cache_key.options)
+	if not code_str then
+		ngx.header['Tl-Waf-Mode'] = "n-empty";
+		ngx.exit(506)
+		return
+	end
+	local code = cjson.decode(code_str);
+	if not code and type(code) ~= 'table' then
+		ngx.header['Tl-Waf-Mode'] = "n-empty";
+		ngx.exit(506)
+		return
+	end
+
+	local waf = tl_ops_waf_core_ip.tl_ops_waf_core_ip_filter_node_pass()
+	if not waf then
+		ngx.header['Tl-Waf-Mode'] = "n-ip";
+        ngx.exit(code[tl_ops_constant_waf.cache_key.ip])
+        return
+	end
+	
+	waf = tl_ops_waf_core_api.tl_ops_waf_core_api_filter_node_pass()
+	if not waf then
+		ngx.header['Tl-Waf-Mode'] = "n-api";
+        ngx.exit(code[tl_ops_constant_waf.cache_key.api])
+        return
+	end
+
+	waf = tl_ops_waf_core_cc.tl_ops_waf_core_cc_filter_node_pass()
+	if not waf then
+		ngx.header['Tl-Waf-Mode'] = "n-cc";
+        ngx.exit(code[tl_ops_constant_waf.cache_key.cc])
+        return
+	end
+
+	waf = tl_ops_waf_core_header.tl_ops_waf_core_header_filter_node_pass()
+	if not waf then
+		ngx.header['Tl-Waf-Mode'] = "n-header";
+        ngx.exit(code[tl_ops_constant_waf.cache_key.header])
+        return
+	end
+
+	waf = tl_ops_waf_core_cookie.tl_ops_waf_core_cookie_filter_node_pass()
+	if not waf then
+		ngx.header['Tl-Waf-Mode'] = "n-cookie";
+        ngx.exit(code[tl_ops_constant_waf.cache_key.cookie])
+        return
+	end
+
+	waf = tl_ops_waf_core_param.tl_ops_waf_core_param_filter_node_pass()
+	if not waf then
+		ngx.header['Tl-Waf-Mode'] = "n-param";
+        ngx.exit(code[tl_ops_constant_waf.cache_key.param])
+        return
+	end
+
+	return true
+end
+
+
+function _M:new()
+	return setmetatable({}, mt)
+end
+
+
+return _M

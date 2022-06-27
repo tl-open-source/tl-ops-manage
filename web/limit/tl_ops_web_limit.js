@@ -101,6 +101,7 @@ const tl_ops_web_limit_bucket_edit = function (name, depend) {
                 if(!tl_ops_limit_bucket_data_edit_filter(data, depend)){
                     return;
                 }
+                
                 $.ajax(tl_ajax_data({
                     url: '/tlops/limit/set',
                     data : JSON.stringify(res_data),

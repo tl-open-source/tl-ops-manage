@@ -102,7 +102,7 @@ const tl_ops_web_cookie_random_cols = function () {
 const tl_ops_web_cookie_render = function () {
     table.render(tl_ajax_data({
         elem: '#'+_table_id_name,
-        url: '/tlops/cookie/list',
+        url: '/tlops/balance/cookie/list',
         cols: rule === 'random' ? tl_ops_web_cookie_random_cols() : tl_ops_web_cookie_point_cols(),
         page:true,
         needReloadMsg : false,
@@ -119,8 +119,8 @@ const tl_ops_web_cookie_render = function () {
                 };
             }
             res_data = res.data;
-            rule = res_data.tl_ops_cookie_rule
-            let datas = res_data.tl_ops_cookie_list[rule];
+            rule = res_data.tl_ops_balance_cookie_rule
+            let datas = res_data.tl_ops_balance_cookie_list[rule];
             if (datas === undefined){ datas = []; }
             datas = datas.sort(function(a, b){return b.id - a.id})
 
@@ -144,7 +144,7 @@ const tl_ops_web_cookie_render = function () {
 const tl_ops_web_cookie_reload = function (matcher) {
     table.render(tl_ajax_data({
         elem: '#'+_table_id_name,
-        url: '/tlops/cookie/list',
+        url: '/tlops/balance/cookie/list',
         where : matcher,
         cols: rule === 'random' ? tl_ops_web_cookie_random_cols() : tl_ops_web_cookie_point_cols(),
         page:true,
@@ -162,8 +162,8 @@ const tl_ops_web_cookie_reload = function (matcher) {
                 };
             }
             res_data = res.data;
-            rule = res_data.tl_ops_cookie_rule;
-            let datas = res_data.tl_ops_cookie_list[rule];
+            rule = res_data.tl_ops_balance_cookie_rule;
+            let datas = res_data.tl_ops_balance_cookie_list[rule];
             if (datas === undefined){ datas = []; }
             datas = datas.sort(function(a, b){return b.id - a.id})
             $('#tl-ops-web-cookie-cur-rule')[0].innerHTML = `<b style='color:red;font-size:16px;cursor: pointer;' class="layui-badge layui-bg-red" 
@@ -198,14 +198,14 @@ const tl_ops_web_cookie_delete = function () {
         idList.push(checkData[i].id);
     }
 
-    let new_list = res_data.tl_ops_cookie_list[rule].filter(item=>{
+    let new_list = res_data.tl_ops_balance_cookie_list[rule].filter(item=>{
         return !idList.includes(item.id);
     })
 
-    res_data.tl_ops_cookie_list[rule] = new_list;
+    res_data.tl_ops_balance_cookie_list[rule] = new_list;
 
     $.ajax(tl_ajax_data({
-        url: '/tlops/cookie/set',
+        url: '/tlops/balance/cookie/set',
         data : JSON.stringify(res_data),
         contentType : "application/json",
         success : (res)=>{
@@ -229,10 +229,10 @@ const tl_ops_web_cookie_change_rule = function () {
         rule = 'point';
     }
 
-    res_data.tl_ops_cookie_rule = rule;
+    res_data.tl_ops_balance_cookie_rule = rule;
 
     $.ajax(tl_ajax_data({
-        url: '/tlops/cookie/set',
+        url: '/tlops/balance/cookie/set',
         data : JSON.stringify(res_data),
         contentType : "application/json",
         success : (res)=>{
@@ -261,7 +261,7 @@ const tl_ops_web_cookie_add = function () {
                     return;
                 }
                 $.ajax(tl_ajax_data({
-                    url: '/tlops/cookie/set',
+                    url: '/tlops/balance/cookie/set',
                     data : JSON.stringify(res_data),
                     contentType : "application/json",
                     success : (res)=>{
@@ -294,7 +294,7 @@ const tl_ops_web_cookie_edit = function (evtdata) {
                     return;
                 }
                 $.ajax(tl_ajax_data({
-                    url: '/tlops/cookie/set',
+                    url: '/tlops/balance/cookie/set',
                     data : JSON.stringify(res_data),
                     contentType : "application/json",
                     success : (res)=>{
@@ -343,17 +343,17 @@ const tl_ops_cookie_data_add_filter = function( data ) {
         }
     }
 
-    for(let i = 0; i < res_data.tl_ops_cookie_list[rule].length; i++){
-        let obj = res_data.tl_ops_cookie_list[rule][i];
+    for(let i = 0; i < res_data.tl_ops_balance_cookie_list[rule].length; i++){
+        let obj = res_data.tl_ops_balance_cookie_list[rule][i];
         if (obj.key === data.field.key && obj.value === data.field.value && obj.id !== data.field.id){
             layer.msg("cookie键值对 “"+obj.key+"” 已存在")
             return false;
         }
     }
 
-    res_data.tl_ops_cookie_list[rule].push(data.field)
+    res_data.tl_ops_balance_cookie_list[rule].push(data.field)
 
-    res_data.tl_ops_cookie_list[rule].forEach(item=>{
+    res_data.tl_ops_balance_cookie_list[rule].forEach(item=>{
         if( item.LAY_TABLE_INDEX !== undefined){
             delete item.LAY_TABLE_INDEX
         }
@@ -386,7 +386,7 @@ const tl_ops_cookie_data_edit_filter = function( data ) {
         }
     }
     let cur_list = []
-    res_data.tl_ops_cookie_list[rule].forEach((item)=>{
+    res_data.tl_ops_balance_cookie_list[rule].forEach((item)=>{
         if(item.id === data.field.id){
             data.field.change = true;
             item = data.field;
@@ -394,17 +394,17 @@ const tl_ops_cookie_data_edit_filter = function( data ) {
         cur_list.push(item)
     })
 
-    for(let i = 0; i < res_data.tl_ops_cookie_list[rule].length; i++){
-        let obj = res_data.tl_ops_cookie_list[rule][i];
+    for(let i = 0; i < res_data.tl_ops_balance_cookie_list[rule].length; i++){
+        let obj = res_data.tl_ops_balance_cookie_list[rule][i];
         if (obj.key === data.field.key && obj.value === data.field.value && obj.id !== data.field.id){
             layer.msg("cookie键值对 “"+obj.key+"” 已存在")
             return false;
         }
     }
 
-    res_data.tl_ops_cookie_list[rule] = cur_list;
+    res_data.tl_ops_balance_cookie_list[rule] = cur_list;
 
-    res_data.tl_ops_cookie_list[rule].forEach(item=>{
+    res_data.tl_ops_balance_cookie_list[rule].forEach(item=>{
         if( item.LAY_TABLE_INDEX !== undefined){
             delete item.LAY_TABLE_INDEX
         }

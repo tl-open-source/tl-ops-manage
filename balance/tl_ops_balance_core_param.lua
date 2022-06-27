@@ -5,11 +5,11 @@
 -- @email 1905333456@qq.com
 
 local cjson = require("cjson");
-local cache_param = require("cache.tl_ops_cache"):new("tl-ops-param");
+local cache_param = require("cache.tl_ops_cache"):new("tl-ops-balance-param");
 local tl_ops_rt = require("constant.tl_ops_constant_comm").tl_ops_rt;
 local tl_ops_utils_func = require("utils.tl_ops_utils_func");
 
-local tl_ops_constant_param = require("constant.tl_ops_constant_param");
+local tl_ops_constant_balance_param = require("constant.tl_ops_constant_balance_param");
 local tl_ops_constant_service = require("constant.tl_ops_constant_service");
 local tl_ops_constant_health = require("constant.tl_ops_constant_health")
 local shared = ngx.shared.tlopsbalance
@@ -50,13 +50,13 @@ local tl_ops_balance_param_service_matcher = function(service_list_table)
     local node = nil
 
     -- param路由策略
-    local param_rule, _ = cache_param:get(tl_ops_constant_param.cache_key.rule);
+    local param_rule, _ = cache_param:get(tl_ops_constant_balance_param.cache_key.rule);
     if not param_rule then
         return nil
     end
     
     -- param配置列表
-    local param_list, _ = cache_param:get(tl_ops_constant_param.cache_key.list);
+    local param_list, _ = cache_param:get(tl_ops_constant_balance_param.cache_key.list);
     if not param_list then
         return nil, nil, nil, nil
     end
@@ -67,13 +67,13 @@ local tl_ops_balance_param_service_matcher = function(service_list_table)
     end
     
     -- 根据路由当前策略进行路由, 返回正则命中的param
-    if param_rule == tl_ops_constant_param.rule.point then
+    if param_rule == tl_ops_constant_balance_param.rule.point then
         matcher = tl_ops_balance_param_get_matcher_param(
-            param_list_table, tl_ops_constant_param.rule.point
+            param_list_table, tl_ops_constant_balance_param.rule.point
         );
-    elseif param_rule == tl_ops_constant_param.rule.random then
+    elseif param_rule == tl_ops_constant_balance_param.rule.random then
         matcher = tl_ops_balance_param_get_matcher_param(
-            param_list_table, tl_ops_constant_param.rule.random
+            param_list_table, tl_ops_constant_balance_param.rule.random
         );
     end
 

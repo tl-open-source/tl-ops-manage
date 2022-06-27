@@ -855,7 +855,7 @@ const tl_ops_web_console_echarts_fuselimit_render_reflush = function (data) {
             let state = data[serviceName].nodes[nodeName].health_state ? "上线" : "下线";
 
             let fuse_msg = "";
-            if(mode === 'balance_faild'){
+            if(mode === 'balance_fail'){
                 fuse_msg = "<div >当前熔断策略 : 路由失败率策略 </div>" +
                 "<div >当前路由成功 : "+data[serviceName].nodes[nodeName].limit_success+"</div>" +
                 "<div >当前路由失败 : "+data[serviceName].nodes[nodeName].limit_failed+"</div>";

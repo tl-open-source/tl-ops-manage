@@ -4,8 +4,6 @@
     |  | |  |__  /_____/ (  <_> )  |_> >___ \  /_____/ |  Y Y  \/ __ \|   |  \/ __ \_/ /_/  >  ___/ 
     |__| |____/           \____/|   __/____  >         |__|_|  (____  /___|  (____  /\___  / \___  >
                                 |__|       \/                \/     \/     \/     \//_____/      \/ 
-# 基于openresty的服务管理框架 （API网关）
-
 [![](https://img.shields.io/badge/base-openresty-blue)](https://openresty.org/cn/)
 [![](https://img.shields.io/badge/webmanage-red)](https://github.com/iamtsm/tl-ops-manage)
 [![](https://img.shields.io/badge/healthcheck-red)](https://github.com/iamtsm/tl-ops-manage/blob/main/doc/tl-ops-health.md)
@@ -14,23 +12,15 @@
 [![](https://img.shields.io/badge/dynamic%20conf-green)](https://github.com/iamtsm/tl-ops-manage)
 
 
+<p align="center"> <a href="https://github.com/iamtsm/tl-ops-manage/blob/main/doc/README_EN.md"> EN </a> | <a href="https://github.com/iamtsm/tl-ops-manage#readme"> ZN </a>  </p>
+
+ 
 
 体验demo : https://tlops.iamtsm.cn/tlops/tl_ops_web_index.html
 
 
 **qq交流群 : 624214498，欢迎有兴趣的童鞋提交PR, 持续更新中 ....**
 
-
-<p align="center"> <a href="https://github.com/iamtsm/tl-ops-manage/blob/main/doc/README_EN.md"> EN </a> | <a href="https://github.com/iamtsm/tl-ops-manage#readme"> ZN </a>  </p>
-
-
-
-| Web | Manage  | UI  | Preview  |
-|:-------------:|:-------:|:-------:|:-------:|
-| ![console_balance](doc/console_balance.png "console_balance") | ![console_health](doc/console_health.png "console_health") | ![console_fuse](doc/console_fuse.png "console_fuse") |![service](doc/service.png "service")
-|![service_node](doc/service_node.png "service_node") |![balance_api](doc/balance_api.png "balance_api")| ![balance_cookie](doc/balance_cookie.png "balance_cookie") | ![balance_header](doc/balance_header.png "balance_header") 
-|![balance_param](doc/balance_param.png "balance_param")|![fuse](doc/fuse.png "fuse")|![fuse_limit_token](doc/fuse_limit_token.png "fuse_limit_token")|![fuse_limit_leak](doc/fuse_limit_leak.png "fuse_limit_leak")
-|![health](doc/health.png "health")|![store](doc/store.png "store")|![store_view](doc/store_view.png "store_view")
 
 
 # 性能压测
@@ -39,23 +29,23 @@
 
 ###  机器 : 腾讯云2核4g
 
- ![图片](https://qnproxy.iamtsm.cn/企业微信截图_16559798756003.png "图片") 
+ ![图片](https://qnproxy.iamtsm.cn/16559798756003.png "图片") 
 
 
-### 正常压测结果，执行压测命令 : ab -n 10000 -c 50 http://127.0.0.1/，单个请求耗时约3.7ms
+### 正常压测结果，执行压测命令 : `ab -n 10000 -c 50 http://127.0.0.1/` ， 单个请求耗时约3.7ms
 
  ![图片](https://qnproxy.iamtsm.cn/16559785692014.png "图片") 
 
 
-### 开启tl-ops-manage网关后 【健康检查，路由统计，熔断限流，负载均衡】，执行压测命令 : ab -n 10000 -c 50 http://127.0.0.1/，单个请求耗时约4.6ms
+### 开启tl-ops-manage网关后 【健康检查，路由统计，熔断限流，负载均衡】，执行压测命令 : `ab -n 10000 -c 50 http://127.0.0.1/` ，单个请求耗时约4.6ms
 
- ![图片](https://qnproxy.iamtsm.cn/企业微信截图_16559817202461.png "图片") 
+ ![图片](https://qnproxy.iamtsm.cn/16559817202461.png "图片") 
 
 
 
 # 说明文档
 
-- [x] [tl-ops-manage详细文档](https://book.iamtsm.cn)
+- [x] [tl-ops-manage详细文档-推荐](https://book.iamtsm.cn)
 
 - [x] [路由模块简要文档](doc/tl-ops-balance.md)
 
@@ -125,19 +115,19 @@
 
 
 
-- [ ] 支持定制WAF策略
+- [x] 支持定制WAF策略
 
-- [ ] 支持cc防范规则
+- [x] 支持cc防范规则
 
-- [ ] 支持Ip黑白名单规则
+- [x] 支持Ip黑白名单规则
 
-- [ ] 支持Url黑白名单规则
+- [x] 支持Url黑白名单规则
 
-- [ ] 支持Cookie黑白名单规则
+- [x] 支持Cookie黑白名单规则
 
-- [ ] 支持Header黑白名单规则
+- [x] 支持Header黑白名单规则
 
-- [ ] 支持请求参数黑白名单规则
+- [x] 支持Args黑白名单规则
 
 
 

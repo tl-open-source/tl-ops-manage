@@ -22,13 +22,37 @@ Experience demo : https://tlops.iamtsm.cn/tlops/tl_ops_web_index.html
 
 <p align="center"> <a href="https://github.com/iamtsm/tl-ops-manage/blob/main/doc/README_EN.md"> EN </a> | <a href="https:// github.com/iamtsm/tl-ops-manage#readme"> ZN </a> </p>  
 
+# Performance stress test
 
-| Web | Manage | UI | Preview |
-|:-------------:|:-------:|:-------:|:-------:|
-| ![console_balance](console_balance.png "console_balance") | ![console_health](console_health.png "console_health") | ![console_fuse](console_fuse.png "console_fuse") |![service](service.png "service")
-|![service_node](service_node.png "service_node") |![balance_api](balance_api.png "balance_api")| ![balance_cookie](balance_cookie.png "balance_cookie") | ![balance_header](balance_header.png "balance_header")
-|![balance_param](balance_param.png "balance_param")|![fuse](fuse.png "fuse")|![fuse_limit_token](fuse_limit_token.png "fuse_limit_token")|![fuse_limit_leak](fuse_limit_leak.png "fuse_limit_leak")
-|![health](health.png "health")|![store](store.png "store")|![store_view](store_view.png "store_view")
+### Version : openresty-1.19.3.1
+
+### Machine: Tencent Cloud 2 core 4g
+
+ ![Picture](https://qnproxy.iamtsm.cn/16559798756003.png "Picture")
+
+
+### For normal pressure test results, execute the pressure test command: `ab -n 10000 -c 50 http://127.0.0.1/` , a single request takes about 3.7ms
+
+ ![Picture](https://qnproxy.iamtsm.cn/16559785692014.png "Picture")
+
+
+### After enabling the tl-ops-manage gateway [health check, routing statistics, fuse current limiting, load balancing], execute the stress test command: `ab -n 10000 -c 50 http://127.0.0.1/` , single The request takes about 4.6ms
+
+ ![Picture](https://qnproxy.iamtsm.cn/16559817202461.png "Picture")
+
+
+
+# Documentation
+
+- [x] [tl-ops-manage detailed documentation](https://book.iamtsm.cn)
+
+- [x] [Brief documentation of routing module](tl-ops-balance.md)
+
+- [x] [Brief Documentation of Health Check Module](tl-ops-health.md)
+
+- [x] [Brief Documentation of Fusing Current Limiting Module](tl-ops-limit.md)
+
+- [x] [Data Module Brief Documentation](tl-ops-store.md)
 
 
 # Features
@@ -61,11 +85,11 @@ Experience demo : https://tlops.iamtsm.cn/tlops/tl_ops_web_index.html
 
 - [x] Support service fuse current limiting
 
-- [x] support token bucket current limiter
+- [x] Support token bucket current limiter
 
 - [x] Support token bucket warm-up
 
-- [x] Support leaky bucket restrictor
+- [x] support leaky bucket restrictor
 
 - [x] Support for dynamically changing current limiter
 
@@ -89,19 +113,19 @@ Experience demo : https://tlops.iamtsm.cn/tlops/tl_ops_web_index.html
 
 
 
-- [ ] Support custom WAF policy
+- [x] Support custom WAF policy
 
-- [ ] Support cc prevention rules
+- [x] Support cc prevention rules
 
-- [ ] Support IP black and white list rules
+- [x] Support IP black and white list rules
 
-- [ ] Support Url black and white list rules
+- [x] Support Url black and white list rules
 
-- [ ] Support Cookie black and white list rules
+- [x] Support Cookie black and white list rules
 
-- [ ] Support parameter black and white list rules
+- [x] Support Header black and white list rules
 
-- [ ] Support Header black and white list rules
+- [x] Support request parameter black and white list rules
 
 
 
@@ -127,66 +151,9 @@ Experience demo : https://tlops.iamtsm.cn/tlops/tl_ops_web_index.html
 
 - [ ] Support routing load log analysis
 
-
-
-
-# How to use
-
-## 1. Installation environment
-
-install openresty
-
-## 2. Modify the configuration
-
-- Copy the following two lines into nginx.conf into the http block
-
-    ````
-    http {
-        ...
-        # Import tl_ops_manage.conf
-        include "/path/to/tl-ops-manage/conf/*.conf;
-
-        # import lua package
-        lua_package_path "/path/to/tl-ops-manage/?.lua;;"
-        ...
-    }
-    ````
-
-- Modify the path in the /path/to/tl-ops-manage/conf/tl_ops_manage.conf file
-
-- Modify the path in the /path/to/tl-ops-manage/constant/tl_ops_manage_env.lua file
-
-- Since redis is enabled by default, you need to install redis. If you don't want to use redis, you can set the redis option to false in tl_ops_manage_env.lua
-
-
-## 3. Start nginx/openresty
-
-visit http://your-domain/tlops/tl_ops_web_index.html management background
-
-
-## 4. Version update or first use
-
-visit http://your-domain/tlops/sync for init project / sync version update data
-
-
-# Documentation
-
-- [x] [Detailed instruction document](https://blog.iamtsm.cn/detail.html?id=90)
-
-- [x] [Source code implementation documentation](https://blog.iamtsm.cn/detail.html?id=91)
-
-- [x] [Brief documentation of routing module](doc/tl-ops-balance.md)
-
-- [x] [Brief Documentation of Health Check Module](doc/tl-ops-health.md)
-
-- [x] [Brief Documentation of Fusing Current Limiting Module](doc/tl-ops-limit.md)
-
-- [x] [Data Module Brief Documentation](doc/tl-ops-store.md)
-
-
 # Change log
 
-- [x] [CHNAGE-LOG](doc/change.md)
+- [x] [CHNAGE-LOG](change.md)
 
 
 # Thanks

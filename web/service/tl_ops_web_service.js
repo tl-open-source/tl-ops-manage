@@ -131,7 +131,9 @@ const tl_ops_web_service_open_health = function (name, isNodeEmpty) {
         }),
         contentType : "application/json",
         success : (res)=>{
-            layer.msg(name+"自检重启成功")
+            if(res.code === 0){
+                layer.msg(name+"自检重启成功")
+            }
             tl_ops_web_service_render();
         }
     }));
@@ -147,7 +149,9 @@ const tl_ops_web_service_pause_health = function (name, isNodeEmpty) {
         }),
         contentType : "application/json",
         success : (res)=>{
-            layer.msg(name+"自检暂停成功")
+            if(res.code === 0){
+                layer.msg(name+"自检暂停成功")
+            }
             tl_ops_web_service_render();
         }
     }));

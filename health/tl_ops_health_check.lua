@@ -16,6 +16,7 @@ local tl_ops_health_check_version = require("health.tl_ops_health_check_version"
 local tl_ops_status = require("constant.tl_ops_constant_comm").tl_ops_status;
 local nx_socket = ngx.socket.tcp
 local shared = ngx.shared.tlopsbalance
+local find = ngx.re.find
 
 
 
@@ -286,7 +287,7 @@ tl_ops_health_check_nodes = function (conf)
 
 			tlog:dbg("tl_ops_health_check_nodes receive socket ok : ", receive_line)
 
-			local from, to, _ = ngx.re.find(receive_line, [[^HTTP/\d+\.\d+\s+(\d+)]], "joi", nil, 1)
+			local from, to, _ = find(receive_line, [[^HTTP/\d+\.\d+\s+(\d+)]], "joi", nil, 1)
 			if not from then
 				tlog:err("tl_ops_health_check_nodes ngx.re.find receive err: ", from, to, _)
 				sock:close()

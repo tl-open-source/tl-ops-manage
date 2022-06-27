@@ -98,7 +98,7 @@ const tl_ops_web_api_random_cols = function () {
 const tl_ops_web_api_render = function () {
     table.render(tl_ajax_data({
         elem: '#'+_table_id_name,
-        url: '/tlops/api/list',
+        url: '/tlops/balance/api/list',
         cols: rule === 'random' ? tl_ops_web_api_random_cols() : tl_ops_web_api_point_cols(),
         page:true,
         needReloadMsg : false,
@@ -115,8 +115,8 @@ const tl_ops_web_api_render = function () {
                 };
             }
             res_data = res.data;
-            rule = res_data.tl_ops_api_rule
-            let datas = res_data.tl_ops_api_list[rule];
+            rule = res_data.tl_ops_balance_api_rule
+            let datas = res_data.tl_ops_balance_api_list[rule];
             if (datas === undefined){ datas = []; }
             datas = datas.sort(function(a, b){return b.id - a.id})
 
@@ -140,7 +140,7 @@ const tl_ops_web_api_render = function () {
 const tl_ops_web_api_reload = function (matcher) {
     table.render(tl_ajax_data({
         elem: '#'+_table_id_name,
-        url: '/tlops/api/list',
+        url: '/tlops/balance/api/list',
         where : matcher,
         cols: rule === 'random' ? tl_ops_web_api_random_cols() : tl_ops_web_api_point_cols(),
         page:true,
@@ -158,8 +158,8 @@ const tl_ops_web_api_reload = function (matcher) {
                 };
             }
             res_data = res.data;
-            rule = res_data.tl_ops_api_rule;
-            let datas = res_data.tl_ops_api_list[rule];
+            rule = res_data.tl_ops_balance_api_rule;
+            let datas = res_data.tl_ops_balance_api_list[rule];
             if (datas === undefined){ datas = []; }
             datas = datas.sort(function(a, b){return b.id - a.id})
 
@@ -195,14 +195,14 @@ const tl_ops_web_api_delete = function () {
         idList.push(checkData[i].id);
     }
 
-    let new_list = res_data.tl_ops_api_list[rule].filter(item=>{
+    let new_list = res_data.tl_ops_balance_api_list[rule].filter(item=>{
         return !idList.includes(item.id);
     })
 
-    res_data.tl_ops_api_list[rule] = new_list;
+    res_data.tl_ops_balance_api_list[rule] = new_list;
 
     $.ajax(tl_ajax_data({
-        url: '/tlops/api/set',
+        url: '/tlops/balance/api/set',
         data : JSON.stringify(res_data),
         contentType : "application/json",
         success : (res)=>{
@@ -225,10 +225,10 @@ const tl_ops_web_api_change_rule = function () {
         rule = 'point';
     }
 
-    res_data.tl_ops_api_rule = rule;
+    res_data.tl_ops_balance_api_rule = rule;
 
     $.ajax(tl_ajax_data({
-        url: '/tlops/api/set',
+        url: '/tlops/balance/api/set',
         data : JSON.stringify(res_data),
         contentType : "application/json",
         success : (res)=>{
@@ -257,7 +257,7 @@ const tl_ops_web_api_add = function () {
                     return;
                 }
                 $.ajax(tl_ajax_data({
-                    url: '/tlops/api/set',
+                    url: '/tlops/balance/api/set',
                     data : JSON.stringify(res_data),
                     contentType : "application/json",
                     success : (res)=>{
@@ -290,7 +290,7 @@ const tl_ops_web_api_edit = function (evtdata) {
                     return;
                 }
                 $.ajax(tl_ajax_data({
-                    url: '/tlops/api/set',
+                    url: '/tlops/balance/api/set',
                     data : JSON.stringify(res_data),
                     contentType : "application/json",
                     success : (res)=>{
@@ -330,9 +330,9 @@ const tl_ops_api_data_add_filter = function( data ) {
             data.field[key] = parseInt(data.field[key])   
         }
     }
-    res_data.tl_ops_api_list[rule].push(data.field)
+    res_data.tl_ops_balance_api_list[rule].push(data.field)
 
-    res_data.tl_ops_api_list[rule].forEach(item=>{
+    res_data.tl_ops_balance_api_list[rule].forEach(item=>{
         if( item.LAY_TABLE_INDEX !== undefined){
             delete item.LAY_TABLE_INDEX
         }
@@ -357,16 +357,16 @@ const tl_ops_api_data_edit_filter = function( data ) {
         }
     }
     let cur_list = []
-    res_data.tl_ops_api_list[rule].forEach((item)=>{
+    res_data.tl_ops_balance_api_list[rule].forEach((item)=>{
         if(item.id === data.field.id){
             data.field.change = true;
             item = data.field;
         }
         cur_list.push(item)
     })
-    res_data.tl_ops_api_list[rule] = cur_list;
+    res_data.tl_ops_balance_api_list[rule] = cur_list;
 
-    res_data.tl_ops_api_list[rule].forEach(item=>{
+    res_data.tl_ops_balance_api_list[rule].forEach(item=>{
         if( item.LAY_TABLE_INDEX !== undefined){
             delete item.LAY_TABLE_INDEX
         }

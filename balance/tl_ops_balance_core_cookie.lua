@@ -5,11 +5,11 @@
 -- @email 1905333456@qq.com
 
 local cjson = require("cjson");
-local cache_cookie = require("cache.tl_ops_cache"):new("tl-ops-cookie");
+local cache_cookie = require("cache.tl_ops_cache"):new("tl-ops-balance-cookie");
 local tl_ops_rt = require("constant.tl_ops_constant_comm").tl_ops_rt;
 local tl_ops_utils_func = require("utils.tl_ops_utils_func");
 
-local tl_ops_constant_cookie = require("constant.tl_ops_constant_cookie");
+local tl_ops_constant_balance_cookie = require("constant.tl_ops_constant_balance_cookie");
 local tl_ops_constant_service = require("constant.tl_ops_constant_service");
 local tl_ops_constant_health = require("constant.tl_ops_constant_health")
 local shared = ngx.shared.tlopsbalance
@@ -49,13 +49,13 @@ local tl_ops_balance_cookie_service_matcher = function(service_list_table)
     local node = nil
 
     -- cookie路由策略
-    local cookie_rule, _ = cache_cookie:get(tl_ops_constant_cookie.cache_key.rule);
+    local cookie_rule, _ = cache_cookie:get(tl_ops_constant_balance_cookie.cache_key.rule);
     if not cookie_rule then
         return nil
     end
     
     -- cookie配置列表
-    local cookie_list, _ = cache_cookie:get(tl_ops_constant_cookie.cache_key.list);
+    local cookie_list, _ = cache_cookie:get(tl_ops_constant_balance_cookie.cache_key.list);
     if not cookie_list then
         return nil, nil, nil, nil
     end
@@ -66,13 +66,13 @@ local tl_ops_balance_cookie_service_matcher = function(service_list_table)
     end
     
     -- 根据路由当前策略进行路由, 返回正则命中的cookie
-    if cookie_rule == tl_ops_constant_cookie.rule.point then
+    if cookie_rule == tl_ops_constant_balance_cookie.rule.point then
         matcher = tl_ops_balance_cookie_get_matcher_cookie(
-            cookie_list_table, tl_ops_constant_cookie.rule.point
+            cookie_list_table, tl_ops_constant_balance_cookie.rule.point
         );
-    elseif cookie_rule == tl_ops_constant_cookie.rule.random then
+    elseif cookie_rule == tl_ops_constant_balance_cookie.rule.random then
         matcher = tl_ops_balance_cookie_get_matcher_cookie(
-            cookie_list_table, tl_ops_constant_cookie.rule.random
+            cookie_list_table, tl_ops_constant_balance_cookie.rule.random
         );
     end
 
