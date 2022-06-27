@@ -12,9 +12,8 @@
 [![](https://img.shields.io/badge/dynamic%20conf-green)](https://github.com/iamtsm/tl-ops-manage)
 
 
-<p align="center"> <a href="https://github.com/iamtsm/tl-ops-manage/blob/main/doc/README_EN.md"> EN </a> | <a href="https://github.com/iamtsm/tl-ops-manage#readme"> ZN </a>  </p>
+<a href="https://github.com/iamtsm/tl-ops-manage/blob/main/doc/README_EN.md"> translate EN DOC </a>
 
- 
 
 体验demo : https://tlops.iamtsm.cn/tlops/tl_ops_web_index.html
 

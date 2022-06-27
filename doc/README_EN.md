@@ -20,7 +20,7 @@ Experience demo : https://tlops.iamtsm.cn/tlops/tl_ops_web_index.html
 **QQ : 624214498, welcome to submit PR, we will continue to update ....**
 
 
-<p align="center"> <a href="https://github.com/iamtsm/tl-ops-manage/blob/main/doc/README_EN.md"> EN </a> | <a href="https:// github.com/iamtsm/tl-ops-manage#readme"> ZN </a> </p>  
+<a href="https://github.com/iamtsm/tl-ops-manage/blob/main/README.md"> 中文翻译 </a>
 
 # Performance stress test
 
