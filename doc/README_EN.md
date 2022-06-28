@@ -14,7 +14,7 @@
 [![](https://img.shields.io/badge/dynamic%20conf-green)](https://github.com/iamtsm/tl-ops-manage)
 
 
-Experience demo : https://tlops.iamtsm.cn/tlops/tl_ops_web_index.html
+Experience demo : https://tlops.iamtsm.cn/tlopsmanage/tl_ops_web_index.html
 
 
 **QQ : 624214498, welcome to submit PR, we will continue to update ....**
