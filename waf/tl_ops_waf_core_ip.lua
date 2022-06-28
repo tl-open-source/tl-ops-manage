@@ -9,6 +9,7 @@ local tl_ops_constant_waf_ip = require("constant.tl_ops_constant_waf_ip");
 local tl_ops_constant_waf_scope = require("constant.tl_ops_constant_waf_scope");
 local tl_ops_utils_func = require("utils.tl_ops_utils_func");
 local cache_ip = require("cache.tl_ops_cache"):new("tl-ops-waf-ip");
+local tlog = require("utils.tl_ops_utils_log"):new("tl_ops_waf_ip");
 local find = ngx.re.find
 local cjson = require("cjson");
 
@@ -44,12 +45,14 @@ local tl_ops_waf_core_ip_filter_global_pass = function()
     end
 
     -- 获取当前ip
-    local ip = tl_ops_utils_func:get_req_ip();
-    if not ip then
+    local cur_ip = tl_ops_utils_func:get_req_ip();
+    if not cur_ip then
         return true
     end
 
     local cur_host = ngx.var.host
+
+    tlog:dbg("tl_ops_waf_ip get list ok, scope=",ip_scope, ",host=",cur_host,",ip=",cur_ip,",list=",ip_list_table)
 
     -- 优先处理白名单
     for _, ip in ipairs(ip_list_table) do
@@ -66,7 +69,7 @@ local tl_ops_waf_core_ip_filter_global_pass = function()
                 break
             end
             -- 未命中拦截规则，进行下一个
-            local res, _ = find(ip , value , 'jo');
+            local res, _ = find(cur_ip , value , 'jo');
             if not res then
                 break
             end
@@ -93,7 +96,7 @@ local tl_ops_waf_core_ip_filter_global_pass = function()
                 break
             end
             -- 未命中拦截规则，进行下一个
-            local res, _ = find(ip , value , 'jo');
+            local res, _ = find(cur_ip , value , 'jo');
             if not res then
                 break
             end
@@ -102,6 +105,8 @@ local tl_ops_waf_core_ip_filter_global_pass = function()
         until true
     end
 
+    tlog:dbg("tl_ops_waf_ip done")
+    
     return true
 end
 
@@ -142,12 +147,14 @@ local tl_ops_waf_core_ip_filter_service_pass = function(service_name)
     end
 
     -- 获取当前ip
-    local ip = tl_ops_utils_func:get_req_ip();
-    if not ip then
+    local cur_ip = tl_ops_utils_func:get_req_ip();
+    if not cur_ip then
         return true
     end
 
     local cur_host = ngx.var.host
+
+    tlog:dbg("tl_ops_waf_ip get list ok, scope=",ip_scope, ",host=",cur_host,",ip=",cur_ip,",list=",ip_list_table)
 
     -- 优先处理白名单
     for _, ip in ipairs(ip_list_table) do
@@ -173,7 +180,7 @@ local tl_ops_waf_core_ip_filter_service_pass = function(service_name)
                 break
             end
             -- 未命中拦截规则，进行下一个
-            local res, _ = find(ip , value , 'jo');
+            local res, _ = find(cur_ip , value , 'jo');
             if not res then
                 break
             end
@@ -210,7 +217,7 @@ local tl_ops_waf_core_ip_filter_service_pass = function(service_name)
                 break
             end
             -- 未命中拦截规则，进行下一个
-            local res, _ = find(ip , value , 'jo');
+            local res, _ = find(cur_ip , value , 'jo');
             if not res then
                 break
             end
@@ -218,6 +225,8 @@ local tl_ops_waf_core_ip_filter_service_pass = function(service_name)
             return false
         until true
     end
+
+    tlog:dbg("tl_ops_waf_ip done")
 
     return true
 end
@@ -259,12 +268,14 @@ local tl_ops_waf_core_ip_filter_node_pass = function(service_name, node_id)
     end
 
     -- 获取当前ip
-    local ip = tl_ops_utils_func:get_req_ip();
-    if not ip then
+    local cur_ip = tl_ops_utils_func:get_req_ip();
+    if not cur_ip then
         return true
     end
 
     local cur_host = ngx.var.host
+
+    tlog:dbg("tl_ops_waf_ip get list ok, scope=",ip_scope, ",host=",cur_host,",ip=",cur_ip,",list=",ip_list_table)
 
     -- 优先处理白名单
     for _, ip in ipairs(ip_list_table) do
@@ -299,7 +310,7 @@ local tl_ops_waf_core_ip_filter_node_pass = function(service_name, node_id)
                 break
             end
             -- 未命中拦截规则，进行下一个
-            local res, _ = find(ip , value , 'jo');
+            local res, _ = find(cur_ip , value , 'jo');
             if not res then
                 break
             end
@@ -345,7 +356,7 @@ local tl_ops_waf_core_ip_filter_node_pass = function(service_name, node_id)
                 break
             end
             -- 未命中拦截规则，进行下一个
-            local res, _ = find(ip , value , 'jo');
+            local res, _ = find(cur_ip , value , 'jo');
             if not res then
                 break
             end
@@ -353,6 +364,8 @@ local tl_ops_waf_core_ip_filter_node_pass = function(service_name, node_id)
             return false
         until true
     end
+
+    tlog:dbg("tl_ops_waf_ip done")
 
     return true
 end

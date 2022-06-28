@@ -8,8 +8,11 @@ local tl_ops_constant_waf_api = require("constant.tl_ops_constant_waf_api");
 local tl_ops_constant_waf_scope = require("constant.tl_ops_constant_waf_scope");
 local tl_ops_utils_func = require("utils.tl_ops_utils_func");
 local cache_api = require("cache.tl_ops_cache"):new("tl-ops-waf-api");
+local tlog = require("utils.tl_ops_utils_log"):new("tl_ops_waf_api");
 local find = ngx.re.find
 local cjson = require("cjson");
+
+
 
 -- 全局拦截
 -- true : 通过, false : 拦截
@@ -49,6 +52,8 @@ local tl_ops_waf_core_api_filter_global_pass = function()
     end
 
     local cur_host = ngx.var.host
+
+    tlog:dbg("tl_ops_waf_api get list ok, scope=",api_scope, ",host=",cur_host,",uri=",request_uri,",list=",api_list_table)
 
     -- 优先处理白名单
     for _, api in ipairs(api_list_table) do
@@ -100,6 +105,8 @@ local tl_ops_waf_core_api_filter_global_pass = function()
             return false
         until true
     end
+
+    tlog:dbg("tl_ops_waf_api done")
 
     return true
 end
@@ -148,6 +155,8 @@ local tl_ops_waf_core_api_filter_service_pass = function(service_name)
     
     local cur_host = ngx.var.host
 
+    tlog:dbg("tl_ops_waf_api get list ok, scope=",api_scope, ",host=",cur_host,",uri=",request_uri,",list=",api_list_table)
+
     -- 优先处理白名单
     for _, api in ipairs(api_list_table) do
         repeat
@@ -216,6 +225,8 @@ local tl_ops_waf_core_api_filter_service_pass = function(service_name)
             return false
         until true
     end
+
+    tlog:dbg("tl_ops_waf_api done")
 
     return true
 end
@@ -264,6 +275,8 @@ local tl_ops_waf_core_api_filter_node_pass = function(service_name, node_id)
 
     local cur_host = ngx.var.host
 
+    tlog:dbg("tl_ops_waf_api get list ok, scope=",api_scope, ",host=",cur_host,",uri=",request_uri,",list=",api_list_table)
+
     -- 优先处理白名单
     for _, api in ipairs(api_list_table) do
         repeat
@@ -350,6 +363,8 @@ local tl_ops_waf_core_api_filter_node_pass = function(service_name, node_id)
             return false
         until true
     end
+
+    tlog:dbg("tl_ops_waf_api done")
 
     return true
 end

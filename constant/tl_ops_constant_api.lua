@@ -47,8 +47,4 @@ tl_ops_constant_api["/tlops/limit/set"] = require("api.router.tl_ops_api_set_lim
 -- store
 tl_ops_constant_api["/tlops/store/list"] = require("api.router.tl_ops_api_get_store")
 
--- sync
-tl_ops_constant_api["/tlops/sync"] = require("api.router.tl_ops_api_sync")
-
-
 return tl_ops_constant_api

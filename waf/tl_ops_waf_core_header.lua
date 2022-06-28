@@ -8,8 +8,10 @@ local tl_ops_constant_waf_header = require("constant.tl_ops_constant_waf_header"
 local tl_ops_constant_waf_scope = require("constant.tl_ops_constant_waf_scope");
 local tl_ops_utils_func = require("utils.tl_ops_utils_func");
 local cache_header = require("cache.tl_ops_cache"):new("tl-ops-waf-header");
+local tlog = require("utils.tl_ops_utils_log"):new("tl_ops_waf_header");
 local find = ngx.re.find
 local cjson = require("cjson");
+
 
 -- 全局拦截
 -- true : 通过, false : 拦截
@@ -49,6 +51,8 @@ local tl_ops_waf_core_header_filter_global_pass = function()
     end
     
     local cur_host = ngx.var.host
+
+    tlog:dbg("tl_ops_waf_header get list ok, scope=",header_scope, ",host=",cur_host,",headers=",headers,",list=",header_list_table)
 
     -- 优先处理白名单
     for _, header in ipairs(header_list_table) do
@@ -130,6 +134,8 @@ local tl_ops_waf_core_header_filter_global_pass = function()
             break
         until true
     end
+
+    tlog:dbg("tl_ops_waf_header done")
 
     return true
 end
@@ -178,6 +184,8 @@ local tl_ops_waf_core_header_filter_service_pass = function(service_name)
 
     local cur_host = ngx.var.host
 
+    tlog:dbg("tl_ops_waf_header get list ok, scope=",header_scope, ",host=",cur_host,",headers=",headers,",list=",header_list_table)
+
     -- 优先处理白名单
     for _, header in ipairs(header_list_table) do
         repeat
@@ -277,6 +285,8 @@ local tl_ops_waf_core_header_filter_service_pass = function(service_name)
             break
         until true
     end
+
+    tlog:dbg("tl_ops_waf_header done")
 
     return true
 end
@@ -325,6 +335,8 @@ local tl_ops_waf_core_header_filter_node_pass = function(service_name, node_id)
 
     local cur_host = ngx.var.host
 
+    tlog:dbg("tl_ops_waf_header get list ok, scope=",header_scope, ",host=",cur_host,",headers=",headers,",list=",header_list_table)
+
     -- 优先处理白名单
     for _, header in ipairs(header_list_table) do
         repeat
@@ -442,6 +454,8 @@ local tl_ops_waf_core_header_filter_node_pass = function(service_name, node_id)
             break
         until true
     end
+
+    tlog:dbg("tl_ops_waf_header done")
 
     return true
 end

@@ -8,6 +8,7 @@ local tl_ops_constant_waf_cc = require("constant.tl_ops_constant_waf_cc");
 local tl_ops_constant_waf_scope = require("constant.tl_ops_constant_waf_scope");
 local tl_ops_utils_func = require("utils.tl_ops_utils_func");
 local cache_cc = require("cache.tl_ops_cache"):new("tl-ops-waf-cc");
+local tlog = require("utils.tl_ops_utils_log"):new("tl_ops_waf_cc");
 local find = ngx.re.find
 local cjson = require("cjson");
 
@@ -55,6 +56,8 @@ local tl_ops_waf_core_cc_filter_global_pass = function()
 
     local cur_host = ngx.var.host
 
+    tlog:dbg("tl_ops_waf_cc get list ok, scope=",cc_scope, ",host=",cur_host,",cc_key=",cc_key,",list=",cc_list_table)
+
     for _, cc in ipairs(cc_list_table) do
         repeat
             local host = cc.host
@@ -83,6 +86,8 @@ local tl_ops_waf_core_cc_filter_global_pass = function()
             return false
         until true
     end
+
+    tlog:dbg("tl_ops_waf_cc done")
 
     return true
 end
@@ -132,6 +137,8 @@ local tl_ops_waf_core_cc_filter_service_pass = function(service_name)
 
     local cur_host = ngx.var.host
 
+    tlog:dbg("tl_ops_waf_cc get list ok, scope=",cc_scope, ",host=",cur_host,",cc_key=",cc_key,",list=",cc_list_table)
+
     for _, cc in ipairs(cc_list_table) do
         repeat
             local host = cc.host
@@ -169,6 +176,8 @@ local tl_ops_waf_core_cc_filter_service_pass = function(service_name)
             return false
         until true
     end
+
+    tlog:dbg("tl_ops_waf_cc done")
 
     return true
 end
@@ -216,6 +225,10 @@ local tl_ops_waf_core_cc_filter_node_pass = function(service_name, node_id)
     -- cc key
     local cc_key = tl_ops_constant_waf_cc.cache_key.prefix .. ip .. request_uri
 
+    local cur_host = ngx.var.host
+
+    tlog:dbg("tl_ops_waf_cc get list ok, scope=",cc_scope, ",host=",cur_host,",cc_key=",cc_key,",list=",cc_list_table)
+
     for _, cc in ipairs(cc_list_table) do
         repeat
             local host = cc.host
@@ -262,6 +275,8 @@ local tl_ops_waf_core_cc_filter_node_pass = function(service_name, node_id)
             return false
         until true
     end
+
+    tlog:dbg("tl_ops_waf_cc done")
 
     return true
 end

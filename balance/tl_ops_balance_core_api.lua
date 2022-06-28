@@ -20,7 +20,7 @@ local tl_ops_balance_api_service_matcher = function(service_list_table)
 
     -- 获取当前url
     local request_uri = tl_ops_utils_func:get_req_uri();
-    
+
     -- api路由策略
     local api_rule, _ = cache_api:get(tl_ops_constant_balance_api.cache_key.rule);
     if not api_rule then
@@ -32,6 +32,7 @@ local tl_ops_balance_api_service_matcher = function(service_list_table)
     if not api_list then
         return nil, nil, nil, nil
     end
+    
     local api_list_table = cjson.decode(api_list);
     if not api_list_table then
         return nil, nil, nil, nil

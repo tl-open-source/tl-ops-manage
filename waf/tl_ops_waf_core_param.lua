@@ -8,6 +8,7 @@ local tl_ops_constant_waf_param = require("constant.tl_ops_constant_waf_param");
 local tl_ops_constant_waf_scope = require("constant.tl_ops_constant_waf_scope");
 local tl_ops_utils_func = require("utils.tl_ops_utils_func");
 local cache_param = require("cache.tl_ops_cache"):new("tl-ops-waf-param");
+local tlog = require("utils.tl_ops_utils_log"):new("tl_ops_waf_param");
 local cjson = require("cjson");
 
 local unescape = ngx.unescape_uri
@@ -52,6 +53,8 @@ local tl_ops_waf_core_param_filter_global_pass = function()
     end
 
     local cur_host = ngx.var.host
+
+    tlog:dbg("tl_ops_waf_param get list ok, scope=",param_scope, ",host=",cur_host,",param=",args,",list=",param_list_table)
 
     -- 优先处理白名单
     for _, param in ipairs(param_list_table) do
@@ -103,6 +106,8 @@ local tl_ops_waf_core_param_filter_global_pass = function()
             return false
         until true
     end
+
+    tlog:dbg("tl_ops_waf_param done")
 
     return true
 end
@@ -151,6 +156,8 @@ local tl_ops_waf_core_param_filter_service_pass = function(service_name)
     
     local cur_host = ngx.var.host
 
+    tlog:dbg("tl_ops_waf_param get list ok, scope=",param_scope, ",host=",cur_host,",param=",args,",list=",param_list_table)
+
     for _, param in ipairs(param_list_table) do
         repeat
             local value = param.value
@@ -219,6 +226,8 @@ local tl_ops_waf_core_param_filter_service_pass = function(service_name)
         until true
     end
 
+    tlog:dbg("tl_ops_waf_param done")
+
     return true
 end
 
@@ -265,6 +274,8 @@ local tl_ops_waf_core_param_filter_node_pass = function(service_name, node_id)
     end
 
     local cur_host = ngx.var.host
+
+    tlog:dbg("tl_ops_waf_param get list ok, scope=",param_scope, ",host=",cur_host,",param=",args,",list=",param_list_table)
 
     -- 优先处理白名单
     for _, param in ipairs(param_list_table) do
@@ -352,6 +363,8 @@ local tl_ops_waf_core_param_filter_node_pass = function(service_name, node_id)
             return false
         until true
     end
+
+    tlog:dbg("tl_ops_waf_param done")
 
     return true
 end

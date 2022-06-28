@@ -53,7 +53,6 @@ const tl_ops_web_service_event = function () {
 
 //表格cols
 const tl_ops_web_service_cols = function () {
-    let health_timer_list = (state_data && state_data.health) ? state_data.health.timer_list || [] : false
     return [[
         {
             field: 'name', title: '服务名称', width:"25%"
@@ -91,7 +90,7 @@ const tl_ops_web_service_cols = function () {
             field: 'oper', title: '服务健康',width:"25%",
             templet : (d)=>{
                 let isNodeEmpty = d.node.length === 0;
-                let isChecking = health_timer_list.includes(d.name) && !state_data.service[d.name].health_uncheck;
+                let isChecking = !state_data.service[d.name].health_uncheck;
                 let isAutoLoad = rule === 'auto_load'
                 return `
                 <div onclick="tl_ops_web_service_open_health('${d.name}',${isNodeEmpty})" id="tl-service-check-${d.name}" onmouseleave="tl_mouse_leave_tips()" 
