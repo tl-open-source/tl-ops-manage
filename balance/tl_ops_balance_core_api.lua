@@ -43,7 +43,7 @@ local tl_ops_balance_api_service_matcher = function(service_list_table)
         local point = api_list_table.point
 
         for i, obj in pairs(point) do
-            local from, to , _ = find(request_uri , obj.url , 'jo');
+            local from, to , _ = find(request_uri , obj.url , 'joi');
             if from and to then
                 local sub = string.sub(request_uri, from, to)
                 if sub then
@@ -60,7 +60,7 @@ local tl_ops_balance_api_service_matcher = function(service_list_table)
         local random = api_list_table.random
 
         for i, obj in pairs(random) do
-            local from, to , _ = find(request_uri , obj.url , 'jo');
+            local from, to , _ = find(request_uri , obj.url , 'joi');
             if from and to then
                 local sub = string.sub(request_uri, from, to)
                 if sub then

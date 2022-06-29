@@ -38,19 +38,19 @@ function _M:init( )
     
 
     -- 数据合并，预热
-    local warm_data = {}
-    warm_data["balance_api"] = tl_ops_sync_constant_data:tl_ops_sync_constant_data_module('balance_api');
-    warm_data["balance_cookie"] = tl_ops_sync_constant_data:tl_ops_sync_constant_data_module('balance_cookie');
-    warm_data["balance_header"] = tl_ops_sync_constant_data:tl_ops_sync_constant_data_module('balance_header');
-    warm_data["balance_param"] = tl_ops_sync_constant_data:tl_ops_sync_constant_data_module('balance_param');
-    warm_data["waf_ip"] = tl_ops_sync_constant_data:tl_ops_sync_constant_data_module('waf_ip');
-    warm_data["waf_api"] = tl_ops_sync_constant_data:tl_ops_sync_constant_data_module('waf_api');
-    warm_data["waf_cc"] = tl_ops_sync_constant_data:tl_ops_sync_constant_data_module('waf_cc');
-    warm_data["waf_header"] = tl_ops_sync_constant_data:tl_ops_sync_constant_data_module('waf_header');
-    warm_data["waf_cookie"] = tl_ops_sync_constant_data:tl_ops_sync_constant_data_module('waf_cookie');
-    warm_data["waf_param"] = tl_ops_sync_constant_data:tl_ops_sync_constant_data_module('waf_param');
+    -- local warm_data = {}
+    -- warm_data["balance_api"] = tl_ops_sync_constant_data:tl_ops_sync_constant_data_module('balance_api');
+    -- warm_data["balance_cookie"] = tl_ops_sync_constant_data:tl_ops_sync_constant_data_module('balance_cookie');
+    -- warm_data["balance_header"] = tl_ops_sync_constant_data:tl_ops_sync_constant_data_module('balance_header');
+    -- warm_data["balance_param"] = tl_ops_sync_constant_data:tl_ops_sync_constant_data_module('balance_param');
+    -- warm_data["waf_ip"] = tl_ops_sync_constant_data:tl_ops_sync_constant_data_module('waf_ip');
+    -- warm_data["waf_api"] = tl_ops_sync_constant_data:tl_ops_sync_constant_data_module('waf_api');
+    -- warm_data["waf_cc"] = tl_ops_sync_constant_data:tl_ops_sync_constant_data_module('waf_cc');
+    -- warm_data["waf_header"] = tl_ops_sync_constant_data:tl_ops_sync_constant_data_module('waf_header');
+    -- warm_data["waf_cookie"] = tl_ops_sync_constant_data:tl_ops_sync_constant_data_module('waf_cookie');
+    -- warm_data["waf_param"] = tl_ops_sync_constant_data:tl_ops_sync_constant_data_module('waf_param');
 
-    tlog:dbg("tl_ops_sync tl_ops_sync_constant_data done , res=",warm_data)
+    -- tlog:dbg("tl_ops_sync tl_ops_sync_constant_data done , res=",warm_data)
 end
 
 return _M

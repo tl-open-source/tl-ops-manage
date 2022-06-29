@@ -51,6 +51,9 @@ local tl_ops_waf_core_header_filter_global_pass = function()
     end
     
     local cur_host = ngx.var.host
+    if not cur_host then
+        return true
+    end
 
     tlog:dbg("tl_ops_waf_header get list ok, scope=",header_scope, ",host=",cur_host,",headers=",headers,",list=",header_list_table)
 
@@ -61,6 +64,10 @@ local tl_ops_waf_core_header_filter_global_pass = function()
             local value = header.value
             local host = header.host
             local white = header.white
+            -- 非白名单跳过
+            if not white then
+                break
+            end
             -- 域名为空跳过规则
             if host == nil or host == '' then
                 break
@@ -81,12 +88,8 @@ local tl_ops_waf_core_header_filter_global_pass = function()
                         break
                     end
                     -- 未命中拦截规则，进行下一个
-                    local res, _ = find(request_uri , value , 'jo');
+                    local res, _ = find(headers[key] , value , 'joi');
                     if not res then
-                        break
-                    end
-                    -- 继续比对下一个白名单
-                    if not white then
                         break
                     end
                     -- 白名单，不用后续比对，直接通过
@@ -103,6 +106,10 @@ local tl_ops_waf_core_header_filter_global_pass = function()
             local value = header.value
             local host = header.host
             local white = header.white
+            -- 此前已处理白名单
+            if white then
+                break
+            end
             -- 域名为空跳过规则
             if host == nil or host == '' then
                 break
@@ -123,7 +130,7 @@ local tl_ops_waf_core_header_filter_global_pass = function()
                         break
                     end
                     -- 未命中拦截规则，进行下一个
-                    local res, _ = find(request_uri , value , 'jo');
+                    local res, _ = find(headers[key] , value , 'joi');
                     if not res then
                         break
                     end
@@ -183,6 +190,9 @@ local tl_ops_waf_core_header_filter_service_pass = function(service_name)
     end
 
     local cur_host = ngx.var.host
+    if not cur_host then
+        return true
+    end
 
     tlog:dbg("tl_ops_waf_header get list ok, scope=",header_scope, ",host=",cur_host,",headers=",headers,",list=",header_list_table)
 
@@ -194,6 +204,10 @@ local tl_ops_waf_core_header_filter_service_pass = function(service_name)
             local host = header.host
             local service = header.service
             local white = header.white
+            -- 非白名单跳过
+            if not white then
+                break
+            end
             -- 域名为空跳过规则
             if host == nil or host == '' then
                 break
@@ -222,12 +236,8 @@ local tl_ops_waf_core_header_filter_service_pass = function(service_name)
                         break
                     end
                     -- 未命中拦截规则，进行下一个
-                    local res, _ = find(request_uri , value , 'jo');
+                    local res, _ = find(headers[key] , value , 'joi');
                     if not res then
-                        break
-                    end
-                    -- 继续比对下一个白名单
-                    if not white then
                         break
                     end
                     -- 白名单，不用后续比对，直接通过
@@ -246,6 +256,10 @@ local tl_ops_waf_core_header_filter_service_pass = function(service_name)
             local service = header.service
             local balck = header.balck
             local white = header.white
+            -- 此前已处理白名单
+            if white then
+                break
+            end
             -- 域名为空跳过规则
             if host == nil or host == '' then
                 break
@@ -274,7 +288,7 @@ local tl_ops_waf_core_header_filter_service_pass = function(service_name)
                         break
                     end
                     -- 未命中拦截规则，进行下一个
-                    local res, _ = find(request_uri , value , 'jo');
+                    local res, _ = find(headers[key] , value , 'joi');
                     if not res then
                         break
                     end
@@ -334,6 +348,9 @@ local tl_ops_waf_core_header_filter_node_pass = function(service_name, node_id)
     end
 
     local cur_host = ngx.var.host
+    if not cur_host then
+        return true
+    end
 
     tlog:dbg("tl_ops_waf_header get list ok, scope=",header_scope, ",host=",cur_host,",headers=",headers,",list=",header_list_table)
 
@@ -346,6 +363,10 @@ local tl_ops_waf_core_header_filter_node_pass = function(service_name, node_id)
             local service = header.service
             local node = header.node
             local white = header.white
+            -- 非白名单跳过
+            if not white then
+                break
+            end
             -- 域名为空跳过规则
             if host == nil or host == '' then
                 break
@@ -382,12 +403,8 @@ local tl_ops_waf_core_header_filter_node_pass = function(service_name, node_id)
                         break
                     end
                     -- 未命中拦截规则，进行下一个
-                    local res, _ = find(request_uri , value , 'jo');
+                    local res, _ = find(headers[key] , value , 'joi');
                     if not res then
-                        break
-                    end
-                    -- 继续比对下一个白名单
-                    if not white then
                         break
                     end
                     -- 白名单，不用后续比对，直接通过
@@ -405,8 +422,11 @@ local tl_ops_waf_core_header_filter_node_pass = function(service_name, node_id)
             local host = header.host
             local service = header.service
             local node = header.node
-            local balck = header.balck
             local white = header.white
+            -- 此前已处理白名单
+            if white then
+                break
+            end
             -- 域名为空跳过规则
             if host == nil or host == '' then
                 break
@@ -443,7 +463,7 @@ local tl_ops_waf_core_header_filter_node_pass = function(service_name, node_id)
                         break
                     end
                     -- 未命中拦截规则，进行下一个
-                    local res, _ = find(request_uri , value , 'jo');
+                    local res, _ = find(headers[key] , value , 'joi');
                     if not res then
                         break
                     end

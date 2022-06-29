@@ -51,8 +51,11 @@ local tl_ops_waf_core_param_filter_global_pass = function()
     if not args then
         return true
     end
-
+    
     local cur_host = ngx.var.host
+    if not cur_host then
+        return true
+    end
 
     tlog:dbg("tl_ops_waf_param get list ok, scope=",param_scope, ",host=",cur_host,",param=",args,",list=",param_list_table)
 
@@ -62,6 +65,10 @@ local tl_ops_waf_core_param_filter_global_pass = function()
             local value = param.value
             local host = param.host
             local white = param.white
+            -- 非白名单跳过
+            if not white then
+                break
+            end
             -- 域名为空跳过规则
             if host == nil or host == '' then
                 break
@@ -70,17 +77,19 @@ local tl_ops_waf_core_param_filter_global_pass = function()
             if host ~= "*" and host ~= cur_host then
                 break
             end
-            -- 未命中拦截规则，进行下一个
-            local res, _ = find(unescape(args) , value , 'jo');
-            if not res then
-                break
+            -- 参数k-v对比
+            for arg_k ,arg_v in pairs(args) do
+                repeat
+                    -- 未命中拦截规则，进行下一个
+                    local res, _ = find(unescape(arg_k .. "=" .. arg_v) , value , 'joi');
+                    if not res then
+                        break
+                    end
+                    -- 白名单，不用后续比对，直接通过
+                    return true
+                until true
             end
-            -- 继续比对下一个白名单
-            if not white then
-                break
-            end
-            -- 白名单，不用后续比对，直接通过
-            return true
+            break
         until true
     end
 
@@ -89,6 +98,10 @@ local tl_ops_waf_core_param_filter_global_pass = function()
             local value = param.value
             local host = param.host
             local white = param.white
+            -- 此前已处理白名单
+            if white then
+                break
+            end
             -- 域名为空跳过规则
             if host == nil or host == '' then
                 break
@@ -97,13 +110,26 @@ local tl_ops_waf_core_param_filter_global_pass = function()
             if host ~= "*" and host ~= cur_host then
                 break
             end
-            -- 未命中拦截规则，进行下一个
-            local res, _ = find(unescape(args) , value , 'jo');
-            if not res then
-                break
+            -- 参数k-v对比
+            for arg_k ,arg_v in pairs(args) do
+                if type(arg_v) == 'boolean' then
+                    if arg_v then
+                        arg_v = "true"
+                    else
+                        arg_v = "false"
+                    end
+                end
+                repeat
+                    -- 未命中拦截规则，进行下一个
+                    local res, _ = find(unescape(arg_k .. "=" .. arg_v) , value , 'joi');
+                    if not res then
+                        break
+                    end
+                    -- 命中规则的param
+                    return false
+                until true
             end
-            -- 命中规则的param
-            return false
+            break
         until true
     end
 
@@ -155,6 +181,9 @@ local tl_ops_waf_core_param_filter_service_pass = function(service_name)
     end
     
     local cur_host = ngx.var.host
+    if not cur_host then
+        return true
+    end
 
     tlog:dbg("tl_ops_waf_param get list ok, scope=",param_scope, ",host=",cur_host,",param=",args,",list=",param_list_table)
 
@@ -164,6 +193,10 @@ local tl_ops_waf_core_param_filter_service_pass = function(service_name)
             local host = param.host
             local service = param.service
             local white = param.white
+            -- 非白名单跳过
+            if not white then
+                break
+            end
             -- 域名为空跳过规则
             if host == nil or host == '' then
                 break
@@ -180,17 +213,19 @@ local tl_ops_waf_core_param_filter_service_pass = function(service_name)
             if service ~= service_name then
                 break
             end
-            -- 未命中拦截规则，进行下一个
-            local res, _ = find(unescape(args) , value , 'jo');
-            if not res then
-                break
+            -- 参数k-v对比
+            for arg_k ,arg_v in pairs(args) do
+                repeat
+                    -- 未命中拦截规则，进行下一个
+                    local res, _ = find(unescape(arg_k .. "=" .. arg_v) , value , 'joi');
+                    if not res then
+                        break
+                    end
+                    -- 白名单，不用后续比对，直接通过
+                    return true
+                until true
             end
-            -- 继续比对下一个白名单
-            if not white then
-                break
-            end
-            -- 白名单，不用后续比对，直接通过
-            return true
+            break
         until true
     end
 
@@ -200,6 +235,10 @@ local tl_ops_waf_core_param_filter_service_pass = function(service_name)
             local host = param.host
             local service = param.service
             local white = param.white
+            -- 此前已处理白名单
+            if white then
+                break
+            end
             -- 域名为空跳过规则
             if host == nil or host == '' then
                 break
@@ -216,13 +255,19 @@ local tl_ops_waf_core_param_filter_service_pass = function(service_name)
             if service ~= service_name then
                 break
             end
-            -- 未命中拦截规则，进行下一个
-            local res, _ = find(unescape(args) , value , 'jo');
-            if not res then
-                break
+            -- 参数k-v对比
+            for arg_k ,arg_v in pairs(args) do
+                repeat
+                    -- 未命中拦截规则，进行下一个
+                    local res, _ = find(unescape(arg_k .. "=" .. arg_v) , value , 'joi');
+                    if not res then
+                        break
+                    end
+                    -- 命中规则的param
+                    return false
+                until true
             end
-            -- 命中规则的param
-            return false
+            break
         until true
     end
 
@@ -274,6 +319,9 @@ local tl_ops_waf_core_param_filter_node_pass = function(service_name, node_id)
     end
 
     local cur_host = ngx.var.host
+    if not cur_host then
+        return true
+    end
 
     tlog:dbg("tl_ops_waf_param get list ok, scope=",param_scope, ",host=",cur_host,",param=",args,",list=",param_list_table)
 
@@ -285,6 +333,10 @@ local tl_ops_waf_core_param_filter_node_pass = function(service_name, node_id)
             local service = param.service
             local node = param.node
             local white = param.white
+            -- 非白名单跳过
+            if not white then
+                break
+            end
             -- 域名为空跳过规则
             if host == nil or host == '' then
                 break
@@ -309,17 +361,19 @@ local tl_ops_waf_core_param_filter_node_pass = function(service_name, node_id)
             if node ~= node_id then
                 break
             end
-            -- 未命中拦截规则，进行下一个
-            local res, _ = find(unescape(args) , value , 'jo');
-            if not res then
-                break
+            -- 参数k-v对比
+            for arg_k ,arg_v in pairs(args) do
+                repeat
+                    -- 未命中拦截规则，进行下一个
+                    local res, _ = find(unescape(arg_k .. "=" .. arg_v) , value , 'joi');
+                    if not res then
+                        break
+                    end
+                    -- 白名单，不用后续比对，直接通过
+                    return true
+                until true
             end
-            -- 继续比对下一个白名单
-            if not white then
-                break
-            end
-            -- 白名单，不用后续比对，直接通过
-            return true
+            break
         until true
     end
 
@@ -330,6 +384,10 @@ local tl_ops_waf_core_param_filter_node_pass = function(service_name, node_id)
             local service = param.service
             local node = param.node
             local white = param.white
+            -- 此前已处理白名单
+            if white then
+                break
+            end
             -- 域名为空跳过规则
             if host == nil or host == '' then
                 break
@@ -354,13 +412,19 @@ local tl_ops_waf_core_param_filter_node_pass = function(service_name, node_id)
             if node ~= node_id then
                 break
             end
-            -- 未命中拦截规则，进行下一个
-            local res, _ = find(unescape(args) , value , 'jo');
-            if not res then
-                break
+            -- 参数k-v对比
+            for arg_k ,arg_v in pairs(args) do
+                repeat
+                    -- 未命中拦截规则，进行下一个
+                    local res, _ = find(unescape(arg_k .. "=" .. arg_v) , value , 'joi');
+                    if not res then
+                        break
+                    end
+                    -- 命中规则的param
+                    return false
+                until true
             end
-            -- 命中规则的param
-            return false
+            break
         until true
     end
 

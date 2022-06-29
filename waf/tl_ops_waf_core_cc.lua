@@ -55,6 +55,9 @@ local tl_ops_waf_core_cc_filter_global_pass = function()
     local cc_key = tl_ops_constant_waf_cc.cache_key.prefix .. ip .. request_uri
 
     local cur_host = ngx.var.host
+    if not cur_host then
+        return true
+    end
 
     tlog:dbg("tl_ops_waf_cc get list ok, scope=",cc_scope, ",host=",cur_host,",cc_key=",cc_key,",list=",cc_list_table)
 
@@ -136,6 +139,9 @@ local tl_ops_waf_core_cc_filter_service_pass = function(service_name)
     local cc_key = tl_ops_constant_waf_cc.cache_key.prefix .. ip .. request_uri
 
     local cur_host = ngx.var.host
+    if not cur_host then
+        return true
+    end
 
     tlog:dbg("tl_ops_waf_cc get list ok, scope=",cc_scope, ",host=",cur_host,",cc_key=",cc_key,",list=",cc_list_table)
 
@@ -226,6 +232,9 @@ local tl_ops_waf_core_cc_filter_node_pass = function(service_name, node_id)
     local cc_key = tl_ops_constant_waf_cc.cache_key.prefix .. ip .. request_uri
 
     local cur_host = ngx.var.host
+    if not cur_host then
+        return true
+    end
 
     tlog:dbg("tl_ops_waf_cc get list ok, scope=",cc_scope, ",host=",cur_host,",cc_key=",cc_key,",list=",cc_list_table)
 

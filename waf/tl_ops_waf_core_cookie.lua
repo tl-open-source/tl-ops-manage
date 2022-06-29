@@ -10,7 +10,6 @@ local tl_ops_constant_waf_scope = require("constant.tl_ops_constant_waf_scope");
 local tl_ops_utils_func = require("utils.tl_ops_utils_func");
 local cache_cookie = require("cache.tl_ops_cache"):new("tl-ops-waf-cookie");
 local tlog = require("utils.tl_ops_utils_log"):new("tl_ops_waf_cookie");
-local cookie_utils = require("lib.cookie"):new();
 local find = ngx.re.find
 local cjson = require("cjson");
 
@@ -47,12 +46,15 @@ local tl_ops_waf_core_cookie_filter_global_pass = function()
     end
 
     -- 获取当前cookie
-    local cookie_string, _ = cookie_utils:get_cookie_string();
+    local cookie_string, _ = ngx.var.http_cookie
     if not cookie_string then
         return true
     end
     
     local cur_host = ngx.var.host
+    if not cur_host then
+        return true
+    end
 
     tlog:dbg("tl_ops_waf_cookie get list ok, scope=",cookie_scope, ",host=",cur_host,",cookie_string=",cookie_string,",list=",cookie_list_table)
 
@@ -62,6 +64,10 @@ local tl_ops_waf_core_cookie_filter_global_pass = function()
             local value = cookie.value
             local host = cookie.host
             local white = cookie.white
+            -- 非白名单跳过
+            if not white then
+                break
+            end
             -- 域名为空跳过规则
             if host == nil or host == '' then
                 break
@@ -71,12 +77,8 @@ local tl_ops_waf_core_cookie_filter_global_pass = function()
                 break
             end
             -- 未命中拦截规则，进行下一个
-            local res, _ = find(cookie_string , value , 'jo');
+            local res, _ = find(cookie_string , value , 'joi');
             if not res then
-                break
-            end
-            -- 继续比对下一个白名单
-            if not white then
                 break
             end
             -- 白名单，不用后续比对，直接通过
@@ -89,6 +91,10 @@ local tl_ops_waf_core_cookie_filter_global_pass = function()
             local value = cookie.value
             local host = cookie.host
             local white = cookie.white
+            -- 此前已处理白名单
+            if white then
+                break
+            end
             -- 域名为空跳过规则
             if host == nil or host == '' then
                 break
@@ -98,7 +104,7 @@ local tl_ops_waf_core_cookie_filter_global_pass = function()
                 break
             end
             -- 未命中拦截规则，进行下一个
-            local res, _ = find(cookie_string , value , 'jo');
+            local res, _ = find(cookie_string , value , 'joi');
             if not res then
                 break
             end
@@ -149,12 +155,15 @@ local tl_ops_waf_core_cookie_filter_service_pass = function(service_name)
     end
 
     -- 获取当前cookie
-    local cookie_string, _ = cookie_utils:get_cookie_string();
+    local cookie_string, _ = ngx.var.http_cookie
     if not cookie_string then
         return true
     end
 
     local cur_host = ngx.var.host
+    if not cur_host then
+        return true
+    end
 
     tlog:dbg("tl_ops_waf_cookie get list ok, scope=",cookie_scope, ",host=",cur_host,",cookie_string=",cookie_string,",list=",cookie_list_table)
 
@@ -165,6 +174,10 @@ local tl_ops_waf_core_cookie_filter_service_pass = function(service_name)
             local host = cookie.host
             local service = cookie.service
             local white = cookie.white
+            -- 非白名单跳过
+            if not white then
+                break
+            end
             -- 域名为空跳过规则
             if host == nil or host == '' then
                 break
@@ -174,7 +187,7 @@ local tl_ops_waf_core_cookie_filter_service_pass = function(service_name)
                 break
             end
             -- 未命中拦截规则，进行下一个
-            local res, _ = find(cookie_string , value , 'jo');
+            local res, _ = find(cookie_string , value , 'joi');
             if not res then
                 break
             end
@@ -184,10 +197,6 @@ local tl_ops_waf_core_cookie_filter_service_pass = function(service_name)
             end
             -- 服务不匹配
             if service ~= service_name then
-                break
-            end
-            -- 继续比对下一个白名单
-            if not white then
                 break
             end
             -- 白名单，不用后续比对，直接通过
@@ -201,6 +210,10 @@ local tl_ops_waf_core_cookie_filter_service_pass = function(service_name)
             local host = cookie.host
             local service = cookie.service
             local white = cookie.white
+            -- 此前已处理白名单
+            if white then
+                break
+            end
             -- 域名为空跳过规则
             if host == nil or host == '' then
                 break
@@ -218,7 +231,7 @@ local tl_ops_waf_core_cookie_filter_service_pass = function(service_name)
                 break
             end
             -- 未命中拦截规则，进行下一个
-            local res, _ = find(request_uri , value , 'jo');
+            local res, _ = find(request_uri , value , 'joi');
             if not res then
                 break
             end
@@ -269,12 +282,15 @@ local tl_ops_waf_core_cookie_filter_node_pass = function(service_name, node_id)
     end
 
     -- 获取当前cookie
-    local cookie_string, _ = cookie_utils:get_cookie_string();
+    local cookie_string, _ = ngx.var.http_cookie
     if not cookie_string then
         return true
     end
     
     local cur_host = ngx.var.host
+    if not cur_host then
+        return true
+    end
 
     tlog:dbg("tl_ops_waf_cookie get list ok, scope=",cookie_scope, ",host=",cur_host,",cookie_string=",cookie_string,",list=",cookie_list_table)
 
@@ -286,6 +302,10 @@ local tl_ops_waf_core_cookie_filter_node_pass = function(service_name, node_id)
             local service = cookie.service
             local node = cookie.node
             local white = cookie.white
+            -- 非白名单跳过
+            if not white then
+                break
+            end
             -- 域名为空跳过规则
             if host == nil or host == '' then
                 break
@@ -295,7 +315,7 @@ local tl_ops_waf_core_cookie_filter_node_pass = function(service_name, node_id)
                 break
             end
             -- 未命中拦截规则，进行下一个
-            local res, _ = find(cookie_string , value , 'jo');
+            local res, _ = find(cookie_string , value , 'joi');
             if not res then
                 break
             end
@@ -315,10 +335,6 @@ local tl_ops_waf_core_cookie_filter_node_pass = function(service_name, node_id)
             if node ~= node_id then
                 break
             end
-            -- 继续比对下一个白名单
-            if not white then
-                break
-            end
             -- 白名单，不用后续比对，直接通过
             return true
         until true
@@ -331,6 +347,10 @@ local tl_ops_waf_core_cookie_filter_node_pass = function(service_name, node_id)
             local service = cookie.service
             local node = cookie.node
             local white = cookie.white
+            -- 此前已处理白名单
+            if white then
+                break
+            end
             -- 域名为空跳过规则
             if host == nil or host == '' then
                 break
@@ -356,7 +376,7 @@ local tl_ops_waf_core_cookie_filter_node_pass = function(service_name, node_id)
                 break
             end
             -- 未命中拦截规则，进行下一个
-            local res, _ = find(request_uri , value , 'jo');
+            local res, _ = find(request_uri , value , 'joi');
             if not res then
                 break
             end
