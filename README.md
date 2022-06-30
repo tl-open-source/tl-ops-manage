@@ -159,6 +159,8 @@ qq交流群 : 624214498，欢迎有兴趣的童鞋提交PR, 持续更新中 ....
 
 #### [iredis](https://github.com/membphis/lua-resty-iredis)
 
+#### [cookie](https://github.com/cloudflare/lua-resty-cookie)
+
 #### [snowflake](https://github.com/yunfengmeng/lua-resty-snowflake)
 
 #### [echarts](https://github.com/apache/echarts)
@@ -167,6 +169,3 @@ qq交流群 : 624214498，欢迎有兴趣的童鞋提交PR, 持续更新中 ....
 # 开源协议
 
 #### Apache License 2.0
-
-
-[badge-action-image]: https://github.com/Kong/kong/workflows/Build%20&%20Test/badge.svg
