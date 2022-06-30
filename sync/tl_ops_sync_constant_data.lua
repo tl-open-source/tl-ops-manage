@@ -63,54 +63,129 @@ local tl_ops_sync_constant_data_balance = function ()
     return tl_ops_rt.ok
 end
 
+-- api策略静态配置数据
+local tl_ops_sync_constant_data_balance_api = function ()
+
+
+    return tl_ops_rt.ok
+end
+
+-- cookie策略静态配置数据
+local tl_ops_sync_constant_data_balance_cookie = function ()
+
+
+    return tl_ops_rt.ok
+end
+
+-- header策略静态配置数据
+local tl_ops_sync_constant_data_balance_header = function ()
+
+
+    return tl_ops_rt.ok
+end
+
+-- param策略静态配置数据
+local tl_ops_sync_constant_data_balance_param = function ()
+
+
+    return tl_ops_rt.ok
+end
+
 
 
 --+++++++++++++++WAF策略数据同步合并，预热+++++++++++++++--
 
+-- waf策略静态配置数据
+local tl_ops_sync_constant_data_waf = function ()
 
+
+    return tl_ops_rt.ok
+end
+
+-- waf ip策略静态配置数据
+local tl_ops_sync_constant_data_waf_ip = function ()
+
+
+    return tl_ops_rt.ok
+end
+
+-- waf api策略静态配置数据
+local tl_ops_sync_constant_data_waf_api = function ()
+
+
+    return tl_ops_rt.ok
+end
+
+-- waf cookie策略静态配置数据
+local tl_ops_sync_constant_data_waf_cookie = function ()
+
+
+    return tl_ops_rt.ok
+end
+
+-- waf header策略静态配置数据
+local tl_ops_sync_constant_data_waf_header = function ()
+
+
+    return tl_ops_rt.ok
+end
+
+-- waf param策略静态配置数据
+local tl_ops_sync_constant_data_waf_param = function ()
+
+
+    return tl_ops_rt.ok
+end
+
+-- waf cc策略静态配置数据
+local tl_ops_sync_constant_data_waf_cc = function ()
+
+
+    return tl_ops_rt.ok
+end
 
 
 
 
 function _M:tl_ops_sync_constant_data_module( module )
 
-    if module == 'balance_api' then
+    if module == 'balance-api' then
         return tl_ops_sync_constant_data_balance_api()
     end
 
-    if module == 'balance_cookie' then
+    if module == 'balance-cookie' then
         return tl_ops_sync_constant_data_balance_cookie()
     end
 
-    if module == 'balance_header' then
+    if module == 'balance-header' then
         return tl_ops_sync_constant_data_balance_header()
     end
 
-    if module == 'balance_param' then
+    if module == 'balance-param' then
         return tl_ops_sync_constant_data_balance_param()
     end
 
-    if module == 'waf_api' then
+    if module == 'waf-api' then
         return tl_ops_sync_constant_data_waf_api()
     end
 
-    if module == 'waf_ip' then
+    if module == 'waf-ip' then
         return tl_ops_sync_constant_data_waf_ip()
     end
     
-    if module == 'waf_header' then
+    if module == 'waf-header' then
         return tl_ops_sync_constant_data_waf_header()
     end
 
-    if module == 'waf_cookie' then
+    if module == 'waf-cookie' then
         return tl_ops_sync_constant_data_waf_cookie()
     end
 
-    if module == 'waf_param' then
+    if module == 'waf-param' then
         return tl_ops_sync_constant_data_waf_param()
     end
 
-    if module == 'waf_cc' then
+    if module == 'waf-cc' then
         return tl_ops_sync_constant_data_waf_cc()
     end
 end

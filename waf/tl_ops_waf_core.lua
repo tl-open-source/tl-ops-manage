@@ -17,7 +17,9 @@ local cache_waf = require("cache.tl_ops_cache"):new("tl-ops-waf");
 
 local cjson = require("cjson");
 local tl_ops_utils_func = require("utils.tl_ops_utils_func");
+local tl_ops_manage_env = require("tl_ops_manage_env")
 local shared = ngx.shared.tlopsbalance
+
 
 local _M = {
 	_VERSION = '0.01'
@@ -27,6 +29,11 @@ local mt = { __index = _M }
 
 -- 全局waf核心流程
 function _M:tl_ops_waf_global_core()
+
+	-- 关闭
+	if tl_ops_manage_env.waf.open then
+		return true
+	end
 
 	-- waf错误码配置
     local code_str = cache_waf:get(tl_ops_constant_waf.cache_key.options)
@@ -89,6 +96,11 @@ end
 
 -- 服务waf核心流程
 function _M:tl_ops_waf_service_core()
+	-- 关闭
+	if tl_ops_manage_env.waf.open then
+		return true
+	end
+	
 	-- waf错误码配置
 	local code_str = cache_waf:get(tl_ops_constant_waf.cache_key.options)
 	if not code_str then
@@ -150,6 +162,10 @@ end
 
 -- 节点waf核心流程
 function _M:tl_ops_waf_node_core()
+	-- 关闭
+	if tl_ops_manage_env.waf.open then
+		return true
+	end
 
 	-- waf错误码配置
 	local code_str = cache_waf:get(tl_ops_constant_waf.cache_key.options)

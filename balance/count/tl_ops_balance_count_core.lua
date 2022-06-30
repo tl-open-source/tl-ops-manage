@@ -10,6 +10,8 @@ local tl_ops_utils_func = require("utils.tl_ops_utils_func");
 local tl_ops_constant_balance = require("constant.tl_ops_constant_balance");
 local tl_ops_constant_service = require("constant.tl_ops_constant_service");
 local cache_service = require("cache.tl_ops_cache"):new("tl-ops-service");
+local tl_ops_manage_env = require("tl_ops_manage_env")
+
 local lock = require("lib.lock");
 local shared = ngx.shared.tlopsbalance;
 
@@ -135,6 +137,11 @@ end
 
 -- 启动
 function _M:tl_ops_balance_count_timer_start() 
+    if not tl_ops_manage_env.balance.open then
+        tlog:err("balance counting not open " ,_)
+        return
+    end
+
 	local ok, _ = ngx.timer.at(0, tl_ops_balance_count_timer, nil)
 	if not ok then
 		tlog:err("failed to run default args , create timer failed " ,_)

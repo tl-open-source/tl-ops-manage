@@ -20,11 +20,13 @@ local cache_balance = require("cache.tl_ops_cache"):new("tl-ops-balance");
 
 local balance_count = require("balance.count.tl_ops_balance_count");
 
-local cjson = require("cjson");
-local tl_ops_utils_func = require("utils.tl_ops_utils_func");
 local tl_ops_limit_fuse_token_bucket = require("limit.fuse.tl_ops_limit_fuse_token_bucket");
 local tl_ops_limit_fuse_leak_bucket = require("limit.fuse.tl_ops_limit_fuse_leak_bucket");
 local tl_ops_limit = require("limit.tl_ops_limit");
+
+local cjson = require("cjson");
+local tl_ops_utils_func = require("utils.tl_ops_utils_func");
+local tl_ops_manage_env = require("tl_ops_manage_env")
 
 local shared = ngx.shared.tlopsbalance
 
@@ -120,33 +122,35 @@ function _M:tl_ops_balance_core_balance()
     end
 
     -- 流控介入
-    local depend = tl_ops_limit.tl_ops_limit_get_limiter(node.service, node_id)
-    if depend then
-        -- 令牌桶流控
-        if depend == tl_ops_constant_limit.depend.token then
-            local token_result = tl_ops_limit_fuse_token_bucket.tl_ops_limit_token( node.service, node_id)  
-            if not token_result or token_result == false then
-                balance_count:tl_ops_balance_count_incr_fail(node.service, node_id)
-                
-                ngx.header['Tl-Proxy-Server'] = "";
-                ngx.header['Tl-Proxy-State'] = "t-limit"
-                ngx.header['Tl-Proxy-Mode'] = balance_mode
-                ngx.exit(code[tl_ops_constant_balance.cache_key.token_limit])
-                return
+    if tl_ops_manage_env.balance.limiter then
+        local depend = tl_ops_limit.tl_ops_limit_get_limiter(node.service, node_id)
+        if depend then
+            -- 令牌桶流控
+            if depend == tl_ops_constant_limit.depend.token then
+                local token_result = tl_ops_limit_fuse_token_bucket.tl_ops_limit_token( node.service, node_id)  
+                if not token_result or token_result == false then
+                    balance_count:tl_ops_balance_count_incr_fail(node.service, node_id)
+                    
+                    ngx.header['Tl-Proxy-Server'] = "";
+                    ngx.header['Tl-Proxy-State'] = "t-limit"
+                    ngx.header['Tl-Proxy-Mode'] = balance_mode
+                    ngx.exit(code[tl_ops_constant_balance.cache_key.token_limit])
+                    return
+                end
             end
-        end
-
-        -- 漏桶流控 
-        if depend == tl_ops_constant_limit.depend.leak then
-            local leak_result = tl_ops_limit_fuse_leak_bucket.tl_ops_limit_leak( node.service, node_id)
-            if not leak_result or leak_result == false then
-                balance_count:tl_ops_balance_count_incr_fail(node.service, node_id)
-                
-                ngx.header['Tl-Proxy-Server'] = "";
-                ngx.header['Tl-Proxy-State'] = "l-limit"
-                ngx.header['Tl-Proxy-Mode'] = balance_mode
-                ngx.exit(code[tl_ops_constant_balance.cache_key.leak_limit])
-                return
+    
+            -- 漏桶流控 
+            if depend == tl_ops_constant_limit.depend.leak then
+                local leak_result = tl_ops_limit_fuse_leak_bucket.tl_ops_limit_leak( node.service, node_id)
+                if not leak_result or leak_result == false then
+                    balance_count:tl_ops_balance_count_incr_fail(node.service, node_id)
+                    
+                    ngx.header['Tl-Proxy-Server'] = "";
+                    ngx.header['Tl-Proxy-State'] = "l-limit"
+                    ngx.header['Tl-Proxy-Mode'] = balance_mode
+                    ngx.exit(code[tl_ops_constant_balance.cache_key.leak_limit])
+                    return
+                end
             end
         end
     end

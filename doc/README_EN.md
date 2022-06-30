@@ -1,23 +1,14 @@
-      __  .__                                                                                       
-    _/  |_|  |             ____ ______  ______           _____ _____    ____ _____     ____   ____  
-    \   __\  |    ______  /  _ \\____ \/  ___/  ______  /     \\__  \  /    \\__  \   / ___\_/ __ \ 
-    |  | |  |__  /_____/ (  <_> )  |_> >___ \  /_____/ |  Y Y  \/ __ \|   |  \/ __ \_/ /_/  >  ___/ 
-    |__| |____/           \____/|   __/____  >         |__|_|  (____  /___|  (____  /\___  / \___  >
-                                |__|       \/                \/     \/     \/     \//_____/      \/ 
-# Service management framework based on openresty （API Gateway）
+<div align=center><img src="https://qnproxy.iamtsm.cn/logo.png"/></div>
 
-[![](https://img.shields.io/badge/base-openresty-blue)](https://openresty.org/cn/)
-[![](https://img.shields.io/badge/webmanage-red)](https://github.com/iamtsm/tl-ops-manage)
-[![](https://img.shields.io/badge/healthcheck-red)](https://github.com/iamtsm/tl-ops-manage/blob/main/doc/tl-ops-health.md)
-[![](https://img.shields.io/badge/balance-red)](https://github.com/iamtsm/tl-ops-manage/blob/main/doc/tl-ops-balance.md)
-[![](https://img.shields.io/badge/limitfuse-red)](https://github.com/iamtsm/tl-ops-manage/blob/main/doc/tl-ops-balance.md)
-[![](https://img.shields.io/badge/dynamic%20conf-green)](https://github.com/iamtsm/tl-ops-manage)
+[![](https://img.shields.io/badge/base-openresty-blue?style=flat-square)](https://openresty.org/cn/) ![Build](https://img.shields.io/badge/build-passing-green?style=flat-square) ![Version](https://img.shields.io/github/v/tag/iamtsm/tl-ops-manage?color=green&label=Version&style=flat-square) ![License](https://img.shields.io/badge/License-Apache%202.0-blue?style=flat-square)
 
+API gateway based on openresty, supports load balancing, registration discovery, health check, service fuse, service current limit, waf filtering, black and white list, dynamic configuration, data statistics, data display
+
+---
 
 Experience demo : https://tlops.iamtsm.cn/tlopsmanage/tl_ops_web_index.html
 
-
-**QQ : 624214498, welcome to submit PR, we will continue to update ....**
+QQ : 624214498, welcome to submit PR, we will continue to update ....
 
 
 <a href="https://github.com/iamtsm/tl-ops-manage/blob/main/README.md"> 中文翻译 </a>

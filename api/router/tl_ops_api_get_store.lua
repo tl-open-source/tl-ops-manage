@@ -73,6 +73,34 @@ local Router = function()
     if not balance_content then
         balance_content = {}
     end
+    local waf_content, waf_size = read("tl-ops-waf.tlstore");
+    if not waf_content then
+        waf_content = {}
+    end
+    local waf_api_content, waf_api_size = read("tl-ops-waf-api.tlstore");
+    if not waf_api_content then
+        waf_api_content = {}
+    end
+    local waf_ip_content, waf_ip_size = read("tl-ops-waf-ip.tlstore");
+    if not waf_ip_content then
+        waf_ip_content = {}
+    end
+    local waf_cookie_content, waf_cookie_size = read("tl-ops-waf-cookie.tlstore");
+    if not waf_cookie_content then
+        waf_cookie_content = {}
+    end
+    local waf_param_content, waf_param_size = read("tl-ops-waf-param.tlstore");
+    if not waf_param_content then
+        waf_param_content = {}
+    end
+    local waf_header_content, waf_header_size = read("tl-ops-waf-header.tlstore");
+    if not waf_header_content then
+        waf_header_content = {}
+    end
+    local waf_cc_content, waf_cc_size = read("tl-ops-waf-cc.tlstore");
+    if not waf_cc_content then
+        waf_cc_content = {}
+    end
 
     local res_data = {
         api = {
@@ -131,6 +159,55 @@ local Router = function()
             version = #balance_content,
             list = balance_content,
         },
+        waf = {
+            id = 9,
+            name = "tl-ops-waf.tlstore",
+            size = waf_size,
+            version = #waf_content,
+            list = waf_content,
+        },
+        waf_api = {
+            id = 10,
+            name = "tl-ops-waf-api.tlstore",
+            size = waf_api_size,
+            version = #waf_api_content,
+            list = waf_api_content,
+        },
+        waf_ip = {
+            id = 11,
+            name = "tl-ops-waf-ip.tlstore",
+            size = waf_ip_size,
+            version = #waf_ip_content,
+            list = waf_ip_content,
+        },
+        waf_cookie = {
+            id = 12,
+            name = "tl-ops-waf-cookie.tlstore",
+            size = waf_cookie_size,
+            version = #waf_cookie_content,
+            list = waf_cookie_content,
+        },
+        waf_param = {
+            id = 13,
+            name = "tl-ops-waf-param.tlstore",
+            size = waf_param_size,
+            version = #waf_param_content,
+            list = waf_param_content,
+        },
+        waf_header = {
+            id = 14,
+            name = "tl-ops-waf-header.tlstore",
+            size = waf_header_size,
+            version = #waf_header_content,
+            list = waf_header_content,
+        },
+        waf_cc = {
+            id = 15,
+            name = "tl-ops-waf-cc.tlstore",
+            size = waf_cc_size,
+            version = #waf_cc_content,
+            list = waf_cc_content,
+        }
     }
 
     tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.ok, "success", res_data);

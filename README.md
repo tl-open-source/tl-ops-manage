@@ -1,15 +1,10 @@
-      __  .__                                                                                       
-    _/  |_|  |             ____ ______  ______           _____ _____    ____ _____     ____   ____  
-    \   __\  |    ______  /  _ \\____ \/  ___/  ______  /     \\__  \  /    \\__  \   / ___\_/ __ \ 
-    |  | |  |__  /_____/ (  <_> )  |_> >___ \  /_____/ |  Y Y  \/ __ \|   |  \/ __ \_/ /_/  >  ___/ 
-    |__| |____/           \____/|   __/____  >         |__|_|  (____  /___|  (____  /\___  / \___  >
-                                |__|       \/                \/     \/     \/     \//_____/      \/ 
-[![](https://img.shields.io/badge/base-openresty-blue)](https://openresty.org/cn/)
-[![](https://img.shields.io/badge/webmanage-red)](https://github.com/iamtsm/tl-ops-manage)
-[![](https://img.shields.io/badge/healthcheck-red)](https://github.com/iamtsm/tl-ops-manage/blob/main/doc/tl-ops-health.md)
-[![](https://img.shields.io/badge/balance-red)](https://github.com/iamtsm/tl-ops-manage/blob/main/doc/tl-ops-balance.md)
-[![](https://img.shields.io/badge/limitfuse-red)](https://github.com/iamtsm/tl-ops-manage/blob/main/doc/tl-ops-balance.md)
-[![](https://img.shields.io/badge/dynamic%20conf-green)](https://github.com/iamtsm/tl-ops-manage)
+<div align=center><img src="https://qnproxy.iamtsm.cn/logo.png"/></div>
+
+[![](https://img.shields.io/badge/base-openresty-blue?style=flat-square)](https://openresty.org/cn/) ![Build](https://img.shields.io/badge/build-passing-green?style=flat-square) ![Version](https://img.shields.io/github/v/tag/iamtsm/tl-ops-manage?color=green&label=Version&style=flat-square) ![License](https://img.shields.io/badge/License-Apache%202.0-blue?style=flat-square)
+
+基于openresty的API网关，支持负载均衡，注册发现，健康检查，服务熔断，服务限流，waf过滤，黑白名单，动态配置，数据统计，数据展示
+
+---
 
 <a href="https://github.com/iamtsm/tl-ops-manage/blob/main/doc/README_EN.md"> translate EN DOC </a>
 
@@ -17,11 +12,10 @@
 体验demo : https://tlops.iamtsm.cn/tlopsmanage/tl_ops_web_index.html
 
 
-**qq交流群 : 624214498，欢迎有兴趣的童鞋提交PR, 持续更新中 ....**
+qq交流群 : 624214498，欢迎有兴趣的童鞋提交PR, 持续更新中 ....
 
 
-
-# 性能压测
+## 性能压测
 
 ###  版本 : openresty-1.19.3.1
 
@@ -173,3 +167,6 @@
 # 开源协议
 
 #### Apache License 2.0
+
+
+[badge-action-image]: https://github.com/Kong/kong/workflows/Build%20&%20Test/badge.svg
