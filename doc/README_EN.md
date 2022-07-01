@@ -13,37 +13,10 @@ QQ : 624214498, welcome to submit PR, we will continue to update ....
 
 <a href="https://github.com/iamtsm/tl-ops-manage/blob/main/README.md"> 中文翻译 </a>
 
-# Performance stress test
-
-### Version : openresty-1.19.3.1
-
-### Machine: Tencent Cloud 2 core 4g
-
- ![Picture](https://qnproxy.iamtsm.cn/16559798756003.png "Picture")
-
-
-### For normal pressure test results, execute the pressure test command: `ab -n 10000 -c 50 http://127.0.0.1/` , a single request takes about 3.7ms
-
- ![Picture](https://qnproxy.iamtsm.cn/16559785692014.png "Picture")
-
-
-### After enabling the tl-ops-manage gateway [health check, routing statistics, fuse current limiting, load balancing], execute the stress test command: `ab -n 10000 -c 50 http://127.0.0.1/` , single The request takes about 4.6ms
-
- ![Picture](https://qnproxy.iamtsm.cn/16559817202461.png "Picture")
-
-
 
 # Documentation
 
-- [x] [tl-ops-manage detailed documentation](https://book.iamtsm.cn)
-
-- [x] [Brief documentation of routing module](tl-ops-balance.md)
-
-- [x] [Brief Documentation of Health Check Module](tl-ops-health.md)
-
-- [x] [Brief Documentation of Fusing Current Limiting Module](tl-ops-limit.md)
-
-- [x] [Data Module Brief Documentation](tl-ops-store.md)
+[tl-ops-manage detailed documentation](https://book.iamtsm.cn)
 
 
 # Features

@@ -10,7 +10,7 @@ local tl_ops_constant_service = {
         
     },
     demo = {
-        id = snowflake.generate_id( 100 ),  -- default snow id
+        id = 1,
         name = "tlops-demo-node",           -- 当前节点name
         service = "service",                -- 当前节点所属service
         protocol = "http://",               -- 当前节点协议头

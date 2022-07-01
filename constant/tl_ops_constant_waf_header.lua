@@ -14,7 +14,7 @@ local tl_ops_constant_waf_header = {
     open = true,
     scope = scope.global,
     demo = {
-        id = snowflake.generate_id( 100 ),  -- default snow id
+        id = 1,
         host = "tlops.com",                 -- 当前生效的域名
         keys = {                            -- 拦截的请求头名称列表
             "User-Agent","Accept"

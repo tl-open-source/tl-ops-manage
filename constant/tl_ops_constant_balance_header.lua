@@ -14,9 +14,8 @@ local tl_ops_constant_balance_header = {
     },
     demo = {
         point = {
-            id = snowflake.generate_id( 100 ),  -- default snow id
+            id = 1,
             key = "content-type",               -- 当前请求头匹配名称
-            value = "text/fragment+html",       -- 当前请求头名称对应值      
             value = {                           -- 当前请求头名称对应值列表  
                 "text/fragment+html","text/plain"
             },
@@ -25,9 +24,8 @@ local tl_ops_constant_balance_header = {
             host = "tlops1.com",                -- 当前请求头处理的域名范围
         },
         random = {
-            id = snowflake.generate_id( 100 ),  -- default snow id
+            id = 1,
             key = "content-type",               -- 当前请求头匹配名称
-            value = "text/fragment+html",       -- 当前请求头名称对应值      
             value = {                           -- 当前请求头名称对应值列表  
                 "text/fragment+html","text/plain"
             },

@@ -14,7 +14,7 @@ local tl_ops_constant_balance_param = {
     },
     demo = {
         point = {
-            id = snowflake.generate_id( 100 ),  -- default snow id
+            id = 1,
             key = "_tl_id",                     -- 当前请求参数匹配名称
             value = {                           -- 当前请求参数名称对应值列表  
                 "text/fragment+html","text/plain"
@@ -24,7 +24,7 @@ local tl_ops_constant_balance_param = {
             host = "tlops1.com",                -- 当前请求参数处理的域名范围
         },
         random = {
-            id = snowflake.generate_id( 100 ),  -- default snow id
+            id = 1,
             key = "_tl_id",                     -- 当前请求参数匹配名称
             value = {                           -- 当前请求参数名称对应值列表  
                 "text/fragment+html","text/plain"
@@ -33,8 +33,8 @@ local tl_ops_constant_balance_param = {
             host = "tlops1.com",                -- 当前请求参数处理的域名范围
         }
     },
-    rule = {                    -- cookie rule 策略
-        point = "point",        -- cookie路由可指定到具体节点
+    rule = {                    -- rule 策略
+        point = "point",        -- 路由可指定到具体节点
         random = "random"       -- 随机路由可指定到具体服务
     },
 }
