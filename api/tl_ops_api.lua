@@ -11,10 +11,9 @@ local tlog = require("utils.tl_ops_utils_log"):new("tl_ops_api_router");
 
 local _M = {}
 
-
 function _M:init( )
-    local request_uri = tl_ops_utils_func:get_req_uri();
-
+    local request_uri = tl_ops_utils_func:get_req_uri()
+    
     for uri ,router in pairs(tl_ops_api_core) do
         if ngx.re.find(request_uri, uri, 'jo') then
 

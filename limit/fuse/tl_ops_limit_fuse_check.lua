@@ -235,33 +235,14 @@ tl_ops_limit_fuse_main = function( conf )
 	tl_ops_limit_fuse_check_dynamic_conf.dynamic_conf_change_start( conf )
 
 	-- 自动熔断/恢复
-	if tl_ops_limit_fuse_get_lock( conf ) then
+	local lock_key = tl_ops_utils_func:gen_node_key(tl_ops_constant_limit.fuse.cache_key.lock,conf.service_name)
+    local lock_time = conf.interval - 0.01
+    if tl_ops_utils_func:tl_ops_worker_lock(lock_key, lock_time) then
 		tl_ops_limit_fuse_auto_recover( conf )
 		tl_ops_limit_fuse_check_nodes( conf )
 	end
 
     tlog:dbg("tl_ops_limit_fuse_main end")
-end
-
-
-tl_ops_limit_fuse_get_lock = function(conf)
-	local key = tl_ops_utils_func:gen_node_key(tl_ops_constant_limit.fuse.cache_key.lock,conf.service_name)
-
-	tlog:dbg("tl_ops_limit_fuse_get_lock start : key=", key)
-
-	local ok, _ = shared:add(key, true, conf.interval - 0.01)
-	if not ok then
-		if _ == "exists" then
-			tlog:dbg("tl_ops_limit_fuse_get_lock key exists : key=", key)
-			return nil
-		end
-		tlog:err("tl_ops_limit_fuse_get_lock failed to add key, get lock failed, key=" ,key)
-		return nil
-	end
-	
-	tlog:dbg("tl_ops_limit_fuse_get_lock done : key=", key, ",service_name=" , conf.service_name)
-
-	return true
 end
 
 

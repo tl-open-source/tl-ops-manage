@@ -26,23 +26,11 @@ local mt = { __index = _M }
 local tl_ops_balance_count_timer
 
 
--- 统计器加锁
-local tl_ops_balance_count_lock = function()
-	local ok, _ = shared:add(tl_ops_constant_balance.cache_key.lock, true, tl_ops_constant_balance.count.interval - 0.01)
-	if not ok then
-		if _ == "exists" then
-			return nil
-		end
-		return nil
-    end
-	
-	return true
-end
-
-
 -- 统计器 ： 持久化数据
 local tl_ops_balance_count = function()
-    if not tl_ops_balance_count_lock() then
+    local lock_key = tl_ops_constant_balance.cache_key.lock
+    local lock_time = tl_ops_constant_balance.count.interval - 0.01
+    if not tl_ops_utils_func:tl_ops_worker_lock(lock_key, lock_time) then
         return
     end
 
@@ -137,7 +125,7 @@ end
 
 -- 启动
 function _M:tl_ops_balance_count_timer_start() 
-    if not tl_ops_manage_env.balance.open then
+    if not tl_ops_manage_env.balance.counting then
         tlog:err("balance counting not open " ,_)
         return
     end

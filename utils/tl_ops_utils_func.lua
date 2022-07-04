@@ -5,6 +5,9 @@
 -- @email 1905333456@qq.com
 
 local cjson, _ = require("cjson");
+local lock = require("lib.lock");
+
+local shared = ngx.shared.tlopsbalance;
 local find = ngx.re.find
 local _M = {}
 
@@ -347,6 +350,20 @@ function _M:get_req_ip()
     end
 
     return ip
+end
+
+
+-- lock
+function _M:tl_ops_worker_lock(key, time)
+	local ok, _ = shared:add(key, true, time)
+	if not ok then
+		if _ == "exists" then
+			return nil
+		end
+		return nil
+    end
+	
+	return true
 end
 
 

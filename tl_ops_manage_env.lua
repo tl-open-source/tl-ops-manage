@@ -152,8 +152,20 @@ return {
 
     },
     plugin = {
-        
-        
-
+        --[[
+            en :plugins, when this option is turned on, the added plugins will be enabled
+            
+            zn :插件，开启此选项后，将在启动时加载添加的所有插件
+        ]]
+        open = true,
+        --[[
+            en :plugin module definition, the imported plugin needs to be defined here before it can be loaded. 
+                Otherwise it will not take effect
+            
+            zn :插件模块定义，引入的插件需要在此定义好才能被加载。否则将不生效
+        ]]
+        module = {
+            "log_analyze", "api_authentication", "cluster_sync","template"
+        }
     }
 }

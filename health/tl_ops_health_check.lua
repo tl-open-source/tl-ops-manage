@@ -188,8 +188,9 @@ tl_ops_health_check_main = function (conf)
 	tl_ops_health_check_dynamic_conf.dynamic_conf_change_start( conf )
 
 	-- 心跳包
-	if tl_ops_health_check_get_lock(conf) then
-
+	local lock_key = tl_ops_utils_func:gen_node_key(tl_ops_constant_health.cache_key.lock, conf.check_service_name)
+    local lock_time = conf.check_interval - 0.01
+    if tl_ops_utils_func:tl_ops_worker_lock(lock_key, lock_time) then
 		-- 是否主动关闭自检
 		local uncheck_key = tl_ops_utils_func:gen_node_key(tl_ops_constant_health.cache_key.uncheck, conf.check_service_name)
 		local uncheck, _ = shared:get(uncheck_key)
@@ -204,27 +205,6 @@ tl_ops_health_check_main = function (conf)
 	tlog:dbg("tl_ops_health_check_main end")
 end
 
--- 由于ngx是多worker进程，当前实现为只允许一个拿到锁的worker才能执行检查即可。
--- key : tl_ops_health_check_lock + _service1，value :  true代表拿到锁，false则失败
-tl_ops_health_check_get_lock = function(conf)
-	local key = tl_ops_utils_func:gen_node_key(tl_ops_constant_health.cache_key.lock,conf.check_service_name)
-
-	tlog:dbg("tl_ops_health_check_get_lock start : key=", key)
-
-	local ok, _ = shared:add(key, true, conf.check_interval - 0.01)
-	if not ok then
-		if _ == "exists" then
-			tlog:dbg("tl_ops_health_check_get_lock key exists : key=", key)
-			return nil
-		end
-		tlog:err("tl_ops_health_check_get_lock failed to add key, get lock failed, key=" ,key)
-		return nil
-	end
-	
-	tlog:dbg("tl_ops_health_check_get_lock done : key=", key, ",check_service_name=" , conf.check_service_name)
-
-	return true
-end
 
 -- 对配置的路由机器依次发送心跳包
 tl_ops_health_check_nodes = function (conf)

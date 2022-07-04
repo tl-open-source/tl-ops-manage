@@ -7,6 +7,7 @@
 local tl_ops_sync_constant_fields = require("sync.tl_ops_sync_constant_fields"):new();
 local tl_ops_sync_constant_data = require("sync.tl_ops_sync_constant_data"):new();
 local tlog = require("utils.tl_ops_utils_log"):new("tl_ops_sync");
+local tl_ops_utils_func = require("utils.tl_ops_utils_func");
 
 local tl_ops_manage_env = require("tl_ops_manage_env")
 local sync_env = tl_ops_manage_env.sync
@@ -19,20 +20,6 @@ local _M = {
     _VERSION = '0.01',
 }
 local mt = { __index = _M }
-
-
--- 同步器加锁
-local tl_ops_sync_lock = function()
-	local ok, _ = shared:add("tl_ops_sync_lock", true, 5)
-	if not ok then
-		if _ == "exists" then
-			return nil
-		end
-		return nil
-    end
-	
-	return true
-end
 
 
 -- 核心逻辑
@@ -75,7 +62,9 @@ end
 
 -- 启动器
 function _M:tl_ops_sync_timer_start( )
-    if not tl_ops_sync_lock() then
+    local lock_key = "tl_ops_sync_lock"
+    local lock_time = 5
+    if not tl_ops_utils_func:tl_ops_worker_lock(lock_key, lock_time) then
         return
     end
 
