@@ -7,7 +7,7 @@
 ### 1.1 引入cache依赖
 按照场景需要创建对应的business-name,每个business-name是一个存储文件和一个对应索引文件
 ```
-    local cache = require("cache.tl_ops_cache"):new("business-name");
+    local cache = require("cache.tl_ops_cache_core"):new("business-name");
 ```
 
 ### 1.2 按需调用

@@ -4,20 +4,13 @@
 -- @author iamtsm
 -- @email 1905333456@qq.com
 
-local cache_dict = ngx.shared.tlopsbalance;
-local tlog = require("utils.tl_ops_utils_log"):new("tl_ops_cache_dict");
+local cache_dict        = ngx.shared.tlopsbalance;
+local tlog              = require("utils.tl_ops_utils_log"):new("tl_ops_cache_dict");
+local tl_ops_utils_func = require("utils.tl_ops_utils_func");
 
-
-local ok, new_tab = pcall(require, "table.new")
-if not ok or type(new_tab) ~= "function" then
-    new_tab = function (narr, nrec) return {} end
-end
-
-
-local _M = new_tab(0, 50)
+local _M = tl_ops_utils_func:new_tab(0, 20)
 _M._VERSION = '0.02'
 local mt = { __index = _M }
-
 
 -- get
 function _M:get( key )

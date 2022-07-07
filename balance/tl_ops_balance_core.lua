@@ -5,30 +5,26 @@
 -- @author iamtsm
 -- @email 1905333456@qq.com
 
-local tl_ops_constant_balance = require("constant.tl_ops_constant_balance");
-local tl_ops_constant_limit = require("constant.tl_ops_constant_limit")
-local tl_ops_constant_health = require("constant.tl_ops_constant_health")
-local tl_ops_constant_service = require("constant.tl_ops_constant_service");
-
-local tl_ops_balance_core_api = require("balance.tl_ops_balance_core_api");
-local tl_ops_balance_core_cookie = require("balance.tl_ops_balance_core_cookie");
-local tl_ops_balance_core_header = require("balance.tl_ops_balance_core_header");
-local tl_ops_balance_core_param = require("balance.tl_ops_balance_core_param");
-
-local cache_service = require("cache.tl_ops_cache"):new("tl-ops-service");
-local cache_balance = require("cache.tl_ops_cache"):new("tl-ops-balance");
-
-local balance_count = require("balance.count.tl_ops_balance_count");
-
-local tl_ops_limit_fuse_token_bucket = require("limit.fuse.tl_ops_limit_fuse_token_bucket");
+local tl_ops_constant_balance       = require("constant.tl_ops_constant_balance");
+local tl_ops_constant_limit         = require("constant.tl_ops_constant_limit")
+local tl_ops_constant_health        = require("constant.tl_ops_constant_health")
+local tl_ops_constant_service       = require("constant.tl_ops_constant_service");
+local tl_ops_constant_waf_scope     = require("constant.tl_ops_constant_waf_scope");
+local tl_ops_balance_core_api       = require("balance.tl_ops_balance_core_api");
+local tl_ops_balance_core_cookie    = require("balance.tl_ops_balance_core_cookie");
+local tl_ops_balance_core_header    = require("balance.tl_ops_balance_core_header");
+local tl_ops_balance_core_param     = require("balance.tl_ops_balance_core_param");
+local cache_service                 = require("cache.tl_ops_cache_core"):new("tl-ops-service");
+local cache_balance                 = require("cache.tl_ops_cache_core"):new("tl-ops-balance");
+local balance_count                 = require("balance.count.tl_ops_balance_count");
+local waf                           = require("waf.tl_ops_waf")
+local tl_ops_limit_fuse_token_bucket= require("limit.fuse.tl_ops_limit_fuse_token_bucket");
 local tl_ops_limit_fuse_leak_bucket = require("limit.fuse.tl_ops_limit_fuse_leak_bucket");
-local tl_ops_limit = require("limit.tl_ops_limit");
-
-local cjson = require("cjson");
-local tl_ops_utils_func = require("utils.tl_ops_utils_func");
-local tl_ops_manage_env = require("tl_ops_manage_env")
-
-local shared = ngx.shared.tlopsbalance
+local tl_ops_limit                  = require("limit.tl_ops_limit");
+local cjson                         = require("cjson.safe");
+local tl_ops_utils_func             = require("utils.tl_ops_utils_func");
+local tl_ops_manage_env             = require("tl_ops_manage_env")
+local shared                        = ngx.shared.tlopsbalance
 
 
 local _M = {
@@ -154,6 +150,9 @@ function _M:tl_ops_balance_core_balance()
             end
         end
     end
+
+    -- 服务层waf
+    waf:init(tl_ops_constant_waf_scope.service);
 
     -- 节点下线
     if not node_state or node_state == false then

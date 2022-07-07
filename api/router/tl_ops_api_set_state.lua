@@ -5,17 +5,16 @@
 -- @email 1905333456@qq.com
 
 
-local cjson = require("cjson");
+local snowflake                     = require("lib.snowflake");
+local tl_ops_rt                     = require("constant.tl_ops_constant_comm").tl_ops_rt;
+local tl_ops_utils_func             = require("utils.tl_ops_utils_func");
+local tl_ops_constant_health        = require("constant.tl_ops_constant_health")
+local tl_ops_health_check_version   = require("health.tl_ops_health_check_version")
+local cache_service                 = require("cache.tl_ops_cache_core"):new("tl-ops-service");
+local tlog                          = require("utils.tl_ops_utils_log"):new("tl_ops_state");
+local shared                        = ngx.shared.tlopsbalance
+local cjson                         = require("cjson.safe");
 cjson.encode_empty_table_as_object(false)
-local snowflake = require("lib.snowflake");
-local tl_ops_rt = require("constant.tl_ops_constant_comm").tl_ops_rt;
-local tl_ops_utils_func = require("utils.tl_ops_utils_func");
-local tl_ops_constant_health = require("constant.tl_ops_constant_health")
-local tl_ops_health_check_version = require("health.tl_ops_health_check_version")
-local cache_service = require("cache.tl_ops_cache"):new("tl-ops-service");
-
-local tlog = require("utils.tl_ops_utils_log"):new("tl_ops_state");
-local shared = ngx.shared.tlopsbalance
 
 local Router = function() 
     local tl_ops_state_cmd, _ = tl_ops_utils_func:get_req_post_args_by_name("cmd", 1);

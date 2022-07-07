@@ -4,10 +4,10 @@
 -- @author iamtsm
 -- @email 1905333456@qq.com
 
-local tl_ops_health_check = require("health.tl_ops_health_check");
-local tl_ops_health_check_dynamic_conf = require("health.tl_ops_health_check_dynamic_conf")
-local tl_ops_constant_health = require("constant.tl_ops_constant_health");
-local tl_ops_health_check_version = require("health.tl_ops_health_check_version")
+local tl_ops_health_check               = require("health.tl_ops_health_check");
+local tl_ops_health_check_dynamic_conf  = require("health.tl_ops_health_check_dynamic_conf")
+local tl_ops_constant_health            = require("constant.tl_ops_constant_health")
+local tl_ops_health_check_version       = require("health.tl_ops_health_check_version")
 
 local _M = {}
 

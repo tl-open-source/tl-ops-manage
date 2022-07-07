@@ -5,16 +5,16 @@
 -- @email 1905333456@qq.com
 
 
-local cjson = require("cjson");
-local snowflake = require("lib.snowflake");
-local cache_service = require("cache.tl_ops_cache"):new("tl-ops-service");
-local tl_ops_constant_service = require("constant.tl_ops_constant_service");
-local tl_ops_constant_health = require("constant.tl_ops_constant_health");
-local tl_ops_constant_limit = require("constant.tl_ops_constant_limit");
-local tl_ops_rt = require("constant.tl_ops_constant_comm").tl_ops_rt;
-local tl_ops_utils_func = require("utils.tl_ops_utils_func");
-local tl_ops_health_check_version = require("health.tl_ops_health_check_version")
-local tl_ops_limit_fuse_check_version = require("limit.fuse.tl_ops_limit_fuse_check_version")
+local cjson                             = require("cjson.safe");
+local snowflake                         = require("lib.snowflake");
+local cache_service                     = require("cache.tl_ops_cache_core"):new("tl-ops-service");
+local tl_ops_constant_service           = require("constant.tl_ops_constant_service");
+local tl_ops_constant_health            = require("constant.tl_ops_constant_health");
+local tl_ops_constant_limit             = require("constant.tl_ops_constant_limit");
+local tl_ops_rt                         = require("constant.tl_ops_constant_comm").tl_ops_rt;
+local tl_ops_utils_func                 = require("utils.tl_ops_utils_func");
+local tl_ops_health_check_version       = require("health.tl_ops_health_check_version")
+local tl_ops_limit_fuse_check_version   = require("limit.fuse.tl_ops_limit_fuse_check_version")
 
 
 local Router = function() 
@@ -100,7 +100,7 @@ local Router = function()
     -- 新增service逻辑分支
     if has_new_service_name == true and new_service_name ~= '' then
         -- 同步健康检查配置
-        local cache_health = require("cache.tl_ops_cache"):new("tl-ops-health");
+        local cache_health = require("cache.tl_ops_cache_core"):new("tl-ops-health");
         local health_list_str, _ = cache_health:get(tl_ops_constant_health.cache_key.options_list);
         if not health_list_str or health_list_str == nil then
             tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.not_found, "not found health list", _);
@@ -117,7 +117,7 @@ local Router = function()
         end
     
         -- 同步熔断配置
-        local cache_limit = require("cache.tl_ops_cache"):new("tl-ops-limit");
+        local cache_limit = require("cache.tl_ops_cache_core"):new("tl-ops-limit");
         local limit_list_str, _ = cache_limit:get(tl_ops_constant_limit.fuse.cache_key.options_list);
         if not limit_list_str or limit_list_str == nil then
             tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.not_found, "not found limit fuse list", _);

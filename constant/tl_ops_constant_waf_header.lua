@@ -1,5 +1,5 @@
-local snowflake = require("lib.snowflake");
-local scope = require("constant.tl_ops_constant_waf_scope");
+local snowflake     = require("lib.snowflake");
+local scope         = require("constant.tl_ops_constant_waf_scope");
 
 -- header waf默认列表
 local tl_ops_constant_waf_header = {

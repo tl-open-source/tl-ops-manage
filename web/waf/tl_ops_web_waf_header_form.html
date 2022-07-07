@@ -83,26 +83,6 @@
             {{#  } }}
         </script>
 
-        <div class="layui-form-item" id="tl-ops-web-waf-header-form-service-node-view"></div>
-        <script id="tl-ops-web-waf-header-form-service-node-tpl" type="text/html">
-            {{#  if(d.length === 0) { }}
-            <label class="layui-form-label">生效节点</label>
-            <div class="layui-input-block">
-                <p style="line-height: 37px;">暂无节点</p>
-            </div>
-            {{#  } else { }}
-            <label class="layui-form-label">节点</label>
-            <div class="layui-input-block">
-                <select name="node" lay-verify="tl-ops-web-waf-header-form-service-node" id="tl-ops-web-waf-header-form-service-node">
-                    <option value="">请选择节点</option>
-                {{#  layui.each(d, function(index, node){ }}
-                    <option value="{{index}}">{{node.name}}:{{node.protocol}}:{{node.ip}}:{{node.port}}</option>
-                {{#  }); }}
-                </select> 
-            </div>
-            {{#  } }}
-        </script>
-
         <div class="layui-form-item layui-hide">
             <input type="button" lay-submit lay-filter="tl-ops-web-waf-header-form-submit" id="tl-ops-web-waf-header-form-submit" value="确认">
         </div>

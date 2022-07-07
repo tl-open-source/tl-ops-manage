@@ -5,26 +5,17 @@
 -- @email 1905333456@qq.com
 
 
-local cjson = require("cjson");
-local tlog = require("utils.tl_ops_utils_log"):new("tl_ops_limit_fuse");
-local tl_ops_utils_func = require("utils.tl_ops_utils_func");
-
-local tl_ops_limit_fuse_check_dynamic_conf = require("limit.fuse.tl_ops_limit_fuse_check_dynamic_conf")
-local tl_ops_limit_fuse_check_version = require("limit.fuse.tl_ops_limit_fuse_check_version")
-local tl_ops_limit_token_bucket = require("limit.fuse.tl_ops_limit_fuse_token_bucket");
-local tl_ops_limit_leak_bucket = require("limit.fuse.tl_ops_limit_fuse_leak_bucket");
-
-local tl_ops_constant_limit = require("constant.tl_ops_constant_limit")
-local tl_ops_constant_health = require("constant.tl_ops_constant_health")
-local tl_ops_constant_service = require("constant.tl_ops_constant_service");
-
-local shared = ngx.shared.tlopsbalance
-
-local ok, new_tab = pcall(require, "table.new")
-if not ok or type(new_tab) ~= "function" then
-    new_tab = function (narr, nrec) return {} end
-end
-
+local cjson 								= require("cjson.safe");
+local tlog 									= require("utils.tl_ops_utils_log"):new("tl_ops_limit_fuse");
+local tl_ops_utils_func 					= require("utils.tl_ops_utils_func");
+local tl_ops_limit_fuse_check_dynamic_conf 	= require("limit.fuse.tl_ops_limit_fuse_check_dynamic_conf")
+local tl_ops_limit_fuse_check_version 		= require("limit.fuse.tl_ops_limit_fuse_check_version")
+local tl_ops_limit_token_bucket 			= require("limit.fuse.tl_ops_limit_fuse_token_bucket");
+local tl_ops_limit_leak_bucket 				= require("limit.fuse.tl_ops_limit_fuse_leak_bucket");
+local tl_ops_constant_limit 				= require("constant.tl_ops_constant_limit")
+local tl_ops_constant_health 				= require("constant.tl_ops_constant_health")
+local tl_ops_constant_service 				= require("constant.tl_ops_constant_service")
+local shared 								= ngx.shared.tlopsbalance
 
 local _STATE = {
 	LIMIT_FUSE_CLOSE = 0,  -- 熔断器关闭
@@ -95,7 +86,7 @@ end
 
 
 tl_ops_limit_fuse_default_confs = function(options, services)
-	local confs = new_tab(#options, 0)
+	local confs = tl_ops_utils_func:new_tab(#options, 0)
 	
 	tlog:dbg("tl_ops_limit_fuse_default_confs start")
 

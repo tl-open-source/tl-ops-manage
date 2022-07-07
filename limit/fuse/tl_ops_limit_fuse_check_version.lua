@@ -5,11 +5,11 @@
 -- @email 1905333456@qq.com
 
 
-local cjson = require("cjson");
-local tlog = require("utils.tl_ops_utils_log"):new("tl_ops_health_check_version");
-local tl_ops_utils_func = require("utils.tl_ops_utils_func");
+local cjson                 = require("cjson.safe");
+local tlog                  = require("utils.tl_ops_utils_log"):new("tl_ops_health_check_version");
+local tl_ops_utils_func     = require("utils.tl_ops_utils_func");
 local tl_ops_constant_limit = require("constant.tl_ops_constant_limit")
-local cache_dict = ngx.shared.tlopsbalance;
+local cache_dict            = ngx.shared.tlopsbalance;
 
 local _M = {
 	_VERSION = '0.02'

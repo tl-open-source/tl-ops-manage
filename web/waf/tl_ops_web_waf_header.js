@@ -53,13 +53,11 @@ const tl_ops_web_waf_header_cols = function () {
         },  {
             field: 'keys', title: 'header键', width:"15%"
         },  {
-            field: 'value', title: '正则过滤', width:"10%"
+            field: 'value', title: '正则过滤', width:"15%"
         },  {
             field: 'service', title: '所属服务',width:"10%"
         },  {
-            field: 'node', title: '节点索引',width:"8%"
-        },  {
-            field: 'white', title: '白名单',width:"7%"
+            field: 'white', title: '白名单',width:"10%"
         },  {
             field: 'updatetime', title: '更新时间',width:"15%",
         },  {
@@ -102,8 +100,7 @@ const tl_ops_web_waf_header_render = function () {
                 id="tl-waf-header-scope" onmouseleave="tl_mouse_leave_tips()" onclick="tl_ops_web_waf_header_change_scope()" 
                 onmouseenter="tl_mouse_enter_tips('tl-waf-header-scope','点击切换作用域，切换将实时生效')">
                 ${scope}
-            </b><b> ( ${scope === 'global' ? '全局级别WAF' : (scope === 'service' ? '服务级别WAF': '节点级别WAF')} )</b>`;
-
+            </b><b> ( ${scope === 'global' ? '全局级别WAF' : '服务级别WAF'} )</b>`;
             return {
                 "code": res.code,
                 "msg": res.msg,
@@ -145,8 +142,7 @@ const tl_ops_web_waf_header_reload = function (matcher) {
                 id="tl-waf-header-scope" onmouseleave="tl_mouse_leave_tips()" onclick="tl_ops_web_waf_header_change_scope()" 
                 onmouseenter="tl_mouse_enter_tips('tl-waf-header-scope','点击切换策略，切换将实时生效')">
                 ${scope}
-            </b><b> ( ${scope === 'global' ? '全局级别WAF' : (scope === 'service' ? '服务级别WAF': '节点级别WAF')} )</b>`;
-            
+            </b><b> ( ${scope === 'global' ? '全局级别WAF' : '服务级别WAF'} )</b>`;            
             return {
                 "code": res.code,
                 "msg": res.msg,
@@ -199,18 +195,22 @@ const tl_ops_web_waf_header_change_scope = function () {
         return;
     }
 
-    layer.msg("暂不支持切换")
+    if(scope === 'global'){
+        scope = 'service';
+    }else if(scope === 'service'){
+        scope = 'global';
+    }
 
-    // res_data.tl_ops_waf_header_scope = scope;
+    res_data.tl_ops_waf_header_scope = scope;
 
-    // $.ajax(tl_ajax_data({
-    //     url: '/tlops/waf/header/set',
-    //     data : JSON.stringify(res_data),
-    //     contentType : "application/json",
-    //     success : (res)=>{
-    //         tl_ops_web_waf_header_reload()
-    //     }
-    // }));
+    $.ajax(tl_ajax_data({
+        url: '/tlops/waf/header/set',
+        data : JSON.stringify(res_data),
+        contentType : "application/json",
+        success : (res)=>{
+            tl_ops_web_waf_header_reload()
+        }
+    }));
 }
 
 
@@ -253,7 +253,7 @@ const tl_ops_web_waf_header_edit = function (evtdata) {
     layer.open({
         type: 2
         ,title: '编辑HEADER-WAF配置'
-        ,content: 'tl_ops_web_waf_header_form.html?service='+evtdata.service+"&node="+evtdata.node+"&white="+evtdata.white
+        ,content: 'tl_ops_web_waf_header_form.html?service='+evtdata.service+"&white="+evtdata.white+"&scope="+res_data.tl_ops_waf_header_scope
         ,maxmin: true
         ,minStack:false
         ,area: ['700px', '600px']
@@ -302,9 +302,6 @@ const tl_ops_waf_header_data_add_filter = function( data ) {
             layer.msg(key + "未填写")
             return false;
         }
-        if(key === 'node'){
-            data.field[key] = parseInt(data.field[key])   
-        }
         if(key === 'white'){
             if(data.field[key] === 'true'){
                 data.field[key] = true
@@ -352,9 +349,6 @@ const tl_ops_waf_header_data_edit_filter = function( data ) {
             layer.msg(key + "未填写")
             return false;
         }
-        if(key === 'node'){
-            data.field[key] = parseInt(data.field[key])   
-        }
         if(key === 'white'){
             if(data.field[key] === 'true'){
                 data.field[key] = true
@@ -374,7 +368,7 @@ const tl_ops_waf_header_data_edit_filter = function( data ) {
 
     let cur_list = []
     res_data.tl_ops_waf_header_list.forEach((item)=>{
-        if(item.id === data.field.id){
+        if(parseInt(item.id) === parseInt(data.field.id)){
             data.field.change = true;
             item = data.field;
         }

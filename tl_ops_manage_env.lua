@@ -20,14 +20,14 @@ return {
             
             zn :日志输出目录，所有模块的日志都将输出到此目录下，注意：需要填写 ‘绝对路径’
         ]]
-        log_dir = "F:/code/tl-open-source/tl-ops-manage/",
+        log_dir = "/path/to/tl-open-source/tl-ops-manage/",
         --[[
             en :data storage directory, the directory where the module data is stored, 
                 Notice: need to fill in the 'absolute path'
             
             zn :数据存放目录，模块的数据存放的目录，注意：需要填写 ‘绝对路径’
         ]]
-        store_dir = "F:/code/tl-open-source/tl-ops-manage/store/",
+        store_dir = "/path/to/tl-open-source/tl-ops-manage/store/",
     },
     cache = {
         --[[
@@ -35,7 +35,7 @@ return {
             
             zn :是否开启redis缓存，注意，开启此选项需要先安装redis。
         ]]
-        redis = true
+        redis = false
     },
     sync = {
         fields = {
@@ -165,7 +165,7 @@ return {
             zn :插件模块定义，引入的插件需要在此定义好才能被加载。否则将不生效
         ]]
         module = {
-            "log_analyze", "api_authentication", "cluster_sync","template"
+            "template", "sync"
         }
     }
 }

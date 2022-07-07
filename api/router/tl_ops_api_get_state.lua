@@ -4,30 +4,26 @@
 -- @author iamtsm
 -- @email 1905333456@qq.com
 
-
-local cjson = require("cjson");
+local tl_ops_constant_waf       = require("constant.tl_ops_constant_waf");
+local tl_ops_constant_balance   = require("constant.tl_ops_constant_balance");
+local tl_ops_constant_service   = require("constant.tl_ops_constant_service");
+local tl_ops_constant_health    = require("constant.tl_ops_constant_health")
+local tl_ops_constant_limit     = require("constant.tl_ops_constant_limit");
+local tl_ops_limit              = require("limit.tl_ops_limit");
+local cache_service             = require("cache.tl_ops_cache_core"):new("tl-ops-service");
+local cache_limit               = require("cache.tl_ops_cache_core"):new("tl-ops-limit");
+local cache_health              = require("cache.tl_ops_cache_core"):new("tl-ops-health");
+local tl_ops_rt                 = require("constant.tl_ops_constant_comm").tl_ops_rt;
+local tl_ops_utils_func         = require("utils.tl_ops_utils_func");
+local shared                    = ngx.shared.tlopsbalance
+local cjson                     = require("cjson.safe");
 cjson.encode_empty_table_as_object(false)
-local tl_ops_constant_balance = require("constant.tl_ops_constant_balance");
-local tl_ops_constant_service = require("constant.tl_ops_constant_service");
-local tl_ops_constant_health = require("constant.tl_ops_constant_health")
-local tl_ops_constant_limit = require("constant.tl_ops_constant_limit");
-
-local tl_ops_limit = require("limit.tl_ops_limit");
-
-local cache_service = require("cache.tl_ops_cache"):new("tl-ops-service");
-local cache_limit = require("cache.tl_ops_cache"):new("tl-ops-limit");
-local cache_health = require("cache.tl_ops_cache"):new("tl-ops-health");
-
-local tl_ops_rt = require("constant.tl_ops_constant_comm").tl_ops_rt;
-local tl_ops_utils_func = require("utils.tl_ops_utils_func");
-local shared = ngx.shared.tlopsbalance
 
 local Router = function() 
     --返回的cache state
     local cache_state = {
-        service = {}, health = {}, limit = {}, balance = {}, other = {}
+        service = {}, health = {}, limit = {}, balance = {}, waf = {}, other = {}
     }
-
 
     -- 服务相关状态
     local list_str, _ = cache_service:get(tl_ops_constant_service.cache_key.service_list);
@@ -63,12 +59,21 @@ local Router = function()
             limit_version_cache = 0 --"version cache nil"
         end
 
+        -- waf统计
+        local waf_count_name_service = "tl-ops-waf-count-" .. tl_ops_constant_waf.count.interval;
+        local waf_cache_count_service = require("cache.tl_ops_cache_core"):new(waf_count_name_service);
+        local waf_success_cache_service = waf_cache_count_service:get001(tl_ops_utils_func:gen_node_key(tl_ops_constant_waf.cache_key.waf_interval_success, service_name, nil)) 
+        if not waf_success_cache_service then
+            waf_success_cache_service = "{}"
+        end
+
         cache_state.service[service_name] = {
             health_lock = health_lock_cache,
             health_version = health_version_cache,
             health_uncheck = health_uncheck_cache,
             limit_state = limit_state_cache,
             limit_version = limit_version_cache,
+            waf_success = waf_success_cache_service
         }
         cache_state.service[service_name].nodes = { }
 
@@ -151,11 +156,18 @@ local Router = function()
                 end
             end
 
-            local count_name = "tl-ops-balance-count-" .. tl_ops_constant_balance.count.interval;
-            local cache_balance_count = require("cache.tl_ops_cache"):new(count_name);
-            local balance_success_cache = cache_balance_count:get001(tl_ops_utils_func:gen_node_key(tl_ops_constant_balance.cache_key.balance_interval_success, node.service, node_id)) 
+            local balance_count_name = "tl-ops-balance-count-" .. tl_ops_constant_balance.count.interval;
+            local balance_cache_count = require("cache.tl_ops_cache_core"):new(balance_count_name);
+            local balance_success_cache = balance_cache_count:get001(tl_ops_utils_func:gen_node_key(tl_ops_constant_balance.cache_key.balance_interval_success, node.service, node_id)) 
             if not balance_success_cache then
                 balance_success_cache = "{}"
+            end
+
+            local waf_count_name_node = "tl-ops-waf-count-" .. tl_ops_constant_waf.count.interval;
+            local waf_cache_count_node = require("cache.tl_ops_cache_core"):new(waf_count_name_node);
+            local waf_success_cache_node = waf_cache_count_node:get001(tl_ops_utils_func:gen_node_key(tl_ops_constant_waf.cache_key.waf_interval_success, node.service, node_id)) 
+            if not waf_success_cache_node then
+                waf_success_cache_node = "{}"
             end
 
             cache_state.service[service_name].nodes[node.name] = {
@@ -171,6 +183,7 @@ local Router = function()
                 limit_pre_time = limit_pre_time,
                 limit_bucket = limit_bucket,
                 balance_success =  cjson.decode(balance_success_cache),
+                waf_success =  cjson.decode(waf_success_cache_node),
             }
         end
     end
@@ -189,7 +202,6 @@ local Router = function()
         health_timers_str = "{}" --"timers nil"
     end
     local health_timer_list = cjson.decode(health_timers_str)
-
     cache_state.health['timer_list'] = health_timer_list
     cache_state.health['options_list'] = health_options_list    
 
@@ -207,34 +219,22 @@ local Router = function()
         limit_timers_str = "{}" --"timers nil"
     end
     local limit_timer_list = cjson.decode(limit_timers_str)
-
-    -- local pre_time = shared:get(tl_ops_constant_limit.global_token.cache_key.pre_time)
-    -- if not pre_time then
-    --     pre_time = "nil" --"pre_time nil"
-    -- end
-    -- local token_bucket = shared:get(tl_ops_constant_limit.global_token.cache_key.token_bucket)
-    -- if not token_bucket then
-    --     token_bucket = "nil" --"token_bucket nil"
-    -- end
-    -- local warm = shared:get(tl_ops_constant_limit.global_token.cache_key.warm)
-    -- if not warm then
-    --     warm = "nil" --"warm nil"
-    -- end
-    -- local lock = shared:get(tl_ops_constant_limit.global_token.cache_key.lock)
-    -- if not lock then
-    --     lock = "nil" --"lock nil"
-    -- end
-    -- cache_state.limit['pre_time'] = pre_time
-    -- cache_state.limit['token_bucket'] = token_bucket
-    -- cache_state.limit['warm'] = warm
-    -- cache_state.limit['lock'] = lock
     cache_state.health['timer_list'] = limit_timer_list
     cache_state.limit['option_list'] = limit_options_list
         
 
-
     -- 路由相关
     cache_state.balance['count_interval'] = tl_ops_constant_balance.count.interval
+
+
+    -- waf相关
+    local waf_count_name_global = "tl-ops-waf-count-" .. tl_ops_constant_waf.count.interval;
+    local waf_cache_count_global = require("cache.tl_ops_cache_core"):new(waf_count_name_global);
+    local waf_success_cache_global = waf_cache_count_global:get001(tl_ops_constant_waf.cache_key.waf_interval_success) 
+    if not waf_success_cache_global then
+        waf_success_cache_global = "{}"
+    end
+    cache_state.waf['waf_success'] = cjson.decode(waf_success_cache_global) 
 
 
     -- 其他

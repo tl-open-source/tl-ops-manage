@@ -5,15 +5,10 @@
 -- @email 1905333456@qq.com
 
 
-local tlog = require("utils.tl_ops_utils_log"):new("tl_ops_cache_store");
-
-
-local ok, new_tab = pcall(require, "table.new")
-if not ok or type(new_tab) ~= "function" then
-    new_tab = function (narr, nrec) return {} end
-end
+local tlog              = require("utils.tl_ops_utils_log"):new("tl_ops_cache_store");
+local tl_ops_utils_func = require("utils.tl_ops_utils_func");
  
-local _M = new_tab(0, 50)
+local _M = tl_ops_utils_func:new_tab(0, 20)
 _M._VERSION = '0.02'
 local mt = { __index = _M }
 

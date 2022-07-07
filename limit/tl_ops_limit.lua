@@ -5,9 +5,9 @@
 -- @email 1905333456@qq.com
 
 
-local cache_limit = require("cache.tl_ops_cache"):new("tl-ops-limit");
+local cache_limit           = require("cache.tl_ops_cache_core"):new("tl-ops-limit");
 local tl_ops_constant_limit = require("constant.tl_ops_constant_limit")
-local cjson = require("cjson");
+local cjson                 = require("cjson.safe");
 
 -- 获取限流器
 local tl_ops_limit_get_limiter = function( service_name, node_id )

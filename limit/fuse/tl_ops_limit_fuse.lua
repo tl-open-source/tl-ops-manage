@@ -4,11 +4,10 @@
 -- @author iamtsm
 -- @email 1905333456@qq.com
 
-local tl_ops_limit_fuse_check_dynamic_conf = require("limit.fuse.tl_ops_limit_fuse_check_dynamic_conf")
-local tl_ops_limit_fuse_check_version = require("limit.fuse.tl_ops_limit_fuse_check_version")
-local tl_ops_limit_fuse_check = require("limit.fuse.tl_ops_limit_fuse_check")
-
-local tl_ops_constant_limit = require("constant.tl_ops_constant_limit")
+local tl_ops_limit_fuse_check_dynamic_conf  = require("limit.fuse.tl_ops_limit_fuse_check_dynamic_conf")
+local tl_ops_limit_fuse_check_version       = require("limit.fuse.tl_ops_limit_fuse_check_version")
+local tl_ops_limit_fuse_check               = require("limit.fuse.tl_ops_limit_fuse_check")
+local tl_ops_constant_limit                 = require("constant.tl_ops_constant_limit")
 local _M = {}
 
 function _M:init(  )

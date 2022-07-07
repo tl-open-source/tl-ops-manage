@@ -48,17 +48,15 @@ const tl_ops_web_waf_cc_cols = function () {
             type:'checkbox',fixed : 'left', width: "5%"
         }, {
             field: 'id', title: 'ID',width:"10%"
-        },  {
+        }, {
             field: 'host', title: '域名',width:"15%"
         }, {
-            field: 'time', title: '时间周期', width:"10%"
-        },  {
-            field: 'count', title: '触发次数', width:"10%"
-        },  {
+            field: 'time', title: '时间周期', width:"15%"
+        }, {
+            field: 'count', title: '触发次数', width:"15%"
+        }, {
             field: 'service', title: '所属服务',width:"15%"
-        },  {
-            field: 'node', title: '节点索引',width:"10%"
-        },  {
+        }, {
             field: 'updatetime', title: '更新时间',width:"15%",
         }, {
             width: "10%",
@@ -100,7 +98,7 @@ const tl_ops_web_waf_cc_render = function () {
                 id="tl-waf-cc-scope" onmouseleave="tl_mouse_leave_tips()" onclick="tl_ops_web_waf_cc_change_scope()" 
                 onmouseenter="tl_mouse_enter_tips('tl-waf-cc-scope','点击切换作用域，切换将实时生效')">
                 ${scope}
-            </b><b> ( ${scope === 'global' ? '全局级别WAF' : (scope === 'service' ? '服务级别WAF': '节点级别WAF')} )</b>`;
+            </b><b> ( ${scope === 'global' ? '全局级别WAF' : '服务级别WAF'} )</b>`;
 
             return {
                 "code": res.code,
@@ -143,8 +141,8 @@ const tl_ops_web_waf_cc_reload = function (matcher) {
                 id="tl-waf-cc-scope" onmouseleave="tl_mouse_leave_tips()" onclick="tl_ops_web_waf_cc_change_scope()" 
                 onmouseenter="tl_mouse_enter_tips('tl-waf-cc-scope','点击切换策略，切换将实时生效')">
                 ${scope}
-            </b><b> ( ${scope === 'global' ? '全局级别WAF' : (scope === 'service' ? '服务级别WAF': '节点级别WAF')} )</b>`;
-            
+            </b><b> ( ${scope === 'global' ? '全局级别WAF' : '服务级别WAF'} )</b>`;      
+
             return {
                 "code": res.code,
                 "msg": res.msg,
@@ -197,18 +195,22 @@ const tl_ops_web_waf_cc_change_scope = function () {
         return;
     }
 
-    layer.msg("暂不支持切换")
+    if(scope === 'global'){
+        scope = 'service';
+    }else if(scope === 'service'){
+        scope = 'global';
+    }
 
-    // res_data.tl_ops_waf_cc_scope = scope;
+    res_data.tl_ops_waf_cc_scope = scope;
 
-    // $.ajax(tl_ajax_data({
-    //     url: '/tlops/waf/cc/set',
-    //     data : JSON.stringify(res_data),
-    //     contentType : "application/json",
-    //     success : (res)=>{
-    //         tl_ops_web_waf_cc_reload()
-    //     }
-    // }));
+    $.ajax(tl_ajax_data({
+        url: '/tlops/waf/cc/set',
+        data : JSON.stringify(res_data),
+        contentType : "application/json",
+        success : (res)=>{
+            tl_ops_web_waf_cc_reload()
+        }
+    }));
 }
 
 
@@ -251,7 +253,7 @@ const tl_ops_web_waf_cc_edit = function (evtdata) {
     layer.open({
         type: 2
         ,title: '编辑CC-WAF配置'
-        ,content: 'tl_ops_web_waf_cc_form.html?service='+evtdata.service+"&node="+evtdata.node
+        ,content: 'tl_ops_web_waf_cc_form.html?service='+evtdata.service+"&scope="+res_data.tl_ops_waf_cc_scope
         ,maxmin: true
         ,minStack:false
         ,area: ['700px', '600px']
@@ -297,7 +299,7 @@ const tl_ops_waf_cc_data_add_filter = function( data ) {
             layer.msg(key + "未填写")
             return false;
         }
-        if(key === 'node' || key === 'time' || key === 'count'){
+        if(key === 'time' || key === 'count'){
             data.field[key] = parseInt(data.field[key])   
         }
     }
@@ -329,16 +331,13 @@ const tl_ops_waf_cc_data_edit_filter = function( data ) {
             layer.msg(key + "未填写")
             return false;
         }
-        if(key === 'node'){
-            data.field[key] = parseInt(data.field[key])   
-        }
-        if(key === 'node' || key === 'time' || key === 'count'){
+        if(key === 'time' || key === 'count'){
             data.field[key] = parseInt(data.field[key])   
         }
     }
     let cur_list = []
     res_data.tl_ops_waf_cc_list.forEach((item)=>{
-        if(item.id === data.field.id){
+        if(parseInt(item.id) === parseInt(data.field.id)){
             data.field.change = true;
             item = data.field;
         }

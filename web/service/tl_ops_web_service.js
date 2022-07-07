@@ -73,6 +73,11 @@ const tl_ops_web_service_cols = function () {
                                 allNodeOnline = false;
                             }
                         }
+                        if(Object.keys(nodes).length === 0){ //无节点
+                            allNodeOnline = false;
+                        }
+                    }else{ //无节点
+                        allNodeOnline = false;
                     }
                 }
                 if( allNodeOnline ){
@@ -90,7 +95,10 @@ const tl_ops_web_service_cols = function () {
             field: 'oper', title: '服务健康',width:"25%",
             templet : (d)=>{
                 let isNodeEmpty = d.node.length === 0;
-                let isChecking = !state_data.service[d.name].health_uncheck;
+                let isChecking = false;
+                if(state_data.service[d.name]){
+                    isChecking = !state_data.service[d.name].health_uncheck
+                }
                 let isAutoLoad = rule === 'auto_load'
                 return `
                 <div onclick="tl_ops_web_service_open_health('${d.name}',${isNodeEmpty})" id="tl-service-check-${d.name}" onmouseleave="tl_mouse_leave_tips()" 

@@ -5,15 +5,9 @@
 -- @email 1905333456@qq.com
 
 
-local cjson = require("cjson");
-local tlog = require("utils.tl_ops_utils_log"):new("tl_ops_limit_sliding_window");
+local cjson             = require("cjson.safe");
+local tlog              = require("utils.tl_ops_utils_log"):new("tl_ops_limit_sliding_window");
 local tl_ops_utils_func = require("utils.tl_ops_utils_func");
-
-
-local ok, new_tab = pcall(require, "table.new")
-if not ok or type(new_tab) ~= "function" then
-    new_tab = function (narr, nrec) return {} end
-end
 
 
 local _M = {

@@ -385,7 +385,7 @@ const tl_ops_param_data_edit_filter = function( data ) {
     }
     let cur_list = []
     res_data.tl_ops_balance_param_list[rule].forEach((item)=>{
-        if(item.id === data.field.id){
+        if(parseInt(item.id) === parseInt(data.field.id)){
             data.field.change = true;
             item = data.field;
         }

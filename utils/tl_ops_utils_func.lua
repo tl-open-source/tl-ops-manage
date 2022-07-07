@@ -4,12 +4,22 @@
 -- @author iamtsm
 -- @email 1905333456@qq.com
 
-local cjson, _ = require("cjson");
-local lock = require("lib.lock");
+local cjson, _  = require("cjson.safe");
+local lock      = require("lib.lock");
+local shared    = ngx.shared.tlopsbalance;
+local find      = ngx.re.find
 
-local shared = ngx.shared.tlopsbalance;
-local find = ngx.re.find
 local _M = {}
+
+
+-- new tab
+function _M:new_tab(narr, nrec)
+    local ok, new_tab = pcall(require, "table.new")
+    if not ok or type(new_tab) ~= "function" then
+        new_tab = function (narr, nrec) return {} end
+    end
+    return new_tab(narr, nrec)
+end
 
 
 -- 获取当前路径

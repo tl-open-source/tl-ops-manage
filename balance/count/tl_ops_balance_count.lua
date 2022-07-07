@@ -4,11 +4,10 @@
 -- @author iamtsm
 -- @email 1905333456@qq.com
 
-
 local tl_ops_balance_count_core = require("balance.count.tl_ops_balance_count_core");
-local tl_ops_constant_balance = require("constant.tl_ops_constant_balance");
-local tl_ops_utils_func = require("utils.tl_ops_utils_func");
-local shared = ngx.shared.tlopsbalance;
+local tl_ops_constant_balance   = require("constant.tl_ops_constant_balance");
+local tl_ops_utils_func         = require("utils.tl_ops_utils_func");
+local shared                    = ngx.shared.tlopsbalance;
 
 local _M = {}
 

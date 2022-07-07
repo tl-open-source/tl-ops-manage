@@ -4,19 +4,16 @@
 -- @author iamtsm
 -- @email 1905333456@qq.com
 
-local cjson = require("cjson");
-local tlog = require("utils.tl_ops_utils_log"):new("tl_ops_health");
-local timer_tlog = require("utils.tl_ops_utils_log"):new("tl_ops_health_options_timer");
-local tl_ops_utils_func = require("utils.tl_ops_utils_func");
-
-local tl_ops_constant_health = require("constant.tl_ops_constant_health")
-local tl_ops_health_check_dynamic_conf = require("health.tl_ops_health_check_dynamic_conf")
-local tl_ops_health_check_version = require("health.tl_ops_health_check_version")
-
-local tl_ops_status = require("constant.tl_ops_constant_comm").tl_ops_status;
-local nx_socket = ngx.socket.tcp
-local shared = ngx.shared.tlopsbalance
-local find = ngx.re.find
+local cjson 							= require("cjson.safe")
+local tlog 								= require("utils.tl_ops_utils_log"):new("tl_ops_health")
+local tl_ops_utils_func 				= require("utils.tl_ops_utils_func")
+local tl_ops_constant_health 			= require("constant.tl_ops_constant_health")
+local tl_ops_health_check_dynamic_conf 	= require("health.tl_ops_health_check_dynamic_conf")
+local tl_ops_health_check_version 		= require("health.tl_ops_health_check_version")
+local tl_ops_status 					= require("constant.tl_ops_constant_comm").tl_ops_status;
+local nx_socket 						= ngx.socket.tcp
+local shared 							= ngx.shared.tlopsbalance
+local find 								= ngx.re.find
 
 
 
@@ -24,13 +21,6 @@ local _M = {
 	_VERSION = '0.02'
 }
 local mt = { __index = _M }
-
-
-local ok, new_tab = pcall(require, "table.new")
-if not ok or type(new_tab) ~= "function" then
-    new_tab = function (narr, nrec) return {} end
-end
-
 
 local tl_ops_health_check, 
 tl_ops_health_check_main ,
@@ -84,7 +74,7 @@ end
 
 -- 对给定配置内容进行初始化，对配置进行默认值给定和过滤
 tl_ops_health_check_default_confs = function (options, services)
-	local confs = new_tab(#options, 0)
+	local confs = tl_ops_utils_func:new_tab(#options, 0)
 	
 	tlog:dbg("tl_ops_health_check_default_confs start")
 

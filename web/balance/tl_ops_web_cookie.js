@@ -260,6 +260,7 @@ const tl_ops_web_cookie_add = function () {
                 if(!tl_ops_cookie_data_add_filter(data)){
                     return;
                 }
+                
                 $.ajax(tl_ajax_data({
                     url: '/tlops/balance/cookie/set',
                     data : JSON.stringify(res_data),
@@ -293,6 +294,7 @@ const tl_ops_web_cookie_edit = function (evtdata) {
                 if(!tl_ops_cookie_data_edit_filter(data)){
                     return;
                 }
+                
                 $.ajax(tl_ajax_data({
                     url: '/tlops/balance/cookie/set',
                     data : JSON.stringify(res_data),
@@ -387,7 +389,7 @@ const tl_ops_cookie_data_edit_filter = function( data ) {
     }
     let cur_list = []
     res_data.tl_ops_balance_cookie_list[rule].forEach((item)=>{
-        if(item.id === data.field.id){
+        if(parseInt(item.id) === parseInt(data.field.id)){
             data.field.change = true;
             item = data.field;
         }

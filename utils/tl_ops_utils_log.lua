@@ -4,9 +4,8 @@
 -- @author iamtsm
 -- @email 1905333456@qq.com
 
-local ngx = require "ngx"
-local cjson_safe = require("cjson.safe")
-local tl_ops_env = require("tl_ops_manage_env")
+local cjson_safe 		= require("cjson.safe")
+local tl_ops_manage_env = require("tl_ops_manage_env")
 
 local _M = {
 	debug = 1,
@@ -96,10 +95,10 @@ function _M:new(module)
 	self.__index = self
 	
   	return setmetatable({
-		level = tl_ops_env.log.level,
+		level = tl_ops_manage_env.log.level,
 		module = module,
-		dir = tl_ops_env.log.log_dir,
-		format_json = tl_ops_env.log.format_json
+		dir = tl_ops_manage_env.log.log_dir,
+		format_json = tl_ops_manage_env.log.format_json
 	}, self)
 end
 

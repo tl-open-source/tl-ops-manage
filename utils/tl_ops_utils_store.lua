@@ -4,12 +4,11 @@
 -- @author iamtsm
 -- @email 1905333456@qq.com
 
-local ngx = require "ngx"
-local cjson = require("cjson.safe")
-local tlog = require("utils.tl_ops_utils_log"):new("tl_ops_utils_store");
+local cjson 			= require("cjson.safe")
+local tlog 				= require("utils.tl_ops_utils_log"):new("tl_ops_utils_store");
 local tl_ops_utils_func = require("utils.tl_ops_utils_func");
-local tl_ops_rt = require("constant.tl_ops_constant_comm").tl_ops_rt;
-local tl_ops_env = require("tl_ops_manage_env")
+local tl_ops_manage_env = require("tl_ops_manage_env")
+local tl_ops_rt 		= require("constant.tl_ops_constant_comm").tl_ops_rt;
 
 
 local _M = {}
@@ -125,7 +124,7 @@ end
 
 function _M:new(business)
 	local store_conf = {
-		path = tl_ops_env.log.store_dir,
+		path = tl_ops_manage_env.log.store_dir,
 		business = business
 	}
  	setmetatable(store_conf, self)

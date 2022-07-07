@@ -5,13 +5,13 @@
 -- @email 1905333456@qq.com
 
 
-local cjson = require("cjson");
-local tlog = require("utils.tl_ops_utils_log"):new("tl_ops_health_check_dynamic_conf");
-local tl_ops_utils_func = require("utils.tl_ops_utils_func");
-local tl_ops_constant_health = require("constant.tl_ops_constant_health")
-local cache_health = require("cache.tl_ops_cache"):new("tl-ops-health");
-local tl_ops_constant_service = require("constant.tl_ops_constant_service");
-local shared = ngx.shared.tlopsbalance
+local cjson 					= require("cjson.safe");
+local tlog 						= require("utils.tl_ops_utils_log"):new("tl_ops_health_check_dynamic_conf");
+local tl_ops_utils_func 		= require("utils.tl_ops_utils_func");
+local tl_ops_constant_health 	= require("constant.tl_ops_constant_health")
+local cache_health 				= require("cache.tl_ops_cache_core"):new("tl-ops-health");
+local tl_ops_constant_service 	= require("constant.tl_ops_constant_service");
+local shared 					= ngx.shared.tlopsbalance
 
 -- 需要提前定义，定时器访问不了
 local tl_ops_health_check_dynamic_conf_add_timer_check;
@@ -114,7 +114,7 @@ local tl_ops_health_check_dynamic_conf_add_check = function()
 	end
 	local dynamic_options = cjson.decode(options_str)
 
-	local cache_service = require("cache.tl_ops_cache"):new("tl-ops-service");
+	local cache_service = require("cache.tl_ops_cache_core"):new("tl-ops-service");
 	local service_str, _ = cache_service:get(tl_ops_constant_service.cache_key.service_list)
 	if not service_str then
 		tlog:err("[add-check] load dynamic service failed , service_str=",service_str)
@@ -224,7 +224,7 @@ end
 
 -- 同步service配置
 local tl_ops_health_check_dynamic_conf_change_service_node_async = function( conf )
-	local cache_service = require("cache.tl_ops_cache"):new("tl-ops-service");
+	local cache_service = require("cache.tl_ops_cache_core"):new("tl-ops-service");
 	local service_str, _ = cache_service:get(tl_ops_constant_service.cache_key.service_list)
 	if not service_str then
 		tlog:err("[change-check] load dynamic service failed , service_str=",service_str)

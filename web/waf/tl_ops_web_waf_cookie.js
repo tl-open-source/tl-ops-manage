@@ -48,17 +48,15 @@ const tl_ops_web_waf_cookie_cols = function () {
             type:'checkbox',fixed : 'left', width: "5%"
         }, {
             field: 'id', title: 'ID',width:"10%"
-        },  {
+        }, {
             field: 'host', title: '域名',width:"15%"
         }, {
-            field: 'value', title: '正则过滤', width:"15%"
-        },  {
-            field: 'service', title: '所属服务',width:"10%"
-        },  {
-            field: 'node', title: '节点索引',width:"10%"
-        },  {
+            field: 'value', title: '正则过滤', width:"20%"
+        }, {
+            field: 'service', title: '所属服务',width:"15%"
+        }, {
             field: 'white', title: '白名单',width:"10%"
-        },  {
+        }, {
             field: 'updatetime', title: '更新时间',width:"15%",
         }, {
             width: "10%",
@@ -100,7 +98,7 @@ const tl_ops_web_waf_cookie_render = function () {
                 id="tl-waf-cookie-scope" onmouseleave="tl_mouse_leave_tips()" onclick="tl_ops_web_waf_cookie_change_scope()" 
                 onmouseenter="tl_mouse_enter_tips('tl-waf-cookie-scope','点击切换作用域，切换将实时生效')">
                 ${scope}
-            </b><b> ( ${scope === 'global' ? '全局级别WAF' : (scope === 'service' ? '服务级别WAF': '节点级别WAF')} )</b>`;
+            </b><b> ( ${scope === 'global' ? '全局级别WAF' : '服务级别WAF'} )</b>`;
 
             return {
                 "code": res.code,
@@ -143,8 +141,8 @@ const tl_ops_web_waf_cookie_reload = function (matcher) {
                 id="tl-waf-cookie-scope" onmouseleave="tl_mouse_leave_tips()" onclick="tl_ops_web_waf_cookie_change_scope()" 
                 onmouseenter="tl_mouse_enter_tips('tl-waf-cookie-scope','点击切换策略，切换将实时生效')">
                 ${scope}
-            </b><b> ( ${scope === 'global' ? '全局级别WAF' : (scope === 'service' ? '服务级别WAF': '节点级别WAF')} )</b>`;
-            
+            </b><b> ( ${scope === 'global' ? '全局级别WAF' : '服务级别WAF'} )</b>`; 
+
             return {
                 "code": res.code,
                 "msg": res.msg,
@@ -197,18 +195,22 @@ const tl_ops_web_waf_cookie_change_scope = function () {
         return;
     }
 
-    layer.msg("暂不支持切换")
+    if(scope === 'global'){
+        scope = 'service';
+    }else if(scope === 'service'){
+        scope = 'global';
+    }
 
-    // res_data.tl_ops_waf_cookie_scope = scope;
+    res_data.tl_ops_waf_cookie_scope = scope;
 
-    // $.ajax(tl_ajax_data({
-    //     url: '/tlops/waf/cookie/set',
-    //     data : JSON.stringify(res_data),
-    //     contentType : "application/json",
-    //     success : (res)=>{
-    //         tl_ops_web_waf_cookie_reload()
-    //     }
-    // }));
+    $.ajax(tl_ajax_data({
+        url: '/tlops/waf/cookie/set',
+        data : JSON.stringify(res_data),
+        contentType : "application/json",
+        success : (res)=>{
+            tl_ops_web_waf_cookie_reload()
+        }
+    }));
 }
 
 
@@ -251,7 +253,7 @@ const tl_ops_web_waf_cookie_edit = function (evtdata) {
     layer.open({
         type: 2
         ,title: '编辑COOKIE-WAF配置'
-        ,content: 'tl_ops_web_waf_cookie_form.html?service='+evtdata.service+"&node="+evtdata.node+"&white="+evtdata.white
+        ,content: 'tl_ops_web_waf_cookie_form.html?service='+evtdata.service+"&white="+evtdata.white+"&scope="+res_data.tl_ops_waf_cookie_scope
         ,maxmin: true
         ,minStack:false
         ,area: ['700px', '600px']
@@ -300,9 +302,6 @@ const tl_ops_waf_cookie_data_add_filter = function( data ) {
             layer.msg(key + "未填写")
             return false;
         }
-        if(key === 'node'){
-            data.field[key] = parseInt(data.field[key])   
-        }
         if(key === 'white'){
             if(data.field[key] === 'true'){
                 data.field[key] = true
@@ -342,9 +341,6 @@ const tl_ops_waf_cookie_data_edit_filter = function( data ) {
             layer.msg(key + "未填写")
             return false;
         }
-        if(key === 'node'){
-            data.field[key] = parseInt(data.field[key])   
-        }
         if(key === 'white'){
             if(data.field[key] === 'true'){
                 data.field[key] = true
@@ -355,7 +351,7 @@ const tl_ops_waf_cookie_data_edit_filter = function( data ) {
     }
     let cur_list = []
     res_data.tl_ops_waf_cookie_list.forEach((item)=>{
-        if(item.id === data.field.id){
+        if(parseInt(item.id) === parseInt(data.field.id)){
             data.field.change = true;
             item = data.field;
         }

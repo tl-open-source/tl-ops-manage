@@ -4,16 +4,14 @@
 -- @author iamtsm
 -- @email 1905333456@qq.com
 
-local cjson = require("cjson");
-local tlog = require("utils.tl_ops_utils_log"):new("tl_ops_balance_count");
-local tl_ops_utils_func = require("utils.tl_ops_utils_func");
-local tl_ops_constant_balance = require("constant.tl_ops_constant_balance");
-local tl_ops_constant_service = require("constant.tl_ops_constant_service");
-local cache_service = require("cache.tl_ops_cache"):new("tl-ops-service");
-local tl_ops_manage_env = require("tl_ops_manage_env")
-
-local lock = require("lib.lock");
-local shared = ngx.shared.tlopsbalance;
+local cjson                     = require("cjson.safe")
+local tlog                      = require("utils.tl_ops_utils_log"):new("tl_ops_balance_count")
+local tl_ops_utils_func         = require("utils.tl_ops_utils_func")
+local tl_ops_constant_balance   = require("constant.tl_ops_constant_balance")
+local tl_ops_constant_service   = require("constant.tl_ops_constant_service")
+local cache_service             = require("cache.tl_ops_cache_core"):new("tl-ops-service")
+local tl_ops_manage_env         = require("tl_ops_manage_env")
+local shared                    = ngx.shared.tlopsbalance
 
 
 local _M = {
@@ -46,7 +44,7 @@ local tl_ops_balance_count = function()
 
     -- 控制细度 ，以周期为分割，仅用store持久
     local count_name = "tl-ops-balance-count-" .. tl_ops_constant_balance.count.interval;
-    local cache_balance_count = require("cache.tl_ops_cache"):new(count_name);
+    local cache_balance_count = require("cache.tl_ops_cache_core"):new(count_name);
 
     for service_name, nodes in pairs(service_list) do
         if nodes == nil then
@@ -70,7 +68,7 @@ local tl_ops_balance_count = function()
 
             local cur_count = cur_succ_count + cur_fail_count
             if cur_count == 0 then
-                tlog:err("balance count async err , succ=",cur_succ_count,",fail=",cur_fail_count,",service_name=",service_name,",node_id=",node_id)
+                tlog:dbg("balance count not need sync , succ=",cur_succ_count,",fail=",cur_fail_count,",service_name=",service_name,",node_id=",node_id)
             else
                 -- push to list
                 local success_key = tl_ops_utils_func:gen_node_key(tl_ops_constant_balance.cache_key.balance_interval_success, service_name, node_id)

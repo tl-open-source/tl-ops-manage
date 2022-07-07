@@ -1,5 +1,5 @@
-local tl_ops_constant_service = require("constant.tl_ops_constant_service");
-local tl_ops_utils_func = require("utils.tl_ops_utils_func");
+local tl_ops_constant_service   = require("constant.tl_ops_constant_service");
+local tl_ops_utils_func         = require("utils.tl_ops_utils_func");
 
 -- 令牌桶配置
 local token = {   --服务令牌桶配置
