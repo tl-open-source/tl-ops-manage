@@ -89,14 +89,14 @@ local tl_ops_balance_cookie_service_matcher = function(service_list_table)
     end
 
     -- 指定节点
-    if api_rule == tl_ops_constant_balance_api.rule.point then
+    if cookie_rule == tl_ops_constant_balance_cookie.rule.point then
         if node_id ~= nil then
             node = service_list[tonumber(node_id) + 1]            
         else
             return nil, nil, nil, host
         end
     -- 服务内随机
-    elseif api_rule == tl_ops_constant_balance_api.rule.random then
+    elseif cookie_rule == tl_ops_constant_balance_cookie.rule.random then
         math.randomseed(#request_uri)
         node_id = tonumber(math.random(0,1) % #service_list_table[matcher.service]) + 1
         node = service_list[node_id]
