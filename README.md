@@ -6,6 +6,10 @@
 
 ---
 
+
+<div align=center><img src="doc/tl-ops-manage.png"/></div>
+
+
 <a href="https://github.com/iamtsm/tl-ops-manage/blob/main/doc/README_EN.md"> translate EN DOC </a>
 
 
@@ -14,8 +18,6 @@
 
 qq交流群 : 624214498，欢迎有兴趣的童鞋提交PR, 持续更新中 ....
 
-
-<div align=center><img src="doc/tl-ops-manage.png"/></div>
 
 
 # 详细文档
