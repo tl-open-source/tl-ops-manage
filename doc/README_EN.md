@@ -2,11 +2,11 @@
 
 [![](https://img.shields.io/badge/base-openresty-blue?style=flat-square)](https://openresty.org/cn/) ![Build](https://img.shields.io/badge/build-passing-green?style=flat-square) ![Version](https://img.shields.io/github/v/tag/iamtsm/tl-ops-manage?color=green&label=Version&style=flat-square) ![License](https://img.shields.io/badge/License-Apache%202.0-blue?style=flat-square)
 
-API gateway based on openresty, supports load balancing, registration discovery, health check, service fuse, service current limit, waf filtering, black and white list, dynamic configuration, data statistics, data display
+API gateway based on openresty, supports load balancing, health check, service fuse, service current limit, waf filtering, black and white list, dynamic SSL certificate, custom plug-in, multi-level cache, visual management, dynamic configuration, data statistics, data display
 
 ---
 
-<div align=center><img src="doc/tl-ops-manage.png"/></div>
+<div align=center><img src="tl-ops-manage.png"/></div>
 
 Experience demo : https://tlops.iamtsm.cn/tlopsmanage/tl_ops_web_index.html
 
@@ -15,11 +15,11 @@ QQ : 624214498, welcome to submit PR, we will continue to update ....
 
 <a href="https://github.com/iamtsm/tl-ops-manage/blob/main/README.md"> 中文翻译 </a>
 
-<div align=center><img src="tl-ops-manage.png"/></div>
+
 
 # Detailed documentation
 
-[tl-ops-manage-documentation](https://book.iamtsm.cn)
+- [x] [tl-ops-manage-documentation](https://book.iamtsm.cn)
 
 # Features
 
