@@ -59,7 +59,7 @@
 
 
 
-- [x] Support custom WAF policy
+- [x] Support custom Waf strategy
 
 - [x] Support cc prevention rules
 
@@ -73,9 +73,15 @@
 
 - [x] Support Args black and white list rules
 
+- [ ] Support Waf return content customization
+
+- [ ] Support Waf statistics display
+
 
 
 - [x] [Plugin] Support version iteration data synchronization
+
+- [x] [Plugin] Support SSL certificate configuration
 
 - [ ] [Plugin] Support configuration of grayscale publishing
 
