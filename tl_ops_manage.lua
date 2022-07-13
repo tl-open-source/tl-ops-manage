@@ -13,7 +13,7 @@ local m_waf             =  require("waf.tl_ops_waf")
 local m_waf_count       =  require("waf.count.tl_ops_waf_count")
 local m_api             =  require("api.tl_ops_api")
 local m_balance         =  require("balance.tl_ops_balance")
-
+local m_ctx             =  require("ctx.tl_ops_ctx");
 local tlog              =  require("utils.tl_ops_utils_log"):new("tl_ops_manage");
 local utils             =  require("utils.tl_ops_utils_func");
 local env               =  require("tl_ops_manage_env")
@@ -31,7 +31,6 @@ local _M = {
     utils = utils,
     constant = constant,
     plugins = {},
-    tlops_api = tlops_api, 
     waf_shared = waf_shared,
     plugin_shared = plugin_shared,
     balance_shared = balance_shared,
@@ -49,6 +48,9 @@ end
 
 -- init_worker阶段执行
 function _M:tl_ops_process_init_worker()
+    -- 执行插件
+    m_plugin:tl_ops_process_before_init_worker();
+
     -- 启动健康检查
 	m_health:init();
 
@@ -62,62 +64,84 @@ function _M:tl_ops_process_init_worker()
 	m_waf_count:init();
 
     -- 执行插件
-    m_plugin:tl_ops_process_init_worker();
+    m_plugin:tl_ops_process_after_init_worker();
+end
+
+
+-- ssl阶段执行
+function _M:tl_ops_process_init_ssl()
+    -- 执行插件
+    m_plugin:tl_ops_process_before_init_ssl();
+    -- 执行插件
+	m_plugin:tl_ops_process_after_init_ssl();
 end
 
 
 -- rewrite阶段执行
 function _M:tl_ops_process_init_rewrite()
-    -- 启动waf
-    m_waf:init(constant.waf_scope.global);
-
     -- 执行插件
-	m_plugin:tl_ops_process_init_rewrite();
+    m_plugin:tl_ops_process_before_init_rewrite();
+    -- 执行插件
+	m_plugin:tl_ops_process_after_init_rewrite();    
 end
 
 
 -- access阶段执行
 function _M:tl_ops_process_init_access()
+    -- 初始化ctx
+    m_ctx:init();
+    
+    -- 执行插件
+    m_plugin:tl_ops_process_before_init_access(ngx.ctx);
+
+    -- 启动waf
+    m_waf:init_global(ngx.ctx);
+
     -- 加载api
-    m_api:init();
+    m_api:init(ngx.ctx);
 
     -- 启动负载均衡
-    m_balance:init();
+    m_balance:init(ngx.ctx);
 
     -- 执行插件
-	m_plugin:tl_ops_process_init_access();
+	m_plugin:tl_ops_process_after_init_access(ngx.ctx);
 end
-
 
 
 -- content阶段执行
 function _M:tl_ops_process_init_content()
     -- 执行插件
-	m_plugin:tl_ops_process_init_content();
+	m_plugin:tl_ops_process_before_init_content(ngx.ctx); 
+    -- 执行插件
+	m_plugin:tl_ops_process_after_init_content(ngx.ctx);
 end
-
 
 
 -- header阶段执行
 function _M:tl_ops_process_init_header()
     -- 执行插件
-	m_plugin:tl_ops_process_init_header();
+	m_plugin:tl_ops_process_before_init_header(ngx.ctx);    
+    -- 执行插件
+	m_plugin:tl_ops_process_after_init_header(ngx.ctx);
 end
 
 
 -- body阶段执行
 function _M:tl_ops_process_init_body()
     -- 执行插件
-	m_plugin:tl_ops_process_init_body();
+	m_plugin:tl_ops_process_before_init_body(ngx.ctx);    
+    -- 执行插件
+	m_plugin:tl_ops_process_after_init_body(ngx.ctx);
 end
 
 
 -- log阶段执行
 function _M:tl_ops_process_init_log()
     -- 执行插件
-	m_plugin:tl_ops_process_init_log();
+	m_plugin:tl_ops_process_before_init_log(ngx.ctx);    
+    -- 执行插件
+	m_plugin:tl_ops_process_after_init_log(ngx.ctx);
 end
-
 
 
 return _M

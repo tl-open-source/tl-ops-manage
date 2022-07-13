@@ -9,7 +9,6 @@ local tl_ops_constant_balance       = require("constant.tl_ops_constant_balance"
 local tl_ops_constant_limit         = require("constant.tl_ops_constant_limit")
 local tl_ops_constant_health        = require("constant.tl_ops_constant_health")
 local tl_ops_constant_service       = require("constant.tl_ops_constant_service");
-local tl_ops_constant_waf_scope     = require("constant.tl_ops_constant_waf_scope");
 local tl_ops_balance_core_api       = require("balance.tl_ops_balance_core_api");
 local tl_ops_balance_core_cookie    = require("balance.tl_ops_balance_core_cookie");
 local tl_ops_balance_core_header    = require("balance.tl_ops_balance_core_header");
@@ -152,7 +151,7 @@ function _M:tl_ops_balance_core_balance()
     end
 
     -- 服务层waf
-    waf:init(tl_ops_constant_waf_scope.service);
+    waf:init_service();
 
     -- 节点下线
     if not node_state or node_state == false then

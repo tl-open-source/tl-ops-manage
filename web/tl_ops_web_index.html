@@ -56,7 +56,7 @@
                 <ul class="layui-nav layui-nav-tree" lay-shrink="all">
                     <li data-name="console" class="layui-nav-item tl-nav-item">
                         <a href="javascript:;" lay-tips="数据统计" lay-direction="5">
-                            <i class="layui-icon layui-icon-home tl-icon"></i>
+                            <i class="layui-icon layui-icon-console tl-icon"></i>
                             <cite>数据统计</cite>
                         </a>
                         <dl class="layui-nav-child" onclick="openpage('console/tl_ops_web_console.html')">
@@ -107,6 +107,17 @@
                             </dd>
                         </dl>
                     </li>
+                    <li data-name="ssl" class="layui-nav-item tl-nav-item">
+                        <a href="javascript:;" lay-tips="SSL配置" lay-direction="5">
+                            <i class="layui-icon layui-icon-vercode tl-icon"></i>
+                            <cite>SSL配置</cite>
+                        </a>
+                        <dl class="layui-nav-child" onclick="openpage('ssl/tl_ops_web_ssl.html')">
+                            <dd data-name="ssl-manage">
+                                <a>SSL配置</a>
+                            </dd>
+                        </dl>
+                    </li>
                     <li data-name="health" class="layui-nav-item tl-nav-item">
                         <a href="javascript:;" lay-tips="服务健康配置" lay-direction="5">
                             <i class="layui-icon layui-icon-set tl-icon"></i>
@@ -131,7 +142,7 @@
                     </li>
                     <li data-name="waf" class="layui-nav-item tl-nav-item">
                         <a href="javascript:;" lay-tips="WAF配置" lay-direction="2">
-                            <i class="layui-icon layui-icon-app tl-icon"></i>
+                            <i class="layui-icon layui-icon-slider tl-icon"></i>
                             <cite>WAF规则配置</cite>
                         </a>
                         <dl class="layui-nav-child" onclick="openpage('waf/tl_ops_web_waf.html')">

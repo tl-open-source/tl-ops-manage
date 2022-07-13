@@ -21,8 +21,7 @@ function _M:new(options)
 end
 
 
--- init_worker阶段执行plugin
-function _M:tl_ops_process_init_worker()
+function _M:tl_ops_process_after_init_worker()
 
     -- 启动同步器
     plugin_sync:tl_ops_sync_timer_start()

@@ -108,7 +108,7 @@
             
             form.verify({
                 check_content : function (value, item) {
-                    document.querySelector("#check_content").value = layedit.getContent(_lay_edit_index);
+                    document.querySelector("#check_content").value = layedit.getText(_lay_edit_index);
                 }
             });
         })

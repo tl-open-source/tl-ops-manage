@@ -20,14 +20,14 @@ return {
             
             zn :日志输出目录，所有模块的日志都将输出到此目录下，注意：需要填写 ‘绝对路径’
         ]]
-        log_dir = "/path/to/tl-open-source/tl-ops-manage/",
+        log_dir = "/path/to/tl-ops-manage/",
         --[[
             en :data storage directory, the directory where the module data is stored, 
                 Notice: need to fill in the 'absolute path'
             
             zn :数据存放目录，模块的数据存放的目录，注意：需要填写 ‘绝对路径’
         ]]
-        store_dir = "/path/to/tl-open-source/tl-ops-manage/store/",
+        store_dir = "/path/to/tl-ops-manage/store/",
     },
     cache = {
         --[[
@@ -53,9 +53,10 @@ return {
                 zn :同步模块定义，同步字段器需要同步的模块，如果新增需要持久化的模块，需要在此定义
             ]]
             module = {
-                "service", "health", "limit-fuse", "limit-token", "limit-leak",
-                "balance", "balance-api", "balance-cookie", "balance-header", "balance-param",
-                "waf", "waf-ip", "waf-api", "waf-cc", "waf-header", "waf-cookie", "waf-param"
+                "service", "health", "limit",
+                "balance", "balance_api", "balance_cookie", "balance_header", "balance_param",
+                "waf", "waf_ip", "waf_api", "waf_cc", "waf_header", "waf_cookie", "waf_param",
+                "ssl"
             }
         },
         data = {
@@ -79,8 +80,9 @@ return {
                     是因为这些模块的数据是在定时器中，而定时器中的数据同步是由其各自的动态配置器处理。
             ]]
             module = {
-                "balance-api", "balance-cookie", "balance-header", "balance-param",
-                "waf-ip", "waf-api", "waf-cc", "waf-header", "waf-cookie", "waf-param"
+                "balance_api", "balance_cookie", "balance_header", "balance_param",
+                "waf_ip", "waf_api", "waf_cc", "waf_header", "waf_cookie", "waf_param",
+                "ssl"
             }
         },
         cluster_data = {
@@ -104,8 +106,8 @@ return {
                     是因为这些模块的数据是在定时器中，而定时器中的数据同步是由其各自的动态配置器处理。
             ]]
             module = {
-                "balance-api", "balance-cookie", "balance-header", "balance-param",
-                "waf-ip", "waf-api", "waf-cc", "waf-header", "waf-cookie", "waf-param"
+                "balance_api", "balance_cookie", "balance_header", "balance_param",
+                "waf_ip", "waf_api", "waf_cc", "waf_header", "waf_cookie", "waf_param",
             }
         }
     },
@@ -161,11 +163,12 @@ return {
         --[[
             en :plugin module definition, the imported plugin needs to be defined here before it can be loaded. 
                 Otherwise it will not take effect
+                Notice: the order in which plugins are filled in will affect the order in which the same plugin stages are executed
             
-            zn :插件模块定义，引入的插件需要在此定义好才能被加载。否则将不生效
+            zn :插件模块定义，引入的插件需要在此定义好才能被加载。否则将不生效。注意，插件填写的顺序将影响相同插件阶段执行的顺序
         ]]
         module = {
-            "template", "sync"
+            "ssl", "sync"
         }
     }
 }

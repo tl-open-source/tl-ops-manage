@@ -22,59 +22,98 @@ function _M:new(options)
 end
 
 
--- init_worker阶段执行plugin
-function _M:tl_ops_process_init_worker()
-
-    tlog:dbg("template plugin tl_ops_process_init_worker")
+function _M:tl_ops_process_before_init_worker()
 
 
     return true, "ok"
 end
 
--- rewrite阶段执行plugin
-function _M:tl_ops_process_init_rewrite()
+function _M:tl_ops_process_after_init_worker()
 
-    tlog:dbg("template plugin tl_ops_process_init_rewrite")
 
     return true, "ok"
 end
 
--- access阶段执行plugin
-function _M:tl_ops_process_init_access()
+function _M:tl_ops_process_before_init_ssl()
+
+
+    return true, "ok"
+end
+
+function _M:tl_ops_process_after_init_ssl()
+
+
+    return true, "ok"
+end
+
+function _M:tl_ops_process_before_init_rewrite()
+
+
+    return true, "ok"
+end
+
+function _M:tl_ops_process_after_init_rewrite()
+
+
+    return true, "ok"
+end
+
+function _M:tl_ops_process_before_init_access(ctx)
     
-    tlog:dbg("template plugin tl_ops_process_init_access")
 
     return true, "ok"
 end
 
--- content阶段执行plugin
-function _M:tl_ops_process_init_content()
+function _M:tl_ops_process_after_init_access(ctx)
     
-    tlog:dbg("template plugin tl_ops_process_init_content")
 
     return true, "ok"
 end
 
--- header阶段执行plugin
-function _M:tl_ops_process_init_header()
+function _M:tl_ops_process_before_init_content(ctx)
+    
+
+    return true, "ok"
+end
+
+function _M:tl_ops_process_after_init_content(ctx)
+    
+
+    return true, "ok"
+end
+
+function _M:tl_ops_process_before_init_header(ctx)
    
-    tlog:dbg("template plugin tl_ops_process_init_header")
 
     return true, "ok"
 end
 
--- body阶段执行plugin
-function _M:tl_ops_process_init_body()
-    
-    tlog:dbg("template plugin tl_ops_process_init_body")
+function _M:tl_ops_process_after_init_header(ctx)
+   
 
     return true, "ok"
 end
 
--- log阶段执行plugin
-function _M:tl_ops_process_init_log()
+function _M:tl_ops_process_before_init_body(ctx)
     
-    tlog:dbg("template plugin tl_ops_process_init_log")
+
+    return true, "ok"
+end
+
+function _M:tl_ops_process_after_init_body(ctx)
+    
+
+    return true, "ok"
+end
+
+function _M:tl_ops_process_before_init_log(ctx)
+    
+
+    return true, "ok"
+end
+
+function _M:tl_ops_process_after_init_log(ctx)
+    
 
     return true, "ok"
 end

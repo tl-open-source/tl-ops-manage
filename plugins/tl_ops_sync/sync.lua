@@ -5,8 +5,8 @@
 -- @email 1905333456@qq.com
 
 local tlog                  = require("utils.tl_ops_utils_log"):new("tl_ops_plugin_sync")
-local sync_constant_fields  = require("plugins.tl_ops_sync.sync_constant_fields")
-local sync_constant_data    = require("plugins.tl_ops_sync.sync_constant_data")
+local sync_fields  = require("plugins.tl_ops_sync.sync_fields")
+local sync_data    = require("plugins.tl_ops_sync.sync_data")
 local sync_env              = tlops.env.sync
 local utils                 = tlops.utils
 local shared                = tlops.balance_shared
@@ -29,11 +29,11 @@ local tl_ops_sync_timer = function(premature, args)
         local module = sync_fields_env.module
         if module then
             for i = 1, #module do
-                local res = sync_constant_fields:sync_constant_fields_module(module[i]);
-                tlog:dbg("sync_constant_fields , module=",module[i],",res=",res)
+                local res = sync_fields:sync_fields_module(module[i]);
+                tlog:dbg("sync_fields , module=",module[i],",res=",res)
             end
         else
-            tlog:dbg("sync_constant_fields no module, module=",module)
+            tlog:dbg("sync_fields no module, module=",module)
         end
     end
 
@@ -42,11 +42,11 @@ local tl_ops_sync_timer = function(premature, args)
         local module = sync_data_env.module
         if module then
             for i = 1, #module do
-                local res = sync_constant_data:sync_constant_data_module(module[i]);
-                tlog:dbg("sync_constant_data , module=",module[i],",res=",res)
+                local res = sync_data:sync_data_module(module[i]);
+                tlog:dbg("sync_data , module=",module[i],",res=",res)
             end
         else
-            tlog:dbg("sync_constant_data no module, module=",module)
+            tlog:dbg("sync_data no module, module=",module)
         end
     end
 end
