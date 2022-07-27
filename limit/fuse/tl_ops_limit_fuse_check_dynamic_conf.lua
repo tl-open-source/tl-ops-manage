@@ -4,13 +4,13 @@
 -- @author iamtsm
 -- @email 1905333456@qq.com
 
-local cjson 					= require("cjson.safe");
-local tlog 						= require("utils.tl_ops_utils_log"):new("tl_ops_limit_fuse_check_dynamic_conf");
-local tl_ops_utils_func 		= require("utils.tl_ops_utils_func");
-local tl_ops_constant_limit 	= require("constant.tl_ops_constant_limit")
-local cache_limit 				= require("cache.tl_ops_cache_core"):new("tl-ops-limit");
-local tl_ops_constant_service 	= require("constant.tl_ops_constant_service")
-local shared 					= ngx.shared.tlopsbalance
+local cjson						= require("cjson.safe");
+local tlog						= require("utils.tl_ops_utils_log"):new("tl_ops_limit_fuse_check_dynamic_conf");
+local tl_ops_utils_func			= require("utils.tl_ops_utils_func");
+local tl_ops_constant_limit		= require("constant.tl_ops_constant_limit")
+local cache_limit				= require("cache.tl_ops_cache_core"):new("tl-ops-limit");
+local tl_ops_constant_service	= require("constant.tl_ops_constant_service")
+local shared					= ngx.shared.tlopsbalance
 
 local tl_ops_limit_fuse_check_dynamic_conf_add_timer_check;
 

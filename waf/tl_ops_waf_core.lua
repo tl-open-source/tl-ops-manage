@@ -4,18 +4,18 @@
 -- @author iamtsm
 -- @email 1905333456@qq.com
 
-local tl_ops_waf_core_api 		= require("waf.tl_ops_waf_core_api");
-local tl_ops_waf_core_ip 		= require("waf.tl_ops_waf_core_ip");
-local tl_ops_waf_core_cc 		= require("waf.tl_ops_waf_core_cc");
-local tl_ops_waf_core_header 	= require("waf.tl_ops_waf_core_header");
-local tl_ops_waf_core_cookie 	= require("waf.tl_ops_waf_core_cookie");
-local tl_ops_waf_core_param 	= require("waf.tl_ops_waf_core_param");
-local tl_ops_constant_waf 		= require("constant.tl_ops_constant_waf");
-local cache_waf 				= require("cache.tl_ops_cache_core"):new("tl-ops-waf");
-local cjson 					= require("cjson.safe");
-local tl_ops_utils_func 		= require("utils.tl_ops_utils_func");
-local tl_ops_manage_env 		= require("tl_ops_manage_env")
-local shared 					= ngx.shared.tlopsbalance
+local tl_ops_waf_core_api		= require("waf.tl_ops_waf_core_api");
+local tl_ops_waf_core_ip		= require("waf.tl_ops_waf_core_ip");
+local tl_ops_waf_core_cc		= require("waf.tl_ops_waf_core_cc");
+local tl_ops_waf_core_header	= require("waf.tl_ops_waf_core_header");
+local tl_ops_waf_core_cookie	= require("waf.tl_ops_waf_core_cookie");
+local tl_ops_waf_core_param		= require("waf.tl_ops_waf_core_param");
+local tl_ops_constant_waf		= require("constant.tl_ops_constant_waf");
+local cache_waf					= require("cache.tl_ops_cache_core"):new("tl-ops-waf");
+local cjson						= require("cjson.safe");
+local tl_ops_utils_func			= require("utils.tl_ops_utils_func");
+local tl_ops_manage_env			= require("tl_ops_manage_env")
+local shared					= ngx.shared.tlopsbalance
 
 
 local _M = {

@@ -4,11 +4,11 @@
 -- @author iamtsm
 -- @email 1905333456@qq.com
 
-local cjson 			= require("cjson.safe")
-local tlog 				= require("utils.tl_ops_utils_log"):new("tl_ops_utils_store");
-local tl_ops_utils_func = require("utils.tl_ops_utils_func");
-local tl_ops_manage_env = require("tl_ops_manage_env")
-local tl_ops_rt 		= require("constant.tl_ops_constant_comm").tl_ops_rt;
+local cjson				= require("cjson.safe")
+local tlog				= require("utils.tl_ops_utils_log"):new("tl_ops_utils_store");
+local tl_ops_utils_func	= require("utils.tl_ops_utils_func");
+local tl_ops_manage_env	= require("tl_ops_manage_env")
+local tl_ops_rt			= require("constant.tl_ops_constant_comm").tl_ops_rt;
 
 
 local _M = {}

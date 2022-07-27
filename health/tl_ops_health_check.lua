@@ -4,16 +4,16 @@
 -- @author iamtsm
 -- @email 1905333456@qq.com
 
-local cjson 							= require("cjson.safe")
-local tlog 								= require("utils.tl_ops_utils_log"):new("tl_ops_health")
-local tl_ops_utils_func 				= require("utils.tl_ops_utils_func")
-local tl_ops_constant_health 			= require("constant.tl_ops_constant_health")
-local tl_ops_health_check_dynamic_conf 	= require("health.tl_ops_health_check_dynamic_conf")
-local tl_ops_health_check_version 		= require("health.tl_ops_health_check_version")
-local tl_ops_status 					= require("constant.tl_ops_constant_comm").tl_ops_status;
-local nx_socket 						= ngx.socket.tcp
-local shared 							= ngx.shared.tlopsbalance
-local find 								= ngx.re.find
+local cjson								= require("cjson.safe")
+local tlog								= require("utils.tl_ops_utils_log"):new("tl_ops_health")
+local tl_ops_utils_func					= require("utils.tl_ops_utils_func")
+local tl_ops_constant_health			= require("constant.tl_ops_constant_health")
+local tl_ops_status						= require("constant.tl_ops_constant_comm").tl_ops_status;
+local tl_ops_health_check_dynamic_conf	= require("health.tl_ops_health_check_dynamic_conf")
+local tl_ops_health_check_version		= require("health.tl_ops_health_check_version")
+local nx_socket							= ngx.socket.tcp
+local shared							= ngx.shared.tlopsbalance
+local find								= ngx.re.find
 
 
 

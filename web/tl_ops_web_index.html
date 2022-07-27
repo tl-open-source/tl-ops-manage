@@ -9,8 +9,8 @@
     <meta name="viewport"
         content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
     <script src="lib/axios.js"></script>
-    <script src="https://im.iamtsm.cn/lay/dist/layuiadmin/layui/layui.js" v="layui" e="layui"></script>
-    <link rel="stylesheet" type="text/css" href="https://im.iamtsm.cn/lay/dist/layuiadmin/layui/css/layui.css" />
+    <script src="lib/layui/layui.js" v="layui" e="layui"></script>
+    <link rel="stylesheet" type="text/css" href="lib/layui/css/layui.css" />
 </head>
 
 <style>
@@ -107,17 +107,6 @@
                             </dd>
                         </dl>
                     </li>
-                    <li data-name="ssl" class="layui-nav-item tl-nav-item">
-                        <a href="javascript:;" lay-tips="SSL配置" lay-direction="5">
-                            <i class="layui-icon layui-icon-vercode tl-icon"></i>
-                            <cite>SSL配置</cite>
-                        </a>
-                        <dl class="layui-nav-child" onclick="openpage('ssl/tl_ops_web_ssl.html')">
-                            <dd data-name="ssl-manage">
-                                <a>SSL配置</a>
-                            </dd>
-                        </dl>
-                    </li>
                     <li data-name="health" class="layui-nav-item tl-nav-item">
                         <a href="javascript:;" lay-tips="服务健康配置" lay-direction="5">
                             <i class="layui-icon layui-icon-set tl-icon"></i>
@@ -181,6 +170,18 @@
                             </dd>
                         </dl>
                     </li>
+                    <li data-name="plugins" class="layui-nav-item tl-nav-item">
+                        <a href="javascript:;" lay-tips="插件列表管理" lay-direction="5">
+                            <i class="layui-icon layui-icon-vercode tl-icon"></i>
+                            <cite>插件列表管理</cite>
+                        </a>
+                        <dl class="layui-nav-child" onclick="openpage('plugins/ssl/tl_ops_web_ssl.html')">
+                            <dd data-name="ssl-manage">
+                                <a>SSL插件配置</a>
+                            </dd>
+                        </dl>
+                    </li>
+                    
                     <li data-name="store" class="layui-nav-item tl-nav-item">
                         <a href="javascript:;" lay-tips="数据文件管理" lay-direction="2">
                             <i class="layui-icon layui-icon-template tl-icon"></i>

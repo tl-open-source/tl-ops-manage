@@ -5,13 +5,13 @@
 -- @email 1905333456@qq.com
 
 
-local cjson 					= require("cjson.safe");
-local tlog 						= require("utils.tl_ops_utils_log"):new("tl_ops_health_check_dynamic_conf");
-local tl_ops_utils_func 		= require("utils.tl_ops_utils_func");
-local tl_ops_constant_health 	= require("constant.tl_ops_constant_health")
-local cache_health 				= require("cache.tl_ops_cache_core"):new("tl-ops-health");
-local tl_ops_constant_service 	= require("constant.tl_ops_constant_service");
-local shared 					= ngx.shared.tlopsbalance
+local cjson						= require("cjson.safe");
+local tlog						= require("utils.tl_ops_utils_log"):new("tl_ops_health_check_dynamic_conf");
+local tl_ops_utils_func			= require("utils.tl_ops_utils_func");
+local tl_ops_constant_health	= require("constant.tl_ops_constant_health")
+local cache_health				= require("cache.tl_ops_cache_core"):new("tl-ops-health");
+local tl_ops_constant_service	= require("constant.tl_ops_constant_service");
+local shared					= ngx.shared.tlopsbalance
 
 -- 需要提前定义，定时器访问不了
 local tl_ops_health_check_dynamic_conf_add_timer_check;

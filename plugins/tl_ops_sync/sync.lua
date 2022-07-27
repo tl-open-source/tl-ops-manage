@@ -5,8 +5,8 @@
 -- @email 1905333456@qq.com
 
 local tlog                  = require("utils.tl_ops_utils_log"):new("tl_ops_plugin_sync")
-local sync_fields  = require("plugins.tl_ops_sync.sync_fields")
-local sync_data    = require("plugins.tl_ops_sync.sync_data")
+local sync_fields           = require("plugins.tl_ops_sync.sync_fields")
+local sync_data             = require("plugins.tl_ops_sync.sync_data")
 local sync_env              = tlops.env.sync
 local utils                 = tlops.utils
 local shared                = tlops.balance_shared
