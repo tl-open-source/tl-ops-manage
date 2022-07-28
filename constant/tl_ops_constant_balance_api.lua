@@ -19,12 +19,14 @@ local tl_ops_constant_balance_api = {
             service = "tlops-demo",             -- 当前url路由到的service
             node = 0,                           -- 当前url路由到的service下的node的索引
             host = "tlops1.com",                -- 当前url处理的域名范围
+            rewrite_url = "",                   -- 当前url重写后的url
         },
         random = {
             id = 1,
             url = "/*",                         -- 当前url匹配规则
             service = "tlops-demo",             -- 当前url路由到的service
             host = "tlops1.com",                -- 当前url处理的域名范围
+            rewrite_url = "",                   -- 当前url重写后的url
         }
     },
     rule = {-- api rule 策略

@@ -100,11 +100,15 @@ function _M:tl_ops_process_init_access()
     -- 加载api
     m_api:init(ngx.ctx);
 
-    -- 启动负载均衡
-    m_balance:init(ngx.ctx);
-
     -- 执行插件
 	m_plugin:tl_ops_process_after_init_access(ngx.ctx);
+end
+
+
+-- balance
+function _M:tl_ops_process_init_balancer()
+    -- 启动负载均衡
+    m_balance:init(ngx.ctx);
 end
 
 

@@ -23,6 +23,7 @@ local tl_ops_limit                  = require("limit.tl_ops_limit");
 local cjson                         = require("cjson.safe");
 local tl_ops_utils_func             = require("utils.tl_ops_utils_func");
 local tl_ops_manage_env             = require("tl_ops_manage_env")
+local ngx_balancer                  = require ("ngx.balancer")
 local shared                        = ngx.shared.tlopsbalance
 
 
@@ -182,11 +183,15 @@ function _M:tl_ops_balance_core_balance()
     end
     shared:incr(limit_req_succ_count_key, 1)
 
-    ngx.var.node = node['protocol'] .. node["ip"] .. ':' .. node["port"];
     ngx.header['Tl-Proxy-Server'] = node['service'];
     ngx.header['Tl-Proxy-Node'] = node['name'];
     ngx.header['Tl-Proxy-State'] = "online"
     ngx.header['Tl-Proxy-Mode'] = balance_mode
+
+    local ok, err = ngx_balancer.set_current_peer(node["ip"], node["port"])
+    if ok then
+        ngx_balancer.set_timeouts(3, 60, 60)
+    end
 end
 
 

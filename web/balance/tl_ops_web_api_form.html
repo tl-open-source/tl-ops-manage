@@ -38,6 +38,13 @@
                 <input type="text" name="url" id="url" maxlength="100" placeholder="请输入API" autocomplete="off" class="layui-input">
             </div>
         </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">API重定向</label>
+            <div class="layui-input-block" >
+                <input type="text" name="rewrite_url" id="rewrite_url" maxlength="100" placeholder="API重定向地址" autocomplete="off" class="layui-input" 
+                    onmouseleave="tl_mouse_leave_tips()" onmouseenter="tl_mouse_enter_tips('rewrite_url','默认为空，如有需要可填写，会将匹配的API重写至此API')">
+            </div>
+        </div>
 
         <div class="layui-form-item" id="tl-ops-web-api-form-service-view"></div>
         <script id="tl-ops-web-api-form-service-tpl" type="text/html">

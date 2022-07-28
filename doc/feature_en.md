@@ -14,6 +14,8 @@
 
 - [x] Support dynamic routing strategy
 
+- [x] Support api address rewriting
+
 - [x] Support routing configuration management
 
 

@@ -49,15 +49,17 @@ const tl_ops_web_api_point_cols = function () {
             type:'checkbox',fixed : 'left', width: "5%"
         }, {
             field: 'id', title: 'ID',width:"10%"
-        },  {
+        }, {
             field: 'host', title: '域名',width:"15%"
         }, {
-            field: 'url', title: 'API', width:"15%"
-        },  {
-            field: 'service', title: '所属服务',width:"15%"
-        },  {
-            field: 'node', title: '节点索引',width:"15%"
-        },  {
+            field: 'url', title: 'API', width:"10%"
+        }, {
+            field: 'service', title: '所属服务',width:"10%"
+        }, {
+            field: 'node', title: '节点索引',width:"10%"
+        }, {
+            field: 'rewrite_url', title: '重写地址',width:"15%"
+        }, {
             field: 'updatetime', title: '更新时间',width:"15%",
         }, {
             width: "10%",
@@ -76,16 +78,18 @@ const tl_ops_web_api_random_cols = function () {
             type:'checkbox',fixed : 'left', width: "5%"
         }, {
             field: 'id', title: 'ID', width:"10%"
-        },  {
+        }, {
             field: 'host', title: '域名',width:"15%"
         }, {
-            field: 'url', title: 'API', width:"20%"
-        },  {
-            field: 'service', title: '所属服务',width:"15%"
-        },  {
-            field: 'updatetime', title: '更新时间',width:"20%",
+            field: 'url', title: 'API', width:"15%"
         }, {
-            width: "15%",
+            field: 'service', title: '所属服务',width:"15%"
+        }, {
+            field: 'rewrite_url', title: '重写地址',width:"15%"
+        }, {
+            field: 'updatetime', title: '更新时间',width:"15%",
+        }, {
+            width: "10%",
             align: 'center',
             fixed: 'right',
             title: '操作',
@@ -319,7 +323,7 @@ const tl_ops_api_data_add_filter = function( data ) {
         delete data.field.node
     }
     for(let key in data.field){
-        if(key === 'id'){
+        if(key === 'id' || key === 'rewrite_url'){
             continue;
         }
         if(data.field[key] === undefined || data.field[key] === null || data.field[key] === ''){
@@ -348,6 +352,9 @@ const tl_ops_api_data_edit_filter = function( data ) {
         delete data.field.node
     }
     for(let key in data.field){
+        if(key === 'rewrite_url'){
+            continue
+        }
         if(data.field[key] === undefined || data.field[key] === null || data.field[key] === ''){
             layer.msg(key + "未填写")
             return false;

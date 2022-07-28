@@ -35,7 +35,7 @@ local tl_ops_balance_api_service_matcher = function(service_list_table)
     local api_list_table = cjson.decode(api_list);
     if not api_list_table then
         return nil, nil, nil, nil
-    end    
+    end
     
     -- 根据路由当前策略进行路由, 返回正则命中的api
     if api_rule == tl_ops_constant_balance_api.rule.point then
@@ -103,6 +103,13 @@ local tl_ops_balance_api_service_matcher = function(service_list_table)
     -- 获取当前节点健康状态
     local key = tl_ops_utils_func:gen_node_key(tl_ops_constant_health.cache_key.state, matcher.service, node_id)
     local node_state , _ = shared:get(key)
+
+
+    -- 需要重写url
+    local rewrite_url = matcher.rewrite_url
+    if rewrite_url and rewrite_url ~= '' then
+        ngx.req.set_uri(rewrite_url, false)
+    end
     
     return node, node_state, node_id, host
 end
