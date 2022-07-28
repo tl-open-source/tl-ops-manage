@@ -242,32 +242,32 @@ function _M:tl_ops_process_after_init_access(ctx)
 end
 
 
--- content前置阶段执行
-function _M:tl_ops_process_before_init_content(ctx)
+-- balance前置阶段执行
+function _M:tl_ops_process_before_init_balancer(ctx)
     for i = 1, #self.plugins do
         local plugin = self.plugins[i]
-        if type(plugin.func.tl_ops_process_before_init_content) == 'function' then
-            local ok, _ = plugin.func:tl_ops_process_before_init_content(ctx)
+        if type(plugin.func.tl_ops_process_before_init_balancer) == 'function' then
+            local ok, _ = plugin.func:tl_ops_process_before_init_balancer(ctx)
             if not ok then
-                tlog:err("tl_ops_process_before_init_content process err , name=",plugin.name, ", ",_)
+                tlog:err("tl_ops_process_before_init_balancer process err , name=",plugin.name, ", ",_)
             else
-                tlog:dbg("tl_ops_process_before_init_content process ok , name=",plugin.name, ", ",_)
+                tlog:dbg("tl_ops_process_before_init_balancer process ok , name=",plugin.name, ", ",_)
             end
         end
     end
 end
 
 
--- content后置阶段执行
-function _M:tl_ops_process_after_init_content(ctx)
+-- balance后置阶段执行
+function _M:tl_ops_process_after_init_balancer(ctx)
     for i = 1, #self.plugins do
         local plugin = self.plugins[i]
-        if type(plugin.func.tl_ops_process_after_init_content) == 'function' then
-            local ok, _ = plugin.func:tl_ops_process_after_init_content(ctx)
+        if type(plugin.func.tl_ops_process_after_init_balancer) == 'function' then
+            local ok, _ = plugin.func:tl_ops_process_after_init_balancer(ctx)
             if not ok then
-                tlog:err("tl_ops_process_after_init_content process err , name=",plugin.name, ", ",_)
+                tlog:err("tl_ops_process_after_init_balancer process err , name=",plugin.name, ", ",_)
             else
-                tlog:dbg("tl_ops_process_after_init_content process ok , name=",plugin.name, ", ",_)
+                tlog:dbg("tl_ops_process_after_init_balancer process ok , name=",plugin.name, ", ",_)
             end
         end
     end

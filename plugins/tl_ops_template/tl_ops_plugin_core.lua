@@ -70,13 +70,13 @@ function _M:tl_ops_process_after_init_access(ctx)
     return true, "ok"
 end
 
-function _M:tl_ops_process_before_init_content(ctx)
+function _M:tl_ops_process_before_init_balancer(ctx)
     
 
     return true, "ok"
 end
 
-function _M:tl_ops_process_after_init_content(ctx)
+function _M:tl_ops_process_after_init_balancer(ctx)
     
 
     return true, "ok"

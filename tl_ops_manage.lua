@@ -105,19 +105,16 @@ function _M:tl_ops_process_init_access()
 end
 
 
--- balance
+-- balance阶段执行
 function _M:tl_ops_process_init_balancer()
+    -- 执行插件
+    m_plugin:tl_ops_process_before_init_balancer(ngx.ctx); 
+
     -- 启动负载均衡
     m_balance:init(ngx.ctx);
-end
 
-
--- content阶段执行
-function _M:tl_ops_process_init_content()
     -- 执行插件
-	m_plugin:tl_ops_process_before_init_content(ngx.ctx); 
-    -- 执行插件
-	m_plugin:tl_ops_process_after_init_content(ngx.ctx);
+	m_plugin:tl_ops_process_after_init_balancer(ngx.ctx);
 end
 
 
