@@ -13,8 +13,11 @@
 <a href="https://github.com/iamtsm/tl-ops-manage/blob/main/doc/README_EN.md"> translate EN DOC </a>
 
 
+官网 : https://tlops.iamtsm.cn/website/index.html
+
 体验demo : https://tlops.iamtsm.cn/tlopsmanage/tl_ops_web_index.html
 
+插件列表 : https://tlops.iamtsm.cn/website/plugins.html
 
 qq交流群 : 624214498，欢迎有兴趣的童鞋提交PR, 持续更新中 ....
 
