@@ -26,7 +26,7 @@ local tl_ops_waf_count_timer
 
 
 
-local tl_ops_waf_count_keys = function(waf_interval_success_key, service_name, node_id)
+local tl_ops_waf_count_keys = function(cache_waf_count, waf_interval_success_key, service_name, node_id)
 
     local req_ip_key = tl_ops_constant_waf.cache_key.req_ip
     if service_name ~= nil or node_id ~= nil then
@@ -87,7 +87,10 @@ local tl_ops_waf_count_keys = function(waf_interval_success_key, service_name, n
         tlog:dbg("waf count dont need async , cur_count=",cur_count,",service_name=",service_name,",node_id=",node_id)
     else
         -- push to list
-        local key = tl_ops_utils_func:gen_node_key(waf_interval_success_key, service_name, node_id)
+        local key = waf_interval_success_key
+        if service_name ~= nil or node_id ~= nil then
+            key = tl_ops_utils_func:gen_node_key(waf_interval_success_key, service_name, node_id)
+        end
         local waf_interval_success = cache_waf_count:get001(key)
         if not waf_interval_success then
             waf_interval_success = {}
@@ -161,10 +164,10 @@ local tl_ops_waf_count = function()
             return
         end
         -- 服务级别waf
-        tl_ops_waf_count_keys(tl_ops_constant_waf.cache_key.waf_interval_success, service_name, nil)
+        tl_ops_waf_count_keys(cache_waf_count, tl_ops_constant_waf.cache_key.waf_interval_success, service_name, nil)
     end
     -- 全局级别waf
-    tl_ops_waf_count_keys(tl_ops_constant_waf.cache_key.waf_interval_success, nil, nil)
+    tl_ops_waf_count_keys(cache_waf_count, tl_ops_constant_waf.cache_key.waf_interval_success, nil, nil)
 end
 
 

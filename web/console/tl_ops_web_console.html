@@ -19,7 +19,7 @@
 <style>
     .tl-inspector {
         display: flex;
-        width: 272px;
+        width: 430px;
         height: 27px;
         margin: 10px auto;
         border-radius: 6px;
@@ -110,8 +110,11 @@
                 </div>
                 <div class="tl-inspector-span" onclick="tl_ops_web_console_change_nav('health')" id="health-nav"
                     style="margin-right: 16px;">健康监测</div>
-                <div class="tl-inspector-span" onclick="tl_ops_web_console_change_nav('fuselimit')" id="fuselimit-nav">
+                <div class="tl-inspector-span" onclick="tl_ops_web_console_change_nav('fuselimit')" id="fuselimit-nav"
+                    style="margin-right: 16px;">
                     熔断监测</div>
+                <div class="tl-inspector-span" onclick="tl_ops_web_console_change_nav('waf')" id="waf-nav">
+                    WAF检测</div>
             </div>
 
             <div style="text-align: right;" class="layui-form" id="tl-console-load-sync" onmouseleave="tl_mouse_leave_tips()"
@@ -152,6 +155,7 @@
                                     <div class="layui-card" style="border-radius: 24px;">
                                         <div class="layui-card-header">
                                             <span class="layui-badge layui-bg-blue">{{service.id}}服务</span>
+
                                             {{#  if(service.type === 'balance') { }}
                                             <div style="float: right;" class="layui-form">
                                                 <span class="layui-badge layui-bg-blue " style="padding: 4px 14px 4px 14px;cursor: pointer;">当天</span>
@@ -161,6 +165,8 @@
                                                     onmouseenter="tl_mouse_enter_tips('tl-balance-span-all-{{service.id}}','暂不支持')">全部</span>
                                             </div>
                                             {{#  } }}
+
+
                                             {{#  if(service.type === 'health') { }}
                                             <div style="float: right;" class="layui-form">
                                                 {{#  if(service.uncheck === false) { }}
@@ -174,6 +180,19 @@
                                                 {{#  } }}
                                             </div>
                                             {{#  } }}
+
+
+                                            {{#  if(service.type === 'waf') { }}
+                                            <div style="float: right;" class="layui-form">
+                                                <span class="layui-badge layui-bg-blue " style="padding: 4px 14px 4px 14px;cursor: pointer;">当天</span>
+                                                <span class="layui-badge layui-bg-red layui-btn-disabled"
+                                                    style="padding: 4px 14px 4px 14px;cursor: pointer;" id="tl-waf-span-all-{{service.id}}"
+                                                    onmouseleave="tl_mouse_leave_tips()"
+                                                    onmouseenter="tl_mouse_enter_tips('tl-waf-span-all-{{service.id}}','暂不支持')">全部</span>
+                                            </div>
+                                            {{#  } }}
+
+
                                         </div>
                                         <div class="layui-card-body">
                                             <div style="height:300px;" id="{{service.id}}"> </div>

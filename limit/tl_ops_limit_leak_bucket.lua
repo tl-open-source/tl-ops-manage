@@ -80,7 +80,7 @@ function _M:new( options, keys )
 end
 
 
-- get leak with lazy generate
+-- get leak with lazy generate
 -- block 漏桶流速单位
 local tl_ops_limit_leak_bucket = function( block )
     local capacity = shared:get(self.keys.capacity)

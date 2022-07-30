@@ -26,6 +26,7 @@ function _M:tl_ops_waf_count_incr_key(cache_key, service_name, node_id)
     if service_name ~= nil or node_id ~= nil then
         key = tl_ops_utils_func:gen_node_key(cache_key, service_name, node_id)
     end
+
     local count = shared:get(key)
     if not count then
         shared:set(key, 0);

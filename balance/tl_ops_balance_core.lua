@@ -152,7 +152,7 @@ function _M:tl_ops_balance_core_balance()
     end
 
     -- 服务层waf
-    waf:init_service();
+    waf:init_service(node.service);
 
     -- 节点下线
     if not node_state or node_state == false then

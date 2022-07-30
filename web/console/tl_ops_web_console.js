@@ -39,6 +39,8 @@ const tl_ops_web_console_main = function () {
                 tl_ops_web_console_echarts_fuselimit_render(service_data)
             }else if(cur_type === 'health'){
                 tl_ops_web_console_echarts_health_render(service_data)
+            }else if(cur_type === 'waf'){
+                tl_ops_web_console_echarts_waf_render(service_data)
             }
             
             tl_ops_web_console_service_state_render(service_data)
@@ -67,6 +69,8 @@ const tl_ops_web_console_reflush = function(){
                 tl_ops_web_console_echarts_fuselimit_render_reflush(service_data);
             }else if(cur_type === 'health'){
                 tl_ops_web_console_echarts_health_render_reflush(service_data);
+            }else if(cur_type === 'waf'){
+                tl_ops_web_console_echarts_waf_render_reflush(service_data);
             }
             tl_ops_web_console_service_state_render(service_data)
         }
@@ -430,6 +434,172 @@ const tl_ops_web_console_echarts_balance_render_reflush = function (data) {
         tl_ops_web_console_echarts_balance_options_reflush(item)
     })
 }
+
+
+
+
+
+
+//waf get option
+const tl_ops_web_console_echarts_waf_get_option = function(data){
+    var option = {
+        title: {
+            text: `${data.id}-WAF总量:${data.waf_count}`,
+            show: true,
+            textStyle: {
+                fontSize: 14,
+            },
+            x: 'center',
+            y: 'bottom'
+        },
+        tooltip: {
+            trigger: 'axis',
+            axisPointer: { type: 'cross' }
+        },
+        legend: {},
+        xAxis: {
+            type: 'category',
+            axisTick: {
+                alignWithLabel: true
+            },
+            data: data.timeList,
+            axisLabel: { //轴文字标签
+                interval: 0,
+                show: true,
+                textStyle: {
+                    color: '#B0CEFC',
+                },
+                formatter: function (val) {
+                    var strs = val.split(''); //字符串数组  
+                    var str = ''
+                    for (var i = 0, s; s = strs[i++];) { //遍历字符串数组  
+                        str += s;
+                        if (!(i % 18)) str += '\n';
+                    }
+                    return str
+                }
+            }
+        },
+        yAxis: {
+            type: 'value',
+            name: 'WAF拦截量',
+            position: 'left',
+            axisLabel: {
+                formatter: '{value} 次'
+            },
+            nameTextStyle: {
+                color: '#3582fb',
+                padding: 10
+            },
+        },
+        series: data.seriesWafList
+    };
+    return option;
+}
+
+//waf 统计数量 (以当天为单位)
+const tl_ops_web_console_waf_time_list_caculate_days = function (data) {
+    let config = []
+    for (let key in data) {
+        let waf_count = 0; //服务总量统计
+        let seriesWafList = [];
+        let nodes = data[key].nodes;
+        for (let skey in nodes) {
+            let wafSuccessList = nodes[skey].waf_success;
+
+            for (let time in wafSuccessList) {
+                let count = wafSuccessList[time];
+                waf_count += count;
+            }
+
+            let dayTimeCountList = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] //节点总量统计
+            for (let timeItem in wafSuccessList) {
+                let count = wafSuccessList[timeItem];
+                let day = timeItem.toString().split(" ")[0]
+                let time = timeItem.toString().split(" ")[1]
+                let hours = parseInt(time.split(":")[0])
+                let cur_day = getDateStr(0);
+
+                //当天内
+                if (day.includes(cur_day)) {
+                    let dayTimeCountIndex = parseInt((hours % 2) === 0 ? (hours / 2) : (hours / 2) + 1) - 1;
+                    dayTimeCountList[dayTimeCountIndex] += count
+                }
+            }
+            seriesWafList.push({
+                name: skey,
+                type: 'line',
+                yAxisIndex: 0,
+                data: dayTimeCountList,
+            })
+        }
+        config.push({
+            id: key,
+            waf_count: waf_count,
+            seriesWafList: seriesWafList,
+            timeList: ['1点', '3点', '5点', '7点', '9点', '11点', '13点', '15点', '17点', '19点', '21点', '23点']
+        })
+    }
+    return config
+}
+
+//waf echarts 初始化
+const tl_ops_web_console_echarts_waf_options = function (data) {
+    var option = tl_ops_web_console_echarts_waf_get_option(data);
+
+    var consoleEchart = echarts.init(document.getElementById(data.id));
+    consoleEchart.setOption(option);
+
+    consoleEchartsList.push({
+        id : data.id,
+        type : cur_type,
+        echart : consoleEchart
+    });
+}
+
+//waf echarts 初始化渲染
+const tl_ops_web_console_echarts_waf_render = function (data) {
+    let serviceList = [];
+    for(let serviceName in data){
+        serviceList.push({
+            id : serviceName,
+            type : 'waf',
+        })
+    }
+    serviceList = serviceList.sort(function(a, b){return a.id.localeCompare(b.id,'zh-CN')})
+
+    laytpl(document.getElementById(_console_echarts_tlp_id_name).innerHTML).render((() => {
+        return serviceList
+    })(), (html) => {
+        document.getElementById(_console_echarts_view_id_name).innerHTML = html;
+    });
+    form.render()
+
+    //渲染echarts
+    tl_ops_web_console_waf_time_list_caculate_days(data).forEach((item) => {
+        tl_ops_web_console_echarts_waf_options(item)
+    })
+}
+
+//waf echarts 刷新
+const tl_ops_web_console_echarts_waf_options_reflush = function (data) {
+    var option = tl_ops_web_console_echarts_waf_get_option(data);
+
+    consoleEchartsList.filter((item)=>{
+        if(item.type === 'waf' && item.id === data.id){
+            item.echart.setOption(option)
+        }
+    })
+}
+
+//waf echarts 刷新渲染
+const tl_ops_web_console_echarts_waf_render_reflush = function (data) {
+    //渲染echarts
+    tl_ops_web_console_waf_time_list_caculate_days(data).forEach((item) => {
+        tl_ops_web_console_echarts_waf_options_reflush(item)
+    })
+}
+
 
 
 
@@ -939,20 +1109,30 @@ const tl_ops_web_console_change_nav = function (type) {
         document.getElementById("health-nav").className = 'tl-inspector-span tl-inspector-span-active'
         document.getElementById("balance-nav").className = 'tl-inspector-span '
         document.getElementById("fuselimit-nav").className = 'tl-inspector-span '
+        document.getElementById("waf-nav").className = 'tl-inspector-span '
 
         tl_ops_web_console_echarts_health_render(res_data.service)
     } else if (type === 'balance') {
         document.getElementById("balance-nav").className = 'tl-inspector-span tl-inspector-span-active'
         document.getElementById("health-nav").className = 'tl-inspector-span '
         document.getElementById("fuselimit-nav").className = 'tl-inspector-span '
+        document.getElementById("waf-nav").className = 'tl-inspector-span '
 
         tl_ops_web_console_echarts_balance_render(res_data.service)
     } else if (type === 'fuselimit') {
         document.getElementById("fuselimit-nav").className = 'tl-inspector-span tl-inspector-span-active'
         document.getElementById("balance-nav").className = 'tl-inspector-span '
         document.getElementById("health-nav").className = 'tl-inspector-span '
+        document.getElementById("waf-nav").className = 'tl-inspector-span '
 
         tl_ops_web_console_echarts_fuselimit_render(res_data.service)
+    } else if (type === 'waf') {
+        document.getElementById("waf-nav").className = 'tl-inspector-span tl-inspector-span-active'
+        document.getElementById("balance-nav").className = 'tl-inspector-span '
+        document.getElementById("health-nav").className = 'tl-inspector-span '
+        document.getElementById("fuselimit-nav").className = 'tl-inspector-span '
+
+        tl_ops_web_console_echarts_waf_render(res_data.service)
     }
 }
 

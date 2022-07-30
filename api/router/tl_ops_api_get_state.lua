@@ -235,6 +235,7 @@ local Router = function()
         waf_success_cache_global = "{}"
     end
     cache_state.waf['waf_success'] = cjson.decode(waf_success_cache_global) 
+    cache_state.waf['count_interval'] = tl_ops_constant_waf.count.interval
 
 
     -- 其他

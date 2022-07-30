@@ -17,9 +17,9 @@ function _M:init_global()
 end
 
 -- 开启waf
-function _M:init_service(scope)
+function _M:init_service(service_name)
 
-    tl_ops_waf_core:tl_ops_waf_service_core()
+    tl_ops_waf_core:tl_ops_waf_service_core(service_name)
     
 end
 
