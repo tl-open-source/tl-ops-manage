@@ -503,36 +503,33 @@ const tl_ops_web_console_waf_time_list_caculate_days = function (data) {
     for (let key in data) {
         let waf_count = 0; //服务总量统计
         let seriesWafList = [];
-        let nodes = data[key].nodes;
-        for (let skey in nodes) {
-            let wafSuccessList = nodes[skey].waf_success;
+        let wafSuccessList = data[key].waf_success;
 
-            for (let time in wafSuccessList) {
-                let count = wafSuccessList[time];
-                waf_count += count;
-            }
-
-            let dayTimeCountList = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] //节点总量统计
-            for (let timeItem in wafSuccessList) {
-                let count = wafSuccessList[timeItem];
-                let day = timeItem.toString().split(" ")[0]
-                let time = timeItem.toString().split(" ")[1]
-                let hours = parseInt(time.split(":")[0])
-                let cur_day = getDateStr(0);
-
-                //当天内
-                if (day.includes(cur_day)) {
-                    let dayTimeCountIndex = parseInt((hours % 2) === 0 ? (hours / 2) : (hours / 2) + 1) - 1;
-                    dayTimeCountList[dayTimeCountIndex] += count
-                }
-            }
-            seriesWafList.push({
-                name: skey,
-                type: 'line',
-                yAxisIndex: 0,
-                data: dayTimeCountList,
-            })
+        for (let time in wafSuccessList) {
+            let count = wafSuccessList[time];
+            waf_count += count;
         }
+
+        let dayTimeCountList = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] //总量统计
+        for (let timeItem in wafSuccessList) {
+            let count = wafSuccessList[timeItem];
+            let day = timeItem.toString().split(" ")[0]
+            let time = timeItem.toString().split(" ")[1]
+            let hours = parseInt(time.split(":")[0])
+            let cur_day = getDateStr(0);
+
+            //当天内
+            if (day.includes(cur_day)) {
+                let dayTimeCountIndex = parseInt((hours % 2) === 0 ? (hours / 2) : (hours / 2) + 1) - 1;
+                dayTimeCountList[dayTimeCountIndex] += count
+            }
+        }
+        seriesWafList.push({
+            name: key+"-服务层级",
+            type: 'line',
+            yAxisIndex: 0,
+            data: dayTimeCountList,
+        })
         config.push({
             id: key,
             waf_count: waf_count,
@@ -540,6 +537,41 @@ const tl_ops_web_console_waf_time_list_caculate_days = function (data) {
             timeList: ['1点', '3点', '5点', '7点', '9点', '11点', '13点', '15点', '17点', '19点', '21点', '23点']
         })
     }
+
+    //全局统计
+    let waf_count = 0;
+    let wafSuccessList = res_data.waf.waf_success;
+    for (let time in wafSuccessList) {
+        let count = wafSuccessList[time];
+        waf_count += count;
+    }
+    let dayTimeCountList = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] //总量统计
+    for (let timeItem in wafSuccessList) {
+        let count = wafSuccessList[timeItem];
+        let day = timeItem.toString().split(" ")[0]
+        let time = timeItem.toString().split(" ")[1]
+        let hours = parseInt(time.split(":")[0])
+        let cur_day = getDateStr(0);
+
+        //当天内
+        if (day.includes(cur_day)) {
+            let dayTimeCountIndex = parseInt((hours % 2) === 0 ? (hours / 2) : (hours / 2) + 1) - 1;
+            dayTimeCountList[dayTimeCountIndex] += count
+        }
+    }
+    let seriesWafList = [{
+        name: "全局层级",
+        type: 'line',
+        yAxisIndex: 0,
+        data: dayTimeCountList,
+    }]
+    config.push({
+        id: "全局层级",
+        waf_count: waf_count,
+        seriesWafList: seriesWafList,
+        timeList: ['1点', '3点', '5点', '7点', '9点', '11点', '13点', '15点', '17点', '19点', '21点', '23点']
+    })
+
     return config
 }
 
@@ -567,6 +599,11 @@ const tl_ops_web_console_echarts_waf_render = function (data) {
         })
     }
     serviceList = serviceList.sort(function(a, b){return a.id.localeCompare(b.id,'zh-CN')})
+
+    serviceList.unshift({
+        id : "全局层级",
+        type : 'waf',
+    })
 
     laytpl(document.getElementById(_console_echarts_tlp_id_name).innerHTML).render((() => {
         return serviceList
@@ -1143,5 +1180,5 @@ function getDateStr(day) {
     let y = cur.getFullYear();
     let m = cur.getMonth() + 1;
     let d = cur.getDate();
-    return y + '-' + (m < 10 ? '0' + m : m) + '-' + d;
+    return y + '-' + (m < 10 ? '0' + m : m) + '-' + (d < 10 ? '0' + d : d);
 }

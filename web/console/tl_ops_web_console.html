@@ -154,8 +154,10 @@
                                 <div class="layui-col-sm6">
                                     <div class="layui-card" style="border-radius: 24px;">
                                         <div class="layui-card-header">
+                                            {{#  if(service.type !== 'waf') { }}
                                             <span class="layui-badge layui-bg-blue">{{service.id}}服务</span>
-
+                                            {{#  } }}
+                                        
                                             {{#  if(service.type === 'balance') { }}
                                             <div style="float: right;" class="layui-form">
                                                 <span class="layui-badge layui-bg-blue " style="padding: 4px 14px 4px 14px;cursor: pointer;">当天</span>
@@ -165,7 +167,6 @@
                                                     onmouseenter="tl_mouse_enter_tips('tl-balance-span-all-{{service.id}}','暂不支持')">全部</span>
                                             </div>
                                             {{#  } }}
-
 
                                             {{#  if(service.type === 'health') { }}
                                             <div style="float: right;" class="layui-form">
@@ -181,7 +182,6 @@
                                             </div>
                                             {{#  } }}
 
-
                                             {{#  if(service.type === 'waf') { }}
                                             <div style="float: right;" class="layui-form">
                                                 <span class="layui-badge layui-bg-blue " style="padding: 4px 14px 4px 14px;cursor: pointer;">当天</span>
@@ -191,7 +191,6 @@
                                                     onmouseenter="tl_mouse_enter_tips('tl-waf-span-all-{{service.id}}','暂不支持')">全部</span>
                                             </div>
                                             {{#  } }}
-
 
                                         </div>
                                         <div class="layui-card-body">

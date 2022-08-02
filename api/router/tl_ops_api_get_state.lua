@@ -73,7 +73,7 @@ local Router = function()
             health_uncheck = health_uncheck_cache,
             limit_state = limit_state_cache,
             limit_version = limit_version_cache,
-            waf_success = waf_success_cache_service
+            waf_success = cjson.decode(waf_success_cache_service)
         }
         cache_state.service[service_name].nodes = { }
 
@@ -163,13 +163,6 @@ local Router = function()
                 balance_success_cache = "{}"
             end
 
-            local waf_count_name_node = "tl-ops-waf-count-" .. tl_ops_constant_waf.count.interval;
-            local waf_cache_count_node = require("cache.tl_ops_cache_core"):new(waf_count_name_node);
-            local waf_success_cache_node = waf_cache_count_node:get001(tl_ops_utils_func:gen_node_key(tl_ops_constant_waf.cache_key.waf_interval_success, node.service, node_id)) 
-            if not waf_success_cache_node then
-                waf_success_cache_node = "{}"
-            end
-
             cache_state.service[service_name].nodes[node.name] = {
                 health_state = health_node_state_cache,
                 health_failed = health_node_failed_cache,
@@ -183,11 +176,9 @@ local Router = function()
                 limit_pre_time = limit_pre_time,
                 limit_bucket = limit_bucket,
                 balance_success =  cjson.decode(balance_success_cache),
-                waf_success =  cjson.decode(waf_success_cache_node),
             }
         end
     end
-
 
     -- 健康检查相关状态
     local health_options_str, _ = cache_health:get(tl_ops_constant_health.cache_key.options_list);
