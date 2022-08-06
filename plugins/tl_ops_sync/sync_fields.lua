@@ -366,31 +366,28 @@ end
 --+++++++++++++++路由数据同步+++++++++++++++--
 
 -- 路由配置数据同步
-local sync_fields_balance = function ()
-
-    local cache_key = constant_balance.cache_key.options
-    local demo = constant_balance.demo
+local sync_fields_balance = function (cache_key, constant_data, demo)
 
     local data_str, _ = cache_balance:get(cache_key);
     if not data_str then
-        local res, _ = cache_balance:set(cache_key, cjson.encode(constant_balance.options))
+        local res, _ = cache_balance:set(cache_key, cjson.encode(constant_data))
         if not res then
-            tlog:err("sync_fields_balance new store err, res=",res)
+            tlog:err("sync_fields_balance new store err, cache_key=",cache_key,",res=",res)
             return tl_ops_rt.error
         end
 
         data_str, _ = cache_balance:get(cache_key);
 
-        tlog:dbg("sync_fields_balance new store, res=",res)
+        tlog:dbg("sync_fields_balance new store,  cache_key=",cache_key,",res=",res)
     end
 
     local data = cjson.decode(data_str);
     if not data and type(data) ~= 'table' then
-        tlog:err("sync_fields_balance err, old=",data)
+        tlog:err("sync_fields_balance err,  cache_key=",cache_key,",old=",data)
         return tl_ops_rt.error
     end
 
-    tlog:dbg("sync_fields_balance start, old=",data)
+    tlog:dbg("sync_fields_balance start,  cache_key=",cache_key,",old=",data)
 
     local add_keys = {}
 
@@ -406,11 +403,11 @@ local sync_fields_balance = function ()
 
     local res = cache_balance:set(cache_key, cjson.encode(data))
     if not res then
-        tlog:err("sync_fields_balance err, res=",res,",new=",data)
+        tlog:err("sync_fields_balance err,  cache_key=",cache_key,",res=",res,",new=",data)
         return tl_ops_rt.error
     end
 
-    tlog:dbg("sync_fields_balance done, new=",data,",add_keys=",add_keys)
+    tlog:dbg("sync_fields_balance done,  cache_key=",cache_key,",new=",data,",add_keys=",add_keys)
 
     return tl_ops_rt.ok
 end
@@ -739,31 +736,28 @@ end
 --+++++++++++++++WAF数据同步+++++++++++++++--
 
 -- waf配置数据同步
-local sync_fields_waf = function ()
-    tlog:dbg("xxxx : ",constant_waf)
-    local cache_key = constant_waf.cache_key.options
-    local demo = constant_waf.demo
+local sync_fields_waf = function (cache_key, constant_data, demo)
 
     local data_str, _ = cache_waf:get(cache_key);
     if not data_str then
-        local res, _ = cache_waf:set(cache_key, cjson.encode(constant_waf.options))
+        local res, _ = cache_waf:set(cache_key, cjson.encode(constant_data))
         if not res then
-            tlog:err("sync_fields_waf new store err, res=",res)
+            tlog:err("sync_fields_waf new store err, cache_key=",cache_key,",res=",res)
             return tl_ops_rt.error
         end
 
         data_str, _ = cache_waf:get(cache_key);
 
-        tlog:dbg("sync_fields_waf new store, res=",res)
+        tlog:dbg("sync_fields_waf new store,  cache_key=",cache_key,",res=",res)
     end
 
     local data = cjson.decode(data_str);
     if not data and type(data) ~= 'table' then
-        tlog:err("sync_fields_waf err, old=",data)
+        tlog:err("sync_fields_waf err,  cache_key=",cache_key,",old=",data)
         return tl_ops_rt.error
     end
 
-    tlog:dbg("sync_fields_waf start, old=",data)
+    tlog:dbg("sync_fields_waf start,  cache_key=",cache_key,",old=",data)
 
     local add_keys = {}
 
@@ -779,11 +773,11 @@ local sync_fields_waf = function ()
 
     local res = cache_waf:set(cache_key, cjson.encode(data))
     if not res then
-        tlog:err("sync_fields_waf err, res=",res,",new=",data)
+        tlog:err("sync_fields_waf err,  cache_key=",cache_key,",res=",res,",new=",data)
         return tl_ops_rt.error
     end
 
-    tlog:dbg("sync_fields_waf done, new=",data,",add_keys=",add_keys)
+    tlog:dbg("sync_fields_waf done,  cache_key=",cache_key,",new=",data,",add_keys=",add_keys)
 
     return tl_ops_rt.ok
 end
@@ -1303,7 +1297,13 @@ function _M:sync_fields_module( module )
         sync_fields_limit_leak()
         return sync_fields_limit()
     elseif module == 'balance' then
-        return sync_fields_balance()
+        sync_fields_balance(constant_balance.cache_key.service_empty, constant_balance.service_empty, constant_balance.demo.service_empty)
+        sync_fields_balance(constant_balance.cache_key.mode_empty, constant_balance.mode_empty, constant_balance.demo.mode_empty)
+        sync_fields_balance(constant_balance.cache_key.host_empty, constant_balance.host_empty, constant_balance.demo.host_empty)
+        sync_fields_balance(constant_balance.cache_key.host_pass, constant_balance.host_pass, constant_balance.demo.host_pass)
+        sync_fields_balance(constant_balance.cache_key.token_limit, constant_balance.token_limit, constant_balance.demo.token_limit)
+        sync_fields_balance(constant_balance.cache_key.leak_limit, constant_balance.leak_limit, constant_balance.demo.leak_limit)
+        return sync_fields_balance(constant_balance.cache_key.offline, constant_balance.offline, constant_balance.demo.offline)
     elseif module == 'balance_api' then
         return sync_fields_balance_api()
     elseif module == 'balance_cookie' then
@@ -1313,7 +1313,12 @@ function _M:sync_fields_module( module )
     elseif module == 'balance_param' then
         return sync_fields_balance_param()
     elseif module == 'waf' then
-        return sync_fields_waf()
+        sync_fields_waf(constant_waf.cache_key.waf_ip, constant_waf.waf_ip, constant_waf.demo.waf_ip)
+        sync_fields_waf(constant_waf.cache_key.waf_api, constant_waf.waf_api, constant_waf.demo.waf_api)
+        sync_fields_waf(constant_waf.cache_key.waf_cc, constant_waf.waf_cc, constant_waf.demo.waf_cc)
+        sync_fields_waf(constant_waf.cache_key.waf_header, constant_waf.waf_header, constant_waf.demo.waf_header)
+        sync_fields_waf(constant_waf.cache_key.waf_cookie, constant_waf.waf_cookie, constant_waf.demo.waf_cookie)
+        return sync_fields_waf(constant_waf.cache_key.waf_param, constant_waf.waf_param, constant_waf.demo.waf_param)
     elseif module == 'waf_api' then
         return sync_fields_waf_api()
     elseif module == 'waf_ip' then

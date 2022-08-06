@@ -15,96 +15,71 @@ cjson.encode_empty_table_as_object(false)
 
 
 local Router = function() 
-    local ip, _ = tl_ops_utils_func:get_req_post_args_by_name(tl_ops_constant_waf.cache_key.ip, 1);
-    if not ip or ip == nil then
-        tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.args_error ,"w args err1", _);
-        return;
+    local change = ""
+
+    local waf_ip, _ = tl_ops_utils_func:get_req_post_args_by_name("waf_ip", 1);
+    if waf_ip then
+        local res, _ = cache:set(tl_ops_constant_waf.cache_key.waf_ip, cjson.encode(waf_ip));
+        if not res then
+            tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.error, "set waf_ip err ", _)
+            return;
+        end
+        change = "waf_ip"
     end
     
-    local api, _ = tl_ops_utils_func:get_req_post_args_by_name(tl_ops_constant_waf.cache_key.api, 1);
-    if not api or api == nil then
-        tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.args_error ,"w args err2", _);
-        return;
+    local waf_api, _ = tl_ops_utils_func:get_req_post_args_by_name("waf_api", 1);
+    if waf_api then
+        local res, _ = cache:set(tl_ops_constant_waf.cache_key.waf_api, cjson.encode(waf_api));
+        if not res then
+            tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.error, "set waf_api err ", _)
+            return;
+        end
+        change = "waf_api"
     end
     
-    local cc, _ = tl_ops_utils_func:get_req_post_args_by_name(tl_ops_constant_waf.cache_key.cc, 1);
-    if not cc or cc == nil then
-        tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.args_error ,"w args err3", _);
-        return;
+    local waf_cc, _ = tl_ops_utils_func:get_req_post_args_by_name("waf_cc", 1);
+    if waf_cc then
+        local res, _ = cache:set(tl_ops_constant_waf.cache_key.waf_cc, cjson.encode(waf_cc));
+        if not res then
+            tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.error, "set waf_cc err ", _)
+            return;
+        end
+        change = "waf_cc"
     end
     
-    local header, _ = tl_ops_utils_func:get_req_post_args_by_name(tl_ops_constant_waf.cache_key.header, 1);
-    if not header or header == nil then
-        tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.args_error ,"w args err4", _);
-        return;
+    local waf_header, _ = tl_ops_utils_func:get_req_post_args_by_name("waf_header", 1);
+    if waf_header then
+        local res, _ = cache:set(tl_ops_constant_waf.cache_key.waf_header, cjson.encode(waf_header));
+        if not res then
+            tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.error, "set waf_header err ", _)
+            return;
+        end
+        change = "waf_header"
     end
     
-    local cookie, _ = tl_ops_utils_func:get_req_post_args_by_name(tl_ops_constant_waf.cache_key.cookie, 1);
-    if not cookie or cookie == nil then
-        tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.args_error ,"w args err5", _);
-        return;
+    local waf_cookie, _ = tl_ops_utils_func:get_req_post_args_by_name("waf_cookie", 1);
+    if waf_cookie then
+        local res, _ = cache:set(tl_ops_constant_waf.cache_key.waf_cookie, cjson.encode(waf_cookie));
+        if not res then
+            tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.error, "set waf_cookie err ", _)
+            return;
+        end
+        change = "waf_cookie"
     end
     
-    local param, _ = tl_ops_utils_func:get_req_post_args_by_name(tl_ops_constant_waf.cache_key.param, 1);
-    if not param or param == nil then
-        tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.args_error ,"w args err6", _);
-        return;
+    local waf_param, _ = tl_ops_utils_func:get_req_post_args_by_name("waf_param", 1);
+    if waf_param then
+        local res, _ = cache:set(tl_ops_constant_waf.cache_key.waf_param, cjson.encode(waf_param));
+        if not res then
+            tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.error, "set waf_param err ", _)
+            return;
+        end
+        change = "waf_param"
     end
-    
-    ip = tonumber(ip)
-    if ip < 200 or ip >= 600 then
-        tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.args_error ,"w args err8", _);
-        return;
-    end
-    
-    api = tonumber(api)
-    if api < 200 or api >= 600 then
-        tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.args_error ,"w args err9", _);
-        return;
-    end
-    
-    param = tonumber(param)
-    if param < 200 or param >= 600 then
-        tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.args_error ,"w args err10", _);
-        return;
-    end
-    
-    cookie = tonumber(cookie)
-    if cookie < 200 or cookie >= 600 then
-        tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.args_error ,"w args err11", _);
-        return;
-    end
-    
-    header = tonumber(header)
-    if header < 200 or header >= 600 then
-        tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.args_error ,"w args err12", _);
-        return;
-    end
-    
-    cc = tonumber(cc)
-    if cc < 200 or cc >= 600 then
-        tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.args_error ,"w args err13", _);
-        return;
-    end
-    
-    local waf_data = { }
-    waf_data[tl_ops_constant_waf.cache_key.ip] = ip;
-    waf_data[tl_ops_constant_waf.cache_key.api] = api;
-    waf_data[tl_ops_constant_waf.cache_key.param] = param;
-    waf_data[tl_ops_constant_waf.cache_key.cookie] = cookie;
-    waf_data[tl_ops_constant_waf.cache_key.header] = header;
-    waf_data[tl_ops_constant_waf.cache_key.cc] = cc;
-    
-    local res, _ = cache:set(tl_ops_constant_waf.cache_key.options, cjson.encode(waf_data));
-    if not res then
-        tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.error, "set err_code err ", _)
-        return;
-    end
-    
-    
+
     local res_data = {}
     
-    tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.ok, "success", res_data)
+    tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.ok, change, res_data)
  end
  
 return Router

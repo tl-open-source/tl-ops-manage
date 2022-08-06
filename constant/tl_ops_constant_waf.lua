@@ -11,13 +11,12 @@ local tl_ops_constant_service       = require("constant.tl_ops_constant_service"
 local tl_ops_constant_waf = {
     cache_key = {
         lock = "tl_ops_waf_lock",
-        options = "tl_ops_waf_options",
-        ip = "tl_ops_waf_ip_err_code",
-        api = "tl_ops_waf_api_err_code",
-        cc = "tl_ops_waf_cc_err_code",
-        header = "tl_ops_waf_header_err_code",
-        cookie = "tl_ops_waf_cookie_err_code",
-        param = "tl_ops_waf_param_err_code",
+        waf_ip = "tl_ops_waf_ip_err",
+        waf_api = "tl_ops_waf_api_err",
+        waf_cc = "tl_ops_waf_cc_err",
+        waf_header = "tl_ops_waf_header_err",
+        waf_cookie = "tl_ops_waf_cookie_err",
+        waf_param = "tl_ops_waf_param_err",
 
         req_ip = "tl_ops_waf_req_ip",           -- waf统计, waf-ip命中次数
         req_api = "tl_ops_waf_req_api",
@@ -60,16 +59,55 @@ local tl_ops_constant_waf = {
     count = {
         interval = 10       -- 统计周期 单位/s
     },
-    options = {
+    waf_ip = {
+        
+    },
+    waf_api = {
+        
+    },
+    waf_cc = {
+        
+    },
+    waf_header = {
+        
+    },
+    waf_cookie = {
+        
+    },
+    waf_param = {
         
     },
     demo = {
-        tl_ops_waf_ip_err_code = 503,           -- waf拦截ip返回错误码
-        tl_ops_waf_api_err_code = 503,          -- waf拦截api返回错误码
-        tl_ops_waf_cc_err_code = 503,           -- waf拦截cc返回错误码
-        tl_ops_waf_header_err_code = 503,       -- waf拦截header返回错误码
-        tl_ops_waf_cookie_err_code = 503,       -- waf拦截cookie返回错误码
-        tl_ops_waf_param_err_code = 503,        -- waf拦截args返回错误码
+        waf_ip = {   -- waf拦截ip返回错误码
+            code = 503,
+            content_type = "text/html",
+            content = "<p> waf_ip err </p>"
+        },
+        waf_api = {   -- waf拦截api返回错误码
+            code = 503,
+            content_type = "text/html",
+            content = "<p> waf_api err </p>"
+        },
+        waf_cc = {   -- waf拦截cc返回错误码
+            code = 503,
+            content_type = "text/html",
+            content = "<p> waf_cc err </p>"
+        },
+        waf_header = {   -- waf拦截header返回错误码
+            code = 503,
+            content_type = "text/html",
+            content = "<p> waf_header err </p>"
+        },
+        waf_cookie = {   -- waf拦截cookie返回错误码
+            code = 503,
+            content_type = "text/html",
+            content = "<p> waf_cookie err </p>"
+        },
+        waf_param = {   -- waf拦截args返回错误码
+            code = 503,
+            content_type = "text/html",
+            content = "<p> waf_param err </p>"
+        }
     }
 }
 

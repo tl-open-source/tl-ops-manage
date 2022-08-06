@@ -25,6 +25,9 @@ function _M:init()
     ngx.ctx.http_user_agent = ngx.var.http_user_agent
 
     ngx.ctx.tlops_api       = tlops_api
+    ngx.ctx.tlops_ups_node  = {}
+    ngx.tlops_ups_node_id   = 0
+    ngx.tlops_ups_mode      = ""
 end
 
 return _M

@@ -20,6 +20,7 @@ local env               =  require("tl_ops_manage_env")
 local constant          =  require("constant.tl_ops_constant")
 local cache             =  require("cache.tl_ops_cache")
 local tlops_api         =  require("api.tl_ops_api_core")
+local m_err_content     =  require("err.tl_ops_err_content")
 local balance_shared    =  ngx.shared.tlopsbalance
 local plugin_shared     =  ngx.shared.tlopsplugin
 local waf_shared        =  ngx.shared.tlopswaf
@@ -60,7 +61,7 @@ function _M:tl_ops_process_init_worker()
 	-- 启动路由统计
     m_balance_count:init();
     
-    -- 启动waf统计
+    -- 启动WAF统计
 	m_waf_count:init();
 
     -- 执行插件
@@ -72,6 +73,7 @@ end
 function _M:tl_ops_process_init_ssl()
     -- 执行插件
     m_plugin:tl_ops_process_before_init_ssl();
+
     -- 执行插件
 	m_plugin:tl_ops_process_after_init_ssl();
 end
@@ -79,26 +81,30 @@ end
 
 -- rewrite阶段执行
 function _M:tl_ops_process_init_rewrite()
+    -- 初始化ctx
+    m_ctx:init();
+    
     -- 执行插件
-    m_plugin:tl_ops_process_before_init_rewrite();
+    m_plugin:tl_ops_process_before_init_rewrite(ngx.ctx);
+
+    -- 加载管理台API
+    m_api:init(ngx.ctx);
+
+    -- 启动全局WAF
+    m_waf:init_global(ngx.ctx);
+
+    -- 负载均衡筛选
+    m_balance:filter(ngx.ctx);
+    
     -- 执行插件
-	m_plugin:tl_ops_process_after_init_rewrite();    
+	m_plugin:tl_ops_process_after_init_rewrite(ngx.ctx);    
 end
 
 
 -- access阶段执行
 function _M:tl_ops_process_init_access()
-    -- 初始化ctx
-    m_ctx:init();
-    
     -- 执行插件
     m_plugin:tl_ops_process_before_init_access(ngx.ctx);
-
-    -- 启动waf
-    m_waf:init_global(ngx.ctx);
-
-    -- 加载api
-    m_api:init(ngx.ctx);
 
     -- 执行插件
 	m_plugin:tl_ops_process_after_init_access(ngx.ctx);
@@ -110,7 +116,7 @@ function _M:tl_ops_process_init_balancer()
     -- 执行插件
     m_plugin:tl_ops_process_before_init_balancer(ngx.ctx); 
 
-    -- 启动负载均衡
+    -- 负载均衡请求分发
     m_balance:init(ngx.ctx);
 
     -- 执行插件
@@ -118,10 +124,24 @@ function _M:tl_ops_process_init_balancer()
 end
 
 
+-- content阶段执行
+function _M:tl_ops_process_init_content()
+    -- 执行插件
+    m_plugin:tl_ops_process_before_init_content(ngx.ctx);
+
+    -- 自定义错误内容
+    m_err_content:init(ngx.ctx);
+    
+    -- 执行插件
+	m_plugin:tl_ops_process_after_init_content(ngx.ctx);
+end
+
+
 -- header阶段执行
 function _M:tl_ops_process_init_header()
     -- 执行插件
-	m_plugin:tl_ops_process_before_init_header(ngx.ctx);    
+    m_plugin:tl_ops_process_before_init_header(ngx.ctx);    
+
     -- 执行插件
 	m_plugin:tl_ops_process_after_init_header(ngx.ctx);
 end
@@ -130,7 +150,8 @@ end
 -- body阶段执行
 function _M:tl_ops_process_init_body()
     -- 执行插件
-	m_plugin:tl_ops_process_before_init_body(ngx.ctx);    
+    m_plugin:tl_ops_process_before_init_body(ngx.ctx);
+
     -- 执行插件
 	m_plugin:tl_ops_process_after_init_body(ngx.ctx);
 end

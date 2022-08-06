@@ -227,6 +227,15 @@ function _M:set_ngx_req_return_ok (code, msg, data)
     ngx.flush();
 end
 
+--指定格式返回
+function _M:set_ngx_req_return_content (status, content, content_type)
+    ngx.header['Access-Control-Allow-Origin'] = '*';
+    ngx.header['Content-Type'] = content_type;
+    ngx.status = status;
+    ngx.say(content);
+    ngx.flush();
+end
+
 --返回正则的str
 function _M:get_str_matcher_str (str, reg)
     if str == "" or reg == "" then

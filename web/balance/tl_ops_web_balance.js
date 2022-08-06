@@ -1,64 +1,141 @@
-const _add_form_btn_id_name = "tl-ops-web-balance-form-submit";
-const _add_form_id_name = "tl-ops-web-balance-form";
+const _balance_view_id_name = "tl-ops-web-balance-service-view";
+const _balance_tlp_id_name = "tl-ops-web-balance-service-tpl";
+const _balance_form_btn_id_name = "tl-ops-web-balance-btn";
+
+const _add_form_btn_id_name = "tl-ops-web-balance-form-submit"
+
 let res_data = {};
 
 const tl_ops_web_balance_main = function (){
     window.$ = layui.$;
     window.form = layui.form;
+    window.table = layui.table;
+    window.laytpl = layui.laytpl;
+    window.element = layui.element;
 
-    tl_ops_balance_render()
-
-    $("#tl_ops_balance_submit").on("click",tl_ops_web_balance_submit)
-};
-
-const tl_ops_balance_render = function(){
     axios.get("/tlops/balance/get").then((res)=>{
         res = res.data;
         if(res.code === 0){
             res_data = res.data;
-            form.val(_add_form_id_name, res_data)
-            form.render()
+            tl_ops_web_balance_render(tl_ops_balance_handler_render_data(res_data))
         }
     })
+};
+
+
+const tl_ops_balance_handler_render_data = function(data){
+    let options_list = []
+    for(let name in data){
+        let err_name = "其他";
+        if(name === 'service_empty'){
+            err_name = "服务为空"
+        }else if(name === 'mode_empty'){
+            err_name = "路由无匹配"
+        }else if(name === 'host_empty'){
+            err_name = "域名为空"
+        }else if(name === 'host_pass'){
+            err_name = "域名不匹配"
+        }else if(name === 'token_limit'){
+            err_name = "令牌桶限流"
+        }else if(name === 'leak_limit'){
+            err_name = "漏桶限流"
+        }else if(name === 'offline'){
+            err_name = "服务下线"
+        }
+        data[name]['err_name'] = err_name
+        data[name]['name'] = name
+        data[name]['content_sub'] = data[name].content.substring(0,15) + "...("+data[name]['content'].length+"字符)"
+        options_list.push(data[name])
+    }
+
+    options_list = options_list.sort(function(a, b){return a.name.localeCompare(b.name,'zh-CN')})
+    
+    return options_list
 }
 
-const tl_ops_web_balance_submit = function () {
-    let balance = form.val(_add_form_id_name);
+const tl_ops_web_balance_render = function( data ){
+    laytpl(document.getElementById(_balance_tlp_id_name).innerHTML).render((()=>{
+        return data;
+    })(), (html)=>{
+        document.getElementById(_balance_view_id_name).innerHTML = html;
+    });
+    form.render()
+}
 
-    for(let key in balance){
-        if(key === 'tl_ops_balance_host_empty_err_code'){
-            balance[key] = parseInt(balance[key])
+
+//管理节点
+const tl_ops_web_balance_edit = function (name) {
+    let index = layer.open({
+        type: 2
+        ,title: '自定义【'+name+'】错误配置'
+        ,content: 'tl_ops_web_balance_form.html?name='+name
+        ,maxmin: true
+        ,minStack:false
+        ,area: ['650px', '650px']
+        ,btn: ['确定', '取消']
+        ,yes: function(index, dom){
+            let iframeWindow = window['layui-layer-iframe'+ index]
+                ,submit = dom.find('iframe').contents().find('#'+ _add_form_btn_id_name);
+
+            iframeWindow.layui.form.on('submit('+ _add_form_btn_id_name +')', function(data){
+                if(!tl_ops_balance_data_edit_filter(data)){
+                    return;
+                }
+                let updateInfo = {}
+                updateInfo[name] = res_data[name]
+
+                $.ajax(tl_ajax_data({
+                    url: '/tlops/balance/set',
+                    data : JSON.stringify(updateInfo),
+                    contentType : "application/json",
+                    success : (res)=>{
+                        layer.msg(res.msg)
+                        tl_ops_web_balance_render(tl_ops_balance_handler_render_data(res_data))
+                    }
+                }));
+                layer.close(index);
+            });
+            submit.trigger('click');
+        },
+        success: function(dom, index) {
+            let evtdata = res_data[name]
+            if (evtdata){
+                let editForm = dom.find('iframe')[0].contentWindow;
+                editForm.tl_ops_web_balance_form_render(evtdata);
+            }else{
+                layer.msg("渲染编辑框失败")
+            }
+        },
+    });
+    if(parent.window.tl_side_screen() < 1){
+        layer.full(index);
+    }
+};
+
+
+//过滤数据
+const tl_ops_balance_data_edit_filter = function( data ) {
+    let name = data.field.name
+    delete data.field.file;
+    delete data.field.err_name;
+    delete data.field.content_sub;
+    delete data.field.name;
+    for(let key in data.field){
+        if(data.field[key] === undefined || data.field[key] === null || data.field[key] === ''){
+            layer.msg(key + "未填写")
+            return false;
         }
-        if(key === 'tl_ops_balance_host_pass_err_code'){
-            balance[key] = parseInt(balance[key])
+        if(key === 'code'){
+            data.field[key] = parseInt(data.field[key])
         }
-        if(key === 'tl_ops_balance_leak_limit_err_code'){
-            balance[key] = parseInt(balance[key])
-        }
-        if(key === 'tl_ops_balance_mode_empty_err_code'){
-            balance[key] = parseInt(balance[key])
-        }
-        if(key === 'tl_ops_balance_offline_err_code'){
-            balance[key] = parseInt(balance[key])
-        }
-        if(key === 'tl_ops_balance_service_empty_err_code'){
-            balance[key] = parseInt(balance[key])
-        }
-        if(key === 'tl_ops_balance_token_limit_err_code'){
-            balance[key] = parseInt(balance[key])
-        }
-        if(balance[key] < 200 || balance[key] > 599){
-            layer.msg("错误码范围应该在 200 ~ 599 内")
-            return
+        if(key === 'code'){
+            if(data.field[key] < 200 || data.field[key] > 599){
+                layer.msg(key + "应该在200~599范围内")
+                return false;
+            }
         }
     }
-    $.ajax(tl_ajax_data({
-        url: '/tlops/balance/set',
-        data : JSON.stringify(balance),
-        contentType : "application/json",
-        success : (res)=>{
-            layer.msg(res.msg)
-            tl_ops_balance_render()
-        }
-    }));
+
+    res_data[name] = data.field;
+    return true;
 }

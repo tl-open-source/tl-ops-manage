@@ -10,11 +10,17 @@ local tl_ops_balance_core = require("balance.tl_ops_balance_core");
 local _M = {}
 
 
-function _M:init( )
-
-    -- 启动路由
+-- 启动路由筛选
+function _M:filter(ctx)
     local balance = tl_ops_balance_core:new();
-    balance:tl_ops_balance_core_balance()
+    balance:tl_ops_balance_core_filter(ctx)
+end
+
+
+-- 启动路由转发
+function _M:init(ctx)
+    local balance = tl_ops_balance_core:new();
+    balance:tl_ops_balance_core_balance(ctx)
 
 end
 

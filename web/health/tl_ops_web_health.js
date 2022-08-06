@@ -1,7 +1,6 @@
 const _health_view_id_name = "tl-ops-web-health-service-view";
 const _health_tlp_id_name = "tl-ops-web-health-service-tpl";
 const _health_form_btn_id_name = "tl-ops-web-health-btn";
-const _health_form_perfix_id_name = "tl-ops-web-health-form-";
 
 const _add_form_btn_id_name = "tl-ops-web-health-form-submit"
 

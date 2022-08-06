@@ -15,13 +15,52 @@ cjson.encode_empty_table_as_object(false)
 
 
 local Router = function() 
-   local code_str = cache:get(tl_ops_constant_waf.cache_key.options)
-   if not code_str then
-      tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.not_found, "not found options", _);
+   local waf_ip = cache:get(tl_ops_constant_waf.cache_key.waf_ip)
+   if not waf_ip then
+      tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.not_found, "not found waf_ip", _);
       return;
    end
 
-   tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.ok, "success", cjson.decode(code_str));
+   local waf_api = cache:get(tl_ops_constant_waf.cache_key.waf_api)
+   if not waf_api then
+      tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.not_found, "not found waf_api", _);
+      return;
+   end
+
+   local waf_cc = cache:get(tl_ops_constant_waf.cache_key.waf_cc)
+   if not waf_cc then
+      tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.not_found, "not found waf_cc", _);
+      return;
+   end
+
+   local waf_header = cache:get(tl_ops_constant_waf.cache_key.waf_header)
+   if not waf_header then
+      tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.not_found, "not found waf_header", _);
+      return;
+   end
+
+   local waf_cookie = cache:get(tl_ops_constant_waf.cache_key.waf_cookie)
+   if not waf_cookie then
+      tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.not_found, "not found waf_cookie", _);
+      return;
+   end
+
+   local waf_param = cache:get(tl_ops_constant_waf.cache_key.waf_param)
+   if not waf_param then
+      tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.not_found, "not found waf_param", _);
+      return;
+   end
+
+   local res_data = {
+      waf_ip = cjson.decode(waf_ip),
+      waf_api = cjson.decode(waf_api),
+      waf_cc = cjson.decode(waf_cc),
+      waf_header = cjson.decode(waf_header),
+      waf_cookie = cjson.decode(waf_cookie),
+      waf_param = cjson.decode(waf_param),
+   }
+
+   tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.ok, "success", res_data);
 end
 
 return Router

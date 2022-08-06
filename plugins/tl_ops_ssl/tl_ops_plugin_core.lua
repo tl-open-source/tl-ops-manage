@@ -31,7 +31,7 @@ function _M:tl_ops_process_after_init_ssl()
 end
 
 
-function _M:tl_ops_process_before_init_access(ctx)
+function _M:tl_ops_process_before_init_rewrite(ctx)
 
     ctx.tlops_api["/tlops/ssl/list"] = ssl_get_router
 

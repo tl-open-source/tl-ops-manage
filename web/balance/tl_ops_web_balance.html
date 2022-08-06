@@ -23,76 +23,80 @@
         color: darkorchid;
         font-weight: 700;
     }
+    .tl-ops-service-balance{
+        padding-left: 20px;
+        padding-bottom: 10px;
+    }
+    .tl-balance-option-value{
+        margin-left: 10px;
+        text-align: right;
+    }
+    .tl-ops-balance-col{
+        border: 1px solid #e8e8e8;
+        cursor: pointer;
+        border-radius: 6px;
+        background: #edb2b2;
+    }
+    .tl-ops-balance-col:hover{
+        border-color: rgba(0,0,0,.09);
+        box-shadow: 0 2px 8px rgb(0 0 0 / 9%);
+    }
+    .tl-ops-balance-change-btn{
+        color:black;
+        background: #f7f9fa;
+        width: 100%;
+        padding: 0 10px;
+    }
+    .tl-ops-balance-change-btn:hover{
+        background: #e3e4e5;
+        color: black;
+    }
 </style>
 
-<div class="layui-fluid" style="padding: 20px;">
-    <div class="layui-card">
-        <div class="layui-card-header" style="font-size:20px">负载均衡错误码配置</div>
-        <div class="layui-card-body">
-            <form class="layui-form layui-form-pane" lay-filter="tl-ops-web-balance-form" id="tl-ops-web-balance-form">
-                <div class="layui-form-item" >
-                    <label class="layui-form-label">服务为空返回错误码</label>
-                    <div class="layui-input-block">
-                        <input type="number" name="tl_ops_balance_service_empty_err_code" id="tl_ops_balance_service_empty_err_code" autocomplete="off" class="layui-input"
-                            onmouseleave="tl_mouse_leave_tips()" placeholder="默认值 : 503"
-                            onmouseenter="tl_mouse_enter_tips('tl_ops_balance_service_empty_err_code','服务为空时返回的错误码, 200 ~ 599 内')">
-                    </div>
+<div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-header" style="font-size:20px;word-break: keep-all;">负载均衡错误码配置</div>
+                <div class="layui-card-body" style="padding: 30px 15px;">
+                    <div id="tl-ops-web-balance-service-view"> </div>
                 </div>
-                <div class="layui-form-item" >
-                    <label class="layui-form-label">策略不匹配返回错误码</label>
-                    <div class="layui-input-block">
-                        <input type="number" name="tl_ops_balance_mode_empty_err_code" id="tl_ops_balance_mode_empty_err_code" autocomplete="off" class="layui-input"
-                        onmouseleave="tl_mouse_leave_tips()" placeholder="默认值 : 503"
-                        onmouseenter="tl_mouse_enter_tips('tl_ops_balance_mode_empty_err_code','策略不匹配时返回的错误码, 200 ~ 599 内')">
-                    </div>
-                </div>
-                <div class="layui-form-item" >
-                    <label class="layui-form-label">域名为空返回错误码</label>
-                    <div class="layui-input-block">
-                        <input type="number" name="tl_ops_balance_host_empty_err_code" id="tl_ops_balance_host_empty_err_code" autocomplete="off" class="layui-input"
-                        onmouseleave="tl_mouse_leave_tips()" placeholder="默认值 : 503"
-                        onmouseenter="tl_mouse_enter_tips('tl_ops_balance_host_empty_err_code','域名为空时返回的错误码, 200 ~ 599 内')">
-                    </div>
-                </div>
-                <div class="layui-form-item" >
-                    <label class="layui-form-label">域名不匹配返回错误码</label>
-                    <div class="layui-input-block">
-                        <input type="number" name="tl_ops_balance_host_pass_err_code" id="tl_ops_balance_host_pass_err_code" autocomplete="off" class="layui-input"
-                        onmouseleave="tl_mouse_leave_tips()" placeholder="默认值 : 503"
-                        onmouseenter="tl_mouse_enter_tips('tl_ops_balance_host_pass_err_code','域名不匹配时返回的错误码, 200 ~ 599 内')">
-                    </div>
-                </div>
-                <div class="layui-form-item" >
-                    <label class="layui-form-label">令牌桶限流返回错误码</label>
-                    <div class="layui-input-block">
-                        <input type="number" name="tl_ops_balance_token_limit_err_code" id="tl_ops_balance_token_limit_err_code" autocomplete="off" class="layui-input"
-                        onmouseleave="tl_mouse_leave_tips()" placeholder="默认值 : 503"
-                        onmouseenter="tl_mouse_enter_tips('tl_ops_balance_token_limit_err_code','令牌桶限流时返回的错误码, 200 ~ 599 内')">
-                    </div>
-                </div>
-                <div class="layui-form-item" >
-                    <label class="layui-form-label">漏桶限流返回错误码</label>
-                    <div class="layui-input-block">
-                        <input type="number" name="tl_ops_balance_leak_limit_err_code" id="tl_ops_balance_leak_limit_err_code" autocomplete="off" class="layui-input"
-                        onmouseleave="tl_mouse_leave_tips()" placeholder="默认值 : 503"
-                        onmouseenter="tl_mouse_enter_tips('tl_ops_balance_leak_limit_err_code','漏桶限流时返回的错误码, 200 ~ 599 内')">
-                    </div>
-                </div>
-                <div class="layui-form-item" >
-                    <label class="layui-form-label">节点下线返回错误码</label>
-                    <div class="layui-input-block">
-                        <input type="number" name="tl_ops_balance_offline_err_code" id="tl_ops_balance_offline_err_code" autocomplete="off" class="layui-input"
-                        onmouseleave="tl_mouse_leave_tips()" placeholder="默认值 : 503"
-                        onmouseenter="tl_mouse_enter_tips('tl_ops_balance_offline_err_code','节点下线时返回的错误码, 200 ~ 599 内')">
-                    </div>
-                </div>
-            </form>
-            <div>
-                <input type="button" class="layui-btn" id="tl_ops_balance_submit" value="保存修改">
             </div>
         </div>
     </div>
 </div>
+
+<script id="tl-ops-web-balance-service-tpl" type="text/html">
+    <div class="layui-row layui-col-space20">
+    {{#  layui.each(d, function(index, option){ }}
+    <div class="layui-col-md4 ">
+        <div class="layui-form " lay-filter="tl-ops-web-balance-form-{{index}}">
+            <div class="tl-ops-balance-col">
+                <div style="margin:5px;text-align:center">
+                    <span class="layui-icon layui-icon-note"></span><span class="tl-balance-option-value">{{option.err_name}}</span>
+                </div>
+                <div class="tl-ops-service-balance">
+                    <div>
+                        <span>返回码：</span><span class="tl-balance-option-value">{{option.code}}</span>
+                    </div>
+                    <div>
+                        <span>返回格式：</span><span class="tl-balance-option-value">{{option.content_type}}</span>
+                    </div> 
+                    <div>
+                        <span>返回内容：</span><span class="tl-balance-option-value">{{option.content_sub}}</span>
+                    </div>          
+                </div>
+                <div>
+                    <button  class="layui-btn layui-icon layui-icon-set tl-ops-balance-change-btn" onclick="tl_ops_web_balance_edit('{{option.name}}')">
+                        <b style="margin-left: 10px;">修改</b>
+                    </button>
+                </div>                               
+            </div>
+        </div>
+    </div>
+    {{#  }); }}
+    </div>
+</script>
 
 <script src="tl_ops_web_balance.js"></script>
 <script src="../tl_ops_web_comm.js"></script>
