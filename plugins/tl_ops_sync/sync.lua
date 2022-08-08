@@ -9,7 +9,6 @@ local sync_fields           = require("plugins.tl_ops_sync.sync_fields")
 local sync_data             = require("plugins.tl_ops_sync.sync_data")
 local sync_env              = tlops.env.sync
 local utils                 = tlops.utils
-local shared                = tlops.balance_shared
 
 
 local _M = {

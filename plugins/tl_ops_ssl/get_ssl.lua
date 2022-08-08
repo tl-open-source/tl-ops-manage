@@ -5,7 +5,7 @@
 -- @email 1905333456@qq.com
 
 local cache                     = require("cache.tl_ops_cache_core"):new("tl-ops-ssl");
-local tl_ops_constant_ssl       = require("plugins.tl_ops_ssl.tl_ops_constant_ssl");
+local tl_ops_constant_ssl       = require("plugins.tl_ops_ssl.tl_ops_plugin_constant");
 local tl_ops_rt                 = tlops.constant.comm.tl_ops_rt;
 local tl_ops_utils_func         = tlops.utils
 local cjson                     = require("cjson.safe");

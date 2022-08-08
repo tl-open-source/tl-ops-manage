@@ -6,7 +6,7 @@
 
 local tlog                  = require("utils.tl_ops_utils_log"):new("tl_ops_plugin_ssl")
 local cache                 = require("cache.tl_ops_cache_core"):new("tl-ops-ssl")
-local tl_ops_constant_ssl   = require("plugins.tl_ops_ssl.tl_ops_constant_ssl")
+local tl_ops_constant_ssl   = require("plugins.tl_ops_ssl.tl_ops_plugin_constant")
 local tl_ops_rt             = tlops.constant.comm.tl_ops_rt
 local cjson                 = require("cjson.safe")
 cjson.encode_empty_table_as_object(false)

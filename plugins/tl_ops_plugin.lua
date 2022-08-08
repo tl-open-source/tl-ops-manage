@@ -34,13 +34,13 @@ local tl_ops_process_load_plugins_constant = function(name)
 
     local status, constant = pcall(require, "plugins.tl_ops_" .. name .. ".tl_ops_plugin_constant")
     if status then
-        if plugin and type(constant) == 'table' then
+        if constant and type(constant) == 'table' then
             return constant
         else
             tlog:dbg("tl_ops_process_load_plugins_constant constant err, name=",name,",constant=",constant)
         end
     else 
-        tlog:dbg("tl_ops_process_load_plugins_constant status err, name=",name,",status=",status)
+        tlog:dbg("tl_ops_process_load_plugins_constant status err, name=",name,",status=",status,",err=",constant)
     end
 
     return nil
@@ -62,7 +62,7 @@ local tl_ops_process_load_plugins_func = function(name)
             tlog:dbg("tl_ops_process_load_plugins_func func err, name=",name,",func=",func)
         end
     else 
-        tlog:dbg("tl_ops_process_load_plugins_func status err, name=",name,",status=",status)
+        tlog:dbg("tl_ops_process_load_plugins_func status err, name=",name,",status=",status,",err=",func)
     end
 
     return nil
