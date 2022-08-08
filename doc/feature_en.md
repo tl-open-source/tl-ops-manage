@@ -12,11 +12,13 @@
 
 - [x] Support bulk routing strategy
 
-- [x] Support dynamic routing strategy
-
 - [x] Support api address rewriting
 
+- [x] Support dynamic routing strategy
+
 - [x] Support routing configuration management
+
+- [x] Support custom routing error content
 
 
 - [x] Support service health check
@@ -57,8 +59,11 @@
 
 - [x] Support secondary development of plugins
 
+- [ ] Support configuring grayscale publishing
+
 - [ ] Support install deployment scripts
 
+- [ ] Support docker environment deployment
 
 
 - [x] Support custom Waf strategy
@@ -75,17 +80,26 @@
 
 - [x] Support Args black and white list rules
 
-- [ ] Support Waf return content customization
+- [x] Support Waf return content customization
 
-- [ ] Support Waf statistics display
+- [x] Support Waf statistics display
 
 
 
-- [x] [Plugin] Support version iteration data synchronization
+- [ ] Support multi-protocol forwarding
+
+- [ ] Provide module test cases
+
+
+- [x] [Plugin] Support data synchronization and warm-up
 
 - [x] [Plugin] Support SSL certificate configuration
 
-- [ ] [Plugin] Support configuration of grayscale publishing
+- [ ] [Plugin] Support request ID tracking
+
+- [ ] [Plugin] Support request time-consuming statistics
+
+- [ ] [Plugin] Support request alarm configuration
 
 - [ ] [Plugin] Support permission identity control
 

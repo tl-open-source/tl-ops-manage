@@ -126,14 +126,10 @@ end
 
 -- content阶段执行
 function _M:tl_ops_process_init_content()
-    -- 执行插件
-    m_plugin:tl_ops_process_before_init_content(ngx.ctx);
 
     -- 自定义错误内容
     m_err_content:init(ngx.ctx);
     
-    -- 执行插件
-	m_plugin:tl_ops_process_after_init_content(ngx.ctx);
 end
 
 
