@@ -575,25 +575,25 @@ end
 
 function _M:sync_data_module( module )
 
-    if module == 'balance-api' then
+    if module == 'balance_api' then
         return sync_data_balance_api()
-    elseif module == 'balance-cookie' then
+    elseif module == 'balance_cookie' then
         return sync_data_balance_cookie()
-    elseif module == 'balance-header' then
+    elseif module == 'balance_header' then
         return sync_data_balance_header()
-    elseif module == 'balance-param' then
+    elseif module == 'balance_param' then
         return sync_data_balance_param()
-    elseif module == 'waf-api' then
+    elseif module == 'waf_api' then
         return sync_data_waf_api()
-    elseif module == 'waf-ip' then
+    elseif module == 'waf_ip' then
         return sync_data_waf_ip()
-    elseif module == 'waf-header' then
+    elseif module == 'waf_header' then
         return sync_data_waf_header()
-    elseif module == 'waf-cookie' then
+    elseif module == 'waf_cookie' then
         return sync_data_waf_cookie()
-    elseif module == 'waf-param' then
+    elseif module == 'waf_param' then
         return sync_data_waf_param()
-    elseif module == 'waf-cc' then
+    elseif module == 'waf_cc' then
         return sync_data_waf_cc()
     else 
         -- plugin
