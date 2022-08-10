@@ -85,6 +85,8 @@
 - [x] Support Waf statistics display
 
 
+- [x] Support custom back-to-source cache
+
 
 - [ ] Support multi-protocol forwarding
 

@@ -1,12 +1,13 @@
--- tl_ops_sync_cluster_timer
+-- tl_ops_sync_cluster
 -- en : sync_cluster timer
 -- zn : 周期性同步集群节点数据
 -- @author iamtsm
 -- @email 1905333456@qq.com
 
-local tlog                      = require("utils.tl_ops_utils_log"):new("tl_ops_plugin_sync_cluster_timer")
-local sync_cluster_data         = require("plugins.tl_ops_sync_cluster.sync_cluster_data")
+local tlog                      = require("utils.tl_ops_utils_log"):new("tl_ops_plugin_sync_cluster")
 local constant_sync_cluster     = require("plugins.tl_ops_sync_cluster.tl_ops_plugin_constant")
+local sync_cluster_heartbeat    = require("plugins.tl_ops_sync_cluster.sync_cluster_heartbeat")
+local tl_ops_rt                 = tlops.constant.comm.tl_ops_rt;
 local sync_env                  = tlops.env.sync
 local utils                     = tlops.utils
 
@@ -16,19 +17,34 @@ local _M = {
 }
 local mt = { __index = _M }
 
+local tl_ops_sync_cluster_timer 
 
--- 检查器
-local tl_ops_sync_cluster_timer = function(premature, modules)
+
+-- 核心逻辑
+local tl_ops_sync_cluster_core = function(options)
+    sync_cluster_heartbeat.sync_cluster_heartbeat_send(options)
+end
+
+
+-- 定时器
+tl_ops_sync_cluster_timer = function(premature, options)
 	if premature then
 		return
     end
 
-    -- 对每个节点周期性的检查各个模块数据
-    for i = 1, #other do
-        local node = other[i]
-        local res = sync_cluster_data:sync_cluster_data_module(node, options)
-        tlog:dbg("tl_ops_sync_cluster_timer, res=",res,",node=",node)
-    end
+    tlog:dbg("tl_ops_sync_cluster_timer start")
+
+	local ok, _ = pcall(tl_ops_sync_cluster_core, options)
+	if not ok then
+		tlog:err("tl_ops_sync_cluster_timer failed to pcall : " ,  _)
+	end
+
+	local ok, _ = ngx.timer.at(options.interval, tl_ops_sync_cluster_timer, options)
+	if not ok then
+		tlog:err("tl_ops_sync_cluster_timer failed to create timer: " , _)
+	end
+
+	tlog:dbg("tl_ops_sync_cluster_timer end")
 end
 
 
@@ -57,6 +73,7 @@ function _M:tl_ops_sync_cluster_timer_start( )
         current = constant_sync_cluster.current,
         other = constant_sync_cluster.other,
         interval = constant_sync_cluster.interval,
+        path = constant_sync_cluster.path,
         modules = module
     }
 
@@ -81,7 +98,7 @@ function _M:tl_ops_sync_cluster_timer_start( )
         return
     end
 
-    local ok, _ = ngx.timer.at(options.interval, tl_ops_sync_cluster_timer, options)
+    local ok, _ = ngx.timer.at(0, tl_ops_sync_cluster_timer, options)
 	if not ok then
 		tlog:err("tl_ops_sync_cluster_timer_start start failed to run , create timer failed " ,_)
 		return
@@ -90,7 +107,13 @@ end
 
 
 -- 拦截器
-function _M:tl_ops_sync_cluster_filter(ctx)
+function _M:tl_ops_sync_cluster_filter( ctx )
+
+    local sync_cluster_data_env = sync_env.cluster_data
+    if not sync_cluster_data_env.open then
+        tlog:dbg("tl_ops_sync_cluster_filter not open ")
+        return
+    end
 
     local current = constant_sync_cluster.current
     if not current then
@@ -98,14 +121,23 @@ function _M:tl_ops_sync_cluster_filter(ctx)
         return
     end
 
-    -- 主节点不拦截
+    -- 主节点跳过
     if current.master then
         tlog:dbg("tl_ops_sync_cluster_filter current master")
         return
     end
 
-    --从节点关闭管理端API
     local request_uri = utils:get_req_uri()
+
+    -- 处理主从心跳数据同步
+    if ngx.re.find(request_uri, constant_sync_cluster.path, 'jo') then
+        local res = sync_cluster_heartbeat.sync_cluster_heartbeat_receive(ctx)
+        ngx.header['Tl-Slave-Api'] = "heatbeat"
+        utils:set_ngx_req_return_ok(tl_ops_rt.ok, "success", res);
+        return
+    end
+
+    --从节点关闭管理端API
     for uri ,router in pairs(ctx.tlops_api) do
         if ngx.re.find(request_uri, uri, 'jo') then
             tlog:dbg("tl_ops_sync_cluster_filter slave tlops api close, request_uri=",request_uri)

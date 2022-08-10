@@ -14,7 +14,7 @@ local tl_ops_constant_sync_cluster = {
     other = {
         {
             ip = "192.168.123.1",
-            port = 80,
+            port = 81,
             master = false
         }
     },
@@ -32,6 +32,7 @@ local tl_ops_constant_sync_cluster = {
     },
     interval = 5,                       -- 心跳包同步周期
     timeout = 1000,                     -- 心跳连接超时时间 单位/ms
+    path = "/tlops/cluster/sync"        -- 主从同步心跳的api地址
 }
 
 return tl_ops_constant_sync_cluster
