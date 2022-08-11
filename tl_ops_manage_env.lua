@@ -100,7 +100,7 @@ return {
                 zn :同步模块定义，同步数据器需要同步的模块，如果新增需要持久化的模块，需要在此定义
             ]]
             module = {
-                "service", "health", "limit", "balance", "waf"
+                "service", "health", "limit", "balance", "waf",
                 "balance_api", "balance_cookie", "balance_header", "balance_param",
                 "waf_ip", "waf_api", "waf_cc", "waf_header", "waf_cookie", "waf_param",
             }
