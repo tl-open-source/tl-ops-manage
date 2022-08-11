@@ -13,7 +13,7 @@ local tl_ops_constant_sync_cluster = {
     },
     other = {
         {
-            ip = "192.168.123.1",
+            ip = "127.0.0.1",
             port = 81,
             master = false
         }

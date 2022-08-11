@@ -105,7 +105,7 @@
 
 - [ ] [Plugin] Support permission identity control
 
-- [ ] [Plugin] Support cluster deployment data synchronization
+- [x] [Plugin] Support cluster deployment data synchronization
 
 - [ ] [Plugin] Support health check log analysis
 

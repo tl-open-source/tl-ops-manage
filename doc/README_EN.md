@@ -2,7 +2,7 @@
 
 [![](https://img.shields.io/badge/base-openresty-blue?style=flat-square)](https://openresty.org/cn/) ![Build](https://img.shields.io/badge/build-passing-green?style=flat-square) ![Version](https://img.shields.io/github/v/tag/iamtsm/tl-ops-manage?color=green&label=Version&style=flat-square) ![License](https://img.shields.io/badge/License-Apache%202.0-blue?style=flat-square)
 
-API gateway based on openresty, supports load balancing, health check, service fuse, service current limit, waf filtering, black and white list, dynamic SSL certificate, custom plug-in, multi-level cache, visual management, dynamic configuration, data statistics, data display
+API gateway based on openresty, supports load balancing, health check, service fuse, service current limit, waf filtering, black and white list, dynamic SSL certificate, custom plug-in, multi-level cache, visual management, dynamic configuration, data statistics, data display, Cluster deployment
 
 ---
 

@@ -131,6 +131,7 @@ function _M:tl_ops_sync_cluster_filter( ctx )
 
     -- 处理主从心跳数据同步
     if ngx.re.find(request_uri, constant_sync_cluster.path, 'jo') then
+        tlog:dbg("tl_ops_sync_cluster_filter slave start heartbeta, request_uri=",request_uri)
         local res = sync_cluster_heartbeat.sync_cluster_heartbeat_receive(ctx)
         ngx.header['Tl-Slave-Api'] = "heatbeat"
         utils:set_ngx_req_return_ok(tl_ops_rt.ok, "success", res);
