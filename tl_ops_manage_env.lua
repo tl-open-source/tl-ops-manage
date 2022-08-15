@@ -92,7 +92,7 @@ return {
                 
                 zn :同步集群数据器，开启此选项后，将在每次启动nginx时，会执行一次同步数据。
             ]]
-            open = true,
+            open = false,
             --[[
                 en :synchronization module definition. The synchronization data timer needs to synchronize 
                     the module. If you add a new module that needs to be persisted, you need to define it here.
