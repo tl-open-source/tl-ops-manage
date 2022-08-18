@@ -14,7 +14,7 @@ cjson.encode_empty_table_as_object(false)
 
 -- 读取文件
 local read = function( filename )
-    local store_file_name = tl_ops_manage_env.log.store_dir .. filename
+    local store_file_name = tl_ops_manage_env.path.store .. filename
     local store_file_io, _ = io.open(store_file_name, "r")
     if not store_file_io then
         tlog:err("failed to open file in read: " .. store_file_name)

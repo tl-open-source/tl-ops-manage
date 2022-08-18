@@ -1,10 +1,10 @@
--- tl_ops_plugin_template
--- en : template  
--- zn : 插件示例
+-- tl_ops_plugin_time_alert
+-- en : time_alert  
+-- zn : 请求耗时告警统计插件
 -- @author iamtsm
 -- @email 1905333456@qq.com
 
-local tlog = require("utils.tl_ops_utils_log"):new("tl_ops_plugin_template");
+local tlog = require("utils.tl_ops_utils_log"):new("tl_ops_plugin_time_alert");
 local tl_ops_utils_func = require("utils.tl_ops_utils_func");
 
 local _M = {

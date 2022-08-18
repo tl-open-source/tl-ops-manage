@@ -41,7 +41,7 @@ local cache_waf                 =   tlops.cache.waf
 local utils                     =   tlops.utils
 local cjson                     =   require("cjson.safe");
 cjson.encode_empty_table_as_object(false)
-local tlog = require("utils.tl_ops_utils_log"):new("tl_ops_plugin_sync_data");
+local tlog = require("utils.tl_ops_utils_log"):new("tl_ops_plugin_sync");
 
 
 local _M = {

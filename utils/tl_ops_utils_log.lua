@@ -97,7 +97,7 @@ function _M:new(module)
   	return setmetatable({
 		level = tl_ops_manage_env.log.level,
 		module = module,
-		dir = tl_ops_manage_env.log.log_dir,
+		dir = tl_ops_manage_env.path.log,
 		format_json = tl_ops_manage_env.log.format_json
 	}, self)
 end

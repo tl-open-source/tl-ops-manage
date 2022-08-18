@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>tl-ops-manage-插件列表</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <script src="layui/layui.js" v="layui" e="layui"></script>
+    <link rel="stylesheet" type="text/css" href="layui/css/layui.css" />
+    <link href="https://qnproxy.iamtsm.cn/44826979.png" rel="shortcut icon" type="image/x-icon">
+</head>
+
+<style>
+    .tlops-plugin-main {
+        padding: 20px;
+        background-color: #fff;
+        border: 1px solid #e7eaec;
+        overflow: hidden;
+        box-shadow: 6px 8px 10px rgb(0 0 0 / 8%);
+        border-radius: 8px;
+        cursor: pointer;
+    }
+    .tlops-plugin-img {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        user-select: none;
+    }
+    .layui-fluid {
+        padding: 40px;
+    }
+    .tlops-plugin-intro{
+        padding-left: 5px;
+        margin-top: 15px;
+        word-break: break-all;
+    }
+    .tlops-plugin-intro-addr{
+        margin-top: 20px;
+    }
+    .tlops-plugin-title{
+        text-align: center;
+        padding: 20px;
+        font-weight: 700;
+        user-select: none;
+    }
+    .tlops-plugin-title-help{
+        background: antiquewhite;
+        border-radius: 50%;
+        padding: 5px;
+        cursor: pointer;
+    } 
+
+    .tlops-plugin-line{
+        border-bottom: 1px solid #c7ceef;
+        margin-top: 10px;
+        width: 80%;
+        margin-left: 10%;
+    }
+
+    .tlops-plugin-foot{
+        position: relative;
+        padding-top: 20px;
+        padding-bottom: 20px;
+        margin-top: 20px;
+        line-height: 25px;
+        border-top: 1px solid #e8e8e8;
+        font-size: 14px;
+        font-weight: 800;
+        color: #5c5555;
+        text-align: right;
+        bottom: 10px;
+        width: 80%;
+        margin-left: 10%;
+    }
+
+</style>
+
+<body style="background: aliceblue;">
+    <h2 class="tlops-plugin-title">
+        tl-ops-manage插件列表 
+        <a href="https://book.iamtsm.cn/usage/plugin/" target="_blank">
+            <i class="layui-icon layui-icon-help tlops-plugin-title-help"></i
+        ></a>
+    </h2>
+    <div class="tlops-plugin-line"></div>
+    <div class="layui-fluid">
+        <div class="layui-row layui-col-space15" id="tl-ops-plugins-tpl-view"> </div>
+        <script id="tl-ops-plugins-tpl" type="text/html">
+            {{#  layui.each(d, function(index, plugin){ }}
+            <div class="layui-col-md4">
+                <div class="tlops-plugin-main">
+                    <div class="layui-col-md4">
+                        <div style="text-align: center;margin-bottom: 20px;padding-right: 10px;">
+                            <img class="tlops-plugin-img" src="{{plugin.avatar}}">
+                            <div style="font-weight: 700; margin-top: 20px;color: #529357;">
+                                {{#  if(plugin.dev === true) { }}
+                                <i class="layui-icon layui-icon-time" style="color:red"></i>
+                                {{#  }else { }}
+                                <i class="layui-icon layui-icon-auz"></i>
+                                {{#  }}}
+                                {{plugin.name}}
+                            </div>
+                            <div style="font-weight: 700; margin-top: 20px;color:#586491;">
+                                <a href="{{plugin.author_addr}}">{{plugin.author}}</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-col-md8 tlops-plugin-intro"> 
+                        {{#  if(plugin.template === true) { }}
+                            <div> <b>{{plugin.intro}}</b>  </div>
+                        {{#  }else { }}
+                            <div> {{plugin.intro}}  </div>
+                        {{#  }}}
+                        <div class="tlops-plugin-intro-addr"><b>地址:</b> 
+                            {{#  if(plugin.dev === true) { }}
+                            暂无
+                            {{#  }else { }}
+                            <a href="{{plugin.source_addr}}" target="_blank">点击直达</a> 
+                            {{#  }}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {{#  }); }}
+        </script>
+    </div>
+
+
+    <div class="tlops-plugin-foot">
+        <a href="https://github.com/iamtsm" target="_blank">Copyright @ 2021 iamtsm</a>
+    </div>
+
+    <script>
+        layui.use(['laytpl', 'element'], function () {
+            window.laytpl = layui.laytpl
+            const tl_ops_plugins_render = function (data) {
+                laytpl(document.getElementById("tl-ops-plugins-tpl").innerHTML).render((() => {
+                    return data;
+                })(), (html) => {
+                    document.getElementById("tl-ops-plugins-tpl-view").innerHTML = html;
+                });
+            }
+            let plugins = [{
+                name: "插件模板示例",
+                author: "@iamtsm",
+                avatar: "https://qnproxy.iamtsm.cn/44826979.png",
+                author_addr: "https://github.com/iamtsm",
+                source_addr: "https://github.com/iamtsm/tl-ops-manage/tree/main/plugins/tl_ops_template",
+                intro: "插件模板示例，如有新插件需要在此补充，可联系我或issue留言，后续会优化并完善自动化提交插件。",
+                template : true,
+            }, {
+                name: "SSL动态证书",
+                author: "@iamtsm",
+                avatar: "https://qnproxy.iamtsm.cn/44826979.png",
+                author_addr: "https://github.com/iamtsm",
+                source_addr: "https://github.com/iamtsm/tl-ops-manage/tree/main/plugins/tl_ops_ssl",
+                intro: "动态配置SSL证书插件，支持管理台界面上传证书，删除证书。"
+            }, {
+                name: "数据同步预热",
+                author: "@iamtsm",
+                avatar: "https://qnproxy.iamtsm.cn/44826979.png",
+                author_addr: "https://github.com/iamtsm",
+                source_addr: "https://github.com/iamtsm/tl-ops-manage/tree/main/plugins/tl_ops_sync",
+                intro: "同步静态配置中的数据、增量字段至store文件中，并提供配置数据预热功能。"
+            }, {
+                name: "集群数据同步",
+                author: "@iamtsm",
+                avatar: "https://qnproxy.iamtsm.cn/44826979.png",
+                author_addr: "https://github.com/iamtsm",
+                source_addr: "https://github.com/iamtsm/tl-ops-manage/tree/main/plugins/tl_ops_sync_cluster",
+                intro: "多节点部署下，节点间的store数据文件同步。",
+            }, {
+                name: "控制登录权限 - (开发中)",
+                author: "@iamtsm",
+                avatar: "https://qnproxy.iamtsm.cn/44826979.png",
+                author_addr: "https://github.com/iamtsm",
+                source_addr: "https://github.com/iamtsm/tl-ops-manage/tree/main/plugins/",
+                intro: "支持管理控制台下身份权限校验，支持登录验证。",
+                dev : true
+            }, {
+                name: "模块日志分析 - (开发中)",
+                author: "@iamtsm",
+                avatar: "https://qnproxy.iamtsm.cn/44826979.png",
+                author_addr: "https://github.com/iamtsm",
+                source_addr: "https://github.com/iamtsm/tl-ops-manage/tree/main/plugins/tl_ops_sync",
+                intro: "日志分析统计展示。",
+                dev : true
+            }, {
+                name: "请求ID追踪 - (待排期)",
+                author: "@iamtsm",
+                avatar: "https://qnproxy.iamtsm.cn/44826979.png",
+                author_addr: "https://github.com/iamtsm",
+                source_addr: "",
+                intro: "请求调用执行链路追踪。",
+                dev : true
+            }, {
+                name: "请求耗时统计 - (待排期)",
+                author: "@iamtsm",
+                avatar: "https://qnproxy.iamtsm.cn/44826979.png",
+                author_addr: "https://github.com/iamtsm",
+                source_addr: "",
+                intro: "请求耗时统计分析。",
+                dev : true
+            }, {
+                name: "请求告警通知 - (待排期)",
+                author: "@iamtsm",
+                avatar: "https://qnproxy.iamtsm.cn/44826979.png",
+                author_addr: "https://github.com/iamtsm",
+                source_addr: "",
+                intro: "请求告警通知，支持配置多种通知渠道。",
+                dev : true
+            }]
+
+            tl_ops_plugins_render(plugins)
+        });
+    </script>
+</body>
+
+</html>

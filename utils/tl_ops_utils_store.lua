@@ -124,7 +124,7 @@ end
 
 function _M:new(business)
 	local store_conf = {
-		path = tl_ops_manage_env.log.store_dir,
+		path = tl_ops_manage_env.path.store,
 		business = business
 	}
  	setmetatable(store_conf, self)

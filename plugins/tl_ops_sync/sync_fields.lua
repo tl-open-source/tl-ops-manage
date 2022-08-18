@@ -43,7 +43,7 @@ local tl_ops_limit_fuse_check_version   =   require("limit.fuse.tl_ops_limit_fus
 local tl_ops_health_check_version       =   require("health.tl_ops_health_check_version")
 local cjson                             =   require("cjson.safe");
 cjson.encode_empty_table_as_object(false)
-local tlog = require("utils.tl_ops_utils_log"):new("tl_ops_plugin_sync_fields");
+local tlog = require("utils.tl_ops_utils_log"):new("tl_ops_plugin_sync");
 
 
 local _M = {

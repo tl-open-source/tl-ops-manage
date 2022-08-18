@@ -1,4 +1,33 @@
+local ROOT_PATH = "/path/to/tl-ops-manage/"
+
 return {
+    path = {
+        --[[
+            en :Console path setting, the page forwarding plugin will use this path for path matching
+            
+            zn :控制台路径设置，页面转发插件会将此路径用于路径匹配 
+        ]]
+        tlopsmanage = ROOT_PATH .. "web/",
+        --[[
+            en :The official website path setting, the page forwarding plugin 
+                will use this path for path matching
+            
+            zn :官网路径设置，页面转发插件会将此路径用于路径匹配 
+        ]]
+        website = ROOT_PATH .. "website/",
+        --[[
+            en :log output directory, all module logs will be output to this directory
+            
+            zn :日志输出目录，所有模块的日志都将输出到此目录下
+        ]]
+        log = ROOT_PATH,
+        --[[
+            en :data storage directory, the directory where the module data is stored
+            
+            zn :数据存放目录，模块的数据存放的目录
+        ]]
+        store = ROOT_PATH .. "store/",
+    },
     log = {
         --[[
             en :log level, please be careful not to enable debug level logs 
@@ -14,20 +43,6 @@ return {
             zn :日志格式化，开启此选项会占用更多磁盘空间，生产环境推荐关闭此选项
         ]]
         format_json = true,
-        --[[
-            en :log output directory, all module logs will be output to this directory, 
-                Notice : need to fill in the 'absolute path'
-            
-            zn :日志输出目录，所有模块的日志都将输出到此目录下，注意：需要填写 ‘绝对路径’
-        ]]
-        log_dir = "/path/to/tl-ops-manage/",
-        --[[
-            en :data storage directory, the directory where the module data is stored, 
-                Notice: need to fill in the 'absolute path'
-            
-            zn :数据存放目录，模块的数据存放的目录，注意：需要填写 ‘绝对路径’
-        ]]
-        store_dir = "/path/to/tl-ops-manage/store/",
     },
     cache = {
         --[[
@@ -163,7 +178,8 @@ return {
             zn :插件模块定义，引入的插件需要在此定义好才能被加载。否则将不生效。注意，插件填写的顺序将影响相同插件阶段执行的顺序
         ]]
         module = {
-            "ssl", "sync", "sync_cluster"
+            "ssl", "sync", "sync_cluster", "page_proxy",
+            -- "jwt", "cors", "log_analyze", "tracing"
         }
     }
 }

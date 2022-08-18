@@ -80,21 +80,23 @@ end
 
 
 -- rewrite阶段执行
-function _M:tl_ops_process_init_rewrite()
+function _M:tl_ops_process_init_rewrite(onlyplugin)
     -- 初始化ctx
     m_ctx:init();
     
     -- 执行插件
     m_plugin:tl_ops_process_before_init_rewrite(ngx.ctx);
 
-    -- 加载管理台API
-    m_api:init(ngx.ctx);
+    if not onlyplugin then
+        -- 加载管理台API
+        m_api:init(ngx.ctx);
 
-    -- 启动全局WAF
-    m_waf:init_global(ngx.ctx);
+        -- 启动全局WAF
+        m_waf:init_global(ngx.ctx);
 
-    -- 负载均衡筛选
-    m_balance:filter(ngx.ctx);
+        -- 负载均衡筛选
+        m_balance:filter(ngx.ctx);
+    end
     
     -- 执行插件
 	m_plugin:tl_ops_process_after_init_rewrite(ngx.ctx);    
@@ -156,7 +158,8 @@ end
 -- log阶段执行
 function _M:tl_ops_process_init_log()
     -- 执行插件
-	m_plugin:tl_ops_process_before_init_log(ngx.ctx);    
+    m_plugin:tl_ops_process_before_init_log(ngx.ctx);    
+    
     -- 执行插件
 	m_plugin:tl_ops_process_after_init_log(ngx.ctx);
 end
