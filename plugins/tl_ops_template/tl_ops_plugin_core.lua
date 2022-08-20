@@ -4,8 +4,8 @@
 -- @author iamtsm
 -- @email 1905333456@qq.com
 
-local tlog = require("utils.tl_ops_utils_log"):new("tl_ops_plugin_template");
-local tl_ops_utils_func = require("utils.tl_ops_utils_func");
+local tlog  = require("utils.tl_ops_utils_log"):new("tl_ops_plugin_template");
+local uitls = tlops.utils
 
 local _M = {
     _VERSION = '0.01'

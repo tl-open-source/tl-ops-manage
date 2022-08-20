@@ -5,10 +5,9 @@
 -- @email 1905333456@qq.com
 
 local tlog                      = require("utils.tl_ops_utils_log"):new("tl_ops_plugin_sync_cluster")
-local constant_sync_cluster     = require("plugins.tl_ops_sync_cluster.tl_ops_plugin_constant")
+local sync_cluster_constant     = require("plugins.tl_ops_sync_cluster.tl_ops_plugin_constant")
 local sync_cluster_heartbeat    = require("plugins.tl_ops_sync_cluster.sync_cluster_heartbeat")
 local tl_ops_rt                 = tlops.constant.comm.tl_ops_rt;
-local sync_env                  = tlops.env.sync
 local utils                     = tlops.utils
 
 
@@ -56,24 +55,23 @@ function _M:tl_ops_sync_cluster_timer_start( )
         return
     end
 
-    local sync_cluster_data_env = sync_env.cluster_data
-    if not sync_cluster_data_env.open then
+    if not sync_cluster_constant.open then
         tlog:dbg("tl_ops_sync_cluster_timer_start not open ")
         return
     end
 
-    local module = sync_cluster_data_env.module
+    local module = sync_cluster_constant.module
     if not module then
         tlog:dbg("tl_ops_sync_cluster_timer_start no module, module=",module)
         return
     end
     
     local options = {
-        timeout = constant_sync_cluster.timeout,
-        current = constant_sync_cluster.current,
-        other = constant_sync_cluster.other,
-        interval = constant_sync_cluster.interval,
-        path = constant_sync_cluster.path,
+        timeout = sync_cluster_constant.timeout,
+        current = sync_cluster_constant.current,
+        other = sync_cluster_constant.other,
+        interval = sync_cluster_constant.interval,
+        path = sync_cluster_constant.path,
         modules = module
     }
 
@@ -109,13 +107,12 @@ end
 -- 拦截器
 function _M:tl_ops_sync_cluster_filter( ctx )
 
-    local sync_cluster_data_env = sync_env.cluster_data
-    if not sync_cluster_data_env.open then
+    if not sync_cluster_constant.open then
         tlog:dbg("tl_ops_sync_cluster_filter not open ")
         return
     end
 
-    local current = constant_sync_cluster.current
+    local current = sync_cluster_constant.current
     if not current then
         tlog:err("tl_ops_sync_cluster_filter current nil")
         return
@@ -130,7 +127,7 @@ function _M:tl_ops_sync_cluster_filter( ctx )
     local request_uri = utils:get_req_uri()
 
     -- 处理主从心跳数据同步
-    if ngx.re.find(request_uri, constant_sync_cluster.path, 'jo') then
+    if ngx.re.find(request_uri, sync_cluster_constant.path, 'jo') then
         tlog:dbg("tl_ops_sync_cluster_filter slave start heartbeta, request_uri=",request_uri)
         local res = sync_cluster_heartbeat.sync_cluster_heartbeat_receive(ctx)
         ngx.header['Tl-Slave-Api'] = "heatbeat"

@@ -85,23 +85,26 @@
 - [x] Support Waf statistics display
 
 
-- [x] Support custom back-to-source cache
+- [ ] Support custom back-to-source cache
+
+- [ ] Support dynamic plug-in
+
+- [x] Support for custom data sources
 
 
-- [ ] Support multi-protocol forwarding
+- [ ] Support multi-protocol conversion and forwarding
 
-- [ ] Provide module test cases
+- [ ] Support each module test case
 
 
-- [x] [Plugin] Support data synchronization and warm-up
+
+- [x] [Plugin] Support data synchronization warm-up
 
 - [x] [Plugin] Support SSL certificate configuration
 
-- [ ] [Plugin] Support request ID tracking
+- [x] [plugin] Support request ID tracking
 
-- [ ] [Plugin] Support request time-consuming statistics
-
-- [ ] [Plugin] Support request alarm configuration
+- [x] [Plugin] Support request time-consuming statistics alarm
 
 - [ ] [Plugin] Support permission identity control
 

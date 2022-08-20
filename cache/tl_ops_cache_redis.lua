@@ -1,11 +1,11 @@
 -- tl_ops_cache
 -- en : redis cache , cache2
--- zn : redis 缓存实现二级缓存
+-- zn : redis 缓存实现二级自定义缓存
 -- @author iamtsm
 -- @email 1905333456@qq.com
 
 local cache_redis       = require("lib.iredis"):new();
-local tlog              = require("utils.tl_ops_utils_log"):new("tl_ops_cache_redis");
+local tlog              = require("utils.tl_ops_utils_log"):new("tl_ops_cache_cus");
 local tl_ops_utils_func = require("utils.tl_ops_utils_func");
 
 local _M = tl_ops_utils_func:new_tab(0, 20)

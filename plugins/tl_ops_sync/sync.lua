@@ -7,7 +7,7 @@
 local tlog                  = require("utils.tl_ops_utils_log"):new("tl_ops_plugin_sync")
 local sync_fields           = require("plugins.tl_ops_sync.sync_fields")
 local sync_data             = require("plugins.tl_ops_sync.sync_data")
-local sync_env              = tlops.env.sync
+local sync_constant         = require("plugins.tl_ops_sync.tl_ops_plugin_constant")
 local utils                 = tlops.utils
 
 
@@ -23,7 +23,7 @@ local tl_ops_sync_timer = function(premature, args)
 		return
     end
     
-    local sync_fields_env = sync_env.fields
+    local sync_fields_env = sync_constant.fields
     if sync_fields_env.open then
         local module = sync_fields_env.module
         if module then
@@ -36,7 +36,7 @@ local tl_ops_sync_timer = function(premature, args)
         end
     end
 
-    local sync_data_env = sync_env.data
+    local sync_data_env = sync_constant.data
     if sync_data_env.open then
         local module = sync_data_env.module
         if module then

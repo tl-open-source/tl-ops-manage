@@ -46,80 +46,14 @@ return {
     },
     cache = {
         --[[
-            en :enable redis cache. Notice: that you need to install redis first to enable this option.
+            en : enable custom L2 cache, currently supports options [redis], [none], 
+                 [none] means close L2 cache
+                 Supports custom extended cache implementations, such as etcd, mysql, etcd.
             
-            zn :是否开启redis缓存，注意，开启此选项需要先安装redis。
+            zn :开启自定义二级缓存，目前支持选项 【redis】, 【none】, 【none】表示不开启二级缓存
+                支持自定义扩展缓存实现，如etcd，mysql等。
         ]]
-        redis = false
-    },
-    sync = {
-        fields = {
-            --[[
-                en :sync field device. After this option is turned on, each time nginx is started, 
-                    the field will be synchronized once.
-                
-                zn :同步字段器，开启此选项后，将在每次启动nginx时，会执行一次同步字段。
-            ]]
-            open = true,
-            --[[
-                en :synchronization module definition. The synchronization field device needs to synchronize the module. 
-                    If you add a new module that needs to be persisted, you need to define it here.
-                
-                zn :同步模块定义，同步字段器需要同步的模块，如果新增需要持久化的模块，需要在此定义
-            ]]
-            module = {
-                "service", "health", "limit",
-                "balance", "balance_api", "balance_cookie", "balance_header", "balance_param",
-                "waf", "waf_ip", "waf_api", "waf_cc", "waf_header", "waf_cookie", "waf_param",
-                "ssl"
-            }
-        },
-        data = {
-            --[[
-                en :sync data timer. After this option is turned on, 
-                    each time nginx is started, the data will be synchronized once.
-                
-                zn :同步数据器，开启此选项后，将在每次启动nginx时，会执行一次同步数据。
-            ]]
-            open = true,
-            --[[
-                en :synchronization module definition. The synchronization data timer needs to synchronize 
-                    the module. If you add a new module that needs to be persisted, you need to define it here.
-                    Notice: The reason why the modules here do not include 'health check module', 
-                            'service module','fuse current limiting module', This is because 
-                            the data of these modules is in the timer, and the data synchronization 
-                            in the timer is handled by their respective dynamic configurators.
-                
-                zn :同步模块定义，同步数据器需要同步的模块，如果新增需要持久化的模块，需要在此定义，
-                    注意：之所以这里的模块不包含 ‘健康检查模块’，‘服务模块’，‘熔断限流模块’，
-                    是因为这些模块的数据是在定时器中，而定时器中的数据同步是由其各自的动态配置器处理。
-            ]]
-            module = {
-                "balance_api", "balance_cookie", "balance_header", "balance_param",
-                "waf_ip", "waf_api", "waf_cc", "waf_header", "waf_cookie", "waf_param",
-                "ssl"
-            }
-        },
-        cluster_data = {
-            --[[
-                en :sync cluster data timer. After this option is turned on, 
-                    each time nginx is started, the data will be synchronized once.
-                
-                zn :同步集群数据器，开启此选项后，将在每次启动nginx时，会执行一次同步数据。
-            ]]
-            open = false,
-            --[[
-                en :synchronization module definition. The synchronization data timer needs to synchronize 
-                    the module. If you add a new module that needs to be persisted, you need to define it here.
-
-                zn :同步模块定义，同步数据器需要同步的模块，如果新增需要持久化的模块，需要在此定义
-            ]]
-            module = {
-                "service", "health", "limit", "balance", "waf",
-                "balance_api", "balance_cookie", "balance_header", "balance_param",
-                "waf_ip", "waf_api", "waf_cc", "waf_header", "waf_cookie", "waf_param",
-            }
-        }
+        cus = "none"
     },
     balance = {
         --[[
@@ -178,8 +112,8 @@ return {
             zn :插件模块定义，引入的插件需要在此定义好才能被加载。否则将不生效。注意，插件填写的顺序将影响相同插件阶段执行的顺序
         ]]
         module = {
-            "ssl", "sync", "sync_cluster", "page_proxy",
-            -- "jwt", "cors", "log_analyze", "tracing"
+            "ssl", "sync", "sync_cluster", "page_proxy", "time_alert",
+            -- "auth", "cors", "log_analyze", "tracing"
         }
     }
 }

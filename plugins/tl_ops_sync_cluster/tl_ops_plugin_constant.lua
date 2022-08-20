@@ -1,10 +1,20 @@
 -- 集群节点数据同步配置
 
-local tl_ops_constant_sync_cluster = {
+local tl_ops_plugin_constant_sync_cluster = {
+    open = false,                           -- 是否开启
+    module = {                              -- 同步数据器需要同步的模块，如果新增需要持久化的模块，需要在此定义
+        "service", "health", "limit", "balance", "waf",
+        "balance_api", "balance_cookie", "balance_header", "balance_param",
+        "waf_ip", "waf_api", "waf_cc", "waf_header", "waf_cookie", "waf_param",
+    },
+    interval = 5,                           -- 心跳包同步周期
+    timeout = 1000,                         -- 心跳连接超时时间 单位/ms
+    path = "/tlops/cluster/sync",           -- 主从同步心跳的api地址
+    
     cache_key = {
-        current = "tl_ops_sync_cluster_current",        -- 当前节点信息 (暂不支持动态配置，只能在文件配置)
-        other = "tl_ops_sync_cluster_other",            -- 其他节点信息 (暂不支持动态配置，只能在文件配置)
-        interval = "tl_ops_sync_cluster_interval"       -- 主从心跳周期/单位/s  (暂不支持动态配置，只能在文件配置)
+        current = "tl_ops_plugin_sync_cluster_current",        -- 当前节点信息 (暂不支持动态配置，只能在文件配置)
+        other = "tl_ops_plugin_sync_cluster_other",            -- 其他节点信息 (暂不支持动态配置，只能在文件配置)
+        interval = "tl_ops_plugin_sync_cluster_interval"       -- 主从心跳周期/单位/s  (暂不支持动态配置，只能在文件配置)
     },
     current = {
         ip = "127.0.0.1",
@@ -30,9 +40,6 @@ local tl_ops_constant_sync_cluster = {
             master = false
         }
     },
-    interval = 5,                       -- 心跳包同步周期
-    timeout = 1000,                     -- 心跳连接超时时间 单位/ms
-    path = "/tlops/cluster/sync"        -- 主从同步心跳的api地址
 }
 
-return tl_ops_constant_sync_cluster
+return tl_ops_plugin_constant_sync_cluster

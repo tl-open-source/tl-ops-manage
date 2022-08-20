@@ -409,7 +409,7 @@ local sync_fields_balance = function ()
 
     for key, obj in pairs(cache_keys) do
         local cache_key = obj.cache_key
-        local constant_data = obj.constant_data
+        local constant_data = obj.constant
         local demo = obj.demo
 
         local data_str, _ = cache_balance:get(cache_key);
@@ -818,7 +818,7 @@ local sync_fields_waf = function ()
 
     for key, obj in pairs(cache_keys) do
         local cache_key = obj.cache_key
-        local constant_data = obj.constant_data
+        local constant_data = obj.constant
         local demo = obj.demo
 
         local data_str, _ = cache_waf:get(cache_key);

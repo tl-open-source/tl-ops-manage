@@ -11,10 +11,6 @@ local tl_ops_utils_func     = require("utils.tl_ops_utils_func");
 local tl_ops_constant_limit = require("constant.tl_ops_constant_limit")
 local cache_dict            = ngx.shared.tlopsbalance;
 
-local _M = {
-	_VERSION = '0.02'
-}
-
 
 -- 更新当前service的状态版本，用于通知其他worker进程同步最新conf
 local tl_ops_limit_fuse_version_incr_service_version = function( service_name )
@@ -26,7 +22,7 @@ local tl_ops_limit_fuse_version_incr_service_version = function( service_name )
     local service_version, _ = cache_dict:get(key)
 
     if not service_version then
-        service_version, err = cache_dict:add(key, 1);
+        service_version, _ = cache_dict:add(key, 1);
         if not service_version then 
             tlog:err(" failed to publish new service_version:" , _)
         end
@@ -54,10 +50,7 @@ local tl_ops_limit_fuse_version_incr_service_option_version = function(  )
     end
 end
 
-
-_M = {
+return {
     incr_service_version = tl_ops_limit_fuse_version_incr_service_version,
     incr_service_option_version = tl_ops_limit_fuse_version_incr_service_option_version
 }
-
-return _M;

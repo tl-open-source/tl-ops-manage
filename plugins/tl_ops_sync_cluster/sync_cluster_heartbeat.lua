@@ -9,7 +9,6 @@ local sync_cluster_data_parse   = require("plugins.tl_ops_sync_cluster.sync_clus
 local tlog                      = require("utils.tl_ops_utils_log"):new("tl_ops_plugin_sync_cluster")
 local nx_socket					= ngx.socket.tcp
 local tl_ops_rt                 = tlops.constant.comm.tl_ops_rt
-local sync_env                  = tlops.env.sync
 local utils                     = tlops.utils
 local cjson                     = require("cjson.safe")
 cjson.encode_empty_table_as_object(false)

@@ -4,8 +4,8 @@
 -- @author iamtsm
 -- @email 1905333456@qq.com
 
-local tlog = require("utils.tl_ops_utils_log"):new("tl_ops_plugin_tracing");
-local tl_ops_utils_func = require("utils.tl_ops_utils_func");
+local uuid = require("lib.jit-uuid")
+local utils = tlops.utils
 
 local _M = {
     _VERSION = '0.01'
@@ -22,8 +22,22 @@ function _M:new(options)
 end
 
 
+function _M:tl_ops_process_before_init_worker()
+
+    uuid.seed()
+
+    return true, "ok"
+end
+
+
 function _M:tl_ops_process_before_init_access(ctx)
-    
+    local req = ngx.req
+    local headers = req.get_headers()
+
+    local trace_id = headers["Tl-Tracing-Id"]
+    if not trace_id then
+        req.set_header("Tl-Tracing-Id", uuid())
+    end
 
     return true, "ok"
 end

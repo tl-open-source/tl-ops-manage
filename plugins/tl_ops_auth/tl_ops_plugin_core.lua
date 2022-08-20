@@ -1,10 +1,10 @@
--- tl_ops_plugin_jwt
--- en : jwt  
--- zn : jwt权限认证插件
+-- tl_ops_plugin_auth
+-- en : login auth 
+-- zn : 登录权限认证插件
 -- @author iamtsm
 -- @email 1905333456@qq.com
 
-local tlog = require("utils.tl_ops_utils_log"):new("tl_ops_plugin_jwt");
+local tlog = require("utils.tl_ops_utils_log"):new("tl_ops_plugin_auth");
 local tl_ops_utils_func = require("utils.tl_ops_utils_func");
 
 local _M = {
