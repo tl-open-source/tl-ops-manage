@@ -22,6 +22,9 @@ local tl_ops_constant_balance = {
         req_fail = "tl_ops_balance_req_fail",                           -- 以服务节点为单位路由请求失败次数     int
         balance_interval_success = "tl_ops_balance_interval_success",   -- 以服务节点为单位，周期内成功次数集合 list
     },
+    proxy_server = "Tl-Proxy-Server",   -- 请求头标记
+    proxy_state = "Tl-Proxy-State",
+    proxy_mode = "Tl-Proxy-Mode",
     api = {
         list = {
             point = tl_ops_constant_balance_api.point,

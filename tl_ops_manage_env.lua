@@ -112,8 +112,8 @@ return {
             zn :插件模块定义，引入的插件需要在此定义好才能被加载。否则将不生效。注意，插件填写的顺序将影响相同插件阶段执行的顺序
         ]]
         module = {
-            "ssl", "sync", "sync_cluster", "page_proxy", "time_alert",
-            -- "auth", "cors", "log_analyze", "tracing"
+            "ssl", "sync", "sync_cluster", "page_proxy", "time_alert", "tracing"
+            -- "auth", "cors", "log_analyze",
         }
     }
 }

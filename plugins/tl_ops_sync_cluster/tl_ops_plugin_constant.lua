@@ -10,7 +10,8 @@ local tl_ops_plugin_constant_sync_cluster = {
     interval = 5,                           -- 心跳包同步周期
     timeout = 1000,                         -- 心跳连接超时时间 单位/ms
     path = "/tlops/cluster/sync",           -- 主从同步心跳的api地址
-    
+    salve_api = "Tl-Slave-Api",             -- 请求头标记
+
     cache_key = {
         current = "tl_ops_plugin_sync_cluster_current",        -- 当前节点信息 (暂不支持动态配置，只能在文件配置)
         other = "tl_ops_plugin_sync_cluster_other",            -- 其他节点信息 (暂不支持动态配置，只能在文件配置)

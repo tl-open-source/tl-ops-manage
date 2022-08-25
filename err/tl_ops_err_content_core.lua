@@ -8,7 +8,8 @@ local cjson                 = require("cjson.safe");
 local tl_ops_utils_func     = require("utils.tl_ops_utils_func");
 local cache_balance         = require("cache.tl_ops_cache_core"):new("tl-ops-balance");
 local cache_waf             = require("cache.tl_ops_cache_core"):new("tl-ops-waf");
-
+local constant_balance      = require("constant.tl_ops_constant_balance");
+local constant_waf          = require("constant.tl_ops_constant_waf");
 
 local _M = {
     _VERSION = '0.02',
@@ -24,9 +25,9 @@ end
 -- 负载自定义错误内容处理逻辑
 local tl_ops_err_content_balance_handler = function(args)
 
-    ngx.header['Tl-Proxy-Server'] = args.server
-    ngx.header['Tl-Proxy-State'] = args.state
-    ngx.header['Tl-Proxy-Mode'] = args.mode
+    ngx.header[constant_balance.proxy_server] = args.server
+    ngx.header[constant_balance.proxy_state] = args.state
+    ngx.header[constant_balance.proxy_mode] = args.mode
 
     local str = cache_balance:get(args.cache_key)
     if not str then
@@ -50,7 +51,7 @@ end
 -- WAF自定义错误内容处理逻辑
 local tl_ops_err_content_waf_handler = function(args)
 
-    ngx.header['Tl-Waf-Mode'] = args.mode
+    ngx.header[constant_waf.waf_mode] = args.mode
 
     local str = cache_waf:get(args.cache_key)
     if not str then

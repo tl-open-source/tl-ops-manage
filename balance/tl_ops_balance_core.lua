@@ -164,9 +164,9 @@ function _M:tl_ops_balance_core_balance(ctx)
     end
     shared:incr(limit_req_succ_count_key, 1)
 
-    ngx.header['Tl-Proxy-Server'] = tlops_ups_node.service .. ":" .. tlops_ups_node.name;
-    ngx.header['Tl-Proxy-State'] = "online"
-    ngx.header['Tl-Proxy-Mode'] = tlops_ups_mode
+    ngx.header[tl_ops_constant_balance.proxy_server] = tlops_ups_node.service .. ":" .. tlops_ups_node.name;
+    ngx.header[tl_ops_constant_balance.proxy_state] = "online"
+    ngx.header[tl_ops_constant_balance.proxy_mode] = tlops_ups_mode
 
     local ok, err = ngx_balancer.set_current_peer(tlops_ups_node.ip, tlops_ups_node.port)
     if ok then

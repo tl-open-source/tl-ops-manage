@@ -26,6 +26,7 @@ local tl_ops_constant_waf = {
         req_param = "tl_ops_waf_req_param",
         waf_interval_success = "tl_ops_waf_interval_success",   -- 以服务节点为单位，周期内拦截成功次数集合 list
     },
+    waf_mode = "Tl-Waf-Mode",
     ip = {
         list = tl_ops_constant_waf_ip.list,
         scope = tl_ops_constant_waf_ip.scope,

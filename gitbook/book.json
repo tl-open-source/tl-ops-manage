@@ -1,0 +1,14 @@
+{
+    "title": "tl-ops-manage",
+    "language": "zh-hans",
+    "author": "iamtsm",
+    "links": {
+      "sidebar": {
+        "iamtsm": "http://blog.iamtsm.cn"
+      }
+    },
+    "plugins": [
+      "-search",
+      "-sharing"
+    ]
+  }

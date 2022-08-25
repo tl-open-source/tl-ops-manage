@@ -4,8 +4,9 @@
 -- @author iamtsm
 -- @email 1905333456@qq.com
 
-local uuid = require("lib.jit-uuid")
-local utils = tlops.utils
+local uuid              = require("lib.jit-uuid")
+local utils             = tlops.utils
+local tracing_constant  = require("plugins.tl_ops_tracing.tl_ops_plugin_constant")
 
 local _M = {
     _VERSION = '0.01'
@@ -30,45 +31,27 @@ function _M:tl_ops_process_before_init_worker()
 end
 
 
-function _M:tl_ops_process_before_init_access(ctx)
-    local req = ngx.req
-    local headers = req.get_headers()
+function _M:tl_ops_process_before_init_rewrite(ctx)
+    local headers = ngx.req.get_headers()
 
-    local trace_id = headers["Tl-Tracing-Id"]
+    local trace_id = headers[tracing_constant.tracing_rid]
     if not trace_id then
-        req.set_header("Tl-Tracing-Id", uuid())
+        local new_trace_id = uuid()
+        ngx.req.set_header(tracing_constant.tracing_rid, new_trace_id)
     end
 
     return true, "ok"
 end
 
-function _M:tl_ops_process_after_init_access(ctx)
-    
-
-    return true, "ok"
-end
 
 function _M:tl_ops_process_before_init_header(ctx)
-   
 
-    return true, "ok"
-end
-
-function _M:tl_ops_process_after_init_header(ctx)
-   
-
-    return true, "ok"
-end
-
-function _M:tl_ops_process_before_init_log(ctx)
+    local trace_id = ngx.header[tracing_constant.tracing_rid]
+    if not trace_id then
+        local headers = ngx.req.get_headers()
+        ngx.header[tracing_constant.tracing_rid] = headers[tracing_constant.tracing_rid]
+    end
     
-
-    return true, "ok"
-end
-
-function _M:tl_ops_process_after_init_log(ctx)
-    
-
     return true, "ok"
 end
 

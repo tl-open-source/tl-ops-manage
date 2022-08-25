@@ -130,7 +130,7 @@ function _M:tl_ops_sync_cluster_filter( ctx )
     if ngx.re.find(request_uri, sync_cluster_constant.path, 'jo') then
         tlog:dbg("tl_ops_sync_cluster_filter slave start heartbeta, request_uri=",request_uri)
         local res = sync_cluster_heartbeat.sync_cluster_heartbeat_receive(ctx)
-        ngx.header['Tl-Slave-Api'] = "heatbeat"
+        ngx.header[sync_cluster_constant.salve_api] = "heatbeat"
         utils:set_ngx_req_return_ok(tl_ops_rt.ok, "success", res);
         return
     end
@@ -139,7 +139,7 @@ function _M:tl_ops_sync_cluster_filter( ctx )
     for uri ,router in pairs(ctx.tlops_api) do
         if ngx.re.find(request_uri, uri, 'jo') then
             tlog:dbg("tl_ops_sync_cluster_filter slave tlops api close, request_uri=",request_uri)
-            ngx.header['Tl-Slave-Api'] = "close"
+            ngx.header[sync_cluster_constant.salve_api] = "close"
             ngx.exit(403)
             return
         end
