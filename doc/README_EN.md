@@ -50,4 +50,6 @@ QQ : 624214498, welcome to submit PR, we will continue to update ....
 
 # License
 
-#### Apache License 2.0
+MIT License
+
+Copyright (c) 2022 iamtsm

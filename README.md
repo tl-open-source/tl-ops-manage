@@ -55,4 +55,6 @@ qq交流群 : 624214498，欢迎有兴趣的童鞋提交PR一起迭代维护, �
 
 # 开源协议
 
-#### Apache License 2.0
+MIT License
+
+Copyright (c) 2022 iamtsm

@@ -86,13 +86,16 @@ local tl_ops_time_alert_consume = function( )
         return
     end
 
-    tlog:dbg("tl_ops_time_alert_consume list len, consume_count=",consume_count,",len=",len)
+    tlog:dbg("tl_ops_time_alert_consume list len, consume_count=",consume_count,",len=",len,",key=",list_cache_key .. consume_count)
+
+    -- 用于批量操作日志记录
+    local log_group = {}
 
     -- 一次消费一个缓冲组
     while true do 
         local content_json = shared:rpop(list_cache_key .. consume_count)
         if not content_json then
-            tlog:dbg("tl_ops_time_alert_consume content json nil, ",content_json)
+            tlog:dbg("tl_ops_time_alert_consume content json nil, key=",list_cache_key .. consume_count)
             break
         end
 
@@ -106,10 +109,17 @@ local tl_ops_time_alert_consume = function( )
         local option = content.option
         local alert_type = content.alert_type
         local mode = option.mode
+        local target = option.target
 
         -- 日志
         if mode == ALERT_MODE.log then
-            time_alert_log:handler(option, content)
+            local target_list = log_group[target]
+            if not target_list then
+                target_list = utils:new_tab(0, 50)
+            end
+            table.insert(target_list, content)
+            
+            log_group[target] = target_list
         end
 
         -- 邮件
@@ -117,6 +127,14 @@ local tl_ops_time_alert_consume = function( )
             time_alert_email:handler(option, content)
         end
 
+    end
+    
+    -- 批量IO
+    for target, target_list in ipairs(log_group) do
+        local option = {
+            target = target
+        }
+        time_alert_log:handler(option, target_list)
     end
 
     -- 更新消费指针
