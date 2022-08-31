@@ -61,7 +61,7 @@
 
 - [ ] Support configuring grayscale publishing
 
-- [ ] Support install deployment scripts
+- [x] Support install deployment scripts
 
 - [ ] Support docker environment deployment
 
