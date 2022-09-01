@@ -7,7 +7,6 @@
 local constant_ssl  = require("plugins.tl_ops_ssl.tl_ops_plugin_constant");
 local tlog          = require("utils.tl_ops_utils_log"):new("tl_ops_plugin_ssl");
 local cache_ssl     = require("cache.tl_ops_cache_core"):new("tl-ops-ssl");
-local shared 	    = tlops.plugin_shared
 local utils         = tlops.utils
 local ssl           = require("ngx.ssl")
 local cjson         = require("cjson.safe")

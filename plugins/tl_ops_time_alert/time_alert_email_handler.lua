@@ -7,7 +7,6 @@
 local time_alert_constant   = require("plugins.tl_ops_time_alert.tl_ops_plugin_constant")
 local cjson                 = require("cjson.safe");
 local utils                 = tlops.utils
-local shared                = tlops.plugin_shared
 
 
 local _M = {

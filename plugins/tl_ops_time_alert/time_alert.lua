@@ -13,6 +13,7 @@ local cjson                 = require("cjson.safe");
 local utils                 = tlops.utils
 local shared                = tlops.plugin_shared
 
+
 local _M = {
     _VERSION = '0.01',
 }
@@ -92,16 +93,16 @@ local tl_ops_time_alert_consume = function( )
     local log_group = {}
 
     -- 一次消费一个缓冲组
-    while true do 
-        local content_json = shared:rpop(list_cache_key .. consume_count)
+    for i = 1, max_list_len do
+        local content_json, _ = shared:rpop(list_cache_key .. consume_count)
         if not content_json then
-            tlog:dbg("tl_ops_time_alert_consume content json nil, key=",list_cache_key .. consume_count)
+            tlog:dbg("tl_ops_time_alert_consume content nil, key=",list_cache_key .. consume_count,",err=",_)
             break
         end
 
         local content = cjson.decode(content_json)
         if not content then
-            tlog:err("tl_ops_time_alert_consume decode content json err")
+            tlog:err("tl_ops_time_alert_consume decode content err")
             break
         end
 
@@ -126,16 +127,17 @@ local tl_ops_time_alert_consume = function( )
         if mode == ALERT_MODE.log then
             time_alert_email:handler(option, content)
         end
-
     end
     
     -- 批量IO
-    for target, target_list in ipairs(log_group) do
+    for target, target_list in pairs(log_group) do
         local option = {
             target = target
         }
         time_alert_log:handler(option, target_list)
     end
+
+    tlog:dbg("tl_ops_time_alert_consume done, log_group_len=",#log_group)
 
     -- 更新消费指针
     local new_consume_count = math.min(max_list_count, consume_count + 1)
@@ -193,9 +195,9 @@ local tl_ops_time_alert_produce = function(ctx, option, alert_mode)
     -- 当前缓冲组还没満，写入告警消息
     if len + 1 <= max_list_len then
         local content = time_alert_content.time_alert_content_wrap(ctx, option, alert_mode)
-        shared:rpush(list_cache_key .. produce_count, content)
+        local ok, _ = shared:rpush(list_cache_key .. produce_count, content)
 
-        tlog:dbg("tl_ops_time_alert_produce rpush done ,key=",list_cache_key .. produce_count)
+        tlog:dbg("tl_ops_time_alert_produce rpush done ,ok=",ok,",key=",list_cache_key .. produce_count)
         return
     end
 
@@ -221,9 +223,9 @@ local tl_ops_time_alert_produce = function(ctx, option, alert_mode)
 
     -- 放入新的缓冲组
     local content = time_alert_content.time_alert_content_wrap(ctx, option, alert_mode)
-    shared:rpush(list_cache_key ..  new_produce_count, content)
+    local ok, _ = shared:rpush(list_cache_key ..  new_produce_count, content)
 
-    tlog:dbg("tl_ops_time_alert_produce rpush new done ,key=",list_cache_key .. new_produce_count)
+    tlog:dbg("tl_ops_time_alert_produce rpush new done , ok=",ok,",key=",list_cache_key .. new_produce_count)
     return
 end
 

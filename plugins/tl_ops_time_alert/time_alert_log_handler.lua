@@ -6,10 +6,8 @@
 
 local time_alert_constant   = require("plugins.tl_ops_time_alert.tl_ops_plugin_constant")
 local time_alert_content    = require("plugins.tl_ops_time_alert.time_alert_content")
-local cjson                 = require("cjson.safe");
+local cjson                 = require("cjson.safe")
 local utils                 = tlops.utils
-local shared                = tlops.plugin_shared
-
 
 local _M = {
     _VERSION = '0.01',
@@ -25,6 +23,7 @@ function _M:handler(option, content)
     local alert_log = require("utils.tl_ops_utils_log"):new(target)
 
     alert_log:dbg(content)
+
 end
 
 
