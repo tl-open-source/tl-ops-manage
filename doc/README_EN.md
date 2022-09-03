@@ -8,11 +8,7 @@ API gateway based on openresty, supports load balancing, health check, service f
 
 <div align=center><img src="tl-ops-manage.png"/></div>
 
-website : https://tlops.iamtsm.cn/website/index.html
-
-demo : https://tlops.iamtsm.cn/tlopsmanage/tl_ops_web_index.html
-
-plugins : https://tlops.iamtsm.cn/website/plugins.html
+Experience demo : https://tlops.iamtsm.cn/tlopsmanage/tl_ops_web_index.html
 
 QQ : 624214498, welcome to submit PR, we will continue to update ....
 
