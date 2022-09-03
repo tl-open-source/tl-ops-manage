@@ -10,7 +10,7 @@ local tl_ops_utils_func = require("utils.tl_ops_utils_func");
 local _M = {}
 
 function _M:init(ctx)
-    local request_uri = tl_ops_utils_func:get_req_uri()
+    local request_uri = ctx.request_uri
     for uri ,router in pairs(ctx.tlops_api) do
         if ngx.re.find(request_uri, uri, 'jo') then
             tlog:dbg("访问接口 : request_uri=",ctx.uri)

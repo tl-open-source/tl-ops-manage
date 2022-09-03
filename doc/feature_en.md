@@ -106,7 +106,7 @@
 
 - [x] [Plugin] Support request time-consuming statistics alarm
 
-- [ ] [Plugin] Support permission identity control
+- [x] [Plugin] Support permission identity control
 
 - [x] [Plugin] Support cluster deployment data synchronization
 

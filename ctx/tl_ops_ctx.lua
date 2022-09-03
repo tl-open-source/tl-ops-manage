@@ -18,6 +18,7 @@ function _M:init()
     ngx.ctx.scheme          = ngx.var.scheme
     ngx.ctx.method          = ngx.var.request_method
     ngx.ctx.hostname        = ngx.var.hostname
+    ngx.ctx.request_uri     = ngx.var.request_uri
     ngx.ctx.remote_addr     = utils.get_req_ip()
     ngx.ctx.content_length  = ngx.var.content_length
     ngx.ctx.content_type    = ngx.var.content_type

@@ -1,10 +1,16 @@
 -- ssl默认列表
 -- ps : 可以优化为k-v结构, list结构会影响性能，当前只是简单处理了
 
+local tlops_api = {
+    get = "/tlops/ssl/list",
+    set = "/tlops/ssl/set"
+}
+
 local tl_ops_constant_ssl = {
     cache_key = {
         list = "tl_ops_ssl_list"
     },
+    tlops_api = tlops_api,              -- 对外API
     list = {
 
     },

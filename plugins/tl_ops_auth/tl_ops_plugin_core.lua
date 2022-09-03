@@ -4,8 +4,12 @@
 -- @author iamtsm
 -- @email 1905333456@qq.com
 
-local tlog = require("utils.tl_ops_utils_log"):new("tl_ops_plugin_auth");
-local tl_ops_utils_func = require("utils.tl_ops_utils_func");
+local tlog              = require("utils.tl_ops_utils_log"):new("tl_ops_plugin_auth")
+local auth_constant     = require("plugins.tl_ops_auth.tl_ops_plugin_constant")
+local login_router      = require("plugins.tl_ops_auth.login")
+local auth              = require("plugins.tl_ops_auth.auth")
+local shared            = tlops.plugin_shared
+local utils             = tlops.utils
 
 local _M = {
     _VERSION = '0.01'
@@ -23,38 +27,13 @@ end
 
 
 function _M:tl_ops_process_before_init_rewrite(ctx)
-
-
-    return true, "ok"
-end
-
-function _M:tl_ops_process_after_init_rewrite(ctx)
-
-
-    return true, "ok"
-end
-
-function _M:tl_ops_process_before_init_access(ctx)
     
-
-    return true, "ok"
-end
-
-function _M:tl_ops_process_after_init_access(ctx)
+    -- 对外login接口
+    ctx.tlops_api[auth_constant.tlops_api.login] = login_router
     
-
-    return true, "ok"
-end
-
-function _M:tl_ops_process_before_init_header(ctx)
-   
-
-    return true, "ok"
-end
-
-function _M:tl_ops_process_after_init_header(ctx)
-   
-
+    -- 登录态校验
+    auth:auth_core(ctx)
+    
     return true, "ok"
 end
 

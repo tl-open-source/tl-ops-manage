@@ -34,10 +34,10 @@ end
 function _M:tl_ops_process_before_init_rewrite(ctx)
     local headers = ngx.req.get_headers()
 
-    local trace_id = headers[tracing_constant.tracing_rid]
-    if not trace_id then
-        local new_trace_id = uuid()
-        ngx.req.set_header(tracing_constant.tracing_rid, new_trace_id)
+    local tracing_rid = headers[tracing_constant.tracing_rid]
+    if not tracing_rid then
+        local new_tracing_rid = uuid()
+        ngx.req.set_header(tracing_constant.tracing_rid, new_tracing_rid)
     end
 
     return true, "ok"
@@ -46,8 +46,8 @@ end
 
 function _M:tl_ops_process_before_init_header(ctx)
 
-    local trace_id = ngx.header[tracing_constant.tracing_rid]
-    if not trace_id then
+    local tracing_rid = ngx.header[tracing_constant.tracing_rid]
+    if not tracing_rid then
         local headers = ngx.req.get_headers()
         ngx.header[tracing_constant.tracing_rid] = headers[tracing_constant.tracing_rid]
     end

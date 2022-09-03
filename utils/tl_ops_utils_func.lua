@@ -193,13 +193,11 @@ end
 
 -- 设置response为text
 function _M:set_ngx_response_type_text ()
-    ngx.header['Access-Control-Allow-Origin'] = '*';
     ngx.header['Content-Type'] = 'text/plant';
 end
 
 -- 设置response为json
 function _M:set_ngx_response_type_json ()
-    ngx.header['Access-Control-Allow-Origin'] = '*';
     ngx.header['Content-Type'] = 'application/json';
 end
 
@@ -229,7 +227,6 @@ end
 
 --指定格式返回
 function _M:set_ngx_req_return_content (status, content, content_type)
-    ngx.header['Access-Control-Allow-Origin'] = '*';
     ngx.header['Content-Type'] = content_type;
     ngx.status = status;
     ngx.say(content);
