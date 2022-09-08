@@ -31,10 +31,10 @@ ssl_certificate_key /path/to/tl-ops-manage/conf/tlops.com.key;
 http {
 	...
 	# 引入tl_ops_manage.conf
-	include "/path/to/tl-ops-manage/conf/*.conf;
+	include "/path/to/tl-ops-manage/conf/*.conf";
 
 	# 引入lua包
-	lua_package_path "/path/to/tl-ops-manage/?.lua;;"
+	lua_package_path "/path/to/tl-ops-manage/?.lua;;";
 	...
 }
 ````

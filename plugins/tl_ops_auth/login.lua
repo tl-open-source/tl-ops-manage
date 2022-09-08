@@ -37,9 +37,8 @@ local Router = function()
                 value = auth_cid,
                 path = "/",
                 domain = ngx.var.host,
-                secure = true, httponly = true,
+                httponly = true,
                 max_age = auth_constant.login.auth_time,
-                samesite = "Strict",
             })
 
             -- add session
