@@ -4,11 +4,13 @@
 -- @author iamtsm
 -- @email 1905333456@qq.com
 
-local tlog                  = require("utils.tl_ops_utils_log"):new("tl_ops_time_alert")
+local tlog                  = require("utils.tl_ops_utils_log"):new("tl_ops_plugin_time_alert")
 local time_alert_constant   = require("plugins.tl_ops_time_alert.tl_ops_plugin_constant")
 local time_alert_content    = require("plugins.tl_ops_time_alert.time_alert_content")
 local time_alert_log        = require("plugins.tl_ops_time_alert.time_alert_log_handler")
 local time_alert_email      = require("plugins.tl_ops_time_alert.time_alert_email_handler")
+local time_alert_robot      = require("plugins.tl_ops_time_alert.time_alert_robot_handler")
+local cache                 = require("cache.tl_ops_cache_core"):new("tl-ops-time-alert");
 local cjson                 = require("cjson.safe");
 local utils                 = tlops.utils
 local shared                = tlops.plugin_shared
@@ -126,6 +128,11 @@ local tl_ops_time_alert_consume = function( )
         -- 邮件
         if mode == ALERT_MODE.log then
             time_alert_email:handler(option, content)
+        end
+
+        -- 企业微信机器人
+        if mode == ALERT_MODE.robot then
+            time_alertrobot:handler(option, content)
         end
     end
     
@@ -277,51 +284,63 @@ end
 function _M:tl_ops_time_alert_log(ctx)
     
     local request_time = ngx.var.request_time * 1000
-    local options = time_alert_constant.options
+
+    local options_str, _ = cache:get(time_alert_constant.cache_key.options);
+    if not options_str or options_str == nil then
+        tlog:err("tl_ops_time_alert_log get options faield " ,_)
+		return nil
+    end
+
+    local options = cjson.decode(options_str)
+    if not options or options == nil then
+        tlog:err("tl_ops_time_alert_log decode options faield " ,_)
+		return nil
+    end
 
     for _, rule in ipairs(options) do
-        local time = rule.time
-        if not time then 
-            break
-        end
-        time = tonumber(time)
+        repeat
+            local time = rule.time
+            if not time then 
+                break
+            end
+            time = tonumber(time)
 
-        local count = rule.count
-        if not count then 
-            break
-        end
-        count = tonumber(count)
+            local count = rule.count
+            if not count then 
+                break
+            end
+            count = tonumber(count)
 
-        local interval = rule.interval
-        if not interval then 
-            break
-        end
-        interval = tonumber(interval)
+            local interval = rule.interval
+            if not interval then 
+                break
+            end
+            interval = tonumber(interval)
 
-        -- 周期内触发多少次超时
-        if interval > 0 then
+            -- 周期内触发多少次超时
+            if interval > 0 then
+                if count > 0 then
+                    if time > 0 and request_time > time then
+                        tl_ops_time_alert_produce(ctx, rule, ALERT_TYPE.INTERVAL)
+                    end
+                end
+                break
+            end
+
+            -- 触发多少次超时
             if count > 0 then
                 if time > 0 and request_time > time then
-                    tl_ops_time_alert_produce(ctx, rule, ALERT_TYPE.INTERVAL)
+                    tl_ops_time_alert_produce(ctx, rule, ALERT_TYPE.COUNT)
                 end
-            end
-            break
-        end
-
-        -- 触发多少次超时
-        if count > 0 then
-            if time > 0 and request_time > time then
-                tl_ops_time_alert_produce(ctx, rule, ALERT_TYPE.COUNT)
+                break
             end
 
-            break
-        end
-
-        -- 触发超时
-        if request_time > time then
-            tl_ops_time_alert_produce(ctx, rule, ALERT_TYPE.TIME)
-            break
-        end
+            -- 触发超时
+            if request_time > time then
+                tl_ops_time_alert_produce(ctx, rule, ALERT_TYPE.TIME)
+                break
+            end
+        until true
     end
 
 end

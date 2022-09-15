@@ -101,6 +101,14 @@ local Router = function()
     if not waf_cc_content then
         waf_cc_content = {}
     end
+    local auth, auth_size = read("tl-ops-auth.tlstore");
+    if not auth then
+        auth = {}
+    end
+    local time_alert, time_alert_size = read("tl-ops-time-alert.tlstore");
+    if not time_alert then
+        time_alert = {}
+    end
 
     local res_data = {
         api = {
@@ -207,6 +215,20 @@ local Router = function()
             size = waf_cc_size,
             version = #waf_cc_content,
             list = waf_cc_content,
+        },
+        auth = {
+            id = 16,
+            name = "tl-ops-auth.tlstore",
+            size = auth_size,
+            version = #auth,
+            list = auth,
+        },
+        time_alert = {
+            id = 17,
+            name = "tl-ops-time-alert.tlstore",
+            size = time_alert_size,
+            version = #time_alert,
+            list = time_alert,
         }
     }
 

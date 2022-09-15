@@ -1,6 +1,6 @@
 -- tl_ops_time_alert_email_handler
 -- en : request long time alert email handler
--- zn : 请求耗时告警邮件统计
+-- zn : 请求耗时告警邮件通知
 -- @author iamtsm
 -- @email 1905333456@qq.com
 
@@ -15,7 +15,7 @@ local _M = {
 local mt = { __index = _M }
 
 
--- 日志记录类型
+-- 邮件通知类型
 function _M:handler(option, content)
 
     

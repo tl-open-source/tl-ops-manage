@@ -8,7 +8,6 @@ local ssl               = require("plugins.tl_ops_ssl.ssl");
 local sync              = require("plugins.tl_ops_ssl.sync");
 local ssl_set_router    = require("plugins.tl_ops_ssl.set_ssl");
 local ssl_get_router    = require("plugins.tl_ops_ssl.get_ssl");
-local ssl_set_router    = require("plugins.tl_ops_ssl.set_ssl");
 local constant_ssl      = require("plugins.tl_ops_ssl.tl_ops_plugin_constant")
 
 local _M = {

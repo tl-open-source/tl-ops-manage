@@ -46,62 +46,63 @@ local sync_cluster_heartbeat_send = function(options)
     local modules = options.modules
 
     for i = 1, #other do
-        local node = other[i]
+        repeat
+            local node = other[i]
 
-        local req_data = sync_cluster_data_get:get_sync_cluster_data_module(modules)
+            local req_data = sync_cluster_data_get:get_sync_cluster_data_module(modules)
 
-        tlog:dbg("sync_cluster_heartbeat_send get data done, node=",node,",req_data=",req_data)
+            tlog:dbg("sync_cluster_heartbeat_send get data done, node=",node,",req_data=",req_data)
 
-        local sock, _ = nx_socket()
-        if not sock then
-            tlog:err("sync_cluster_heartbeat_send failed to create stream socket: ", _)
-            break
-        end
-        sock:settimeout(timeout)
-
-        -- 心跳socket
-        local ok, _ = sock:connect(node.ip, node.port)
-        if not ok then
-            tlog:err("sync_cluster_heartbeat_send failed to connect socket: ", _)
-            break
-        end
-
-        tlog:dbg("sync_cluster_heartbeat_send connect socket ok : ok=", ok)
-
-        local body = "POST " .. path .." HTTP/1.0 \r\n"
-        body = body .. "Content-Type: application/json \r\n"
-        body = body .. "Host: " .. current.ip .. ":" .. current.port .. " \r\n"
-        body = body .. "Content-Length: " .. #req_data .. " \r\n"
-        body = body .. "\n" .. req_data .. "\r\n"
-
-        local bytes, _ = sock:send(body)
-        if not bytes then
-            tlog:err("sync_cluster_heartbeat_send failed to send socket: ", _)
-            break
-        end
-
-        tlog:dbg("sync_cluster_heartbeat_send send socket ok : byte=", bytes)
-
-        -- socket反馈
-        local receive_line, _ = sock:receive()
-        if not receive_line then
-            if _ == "check_timeout" then
-                tlog:err("sync_cluster_heartbeat_send socket check_timeout: ", _)
-                sock:close()
+            local sock, _ = nx_socket()
+            if not sock then
+                tlog:err("sync_cluster_heartbeat_send failed to create stream socket: ", _)
+                break
             end
+            sock:settimeout(timeout)
+
+            -- 心跳socket
+            local ok, _ = sock:connect(node.ip, node.port)
+            if not ok then
+                tlog:err("sync_cluster_heartbeat_send failed to connect socket: ", _)
+                break
+            end
+
+            tlog:dbg("sync_cluster_heartbeat_send connect socket ok : ok=", ok)
+
+            local body = "POST " .. path .." HTTP/1.0 \r\n"
+            body = body .. "Content-Type: application/json \r\n"
+            body = body .. "Host: " .. current.ip .. ":" .. current.port .. " \r\n"
+            body = body .. "Content-Length: " .. #req_data .. " \r\n"
+            body = body .. "\n" .. req_data .. "\r\n"
+
+            local bytes, _ = sock:send(body)
+            if not bytes then
+                tlog:err("sync_cluster_heartbeat_send failed to send socket: ", _)
+                break
+            end
+
+            tlog:dbg("sync_cluster_heartbeat_send send socket ok : byte=", bytes)
+
+            -- socket反馈
+            local receive_line, _ = sock:receive()
+            if not receive_line then
+                if _ == "check_timeout" then
+                    tlog:err("sync_cluster_heartbeat_send socket check_timeout: ", _)
+                    sock:close()
+                end
+                break
+            end
+
+            tlog:dbg("sync_cluster_heartbeat_send receive socket ok : ", receive_line)
+
+            sock:close()
+
+            tlog:dbg("sync_cluster_heartbeat_send heartbeat done, res=",res,",node=",node)
+
             break
-        end
-
-        tlog:dbg("sync_cluster_heartbeat_send receive socket ok : ", receive_line)
-
-        sock:close()
-
-        tlog:dbg("sync_cluster_heartbeat_send heartbeat done, res=",res,",node=",node)
-
-        break
+        until true
     end
 end
-
 
 
 return {

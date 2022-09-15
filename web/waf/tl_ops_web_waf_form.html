@@ -71,7 +71,7 @@
         </div>
     </div>
 
-    <script src="../tl_ops_web_comm.js"></script>
+    <script src="../lib/tl_ops_web_comm.js"></script>
     <script>
         layui.use(['table', 'form', 'layedit'], function () {
             window.form = layui.form;
@@ -79,7 +79,6 @@
             let _lay_edit_index = layedit.build('content'); //建立编辑器
 
             window.tl_ops_web_waf_form_render = function(data){
-                console.log(data)
                 form.val("tl-ops-web-waf-form", Object.assign(form.val("tl-ops-web-waf-form"), data))
                 form.render()
                 layedit.setContent(_lay_edit_index, data.content, false);

@@ -1,5 +1,5 @@
 
-local content_page = [[
+local default_content_page = [[
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -10,7 +10,7 @@ local content_page = [[
 </head>
 <body>
     <div class="container">
-        <form class="layui-form" id="login" lay-filter="login">
+        <form class="layui-form" id="login" lay-filter="login" onkeydown="if(event.keyCode==13){return false;}">
             <button class="close" title="关闭">X</button>
             <div class="layui-form-mid layui-word-aux logo">
                 <img src="/tlopsmanage/lib/logo.png" height="35"/>
@@ -37,7 +37,7 @@ local content_page = [[
         </div>
     </div>
     <script src="/tlopsmanage/lib/layui/layui.js"></script>
-    <script src="/tlopsmanage/tl_ops_web_comm.js"></script>
+    <script src="/tlopsmanage/lib/tl_ops_web_comm.js"></script>
     <script>
         layui.use(['form', 'layedit', 'layer'], function () {
             window.form = layui.form;
@@ -71,17 +71,19 @@ local content_page = [[
 
 local tl_ops_plugin_constant_auth = {
     cache_key = {
-        login = "tl_ops_plugin_auth_login",         -- 登录配置, 暂不支持动态配置
-        list = "tl_ops_plugin_auth_list",           -- 用户列表，暂不支持动态配置
-        session = "tl_ops_plugin_auth_session",     -- 登录态key前缀, 暂不支持动态配置
+        login = "tl_ops_plugin_auth_login",         -- 登录配置
+        list = "tl_ops_plugin_auth_list",           -- 用户列表
+        session = "tl_ops_plugin_auth_session",     -- 登录态key前缀
     },
     tlops_api = {                                   -- 对外提供的API
-        login = "/tlops/auth/login"
+        login = "/tlops/auth/login",
+        get = "/tlops/auth/get",
+        set = "/tlops/auth/set",
     },
     login = {
         code = 403,
         content_type = "text/html",
-        content = content_page,
+        content = default_content_page,
         intercept = {
             "/tlopsmanage/", 
             "/tlops/",
@@ -89,7 +91,6 @@ local tl_ops_plugin_constant_auth = {
         filter = {
             "/tlops/auth/login",
             "/tlopsmanage/lib/",
-            "/tlopsmanage/tl_ops_web_comm.js",
         },
         auth_time = 3600,
         auth_cid = "_tl_t",

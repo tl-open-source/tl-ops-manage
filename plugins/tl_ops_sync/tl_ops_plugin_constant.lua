@@ -9,7 +9,7 @@ local tl_ops_plugin_sync_constant = {
             "service", "health", "limit",
             "balance", "balance_api", "balance_cookie", "balance_header", "balance_param",
             "waf", "waf_ip", "waf_api", "waf_cc", "waf_header", "waf_cookie", "waf_param",
-            "ssl"
+            "ssl", "auth", "time_alert"
         }
     },
     data = {
@@ -22,7 +22,7 @@ local tl_ops_plugin_sync_constant = {
         module = {
             "balance_api", "balance_cookie", "balance_header", "balance_param",
             "waf_ip", "waf_api", "waf_cc", "waf_header", "waf_cookie", "waf_param",
-            "ssl"
+            "ssl", "auth", "time_alert"
         }
     },
 }

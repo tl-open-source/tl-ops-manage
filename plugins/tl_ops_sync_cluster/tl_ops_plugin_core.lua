@@ -4,7 +4,9 @@
 -- @author iamtsm
 -- @email 1905333456@qq.com
 
-local plugin_sync_cluster = require("plugins.tl_ops_sync_cluster.sync_cluster");
+local get_router                = require("plugins.tl_ops_sync_cluster.get_cluster")
+local constant_sync_cluster     = require("plugins.tl_ops_sync_cluster.tl_ops_plugin_constant")
+local plugin_sync_cluster       = require("plugins.tl_ops_sync_cluster.sync_cluster");
 
 local _M = {
     _VERSION = '0.01'
@@ -31,6 +33,9 @@ end
 
 
 function _M:tl_ops_process_before_init_rewrite(ctx)
+    
+    -- 集群节点对外API
+    ctx.tlops_api[constant_sync_cluster.tlops_api.get] = get_router
     
     -- 集群节点请求过滤
     plugin_sync_cluster:tl_ops_sync_cluster_filter(ctx)

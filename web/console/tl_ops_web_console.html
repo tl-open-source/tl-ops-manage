@@ -50,9 +50,10 @@
     .tl-icon-font {
         border-radius: 23px;
         padding: 2px;
-        font-size: 12px;
-        background: burlywood;
+        font-size: 16px;
+        color: #21d948;
         cursor: pointer;
+        font-weight: bold;
     }
     #tl-console-load-sync .layui-form-switch{
         margin-top: 0px;
@@ -114,7 +115,7 @@
                     style="margin-right: 16px;">
                     熔断监测</div>
                 <div class="tl-inspector-span" onclick="tl_ops_web_console_change_nav('waf')" id="waf-nav">
-                    WAF检测</div>
+                    WAF监测</div>
             </div>
 
             <div style="text-align: right;" class="layui-form" id="tl-console-load-sync" onmouseleave="tl_mouse_leave_tips()"
@@ -140,7 +141,7 @@
                                     <div class="layui-card" style="border-radius: 24px;">
                                         <div class="layui-card-header"> 
                                             <span class="layui-badge layui-bg-blue">{{service.id}}服务</span>
-                                            <i class="layui-icon layui-icon-help tl-icon-font" id="tl-icon-{{service.id}}-{{node.id}}"
+                                            <i class="layui-icon layui-icon-vercode tl-icon-font" id="tl-icon-{{service.id}}-{{node.id}}"
                                             onmouseleave="tl_mouse_leave_tips()" onmouseenter="tl_mouse_enter_tips('tl-icon-{{service.id}}-{{node.id}}','{{node.limit_msg}}')"></i>
                                         </div>
                                         <div class="layui-card-body">
@@ -159,6 +160,8 @@
                                             {{#  } }}
                                         
                                             {{#  if(service.type === 'balance') { }}
+                                            <i class="layui-icon layui-icon-fire tl-icon-font" style="position: initial;margin-left: 5px;" id="tl-icon-balance-{{service.id}}"
+                                            onmouseleave="tl_mouse_leave_tips()" onmouseenter="tl_mouse_enter_tips('tl-icon-balance-{{service.id}}','点击查看负载详情，暂不支持')"></i>
                                             <div style="float: right;" class="layui-form">
                                                 <span class="layui-badge layui-bg-blue " style="padding: 4px 14px 4px 14px;cursor: pointer;">当天</span>
                                                 <span class="layui-badge layui-bg-red layui-btn-disabled"
@@ -183,6 +186,9 @@
                                             {{#  } }}
 
                                             {{#  if(service.type === 'waf') { }}
+                                            <i class="layui-icon layui-icon-fire tl-icon-font" style="position: initial;" id="tl-icon-waf-{{service.id}}"
+                                            onmouseleave="tl_mouse_leave_tips()" onmouseenter="tl_mouse_enter_tips('tl-icon-waf-{{service.id}}','点击查看WAF详情，暂不支持')"></i>
+
                                             <div style="float: right;" class="layui-form">
                                                 <span class="layui-badge layui-bg-blue " style="padding: 4px 14px 4px 14px;cursor: pointer;">当天</span>
                                                 <span class="layui-badge layui-bg-red layui-btn-disabled"
@@ -209,7 +215,7 @@
 
     
 
-    <script src="../tl_ops_web_comm.js"></script>
+    <script src="../lib/tl_ops_web_comm.js"></script>
     <script src="tl_ops_web_console.js"></script>
     <script>
         layui.use(['table', 'form', 'laytpl'], tl_ops_web_console_main);

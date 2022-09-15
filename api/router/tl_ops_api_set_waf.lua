@@ -15,7 +15,7 @@ cjson.encode_empty_table_as_object(false)
 
 
 local Router = function() 
-    local change = ""
+    local change = "success"
 
     local waf_ip, _ = tl_ops_utils_func:get_req_post_args_by_name("waf_ip", 1);
     if waf_ip then

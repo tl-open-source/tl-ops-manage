@@ -12,7 +12,7 @@ const tl_ops_web_waf_param_main = function (){
 
     tl_ops_web_waf_param_render();
 
-    //表格外部事件操作
+    //事件操作
     $('.layui-btn.layuiadmin-btn-useradmin').on('click', function(){
         let type = $(this).data('type');
         tl_ops_web_waf_param_event()[type] ? tl_ops_web_waf_param_event()[type].call(this) : '';

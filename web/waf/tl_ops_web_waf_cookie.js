@@ -12,7 +12,7 @@ const tl_ops_web_waf_cookie_main = function (){
 
     tl_ops_web_waf_cookie_render();
 
-    //表格外部事件操作
+    //事件操作
     $('.layui-btn.layuiadmin-btn-useradmin').on('click', function(){
         let type = $(this).data('type');
         tl_ops_web_waf_cookie_event()[type] ? tl_ops_web_waf_cookie_event()[type].call(this) : '';

@@ -1,8 +1,7 @@
-local env = tlops.env
-
 local mode = {
-    log = "log",        -- log模式下 target = "/path/to/log_file.log"
-    email = "email"     -- email模式下 target= "xx@qq.com",
+    log = "log",        -- 日志模式下 target = "/path/to/log_file.log"
+    email = "email",    -- 邮件模式下 target = "xx@qq.com",
+    robot = "robot",    -- 企业微信机器人通知 target = "机器人key"
 }
 
 local tl_ops_plugin_constant_time_alert = {
@@ -14,10 +13,18 @@ local tl_ops_plugin_constant_time_alert = {
         produce = "tl_ops_plugin_time_alert_produce",       -- 告警消息列表生产指针，自增达到max后进行循环覆盖
         consume = "tl_ops_plugin_time_alert_consume",       -- 告警消息列表消费指针，递减达到最小后进行循环覆盖
     },
+    tlops_api = {
+        get = "/tlops/alert/get",
+        set = "/tlops/alert/set",
+    },
+    mode = mode,
+    interval = 5,                   -- 定时告警时间间隔 单位/s
+    max_list_count = 10,            -- 最大告警组数量
+    max_list_len = 100,             -- 周期内处理多少条告警消息
     options = {
         {
             id = 1,
-            time = 10,
+            time = 1,
             count = 0,
             interval = 0,
             mode = mode.log,
@@ -31,6 +38,14 @@ local tl_ops_plugin_constant_time_alert = {
             mode = mode.email,
             target = "1905333456@qq.com"
         },
+        {
+            id = 3,
+            time = 1000,
+            count = 5,
+            interval = 10,
+            mode = mode.robot,
+            target = "xxxxxxxxxxxxxxxxx"
+        },
     },
     demo = {
         id = 1,
@@ -40,10 +55,6 @@ local tl_ops_plugin_constant_time_alert = {
         mode = mode.email,      -- 告警模式
         target = "xx@qq.com",   -- 告警通知对象，内容格式取决于mode
     },
-    mode = mode,
-    interval = 5,               -- 定时告警时间间隔 单位/s
-    max_list_count = 10,        -- 最大告警组数量
-    max_list_len = 100          -- 周期内处理多少条告警消息
 }
 
 return tl_ops_plugin_constant_time_alert
