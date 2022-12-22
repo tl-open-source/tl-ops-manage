@@ -393,6 +393,41 @@ function _M:gen_node_key(prefix, node, node_id)
     end
 end
 
+-- 替换func
+function _M.replace(oldfunction, newfunction)
+    local visited = {}
+    local function f(t)
+        if not t or visited[t] then return end
+        visited[t] = true
+        if type(t) == "function" then
+            for i = 1, math.huge do
+                local name, value = debug.getupvalue(t, i)
+               
+                if not name then break end
+                f(value)
+            end
+        elseif type(t) == "table" then
+            f(debug.getmetatable(t))
+            for k,v in pairs(t) do
+                f(k); f(v);
+                if type(v) == "function" or type(k) == "function" then
+                    if v == oldfunction then t[k] = newfunction end
+                    if k == oldfunction then 
+                        t[newfunction] = t[k]
+                        t[k] = nil
+                    end
+                end
+            end
+        end
+    end
+    f(_G)
+    local registryTable = debug.getregistry()
+    for k, v in pairs(registryTable) do
+        if v == oldfunction then
+            registryTable[k] = newfunction
+        end
+    end
+end
 
 
 

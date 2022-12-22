@@ -4,17 +4,17 @@
 -- @author iamtsm
 -- @email 1905333456@qq.com
 
-local tl_ops_utils_func						= require("utils.tl_ops_utils_func");
+local tl_ops_utils_func						          = require("utils.tl_ops_utils_func");
 local tl_ops_limit_fuse_check_dynamic_conf	= require("limit.fuse.tl_ops_limit_fuse_check_dynamic_conf")
-local tl_ops_limit_fuse_check_version		= require("limit.fuse.tl_ops_limit_fuse_check_version")
-local tl_ops_limit_token_bucket				= require("limit.fuse.tl_ops_limit_fuse_token_bucket");
-local tl_ops_limit_leak_bucket				= require("limit.fuse.tl_ops_limit_fuse_leak_bucket");
-local tl_ops_constant_limit					= require("constant.tl_ops_constant_limit")
-local tl_ops_constant_health				= require("constant.tl_ops_constant_health")
-local tl_ops_constant_service				= require("constant.tl_ops_constant_service")
-local shared								= ngx.shared.tlopsbalance
-local cjson									= require("cjson.safe");
-local tlog									= require("utils.tl_ops_utils_log"):new("tl_ops_limit_fuse");
+local tl_ops_limit_fuse_check_version		    = require("limit.fuse.tl_ops_limit_fuse_check_version")
+local tl_ops_limit_token_bucket				      = require("limit.fuse.tl_ops_limit_fuse_token_bucket");
+local tl_ops_limit_leak_bucket				      = require("limit.fuse.tl_ops_limit_fuse_leak_bucket");
+local tl_ops_constant_limit					        = require("constant.tl_ops_constant_limit")
+local tl_ops_constant_health				        = require("constant.tl_ops_constant_health")
+local tl_ops_constant_service				        = require("constant.tl_ops_constant_service")
+local shared								                = ngx.shared.tlopsbalance
+local cjson									                = require("cjson.safe");
+local tlog									                = require("utils.tl_ops_utils_log"):new("tl_ops_limit_fuse");
 
 
 local _STATE = {

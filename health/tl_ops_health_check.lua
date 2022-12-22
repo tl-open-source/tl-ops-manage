@@ -4,18 +4,16 @@
 -- @author iamtsm
 -- @email 1905333456@qq.com
 
-local cjson								= require("cjson.safe")
-local tlog								= require("utils.tl_ops_utils_log"):new("tl_ops_health")
-local tl_ops_utils_func					= require("utils.tl_ops_utils_func")
-local tl_ops_constant_health			= require("constant.tl_ops_constant_health")
-local tl_ops_status						= require("constant.tl_ops_constant_comm").tl_ops_status;
-local tl_ops_health_check_dynamic_conf	= require("health.tl_ops_health_check_dynamic_conf")
-local tl_ops_health_check_version		= require("health.tl_ops_health_check_version")
-local nx_socket							= ngx.socket.tcp
-local shared							= ngx.shared.tlopsbalance
-local find								= ngx.re.find
-
-
+local cjson                             = require("cjson.safe")
+local tlog                              = require("utils.tl_ops_utils_log"):new("tl_ops_health")
+local tl_ops_utils_func                 = require("utils.tl_ops_utils_func")
+local tl_ops_constant_health            = require("constant.tl_ops_constant_health")
+local tl_ops_status                     = require("constant.tl_ops_constant_comm").tl_ops_status;
+local tl_ops_health_check_dynamic_conf  = require("health.tl_ops_health_check_dynamic_conf")
+local tl_ops_health_check_version       = require("health.tl_ops_health_check_version")
+local nx_socket                         = ngx.socket.tcp
+local shared                            = ngx.shared.tlopsbalance
+local find                              = ngx.re.find
 
 local _M = {
 	_VERSION = '0.02'
@@ -238,6 +236,7 @@ tl_ops_health_check_nodes = function (conf)
 			local bytes, _ = sock:send(check_content .. "\r\n\r\n\r\n")
 			if not bytes then
 				tlog:err("tl_ops_health_check_nodes failed to send socket: ", _)
+				socket:close()
 				tl_ops_health_check_node_failed(conf, node_id, node)
 				break
 			end
@@ -245,19 +244,21 @@ tl_ops_health_check_nodes = function (conf)
 			tlog:dbg("tl_ops_health_check_nodes send socket ok : byte=", bytes)
 
 			-- socket反馈
-			local receive_line, _ = sock:receive()
-			if not receive_line then
+			local receive_10k, _ = sock:receiveany(10240)
+			if not receive_10k then
 				if _ == "check_timeout" then
 					tlog:err("tl_ops_health_check_nodes socket check_timeout: ", _)
-					sock:close()
 				end
+
+				tlog:err("tl_ops_health_check_nodes socket receive failed: ", receive_10k)
+				sock:close()
 				tl_ops_health_check_node_failed(conf, node_id, node)
 				break
 			end
 
-			tlog:dbg("tl_ops_health_check_nodes receive socket ok : ", receive_line)
+			tlog:dbg("tl_ops_health_check_nodes receive socket ok : ", receive_10k)
 
-			local from, to, _ = find(receive_line, [[^HTTP/\d+\.\d+\s+(\d+)]], "joi", nil, 1)
+			local from, to, _ = find(receive_10k, [[^HTTP/\d+\.\d+\s+(\d+)]], "joi", nil, 1)
 			if not from then
 				tlog:err("tl_ops_health_check_nodes ngx.re.find receive err: ", from, to, _)
 				sock:close()
@@ -266,7 +267,7 @@ tl_ops_health_check_nodes = function (conf)
 			end
 
 			-- 心跳状态
-			local status = tonumber(string.sub(receive_line, from, to))
+			local status = tonumber(string.sub(receive_10k, from, to))
 
 			tlog:dbg("tl_ops_health_check_nodes get status ok ,name=" ,name, ", status=" , status)
 			local statusPass = false;

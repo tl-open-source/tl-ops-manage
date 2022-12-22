@@ -119,6 +119,7 @@ local Router = function()
             local limit_rate
             local limit_pre_time
             local limit_bucket
+            local limit_block
             if limit_depend == tl_ops_constant_limit.depend.token then
                 limit_capacity = shared:get(tl_ops_utils_func:gen_node_key(tl_ops_constant_limit.token.cache_key.capacity,  node.service, node_id))
                 if not limit_capacity then
@@ -127,6 +128,10 @@ local Router = function()
                 limit_rate = shared:get(tl_ops_utils_func:gen_node_key(tl_ops_constant_limit.token.cache_key.rate,  node.service, node_id))
                 if not limit_rate then
                     limit_rate = 'nil'
+                end
+                limit_block = shared:get(tl_ops_utils_func:gen_node_key(tl_ops_constant_limit.token.cache_key.block,  node.service, node_id))
+                if not limit_block then
+                    limit_block = 'nil'
                 end
                 limit_pre_time = shared:get(tl_ops_utils_func:gen_node_key(tl_ops_constant_limit.token.cache_key.pre_time,  node.service, node_id))
                 if not limit_pre_time then
@@ -137,6 +142,7 @@ local Router = function()
                     limit_bucket = 'nil'
                 end
             end
+
             if limit_depend == tl_ops_constant_limit.depend.leak then
                 limit_capacity = shared:get(tl_ops_utils_func:gen_node_key(tl_ops_constant_limit.leak.cache_key.capacity,  node.service, node_id))
                 if not limit_capacity then
@@ -145,6 +151,10 @@ local Router = function()
                 limit_rate = shared:get(tl_ops_utils_func:gen_node_key(tl_ops_constant_limit.leak.cache_key.rate,  node.service, node_id))
                 if not limit_rate then
                     limit_rate = 'nil'
+                end
+                limit_block = shared:get(tl_ops_utils_func:gen_node_key(tl_ops_constant_limit.leak.cache_key.block,  node.service, node_id))
+                if not limit_block then
+                    limit_block = 'nil'
                 end
                 limit_pre_time = shared:get(tl_ops_utils_func:gen_node_key(tl_ops_constant_limit.leak.cache_key.pre_time,  node.service, node_id))
                 if not limit_pre_time then
@@ -173,6 +183,7 @@ local Router = function()
                 limit_depend = limit_depend,
                 limit_capacity = limit_capacity,
                 limit_rate = limit_rate,
+                limit_block = limit_block,
                 limit_pre_time = limit_pre_time,
                 limit_bucket = limit_bucket,
                 balance_success =  cjson.decode(balance_success_cache),

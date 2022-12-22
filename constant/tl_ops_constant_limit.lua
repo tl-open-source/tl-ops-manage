@@ -6,6 +6,7 @@ local token = {   --服务令牌桶配置
     cache_key = {
         options_list = "tl_ops_limit_token_options_list",
         capacity = "tl_ops_limit_token_capacity_service",
+        block = "tl_ops_limit_token_block_service",
         rate = "tl_ops_limit_token_rate_service",
         expand = "tl_ops_limit_leak_expand_service",
         shrink = "tl_ops_limit_leak_shrink_service",
@@ -33,6 +34,7 @@ local leak = {   --服务漏桶配置
     cache_key = {
         options_list = "tl_ops_limit_leak_options_list",
         capacity = "tl_ops_limit_leak_capacity_service",
+        block = "tl_ops_limit_leak_block_service",
         rate = "tl_ops_limit_leak_rate_service",
         expand = "tl_ops_limit_leak_expand_service",
         shrink = "tl_ops_limit_leak_shrink_service",
@@ -53,10 +55,41 @@ local leak = {   --服务漏桶配置
     }
 }
 
+-- 滑动窗口配置
+local sliding = {   --服务滑动窗口配置
+    cache_key = {
+        options_list = "tl_ops_limit_sliding_options_list",
+        window = "tl_ops_limit_sliding_window_service",
+        block = "tl_ops_limit_sliding_block_service",
+        cycle = "tl_ops_limit_sliding_cycle_service",
+        limit = "tl_ops_limit_sliding_limit_service",
+        rate = "tl_ops_limit_sliding_rate_service",
+        expand = "tl_ops_limit_sliding_expand_service",
+        shrink = "tl_ops_limit_sliding_shrink_service",
+        count = "tl_ops_limit_sliding_count_service",
+        pre_time = "tl_ops_limit_sliding_pre_time_service",
+        lock = "tl_ops_limit_sliding_lock_service"
+    },
+    options = {
+
+    },
+    demo = {
+        service_name = "tlops-demo",      -- 滑动窗口配置所属服务
+        window = 60,                      -- 滑动窗口大小，理解为时间窗口（单位秒，默认一个窗口60s）
+        limit = 1024 * 100,               -- 滑动窗口限制请求的数量 (默认时间窗口60s，限制请求100 * 单位个)
+        cycle = 10,                       -- 区间个数 （默认时间窗口60s，切分为10个，每个区间6s）
+        rate = 1,                         -- 窗口一次滑动多少个区间
+        block = 1024,                     -- 请求单位 (按字节为单位，可做字节整型流控)
+        expand = 0.5,                     -- 扩容比例
+        shrink = 0.5,                     -- 缩容比例
+    }
+}
+
 -- 依赖限流组件
 local depend = {
     token = "token",
-    leak = "leak"
+    leak = "leak",
+    sliding = "sliding"
 }
 
 -- 组件级别
@@ -104,6 +137,7 @@ local tl_ops_constant_limit = {
     fuse = fuse,
     token = token,
     leak = leak,
+    sliding = sliding,
     depend = depend,
     level = level,
     mode = mode

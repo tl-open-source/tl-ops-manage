@@ -58,6 +58,19 @@
     #tl-console-load-sync .layui-form-switch{
         margin-top: 0px;
         margin-right: 5px;
+        position: absolute;
+        right: 10px;
+    }
+    #tl-console-load-sync{
+        text-align: right;
+        width: 100px;
+        position: absolute;
+        right: 12px;
+        height: 22px;
+    }
+    #tl-console-load-sync-icon{
+        margin-right: -12px;
+        margin-top: 4px;
     }
 </style>
 
@@ -120,11 +133,11 @@
 
             <div style="text-align: right;" class="layui-form" id="tl-console-load-sync" onmouseleave="tl_mouse_leave_tips()"
                 onmouseenter="tl_mouse_enter_tips('tl-console-load-sync','开启后, 每2秒刷新一次数据')">
+                <i style="display: none;" class="layui-icon layui-icon-loading layui-anim layui-anim-rotate layui-anim-loop" id="tl-console-load-sync-icon"></i>
                 <input type="checkbox" name="switch" lay-skin="switch" lay-text="实时同步|非实时同步" >
-                <i style="display: none" class="layui-icon layui-icon-loading layui-anim layui-anim-rotate layui-anim-loop" id="tl-console-load-sync-icon"></i>
             </div>
 
-            <div class="layui-col-sm12">
+            <div class="layui-col-sm12" style="margin-top: 40px;">
                 <div class="layui-row layui-col-space15" id="tl-ops-web-console-echarts-service-view"> </div>
                 <script id="tl-ops-web-console-echarts-service-tpl" type="text/html">
                     {{#  if(d.length === 0) { }}

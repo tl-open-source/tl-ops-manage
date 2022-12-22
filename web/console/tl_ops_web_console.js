@@ -1001,7 +1001,8 @@ const tl_ops_web_console_echarts_fuselimit_render = function (data) {
             let limit_msg = "<div >当前限流策略 : "+data[serviceName].nodes[nodeName].limit_depend+"</div>" +
                             "<div >当前最大容量 : "+data[serviceName].nodes[nodeName].limit_capacity+"</div>"+
                             "<div >当前剩余容量 : "+data[serviceName].nodes[nodeName].limit_bucket+"</div>"+
-                            "<div >当前单位大小 : "+data[serviceName].nodes[nodeName].limit_rate+"</div>"+
+                            "<div >当前流控单位 : "+data[serviceName].nodes[nodeName].limit_block+"</div>"+
+                            "<div >当前流控速度 : "+data[serviceName].nodes[nodeName].limit_rate+"</div>"+
                             "<div >最近补充时间 : "+pre_time+"</div>";
             nodeList.push({
                 id : nodeName,
@@ -1076,7 +1077,8 @@ const tl_ops_web_console_echarts_fuselimit_render_reflush = function (data) {
             let limit_msg = "<div >当前限流策略 : "+data[serviceName].nodes[nodeName].limit_depend+"</div>" +
                             "<div >当前最大容量 : "+data[serviceName].nodes[nodeName].limit_capacity+"</div>"+
                             "<div >当前剩余容量 : "+data[serviceName].nodes[nodeName].limit_bucket+"</div>"+
-                            "<div >当前单位大小 : "+data[serviceName].nodes[nodeName].limit_rate+"</div>"+
+                            "<div >当前流控单位 : "+data[serviceName].nodes[nodeName].limit_block+"</div>"+
+                            "<div >当前流控速度 : "+data[serviceName].nodes[nodeName].limit_rate+"</div>"+
                             "<div >最近补充时间 : "+pre_time+"</div>";
             nodeList.push({
                 id : nodeName,

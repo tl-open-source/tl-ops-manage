@@ -61,8 +61,6 @@ end
 local tl_ops_limit_token = function( service_name, node_id )
     local token_mode = tl_ops_limit_token_mode( service_name , node_id)
 
-    local block = token_mode.options.block
-
     local capacity_key = tl_ops_utils_func:gen_node_key(token_mode.cache_key.capacity, service_name, node_id)
     local capacity = shared:get(capacity_key)
     if not capacity then
@@ -102,6 +100,16 @@ local tl_ops_limit_token = function( service_name, node_id )
             return false
         end
         token_bucket = 0
+    end
+
+    local block_key = tl_ops_utils_func:gen_node_key(token_mode.cache_key.block, service_name, node_id)
+    local block = shared:get(block_key)
+    if not block then
+        local res, _ = shared:set(block_key, token_mode.options.block)
+        if not res then
+            return false
+        end
+        block = token_mode.options.block
     end
 
     -- 取出令牌
@@ -198,8 +206,6 @@ end
 local tl_ops_limit_token_shrink = function( service_name, node_id )
 
     local token_mode = tl_ops_limit_token_mode( service_name, node_id)
-    
-    local block = token_mode.options.block
 
     local capacity_key = tl_ops_utils_func:gen_node_key(token_mode.cache_key.capacity, service_name, node_id)
     local capacity = shared:get(capacity_key)
@@ -209,6 +215,16 @@ local tl_ops_limit_token_shrink = function( service_name, node_id )
             return false
         end
         capacity = token_mode.options.capacity
+    end
+
+    local block_key = tl_ops_utils_func:gen_node_key(token_mode.cache_key.block, service_name, node_id)
+    local block = shared:get(block_key)
+    if not block then
+        local res, _ = shared:set(block_key, token_mode.options.block)
+        if not res then
+            return false
+        end
+        block = token_mode.options.block
     end
 
     -- 无需缩容
