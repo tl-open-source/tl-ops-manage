@@ -1,9 +1,9 @@
 
 # 负载均衡策略
 
-对于负载均衡，目前分为四个负载策略，在负载时，会按照这个顺序进行负载，而每个策略分为两种模式 指定路由，随机路由。
+对于负载均衡，目前分为五个负载策略，在负载时，会按照这个顺序进行负载，而每个策略分为两种模式 指定路由，随机路由。
 
-	URL负载  >  请求参数负载  >  请求COOKIE负载  > 请求头负载
+	URL负载  >  请求参数负载  >  请求COOKIE负载  >  请求头负载  >  请求Body负载
 
 ## 指定路由
 
@@ -132,6 +132,28 @@ random = {
 },
 ```
 
+`请求body模式`
+
+```lua
+point = {
+	 {
+        id = 1,
+        body = "iamtsm",                    -- 当前url匹配规则
+        service = "tlops-demo",             -- 当前url路由到的service
+        node = 0,                           -- 当前url路由到的service下的node的索引
+        host = "tlops1.com",                -- 当前url处理的域名范围
+	}
+},
+random = {
+	 {
+        id = 1,
+        body = "iamtsm",                    -- 当前url匹配规则
+        service = "tlops-demo",             -- 当前url路由到的service
+        host = "tlops1.com",                -- 当前url处理的域名范围
+	}
+},
+```
+
 ## 在管理台配置
 
 `URL模式`
@@ -157,3 +179,7 @@ random = {
  ![图片](https://qnproxy.iamtsm.cn/16566592861425.png "图片") 
 
  ![图片](https://qnproxy.iamtsm.cn/16566594089138.png "图片") 
+
+ `请求body模式`
+
+ ![图片](https://qnproxy.iamtsm.cn/1833f9aaa2fcc040860207c1391209d.png "图片") 
