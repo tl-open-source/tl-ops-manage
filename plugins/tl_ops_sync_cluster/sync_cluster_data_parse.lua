@@ -9,6 +9,7 @@ local cache_service             =   tlops.cache.service
 local cache_limit               =   tlops.cache.limit
 local cache_health              =   tlops.cache.health
 local cache_balance_api         =   tlops.cache.balance_api
+local cache_balance_body        =   tlops.cache.balance_body
 local cache_balance_param       =   tlops.cache.balance_param
 local cache_balance_header      =   tlops.cache.balance_header
 local cache_balance_cookie      =   tlops.cache.balance_cookie
@@ -26,6 +27,7 @@ local constant_health           =   tlops.constant.health
 local constant_limit            =   tlops.constant.limit
 local constant_balance          =   tlops.constant.balance
 local constant_balance_api      =   tlops.constant.balance_api
+local constant_balance_body     =   tlops.constant.balance_body
 local constant_balance_param    =   tlops.constant.balance_param
 local constant_balance_header   =   tlops.constant.balance_header
 local constant_balance_cookie   =   tlops.constant.balance_cookie
@@ -123,6 +125,16 @@ local parse_sync_cluster_data_balance_api = function (content)
     local res, _ = cache_balance_api:set(constant_balance_api.cache_key.list, cjson.encode(content))
     if not res then
         tlog:err("parse_sync_cluster_data_balance_api  err, res=",res)
+        return false
+    end
+    return true
+end
+
+-- post body配置数据
+local parse_sync_cluster_data_balance_body = function (content)
+    local res, _ = cache_balance_body:set(constant_balance_body.cache_key.list, cjson.encode(content))
+    if not res then
+        tlog:err("parse_sync_cluster_data_balance_body  err, res=",res)
         return false
     end
     return true
@@ -262,6 +274,8 @@ function _M:parse_sync_cluster_data_module( sync_content )
         local res = ""
         if module_data.module == 'balance_api' then
             res = parse_sync_cluster_data_balance_api(module_data.content)
+        elseif module_data.module == 'balance_body' then
+            res = parse_sync_cluster_data_balance_body(module_data.content)
         elseif module_data.module == 'balance_cookie' then
             res = parse_sync_cluster_data_balance_cookie(module_data.content)
         elseif module_data.module == 'balance_header' then

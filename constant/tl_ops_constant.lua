@@ -6,6 +6,7 @@ local health           = require("constant.tl_ops_constant_health")
 local limit            = require("constant.tl_ops_constant_limit");
 local balance          = require("constant.tl_ops_constant_balance");
 local balance_api      = require("constant.tl_ops_constant_balance_api");
+local balance_body     = require("constant.tl_ops_constant_balance_body");
 local balance_param    = require("constant.tl_ops_constant_balance_param");
 local balance_header   = require("constant.tl_ops_constant_balance_header");
 local balance_cookie   = require("constant.tl_ops_constant_balance_cookie");
@@ -26,6 +27,7 @@ return {
     limit           = limit,
     balance         = balance,
     balance_api     = balance_api,
+    balance_body    = balance_body,
     balance_param   = balance_param,
     balance_header  = balance_header,
     balance_cookie  = balance_cookie,

@@ -10,6 +10,7 @@ local constant_health           =   tlops.constant.health
 local constant_limit            =   tlops.constant.limit
 local constant_balance          =   tlops.constant.balance
 local constant_balance_api      =   tlops.constant.balance_api
+local constant_balance_body      =   tlops.constant.balance_body
 local constant_balance_param    =   tlops.constant.balance_param
 local constant_balance_header   =   tlops.constant.balance_header
 local constant_balance_cookie   =   tlops.constant.balance_cookie
@@ -26,6 +27,7 @@ local cache_service             =   tlops.cache.service
 local cache_limit               =   tlops.cache.limit
 local cache_health              =   tlops.cache.health
 local cache_balance_api         =   tlops.cache.balance_api
+local cache_balance_body         =   tlops.cache.balance_body
 local cache_balance_param       =   tlops.cache.balance_param
 local cache_balance_header      =   tlops.cache.balance_header
 local cache_balance_cookie      =   tlops.cache.balance_cookie
@@ -533,6 +535,86 @@ local sync_fields_balance_api = function ()
     end
 
     tlog:dbg("sync_fields_balance_api done, new=",data,",add_keys=",add_keys)
+
+    return tl_ops_rt.ok
+end
+
+-- post body策略数据同步
+local sync_fields_balance_body = function ()
+    local cache_key_list = constant_balance_body.cache_key.list;
+    local cache_key_rule = constant_balance_body.cache_key.rule
+
+    local demo = constant_balance_body.demo
+
+    local data_str, _ = cache_balance_body:get(cache_key_list);
+    if not data_str then
+        local res, _ = cache_balance_body:set(cache_key_list, cjson.encode(constant_balance.body.list))
+        if not res then
+            tlog:err("sync_fields_balance_body new store data err, res=",res)
+            return tl_ops_rt.error
+        end
+
+        data_str, _ = cache_balance_body:get(cache_key_list)
+
+        tlog:dbg("sync_fields_balance_body new store data, res=",res)
+    end
+
+    local data_rule_str, _ = cache_balance_body:get(cache_key_rule);
+    if not data_rule_str then
+        local res, _ = cache_balance_body:set(cache_key_rule, constant_balance.body.rule)
+        if not res then
+            tlog:err("sync_fields_balance_body new store rule err, res=",res)
+            return tl_ops_rt.error
+        end
+
+        tlog:dbg("sync_fields_balance_body new store rule, res=",res)
+    end
+
+    local data = cjson.decode(data_str);
+    if not data and type(data) ~= 'table' then
+        tlog:err("sync_fields_balance_body err, old=",data)
+        return tl_ops_rt.error
+    end
+
+    tlog:dbg("sync_fields_balance_body start, old=",data)
+
+    local add_keys = {}
+
+    -- demo fileds check
+    for key , _ in pairs(demo.point) do
+        -- data fileds check
+        for i = 1, #data.point do
+            -- add keys
+            if data.point[i][key] == nil then
+                data.point[i][key] = demo.point[key]
+                table.insert(add_keys , {
+                    key = data.point[i][key]
+                })
+            end
+        end
+    end
+
+    -- demo fileds check
+    for key , _ in pairs(demo.random) do
+        -- data fileds check
+        for i = 1, #data.random do
+            -- add keys
+            if data.random[i][key] == nil then
+                data.random[i][key] = demo.random[key]
+                table.insert(add_keys , {
+                    key = data.random[i][key]
+                })
+            end
+        end
+    end
+
+    local res = cache_balance_body:set(cache_key_list, cjson.encode(data))
+    if not res then
+        tlog:err("sync_fields_balance_body err, res=",res,",new=",data)
+        return tl_ops_rt.error
+    end
+
+    tlog:dbg("sync_fields_balance_body done, new=",data,",add_keys=",add_keys)
 
     return tl_ops_rt.ok
 end
@@ -1384,6 +1466,8 @@ function _M:sync_fields_module( module )
         return sync_fields_balance()
     elseif module == 'balance_api' then
         return sync_fields_balance_api()
+    elseif module == 'balance_body' then
+        return sync_fields_balance_body()
     elseif module == 'balance_cookie' then
         return sync_fields_balance_cookie()
     elseif module == 'balance_header' then

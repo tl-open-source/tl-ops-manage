@@ -9,6 +9,7 @@ local cache_service             =   tlops.cache.service
 local cache_limit               =   tlops.cache.limit
 local cache_health              =   tlops.cache.health
 local cache_balance_api         =   tlops.cache.balance_api
+local cache_balance_body        =   tlops.cache.balance_body
 local cache_balance_param       =   tlops.cache.balance_param
 local cache_balance_header      =   tlops.cache.balance_header
 local cache_balance_cookie      =   tlops.cache.balance_cookie
@@ -26,6 +27,7 @@ local constant_health           =   tlops.constant.health
 local constant_limit            =   tlops.constant.limit
 local constant_balance          =   tlops.constant.balance
 local constant_balance_api      =   tlops.constant.balance_api
+local constant_balance_body     =   tlops.constant.balance_body
 local constant_balance_param    =   tlops.constant.balance_param
 local constant_balance_header   =   tlops.constant.balance_header
 local constant_balance_cookie   =   tlops.constant.balance_cookie
@@ -188,6 +190,20 @@ local get_sync_cluster_data_balance_api = function ()
     local content = nil
 
     local data_str, _ = cache_balance_api:get(constant_balance_api.cache_key.list);
+    if not data_str then
+        data_str = "{}"
+    end
+    
+    content = cjson.decode(data_str)
+
+    return content
+end
+
+-- post body配置数据
+local get_sync_cluster_data_balance_body = function ()
+    local content = nil
+
+    local data_str, _ = cache_balance_body:get(constant_balance_body.cache_key.list);
     if not data_str then
         data_str = "{}"
     end
@@ -370,6 +386,8 @@ function _M:get_sync_cluster_data_module( modules )
         local content = nil
         if modules[i] == 'balance_api' then
             content = get_sync_cluster_data_balance_api()
+        elseif modules[i] == 'balance_body' then
+            content = get_sync_cluster_data_balance_body()
         elseif modules[i] == 'balance_cookie' then
             content = get_sync_cluster_data_balance_cookie()
         elseif modules[i] == 'balance_header' then

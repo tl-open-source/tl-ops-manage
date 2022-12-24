@@ -10,6 +10,7 @@ local tl_ops_constant_limit             = require("constant.tl_ops_constant_limi
 local tl_ops_constant_health            = require("constant.tl_ops_constant_health")
 local tl_ops_constant_service           = require("constant.tl_ops_constant_service");
 local tl_ops_balance_core_api           = require("balance.tl_ops_balance_core_api");
+local tl_ops_balance_core_body          = require("balance.tl_ops_balance_core_body");
 local tl_ops_balance_core_cookie        = require("balance.tl_ops_balance_core_cookie");
 local tl_ops_balance_core_header        = require("balance.tl_ops_balance_core_header");
 local tl_ops_balance_core_param         = require("balance.tl_ops_balance_core_param");
@@ -69,9 +70,15 @@ function _M:tl_ops_balance_core_filter(ctx)
 
                 node, node_state, node_id, host = tl_ops_balance_core_header.tl_ops_balance_header_service_matcher(service_list_table)
                 if not node then
-                    -- 无匹配
-                    tl_ops_err_content:err_content_rewrite_to_balance("", "empty", balance_mode, tl_ops_constant_balance.cache_key.mode_empty)
-                    return
+                     -- header不匹配，走body负载
+                    balance_mode = "body"
+
+                    node, node_state, node_id, host = tl_ops_balance_core_body.tl_ops_balance_body_service_matcher(service_list_table)
+                    if not node then
+                        -- 无匹配
+                        tl_ops_err_content:err_content_rewrite_to_balance("", "empty", balance_mode, tl_ops_constant_balance.cache_key.mode_empty)
+                        return
+                    end
                 end
             end
         end

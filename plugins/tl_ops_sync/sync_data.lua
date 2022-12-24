@@ -10,6 +10,7 @@ local constant_health           =   tlops.constant.health
 local constant_limit            =   tlops.constant.limit
 local constant_balance          =   tlops.constant.balance
 local constant_balance_api      =   tlops.constant.balance_api
+local constant_balance_body     =   tlops.constant.balance_body
 local constant_balance_param    =   tlops.constant.balance_param
 local constant_balance_header   =   tlops.constant.balance_header
 local constant_balance_cookie   =   tlops.constant.balance_cookie
@@ -26,6 +27,7 @@ local cache_service             =   tlops.cache.service
 local cache_limit               =   tlops.cache.limit
 local cache_health              =   tlops.cache.health
 local cache_balance_api         =   tlops.cache.balance_api
+local cache_balance_body        =   tlops.cache.balance_body
 local cache_balance_param       =   tlops.cache.balance_param
 local cache_balance_header      =   tlops.cache.balance_header
 local cache_balance_cookie      =   tlops.cache.balance_cookie
@@ -118,6 +120,56 @@ local sync_data_balance_api = function ()
 
     return tl_ops_rt.ok
 end
+
+
+-- post body策略静态配置数据
+local sync_data_balance_body = function () 
+    local cache_key_list = constant_balance_body.cache_key.list
+
+    local data_str, _ = cache_balance_body:get(cache_key_list);
+    if not data_str then
+        local res, _ = cache_balance_body:set(cache_key_list, cjson.encode(constant_balance.body.list))
+        if not res then
+            tlog:err("sync_data_balance_body new store data err, res=",res)
+            return tl_ops_rt.error
+        end
+
+        tlog:dbg("sync_data_balance_body new store data, res=",res)
+        return tl_ops_rt.ok
+    end
+
+    local data = cjson.decode(data_str);
+    if not data and type(data) ~= 'table' then
+        tlog:err("sync_data_balance_body err, old=",data)
+        return tl_ops_rt.error
+    end
+
+    -- 静态配置
+    local constant_data = constant_balance.body.list
+
+    -- 获取需要同步的配置
+    local add_point = sync_data_need_sync(constant_data.point, data.point)
+    for i = 1, #add_point do 
+        table.insert(data.point, add_point[i])
+    end
+
+    -- 获取需要同步的配置
+    local add_random = sync_data_need_sync(constant_data.random, data.random)
+    for i = 1, #add_random do 
+        table.insert(data.random, add_random[i])
+    end
+
+    local res = cache_balance_body:set(cache_key_list, cjson.encode(data))
+    if not res then
+        tlog:err("sync_data_balance_body err, res=",res,",new=",data)
+        return tl_ops_rt.error
+    end
+
+    tlog:dbg("sync_data_balance_body done, new=",data)
+
+    return tl_ops_rt.ok
+end
+
 
 -- cookie策略静态配置数据
 local sync_data_balance_cookie = function ()
@@ -577,6 +629,8 @@ function _M:sync_data_module( module )
 
     if module == 'balance_api' then
         return sync_data_balance_api()
+    elseif module == 'balance_body' then
+        return sync_data_balance_body()
     elseif module == 'balance_cookie' then
         return sync_data_balance_cookie()
     elseif module == 'balance_header' then

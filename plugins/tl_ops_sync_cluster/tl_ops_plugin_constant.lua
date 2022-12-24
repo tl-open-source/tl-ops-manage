@@ -9,7 +9,7 @@ local tl_ops_plugin_constant_sync_cluster = {
     open = false,                                               -- 是否开启
     module = {                                                  -- 同步数据器需要同步的模块，如果新增需要持久化的模块，需要在此定义
         "service", "health", "limit", "balance", "waf",
-        "balance_api", "balance_cookie", "balance_header", "balance_param",
+        "balance_api", "balance_body", "balance_cookie", "balance_header", "balance_param",
         "waf_ip", "waf_api", "waf_cc", "waf_header", "waf_cookie", "waf_param"
     },
     interval = 5,                                               -- 心跳包同步周期

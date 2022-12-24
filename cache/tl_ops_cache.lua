@@ -6,6 +6,7 @@ local health            = require("cache.tl_ops_cache_core"):new("tl-ops-health"
 
 local balance           = require("cache.tl_ops_cache_core"):new("tl-ops-balance");
 local balance_api       = require("cache.tl_ops_cache_core"):new("tl-ops-balance-api");
+local balance_body       = require("cache.tl_ops_cache_core"):new("tl-ops-balance-body");
 local balance_param     = require("cache.tl_ops_cache_core"):new("tl-ops-balance-param");
 local balance_header    = require("cache.tl_ops_cache_core"):new("tl-ops-balance-header");
 local balance_cookie    = require("cache.tl_ops_cache_core"):new("tl-ops-balance-cookie");
@@ -25,6 +26,7 @@ return {
     limit           = limit,
     balance         = balance,
     balance_api     = balance_api,
+    balance_body    = balance_body,
     balance_param   = balance_param,
     balance_header  = balance_header,
     balance_cookie  = balance_cookie,

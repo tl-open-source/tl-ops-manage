@@ -45,6 +45,10 @@ local Router = function()
     if not api_content then
         api_content = {}
     end
+    local body_content, body_size = read("tl-ops-balance-body.tlstore");
+    if not body_content then
+        body_content = {}
+    end
     local cookie_content, cookie_size = read("tl-ops-balance-cookie.tlstore");
     if not cookie_content then
         cookie_content = {}
@@ -117,6 +121,13 @@ local Router = function()
             size = api_size,
             version = #api_content/2,
             list = api_content,
+        },
+        body = {
+            id = 1,
+            name = "tl-ops-balance-body.tlstore",
+            size = body_size,
+            version = #body_content/2,
+            list = body_content,
         },
         cookie = {
             id = 2,
