@@ -18,6 +18,7 @@ local waf_cc           = require("constant.tl_ops_constant_waf_cc");
 local waf_header       = require("constant.tl_ops_constant_waf_header");
 local waf_cookie       = require("constant.tl_ops_constant_waf_cookie");
 local waf_param        = require("constant.tl_ops_constant_waf_param");
+local plugins_manage   = require("constant.tl_ops_constant_plugins_manage");
 
 
 return {
@@ -39,4 +40,5 @@ return {
     waf_header      = waf_header,
     waf_cookie      = waf_cookie,
     waf_param       = waf_param,
+    plugins_manage  = plugins_manage,
 }

@@ -63,11 +63,15 @@ local Router = function()
     end
     local service_content, service_size = read("tl-ops-service.tlstore");
     if not service_content then
-        service_content = ""
+        service_content = {}
     end
     local health_content, health_size = read("tl-ops-health.tlstore");
     if not health_content then
-        health_content = ""
+        health_content = {}
+    end
+    local plugins_manage_content, plugins_manage_size = read("tl-ops-plugins-manage.tlstore");
+    if not plugins_manage_content then
+        plugins_manage_content = ""
     end
     local limit_content, limit_size = read("tl-ops-limit.tlstore");
     if not limit_content then
@@ -110,6 +114,10 @@ local Router = function()
         auth = {}
     end
     local time_alert, time_alert_size = read("tl-ops-time-alert.tlstore");
+    if not time_alert then
+        time_alert = {}
+    end
+        local time_alert, time_alert_size = read("tl-ops-time-alert.tlstore");
     if not time_alert then
         time_alert = {}
     end
@@ -170,6 +178,13 @@ local Router = function()
             size = limit_size,
             version = #limit_content/3,
             list = limit_content,
+        },
+        plugins_manage = {
+            id = 8,
+            name = "tl-ops-plugins-manage.tlstore",
+            size = plugins_manage_size,
+            version = #plugins_manage_content,
+            list = plugins_manage_content,
         },
         balance = {
             id = 8,

@@ -4,17 +4,17 @@
 -- @author iamtsm
 -- @email 1905333456@qq.com
 
-local tl_ops_utils_func						          = require("utils.tl_ops_utils_func");
+local tl_ops_utils_func						= require("utils.tl_ops_utils_func");
 local tl_ops_limit_fuse_check_dynamic_conf	= require("limit.fuse.tl_ops_limit_fuse_check_dynamic_conf")
-local tl_ops_limit_fuse_check_version		    = require("limit.fuse.tl_ops_limit_fuse_check_version")
-local tl_ops_limit_token_bucket				      = require("limit.fuse.tl_ops_limit_fuse_token_bucket");
-local tl_ops_limit_leak_bucket				      = require("limit.fuse.tl_ops_limit_fuse_leak_bucket");
-local tl_ops_constant_limit					        = require("constant.tl_ops_constant_limit")
-local tl_ops_constant_health				        = require("constant.tl_ops_constant_health")
-local tl_ops_constant_service				        = require("constant.tl_ops_constant_service")
-local shared								                = ngx.shared.tlopsbalance
-local cjson									                = require("cjson.safe");
-local tlog									                = require("utils.tl_ops_utils_log"):new("tl_ops_limit_fuse");
+local tl_ops_limit_fuse_check_version		= require("limit.fuse.tl_ops_limit_fuse_check_version")
+local tl_ops_limit_token_bucket				= require("limit.fuse.tl_ops_limit_fuse_token_bucket");
+local tl_ops_limit_leak_bucket				= require("limit.fuse.tl_ops_limit_fuse_leak_bucket");
+local tl_ops_constant_limit					= require("constant.tl_ops_constant_limit")
+local tl_ops_constant_health				= require("constant.tl_ops_constant_health")
+local tl_ops_constant_service				= require("constant.tl_ops_constant_service")
+local shared								= ngx.shared.tlopsbalance
+local cjson									= require("cjson.safe");
+local tlog									= require("utils.tl_ops_utils_log"):new("tl_ops_limit_fuse");
 
 
 local _STATE = {
@@ -32,13 +32,12 @@ local mt = { __index = _M }
 local tl_ops_limit_fuse_default_confs,
 tl_ops_limit_fuse,
 tl_ops_limit_fuse_main,
-tl_ops_limit_fuse_get_lock,
 tl_ops_limit_fuse_check_nodes,
 tl_ops_limit_fuse_node_upgrade,
 tl_ops_limit_fuse_node_degrade,
 tl_ops_limit_fuse_service_upgrade,
 tl_ops_limit_fuse_service_degrade,
-tl_ops_limit_fuse_reset_count;
+tl_ops_limit_fuse_auto_recover;
 
 
 function _M:new( options , services)
@@ -298,11 +297,11 @@ tl_ops_limit_fuse_check_nodes = function ( conf )
 		
 		if upgrade then
 			upgrade_count = upgrade_count + 1
-			tlog:dbg("node state upgrade : service_name=",service_name, ",node_name=",nodes[i].name, ",mode=",mode, ",state=",state)
+			tlog:dbg("node state upgrade : service_name=",service_name, ",node_name=",nodes[i].name, ",mode=",mode, ",upgrade_count=",upgrade_count)
 			tl_ops_limit_fuse_node_upgrade( conf, node_id )
 		else
 			degrade_count = degrade_count + 1
-			tlog:dbg("node state degrade : service_name=",service_name, ",node_name=",nodes[i].name, ",mode=",mode, ",state=",state)
+			tlog:dbg("node state degrade : service_name=",service_name, ",node_name=",nodes[i].name, ",mode=",mode, ",degrade_count=",degrade_count)
 			tl_ops_limit_fuse_node_degrade( conf, node_id )
 		end
 	end

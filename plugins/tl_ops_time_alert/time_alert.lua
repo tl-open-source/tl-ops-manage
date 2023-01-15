@@ -58,7 +58,7 @@ local tl_ops_time_alert_consume = function( )
 
     consume_count = tonumber(consume_count)
     if consume_count < 0 then
-        tlog:err("tl_ops_time_alert_consume consume_count err ! consume_count=",list_count)
+        tlog:err("tl_ops_time_alert_consume consume_count err ! consume_count=",consume_count)
         return
     end
 
@@ -132,7 +132,7 @@ local tl_ops_time_alert_consume = function( )
 
         -- 企业微信机器人
         if mode == ALERT_MODE.robot then
-            time_alertrobot:handler(option, content)
+            time_alert_robot:handler(option, content)
         end
     end
     

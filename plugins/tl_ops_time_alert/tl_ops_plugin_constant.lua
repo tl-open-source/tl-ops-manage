@@ -55,6 +55,29 @@ local tl_ops_plugin_constant_time_alert = {
         mode = mode.email,      -- 告警模式
         target = "xx@qq.com",   -- 告警通知对象，内容格式取决于mode
     },
+    export = {
+        cache_key = {
+            time_alert = "tl_ops_plugins_export_time_alert",
+        },
+        time_alert = {
+            zname = '耗时告警插件',
+            page = "alert/tl_ops_web_alert.html",
+            name = 'time_alert',
+            open = true,
+            scope = "tl_ops_process_after_init_worker,tl_ops_process_before_init_rewrite,tl_ops_process_after_init_log",
+        },
+        tlops_api = {
+            get = "/tlops/time-alert/manage/get",       -- 获取插件配置数据的接口
+            set = "/tlops/time-alert/manage/set",       -- 修改插件配置数据的接口
+        },
+        demo = {
+            zname = '',         -- 插件中文名称
+            page = "",          -- 插件配置页面
+            name = '',          -- 插件名称
+            open = true,        -- 插件是否开启
+            scope = "",         -- 插件生命周期阶段
+        }
+    }
 }
 
 return tl_ops_plugin_constant_time_alert

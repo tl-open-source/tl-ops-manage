@@ -32,7 +32,7 @@ end
 --del
 function _M:del(key)
     self.cus:del(key);
-    return res;
+    return 0;
 end
 
 

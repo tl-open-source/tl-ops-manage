@@ -1,4 +1,3 @@
-
 local default_content_page = [[
 <!DOCTYPE html>
 <html lang="en">
@@ -129,6 +128,29 @@ local tl_ops_plugin_constant_auth = {
             id = 1,                             -- id
             username = "admin",                 -- 用户名
             password = "admin",                 -- 密码
+        }
+    },
+    export = {
+        cache_key = {
+            auth = "tl_ops_plugins_export_auth",
+        },
+        tlops_api = {
+            get = "/tlops/auth/manage/get",      -- 获取插件配置数据的接口
+            set = "/tlops/auth/manage/set",      -- 修改插件配置数据的接口  
+        },
+        auth = {
+            zname = '登录认证插件',
+            page = "auth/tl_ops_web_auth_user.html",
+            name = 'auth',
+            open = true,
+            scope = "tl_ops_process_before_init_rewrite",
+        },
+        demo = {
+            zname = '',         -- 插件中文名称
+            page = "",          -- 插件配置页面
+            name = '',          -- 插件名称
+            open = true,        -- 插件是否开启
+            scope = "",         -- 插件生命周期阶段
         }
     }
 }

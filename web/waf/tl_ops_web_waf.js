@@ -26,21 +26,6 @@ const tl_ops_web_waf_main = function (){
 const tl_ops_waf_handler_render_data = function(data){
     let options_list = []
     for(let name in data){
-        let err_name = "其他";
-        if(name === 'waf_ip'){
-            err_name = "请求IP拦截"
-        }else if(name === 'waf_api'){
-            err_name = "请求API拦截"
-        }else if(name === 'waf_cc'){
-            err_name = "请求CC拦截"
-        }else if(name === 'waf_header'){
-            err_name = "请求头拦截"
-        }else if(name === 'waf_cookie'){
-            err_name = "请求Cookie拦截"
-        }else if(name === 'waf_param'){
-            err_name = "请求参数拦截"
-        }
-        data[name]['err_name'] = err_name
         data[name]['name'] = name
         data[name]['content_sub'] = data[name].content.substring(0,15) + "...("+data[name]['content'].length+"字符)"
         options_list.push(data[name])
@@ -62,10 +47,10 @@ const tl_ops_web_waf_render = function( data ){
 
 
 //管理节点
-const tl_ops_web_waf_edit = function (name) {
+const tl_ops_web_waf_edit = function (name, err_name) {
     let index = layer.open({
         type: 2
-        ,title: '自定义【'+name+'】错误配置'
+        ,title: '自定义【'+err_name+'】错误配置'
         ,content: 'tl_ops_web_waf_form.html?name='+name
         ,maxmin: true
         ,minStack:false
@@ -115,7 +100,6 @@ const tl_ops_web_waf_edit = function (name) {
 const tl_ops_waf_data_edit_filter = function( data ) {
     let name = data.field.name
     delete data.field.file;
-    delete data.field.err_name;
     delete data.field.content_sub;
     delete data.field.name;
     for(let key in data.field){

@@ -97,7 +97,7 @@ local sync_cluster_heartbeat_send = function(options)
 
             sock:close()
 
-            tlog:dbg("sync_cluster_heartbeat_send heartbeat done, res=",res,",node=",node)
+            tlog:dbg("sync_cluster_heartbeat_send heartbeat done ",",node=",node)
 
             break
         until true

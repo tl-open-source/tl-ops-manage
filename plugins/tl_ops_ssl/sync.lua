@@ -6,7 +6,7 @@
 
 local tlog                  = require("utils.tl_ops_utils_log"):new("tl_ops_plugin_ssl")
 local cache                 = require("cache.tl_ops_cache_core"):new("tl-ops-ssl")
-local constant_ssl          = require("plugins.tl_ops_ssl.tl_ops_plugin_constant")
+local constant              = require("plugins.tl_ops_ssl.tl_ops_plugin_constant")
 local tl_ops_rt             = tlops.constant.comm.tl_ops_rt
 local cjson                 = require("cjson.safe")
 cjson.encode_empty_table_as_object(false)
@@ -33,11 +33,11 @@ end
 
 -- 静态配置数据同步
 local sync_data = function ()
-    local cache_key_list = constant_ssl.cache_key.list
+    local cache_key_list = constant.cache_key.list
 
     local data_str, _ = cache:get(cache_key_list);
     if not data_str then
-        local res, _ = cache:set(cache_key_list, cjson.encode(constant_ssl.list))
+        local res, _ = cache:set(cache_key_list, cjson.encode(constant.list))
         if not res then
             tlog:err("ssl sync_data new store data err, res=",res)
             return tl_ops_rt.error
@@ -56,7 +56,7 @@ local sync_data = function ()
     tlog:dbg("ssl sync_data start, old=",data)
 
     -- 静态配置
-    local constant_data = constant_ssl.list
+    local constant_data = constant.list
 
     -- 获取需要同步的配置
     local add = sync_data_need_sync(constant_data, data)
@@ -79,14 +79,14 @@ end
 
 
 -- 字段数据同步
-local sync_fields = function ()
-    local cache_key_list = constant_ssl.cache_key.list;
+local sync_fields_list = function ()
+    local cache_key_list = constant.cache_key.list;
 
-    local demo = constant_ssl.demo
+    local demo = constant.demo
 
     local data_str, _ = cache:get(cache_key_list);
     if not data_str then
-        local res, _ = cache:set(cache_key_list, cjson.encode(constant_ssl.list))
+        local res, _ = cache:set(cache_key_list, cjson.encode(constant.list))
         if not res then
             tlog:err("ssl sync_fields new store data err, res=",res)
             return tl_ops_rt.error
@@ -132,6 +132,66 @@ local sync_fields = function ()
     return tl_ops_rt.ok
 end
 
+
+
+-- 同步插件对外数据
+local sync_fields_export = function ()
+    local cache_key = constant.export.cache_key.ssl
+    local constant_data = constant.export.ssl
+    local demo = constant.export.demo
+
+    local data_str, _ = cache:get(cache_key);
+    if not data_str then
+        local res, _ = cache:set(cache_key, cjson.encode(constant_data))
+        if not res then
+            tlog:err("ssl sync_fields_export new store err, cache_key=",cache_key,",res=",res)
+            return tl_ops_rt.error
+        end
+
+        data_str, _ = cache:get(cache_key);
+
+        tlog:dbg("ssl sync_fields_export new store,  cache_key=",cache_key,",res=",res)
+    end
+
+    local data = cjson.decode(data_str);
+    if not data and type(data) ~= 'table' then
+        tlog:err("ssl sync_fields_export err,  cache_key=",cache_key,",old=",data)
+        return tl_ops_rt.error
+    end
+
+    tlog:dbg("ssl sync_fields_export start,  cache_key=",cache_key,",old=",data)
+
+    local add_keys = {}
+
+    -- demo fileds check
+    for key , _ in pairs(demo) do
+        -- data fileds check
+         -- add keys
+         if data[key] == nil then
+            data[key] = demo[key]
+            table.insert(add_keys , key)
+        end
+    end
+
+    local res = cache:set(cache_key, cjson.encode(data))
+    if not res then
+        tlog:err("ssl sync_fields_export err,  cache_key=",cache_key,",res=",res,",new=",data)
+        return tl_ops_rt.error
+    end
+
+    tlog:dbg("ssl sync_fields_export done,  cache_key=",cache_key,",new=",data,",add_keys=",add_keys)
+    
+    return tl_ops_rt.ok
+end
+
+
+local sync_fields = function()
+    sync_fields_list()
+
+    sync_fields_export()
+
+    return tl_ops_rt.ok
+end
 
 return {
     sync_data = sync_data,

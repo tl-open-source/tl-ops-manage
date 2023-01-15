@@ -44,11 +44,6 @@
                         <i class="layui-icon layui-icon-shrink-right" ></i>
                     </a>
                 </li>
-                <li class="layui-nav-item" lay-unselect style="margin-left: 30px;">
-                    <a target="_blank" href="https://github.com/iamtsm/tl-ops-manage" style="text-decoration: underline;">
-                        Copyright  2021 iamtsm
-                    </a>
-                </li>
             </ul>
         </div>
 
@@ -181,29 +176,9 @@
                             <i class="layui-icon layui-icon-vercode tl-icon"></i>
                             <cite>插件列表管理</cite>
                         </a>
-                        <dl class="layui-nav-child" onclick="openpage('plugins/ssl/tl_ops_web_ssl.html')">
-                            <dd data-name="ssl-manage">
-                                <a>证书插件配置</a>
-                            </dd>
-                        </dl>
-                        <dl class="layui-nav-child" onclick="openpage('plugins/auth/tl_ops_web_auth_user.html')">
-                            <dd data-name="auth-manage">
-                                <a>登录插件配置</a>
-                            </dd>
-                        </dl>
-                        <dl class="layui-nav-child" onclick="openpage('plugins/alert/tl_ops_web_alert.html')">
-                            <dd data-name="cluster-manage">
-                                <a>告警策略管理</a>
-                            </dd>
-                        </dl>
-                        <dl class="layui-nav-child" onclick="openpage('plugins/cluster/tl_ops_web_cluster.html')">
-                            <dd data-name="cluster-manage">
-                                <a>集群节点管理</a>
-                            </dd>
-                        </dl>
-                        <dl class="layui-nav-child" onclick="openpage('plugins/log/tl_ops_web_log.html')">
-                            <dd data-name="log-manage">
-                                <a>日志文件分析</a>
+                        <dl class="layui-nav-child" onclick="openpage('plugins/tl_ops_web_plugins.html')">
+                            <dd data-name="plugins-manage">
+                                <a>插件列表管理</a>
                             </dd>
                         </dl>
                     </li>
@@ -220,6 +195,12 @@
                         </dl>
                     </li>
                 </ul>
+                
+                <div style="position: absolute; bottom: 10px; z-index: 10000; color: white;margin-left: 14px;">
+                    <a target="_blank" href="https://github.com/iamtsm/tl-ops-manage" style="text-decoration: underline;color: white;    font-weight: bold;">
+                        Copyright @ 2021 iamtsm
+                    </a>
+                </div>
             </div>
         </div>
 
@@ -270,6 +251,13 @@
                     $("#tl-logo-icon").css("position","absolute");
                     $("#tl-logo-icon").css("marginLeft","60px");
                     $(".layui-body").css("left","60px");
+
+                    let childNav = document.querySelectorAll(".layui-nav-tree")[0].children
+                    for(let child in childNav){
+                        if(childNav[child].className && childNav[child].className.indexOf('layui-nav-itemed') > -1){
+                            childNav[child].className = 'layui-nav-item tl-nav-item'
+                        }
+                    }
                 }
             }
             window.tl_side_screen = function(){

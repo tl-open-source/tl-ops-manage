@@ -1,6 +1,6 @@
 -- sync_cluster_data
 -- en : sync master data to slave
--- zn : 解析同步主节点数据到从节点
+-- zn : 解析同步主节点数据到从节点 && 持久化数据
 -- @author iamtsm
 -- @email 1905333456@qq.com
 
@@ -21,17 +21,14 @@ local cache_waf_header          =   tlops.cache.waf_header
 local cache_waf_cc              =   tlops.cache.waf_cc
 local cache_waf_param           =   tlops.cache.waf_param
 local cache_waf                 =   tlops.cache.waf
+local cache_plugins_manage      =   tlops.cache.plugins_manage
 -- constant
-local constant_service          =   tlops.constant.service
 local constant_health           =   tlops.constant.health
-local constant_limit            =   tlops.constant.limit
-local constant_balance          =   tlops.constant.balance
 local constant_balance_api      =   tlops.constant.balance_api
 local constant_balance_body     =   tlops.constant.balance_body
 local constant_balance_param    =   tlops.constant.balance_param
 local constant_balance_header   =   tlops.constant.balance_header
 local constant_balance_cookie   =   tlops.constant.balance_cookie
-local constant_waf              =   tlops.constant.waf
 local constant_waf_ip           =   tlops.constant.waf_ip
 local constant_waf_api          =   tlops.constant.waf_api
 local constant_waf_cc           =   tlops.constant.waf_cc
@@ -53,7 +50,7 @@ local _M = {
 
 -- service配置数据
 local parse_sync_cluster_data_service = function (all)
-    for cache_key , ccontent in pairs(all) do
+    for cache_key , content in pairs(all) do
         local res, _ = cache_service:set(cache_key, cjson.encode(content))
         if not res then
             tlog:err("parse_sync_cluster_data_service  err, res=",res, ",cache_key=",cache_key,",content=",content)
@@ -67,7 +64,7 @@ end
 
 -- limit配置数据
 local parse_sync_cluster_data_limit = function (all)
-    for cache_key , ccontent in pairs(all) do
+    for cache_key , content in pairs(all) do
         local res, _ = cache_limit:set(cache_key, cjson.encode(content))
         if not res then
             tlog:err("parse_sync_cluster_data_limit  err, res=",res, ",cache_key=",cache_key,",content=",content)
@@ -80,7 +77,7 @@ end
 
 -- balance配置数据
 local parse_sync_cluster_data_balance = function (all)
-    for cache_key , ccontent in pairs(all) do
+    for cache_key , content in pairs(all) do
         local res, _ = cache_balance:set(cache_key, cjson.encode(content))
         if not res then
             tlog:err("parse_sync_cluster_data_balance  err, res=",res, ",cache_key=",cache_key,",content=",content)
@@ -94,7 +91,7 @@ end
 
 -- waf配置数据
 local parse_sync_cluster_data_waf = function (all)
-    for cache_key , ccontent in pairs(all) do
+    for cache_key , content in pairs(all) do
         local res, _ = cache_waf:set(cache_key, cjson.encode(content))
         if not res then
             tlog:err("parse_sync_cluster_data_waf  err, res=",res, ",cache_key=",cache_key,",content=",content)
@@ -105,18 +102,15 @@ local parse_sync_cluster_data_waf = function (all)
     return true
 end
 
+
 -- health配置数据
 local parse_sync_cluster_data_health = function (content)
-    local content = nil
-
-    local data_str, _ = cache_health:get(constant_health.cache_key.options_list);
-    if not data_str then
-        data_str = "{}"
+    local res, _ = cache_health:set(constant_health.cache_key.options_list, cjson.encode(content))
+    if not res then
+        tlog:err("parse_sync_cluster_data_health  err, res=",res)
+        return false
     end
-    
-    content = cjson.decode(data_str)
-
-    return content
+    return true
 end
 
 
@@ -231,6 +225,17 @@ local parse_sync_cluster_data_waf_cc = function (content)
 end
 
 
+-- plugins_manage配置数据
+local parse_sync_cluster_data_plugins_manage = function (content)
+    local res, _ = cache_plugins_manage:set(constant_plugins_manage.cache_key.list, cjson.encode(content))
+    if not res then
+        tlog:err("parse_sync_cluster_data_plugins_manage  err, res=",res)
+        return false
+    end
+    return true
+end
+
+
 -- 获取某个插件
 local parse_sync_cluster_data_get_plugin = function(name)
     for i = 1, #tlops.plugins do
@@ -266,7 +271,7 @@ local parse_sync_cluster_data_plugin = function (module, content)
 end
 
 
--- 解析心跳数据接口
+-- 解析心跳数据接口 && 持久化
 function _M:parse_sync_cluster_data_module( sync_content )
     
     for i = 1, #sync_content do
@@ -294,6 +299,18 @@ function _M:parse_sync_cluster_data_module( sync_content )
             res = parse_sync_cluster_data_waf_param(module_data.content)
         elseif module_data.module == 'waf_cc' then
             res = parse_sync_cluster_data_waf_cc(module_data.content)
+        elseif module_data.module == 'service' then
+            res = parse_sync_cluster_data_service(module_data.content)
+        elseif module_data.module == 'limit' then
+            res = parse_sync_cluster_data_limit(module_data.content)
+        elseif module_data.module == 'health' then
+            res = parse_sync_cluster_data_health(module_data.content)
+        elseif module_data.module == 'balance' then
+            res = parse_sync_cluster_data_balance(module_data.content)
+        elseif module_data.module == 'waf' then
+            res = parse_sync_cluster_data_waf(module_data.content)
+        elseif module_data.module == 'plugins_manage' then
+            res = parse_sync_cluster_data_plugins_manage(module_data.content)
         else
             -- plugin
             res = parse_sync_cluster_data_plugin( module_data.module, module_data.content )

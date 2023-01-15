@@ -4,8 +4,9 @@
 -- @author iamtsm
 -- @email 1905333456@qq.com
 
-local utils = tlops.utils
-local env   = tlops.env
+local utils                 = tlops.utils
+local env                   = tlops.env
+local sync                  = require("plugins.tl_ops_page_proxy.sync");
 
 local _M = {
     _VERSION = '0.01'
@@ -36,6 +37,18 @@ function _M:tl_ops_process_before_init_rewrite(ctx)
     end
 
     return true, "ok"
+end
+
+
+-- 插件数据同步
+function _M:sync_data()
+    return sync.sync_data()
+end
+
+
+-- 插件数据字段同步
+function _M:sync_fields()
+    return sync.sync_fields()
 end
 
 

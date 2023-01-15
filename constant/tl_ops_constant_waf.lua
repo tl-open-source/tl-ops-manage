@@ -80,31 +80,37 @@ local tl_ops_constant_waf = {
     },
     demo = {
         waf_ip = {   -- waf拦截ip返回错误码
+            zname = "请求IP拦截",
             code = 503,
             content_type = "text/html",
             content = "<p> waf_ip err </p>"
         },
         waf_api = {   -- waf拦截api返回错误码
+            zname = "请求API拦截",
             code = 503,
             content_type = "text/html",
             content = "<p> waf_api err </p>"
         },
         waf_cc = {   -- waf拦截cc返回错误码
+            zname = "CC攻击拦截",
             code = 503,
             content_type = "text/html",
             content = "<p> waf_cc err </p>"
         },
         waf_header = {   -- waf拦截header返回错误码
+            zname = "请求头拦截",
             code = 503,
             content_type = "text/html",
             content = "<p> waf_header err </p>"
         },
         waf_cookie = {   -- waf拦截cookie返回错误码
+            zname = "请求Cookie拦截",
             code = 503,
             content_type = "text/html",
             content = "<p> waf_cookie err </p>"
         },
         waf_param = {   -- waf拦截args返回错误码
+            zname = "请求参数拦截",
             code = 503,
             content_type = "text/html",
             content = "<p> waf_param err </p>"

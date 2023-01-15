@@ -6,8 +6,7 @@
 
 local cache             = require("cache.tl_ops_cache_core"):new("tl-ops-auth");
 local tlog              = require("utils.tl_ops_utils_log"):new("tl_ops_plugin_auth")
-local constant_auth     = require("plugins.tl_ops_auth.tl_ops_plugin_constant")
-local login_router      = require("plugins.tl_ops_auth.login_auth")
+local constant          = require("plugins.tl_ops_auth.tl_ops_plugin_constant")
 local cjson             = require("cjson.safe")
 local shared            = tlops.plugin_shared
 local utils             = tlops.utils
@@ -27,7 +26,7 @@ end
 -- 获取登录态
 function _M:auth_get_session(id)
 
-    local key = constant_auth.cache_key.session .. id
+    local key = constant.cache_key.session .. id
     
     tlog:dbg("auth_get_session, key=",key)
 
@@ -43,7 +42,7 @@ end
 -- 添加登录态
 function _M:auth_add_session(id, user)
 
-    local login_str, _ = cache:get(constant_auth.cache_key.login)
+    local login_str, _ = cache:get(constant.cache_key.login)
     if not login_str then
         tlog:err("auth_add_session get login cache err login_str=",login_str,",err=",_)
         return
@@ -55,7 +54,7 @@ function _M:auth_add_session(id, user)
         return
     end
 
-    local key = constant_auth.cache_key.session .. id
+    local key = constant.cache_key.session .. id
     local value = cjson.encode(user)
     local time = login.auth_time
 
@@ -72,7 +71,7 @@ end
 -- 删除登录态
 function _M:auth_del_session(id)
 
-    local key = constant_auth.cache_key.session .. id
+    local key = constant.cache_key.session .. id
     
     tlog:dbg("auth_del_session, key=",key)
 
@@ -86,7 +85,7 @@ end
 
 
 local uri_in_intercept_uri = function(ctx)
-    for i, intercept_uri in ipairs(constant_auth.login.intercept) do
+    for i, intercept_uri in ipairs(constant.login.intercept) do
         if ngx.re.find(ctx.request_uri, intercept_uri, 'jo') then
             return true
         end
@@ -97,7 +96,7 @@ end
 
 function _M:auth_core(ctx)
 
-    local login_str, _ = cache:get(constant_auth.cache_key.login)
+    local login_str, _ = cache:get(constant.cache_key.login)
     if not login_str then
         tlog:err("auth_core get login cache err login_str=",login_str,",err=",_)
         return

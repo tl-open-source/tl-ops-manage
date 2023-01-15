@@ -10,7 +10,7 @@ local tl_ops_constant_waf_scope = require("constant.tl_ops_constant_waf_scope")
 local _M = {}
 
 -- 开启waf
-function _M:init_global()
+function _M:init_global(ctx)
 
     tl_ops_waf_core:tl_ops_waf_global_core()
     

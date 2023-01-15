@@ -14,7 +14,7 @@ function _M:init(ctx)
     for uri ,router in pairs(ctx.tlops_api) do
         if ngx.re.find(request_uri, uri, 'jo') then
             tlog:dbg("访问接口 : request_uri=",ctx.uri)
-            router()
+            router(ctx)
             ngx.exit(200)
         end
     end

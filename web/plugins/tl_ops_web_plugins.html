@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>tl-ops-manage后台</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <script src="../lib/axios.js"></script>
+    <script src="../lib/layui/layui.js" v="layui" e="layui"></script>
+    <link rel="stylesheet" type="text/css" href="../lib/layui/css/layui.css" />
+</head>
+
+<style>
+    .tl-ops-service-plugins{
+        padding-left: 20px;
+        padding-bottom: 10px;
+    }
+    .tl-plugins-option-value{
+        margin-left: 10px;
+        text-align: right;
+    }
+    .tl-ops-plugins-col{
+        border: 1px solid #e8e8e8;
+        cursor: pointer;
+        border-radius: 6px;
+        background: #ffffff;
+    }
+    .tl-ops-plugins-col:hover{
+        border-color: rgba(0,0,0,.09);
+        box-shadow: 0 2px 8px rgb(0 0 0 / 9%);
+    }
+    .tl-ops-plugins-col-close {
+        background:rgb(209 209 209 / 50%);
+        backdrop-filter: blur(8px);
+        border: 1px solid #e8e8e8;
+        cursor: pointer;
+        border-radius: 6px;
+    }
+    .tl-ops-plugins-change-btn{
+        color:black;
+        background: #f7f9fa;
+        width: 50%;
+    }
+    .tl-ops-plugins-change-btn:hover{
+        background: #e3e4e5;
+        color: black;
+    }
+</style>
+
+<body>
+    <div class="layui-fluid">
+        <div class="layui-row layui-col-space15">
+            <div class="layui-col-md12">
+                <div class="layui-card">
+                    <div class="layui-card-header" style="font-size:20px">
+                        插件管理
+                        <button class="layui-btn layui-btn-sm" style="margin-left: 15px; margin-top: -5px;" onclick="tl_ops_plugins_add()">添加</button>
+                        <i class="layui-icon layui-icon-help" style="float: right; cursor: pointer;" onclick="tl_ops_plugins_doc()"></i>   
+                    </div>
+                    <div class="layui-card-body" style="padding: 30px 15px;">
+                        <div id="tl-ops-web-plugins-service-view"> </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script id="tl-ops-web-plugins-service-tpl" type="text/html">
+        {{#  if(d.length === 0) { }}
+        <div style="text-align: center; font-weight: 800; color: brown; display: grid;">
+            <svg style="width: 100%;" viewBox="0 0 1024 1024" p-id="4310" width="128" height="128">
+                <path d="M106.97251697 619.07623114h289.80414734c11.63872078 0 21.53163343 9.89291266 21.53163343 21.53163345 0 51.21037142 40.73552271 91.3639581 92.52783018 91.3639581s92.52783017-40.15358668 92.52783018-91.3639581c0-11.63872078 9.89291266-21.53163343 21.53163344-21.53163345h288.05833923c8.72904058 0 16.29420908 5.23742435 19.78582532 12.80259287-4.65548831-15.71227305-12.80259285-32.00648214-13.96646493-34.3342263 0-0.58193603-0.58193603-0.58193603-0.58193604-0.58193603l-92.52783018-146.6478818c0-0.58193603-0.58193603-0.58193603-0.58193605-1.16387207-1.74580811-1.74580811-15.71227305-19.78582532-32.00648212-29.09680195-16.87614513-9.89291266-40.15358668-11.63872078-43.06326688-11.63872078h-494.64563303c-4.07355227 0-23.8593776 0.58193603-39.57165064 9.89291266-15.71227305 9.89291266-27.35099383 26.76905779-28.5148659 28.51486591 0 0-0.58193603 0.58193603-0.58193603 1.16387208l-77.97942921 138.50077725c-2.32774415 3.49161624-9.89291266 16.87614513-16.29420909 37.82584251 4.07355227-2.9096802 8.72904058-5.23742435 14.54840098-5.23742435z" fill="#bfbfbf" p-id="4311"></path><path d="M937.3952444 670.28660257c0-1.74580811-1.16387208-16.87614513-4.07355228-31.4245461v2.32774415c0 11.63872078-9.31097662 21.53163343-21.53163344 21.53163343h-267.69057785l-2.90968021 11.05678476c-15.13033701 59.93941199-69.25038862 101.25687076-130.93560873 101.25687075-62.26715616 0-116.38720777-41.8993948-131.51754478-101.25687075l-2.9096802-11.05678476H106.39058092c-8.72904058 0-15.71227305-5.23742435-19.20388928-12.22065681-1.16387208 10.4748487-1.16387208 18.62195325-1.16387208 22.11356949v157.12273048c0 2.9096802 1.74580811 26.76905779 18.62195325 42.48133083 16.87614513 15.71227305 43.64520291 16.87614513 46.5548831 16.87614514h1.16387208-0.58193603 715.78132778c5.23742435 0 31.4245461-0.58193603 49.46456329-16.87614514 18.0400172-16.29420908 19.20388928-38.40777856 19.2038893-44.80907498l1.16387207-157.12273049zM509.0903198 348.47597308c-16.29420908 0-29.67873798-13.3845289-29.67873798-29.67873798V148.87191176c0-16.29420908 13.3845289-29.67873798 29.67873798-29.67873798s29.67873798 13.3845289 29.67873799 29.67873798v170.50725939c0 16.29420908-13.3845289 29.09680195-29.67873799 29.09680193z m198.44018926-1.16387207c-16.29420908 0-29.67873798-13.3845289-29.67873798-29.67873799 0-6.98323246 2.32774415-13.3845289 6.40129642-18.62195323l67.5045805-83.21685357c5.81936038-6.98323246 13.96646493-11.05678473 23.27744156-11.05678473 6.98323246 0 13.3845289 2.32774415 18.62195324 6.40129643 6.40129643 4.65548831 9.89291266 12.22065682 11.05678474 19.78582531 0.58193603 7.56516851-1.74580811 15.71227305-6.40129642 21.53163344l-67.50458051 83.21685356c-5.81936038 8.14710455-13.96646493 12.22065682-23.27744155 11.63872078z m-393.38876226-1.74580812c-8.72904058 0-17.45808117-4.07355227-23.27744156-11.05678474l-66.34070843-83.7987896c-9.89291266-12.80259285-8.14710455-31.4245461 4.65548831-41.89939479 5.23742435-4.07355227 11.63872078-6.40129643 18.62195325-6.40129643 9.31097662 0 17.45808117 4.07355227 23.27744155 11.05678474l66.34070843 83.79878959c9.89291266 12.80259285 8.14710455 31.4245461-4.65548831 41.8993948-5.23742435 4.07355227-12.22065682 6.40129643-18.62195324 6.40129643z" fill="#bfbfbf" p-id="4312"></path></svg>
+            <p >插件为空，去添加一个插件吧</p>
+        </div>
+        {{#  } else { }}
+        <div class="layui-row layui-col-space20">
+        {{#  layui.each(d, function(index, option){ }}
+        <div class="layui-col-md4 ">
+            <div class="layui-form " lay-filter="tl-ops-web-plugins-form-{{index}}">
+                <div class="{{option.data.open ? 'tl-ops-plugins-col' : 'tl-ops-plugins-col-close'}}">
+                    <div style="margin:5px;text-align:center">
+                        <span class="layui-icon layui-icon-note"></span><span class="tl-plugins-option-value">{{option.data.zname}}</span>
+                        <i class="layui-icon layui-icon-delete" style="color:red" onclick="tl_ops_plugins_delete('{{option.data.name}}','{{option.data.zname}}')"></i>
+                    </div>
+                    <div class="tl-ops-service-plugins">
+                        <div>
+                            <span>插件名称：</span><span class="tl-plugins-option-value" style="font-weight: bold;">{{option.data.name}}</span>
+                        </div>
+
+                        <div>
+                            {{#  if(option.data.scope !== '') { }}
+                            <span>生命周期：</span><span class="tl-plugins-option-value" style="font-weight: bold;">{{option.data.scope.split(",").length}}个阶段</span>
+                            {{# }else { }}
+                            <span>生命周期：</span><span class="tl-plugins-option-value" style="font-weight: bold;">暂无</span>
+                            {{# } }}
+                        </div>
+
+                        {{#  if(option.data.page !== '') { }}
+                        <span>配置页面：</span><span class="tl-plugins-option-value" style="font-weight: bold; color: green">支持</span>
+                        {{# }else { }}
+                        <span>配置页面：</span><span class="tl-plugins-option-value" style="font-weight: bold; color: red">暂无</span>
+                        {{# } }}
+                       
+                        <div>
+                            {{#  if(option.data.open) { }}
+                            <span>是否启用：</span><span class="tl-plugins-option-value" style="font-weight: bold; color: green">启用中</span>
+                            {{# }else { }}
+                            <span>是否启用：</span><span class="tl-plugins-option-value" style="font-weight: bold;color: red;">已关闭</span>
+                            {{# } }}
+                        </div>       
+                    </div>
+                    <div class="layui-btn-group" style="width:100%;overflow: hidden;">
+                        <button class="layui-btn layui-icon layui-icon-set tl-ops-plugins-change-btn" onclick="tl_ops_web_plugins_edit('{{option.data.name}}','{{option.data.zname}}')">
+                            <b style="margin-left: 10px;">修改插件</b>
+                        </button>
+                        {{#  if(option.data.page !== '') { }}
+                            {{#  if(option.data.open) { }}
+                            <button  class="layui-btn layui-icon layui-icon-set tl-ops-plugins-change-btn" onclick="tl_ops_web_plugins_config_edit('{{option.data.name}}','{{option.data.zname}}','{{option.data.page}}')">
+                                <b style="margin-left: 10px;">插件配置</b>
+                            </button>
+                            {{# }else { }}
+                            <button id="change{{index}}" class="layui-btn layui-icon layui-icon-set tl-ops-plugins-change-btn layui-btn-disabled" onmouseleave="tl_mouse_leave_tips()" 
+                                onmouseenter="tl_mouse_enter_tips('change{{index}}','‘{{option.data.zname}}’ 暂未开启')">
+                                <b style="margin-left: 10px;">插件配置</b>
+                            </button>
+                            {{# } }}
+                        {{# }else { }}
+                        <button id="change{{index}}" class="layui-btn layui-icon layui-icon-set tl-ops-plugins-change-btn layui-btn-disabled" onmouseleave="tl_mouse_leave_tips()" 
+                            onmouseenter="tl_mouse_enter_tips('change{{index}}','‘{{option.data.zname}}’暂不支持自定义页面配置管理')">
+                            <b style="margin-left: 10px;">插件配置</b>
+                        </button>
+                        {{# } }}
+                    </div>                             
+                </div>
+            </div>
+        </div>
+        {{#  }); }}
+        </div>
+        {{#  } }}
+    </script>
+
+    <script src="../lib/tl_ops_web_comm.js"></script>
+    <script src="tl_ops_web_plugins.js"></script>
+    <script>
+        layui.use(['table', 'form', 'laytpl', 'element'], tl_ops_web_plugins_main);
+    </script>
+</body>
+
+</html>

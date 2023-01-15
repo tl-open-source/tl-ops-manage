@@ -23,7 +23,7 @@ local tl_ops_balance_header_get_matcher_header = function(header_list_table, rul
     end 
 
     local headers = ngx.req.get_headers()
-    if not header then
+    if not headers then
         return nil
     end
 
@@ -99,6 +99,7 @@ local tl_ops_balance_header_service_matcher = function(service_list_table)
         end
     -- 服务内随机
     elseif header_rule == tl_ops_constant_balance_header.rule.random then
+        local request_uri = tl_ops_utils_func:get_req_uri();
         math.randomseed(#request_uri)
         node_id = tonumber(math.random(0,1) % #service_list_table[matcher.service]) + 1
         node = service_list[node_id]

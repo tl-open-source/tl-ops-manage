@@ -7,6 +7,7 @@
 local cjson             = require("cjson.safe");
 local tlog              = require("utils.tl_ops_utils_log"):new("tl_ops_limit_leak_bucket");
 local tl_ops_utils_func = require("utils.tl_ops_utils_func");
+local shared            = ngx.shared.tlopsbalance
 
 
 local _M = {

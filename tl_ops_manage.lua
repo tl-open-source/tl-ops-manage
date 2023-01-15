@@ -82,7 +82,7 @@ end
 -- rewrite阶段执行
 function _M:tl_ops_process_init_rewrite(onlyplugin)
     -- 初始化ctx
-    m_ctx:init();
+    m_ctx:init(self.plugins);
     
     -- 执行插件
     m_plugin:tl_ops_process_before_init_rewrite(ngx.ctx);

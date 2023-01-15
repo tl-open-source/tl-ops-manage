@@ -45,7 +45,8 @@ end
 
 -- 对service_options_version更新，通知timer检查是否有新增service
 local tl_ops_health_check_version_incr_service_option_version = function(  )
-    local res, _ = cache_dict:set(tl_ops_constant_health.cache_key.service_options_version, true)
+    local key = tl_ops_constant_health.cache_key.service_options_version;
+    local res, _ = cache_dict:set(key, true)
 
     tlog:dbg("service_option_version key=" , key, ", service_option_version=",res)
 

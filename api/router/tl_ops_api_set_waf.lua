@@ -24,7 +24,7 @@ local Router = function()
             tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.error, "set waf_ip err ", _)
             return;
         end
-        change = "waf_ip"
+        change = "waf_ip succeess"
     end
     
     local waf_api, _ = tl_ops_utils_func:get_req_post_args_by_name("waf_api", 1);
@@ -34,7 +34,7 @@ local Router = function()
             tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.error, "set waf_api err ", _)
             return;
         end
-        change = "waf_api"
+        change = "waf_api succeess"
     end
     
     local waf_cc, _ = tl_ops_utils_func:get_req_post_args_by_name("waf_cc", 1);
@@ -44,7 +44,7 @@ local Router = function()
             tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.error, "set waf_cc err ", _)
             return;
         end
-        change = "waf_cc"
+        change = "waf_cc succeess"
     end
     
     local waf_header, _ = tl_ops_utils_func:get_req_post_args_by_name("waf_header", 1);
@@ -54,7 +54,7 @@ local Router = function()
             tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.error, "set waf_header err ", _)
             return;
         end
-        change = "waf_header"
+        change = "waf_header succeess"
     end
     
     local waf_cookie, _ = tl_ops_utils_func:get_req_post_args_by_name("waf_cookie", 1);
@@ -64,7 +64,7 @@ local Router = function()
             tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.error, "set waf_cookie err ", _)
             return;
         end
-        change = "waf_cookie"
+        change = "waf_cookie succeess"
     end
     
     local waf_param, _ = tl_ops_utils_func:get_req_post_args_by_name("waf_param", 1);
@@ -74,7 +74,7 @@ local Router = function()
             tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.error, "set waf_param err ", _)
             return;
         end
-        change = "waf_param"
+        change = "waf_param succeess"
     end
 
     local res_data = {}

@@ -26,23 +26,6 @@ const tl_ops_web_balance_main = function (){
 const tl_ops_balance_handler_render_data = function(data){
     let options_list = []
     for(let name in data){
-        let err_name = "其他";
-        if(name === 'service_empty'){
-            err_name = "服务为空"
-        }else if(name === 'mode_empty'){
-            err_name = "路由无匹配"
-        }else if(name === 'host_empty'){
-            err_name = "域名为空"
-        }else if(name === 'host_pass'){
-            err_name = "域名不匹配"
-        }else if(name === 'token_limit'){
-            err_name = "令牌桶限流"
-        }else if(name === 'leak_limit'){
-            err_name = "漏桶限流"
-        }else if(name === 'offline'){
-            err_name = "服务下线"
-        }
-        data[name]['err_name'] = err_name
         data[name]['name'] = name
         data[name]['content_sub'] = data[name].content.substring(0,15) + "...("+data[name]['content'].length+"字符)"
         options_list.push(data[name])
@@ -64,10 +47,10 @@ const tl_ops_web_balance_render = function( data ){
 
 
 //管理节点
-const tl_ops_web_balance_edit = function (name) {
+const tl_ops_web_balance_edit = function (name, zname) {
     let index = layer.open({
         type: 2
-        ,title: '自定义【'+name+'】错误配置'
+        ,title: '自定义【'+zname+'】错误配置'
         ,content: 'tl_ops_web_balance_form.html?name='+name
         ,maxmin: true
         ,minStack:false
@@ -117,7 +100,6 @@ const tl_ops_web_balance_edit = function (name) {
 const tl_ops_balance_data_edit_filter = function( data ) {
     let name = data.field.name
     delete data.field.file;
-    delete data.field.err_name;
     delete data.field.content_sub;
     delete data.field.name;
     for(let key in data.field){

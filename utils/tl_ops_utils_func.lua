@@ -153,12 +153,12 @@ function _M:get_str_matcher (reg, str)
 end
 
 -- 返回table内key匹配结果
-function _M:get_str_matcher (reg, table)
+function _M:get_str_matcher_table (reg, table)
     local res_tb = {};
 
     for k, v in pairs(table) do  
         if type(k) == 'string' then 
-            local rt,res = get_str_matcher(reg, k);
+            local rt,res = self:get_str_matcher(reg, k);
             res_tb[k] = res;
         end
     end

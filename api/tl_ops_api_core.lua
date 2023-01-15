@@ -46,6 +46,10 @@ tl_ops_api_core["/tlops/health/set"] = require("api.router.tl_ops_api_set_health
 tl_ops_api_core["/tlops/limit/list"] = require("api.router.tl_ops_api_get_limit")
 tl_ops_api_core["/tlops/limit/set"] = require("api.router.tl_ops_api_set_limit")
 
+-- plugins
+tl_ops_api_core["/tlops/plugins/get"] = require("api.router.tl_ops_api_get_plugins_manage")
+tl_ops_api_core["/tlops/plugins/set"] = require("api.router.tl_ops_api_set_plugins_manage");
+
 -- store
 tl_ops_api_core["/tlops/store/list"] = require("api.router.tl_ops_api_get_store")
 

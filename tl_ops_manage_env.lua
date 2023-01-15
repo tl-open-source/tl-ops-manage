@@ -96,24 +96,5 @@ return {
         ]]
         counting = true,
 
-    },
-    plugin = {
-        --[[
-            en :plugins, when this option is turned on, the added plugins will be enabled
-            
-            zn :插件，开启此选项后，将在启动时加载添加的所有插件
-        ]]
-        open = true,
-        --[[
-            en :plugin module definition, the imported plugin needs to be defined here before it can be loaded. 
-                Otherwise it will not take effect
-                Notice: the order in which plugins are filled in will affect the order in which the same plugin stages are executed
-            
-            zn :插件模块定义，引入的插件需要在此定义好才能被加载。否则将不生效。注意，插件填写的顺序将影响相同插件阶段执行的顺序
-        ]]
-        module = {
-            "auth", "ssl", "sync", "sync_cluster", "page_proxy", "time_alert", "tracing"
-            -- cors", "log_analyze",
-        }
     }
 }

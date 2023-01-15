@@ -19,6 +19,7 @@ local waf_header        = require("cache.tl_ops_cache_core"):new("tl-ops-waf-hea
 local waf_cc            = require("cache.tl_ops_cache_core"):new("tl-ops-waf-cc");
 local waf_param         = require("cache.tl_ops_cache_core"):new("tl-ops-waf-param");
 
+local plugins_manage    = require("cache.tl_ops_cache_core"):new("tl-ops-plugins-manage");
 
 return {
     service         = service,
@@ -37,4 +38,5 @@ return {
     waf_header      = waf_header,
     waf_cookie      = waf_cookie,
     waf_param       = waf_param,
+    plugins_manage  = plugins_manage,
 }

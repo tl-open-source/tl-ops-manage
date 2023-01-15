@@ -73,7 +73,7 @@
         <div class="layui-form " lay-filter="tl-ops-web-waf-form-{{index}}">
             <div class="tl-ops-waf-col">
                 <div style="margin:5px;text-align:center">
-                    <span class="layui-icon layui-icon-note"></span><span class="tl-waf-option-value">{{option.err_name}}</span>
+                    <span class="layui-icon layui-icon-note"></span><span class="tl-waf-option-value">{{option.zname}}</span>
                 </div>
                 <div class="tl-ops-service-waf">
                     <div>
@@ -87,7 +87,7 @@
                     </div>          
                 </div>
                 <div>
-                    <button  class="layui-btn layui-icon layui-icon-set tl-ops-waf-change-btn" onclick="tl_ops_web_waf_edit('{{option.name}}')">
+                    <button  class="layui-btn layui-icon layui-icon-set tl-ops-waf-change-btn" onclick="tl_ops_web_waf_edit('{{option.name}}','{{option.err_name}}')">
                         <b style="margin-left: 10px;">修改</b>
                     </button>
                 </div>                               

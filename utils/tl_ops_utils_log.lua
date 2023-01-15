@@ -46,6 +46,7 @@ local function log(self, level,  ... )
 	local t = { ... }
 	local msg = concate_msg(t)
 	local time = os.date("%Y-%m-%d %H:%M:%S", ngx.now())
+    local pid = ngx.worker.pid();
 
     local log_file, _ = io.open(log_file_name, "a")
     if not log_file then
@@ -60,7 +61,8 @@ local function log(self, level,  ... )
 		log_file:write(log_line_inline .. ",\n")
 	else -- json格式化输出log
 		local log_line_json = "{\n\t'time':" .. cjson_safe.encode(time) .. ",'module':" .. cjson_safe.encode(self.module) .. 
-							",'level':" .. cjson_safe.encode(level) .. ",\n\t'msg':" .. cjson_safe.encode(msg) .. "\n},\n";
+							",'level':" .. cjson_safe.encode(level) .. ",'pid': \"" .. cjson_safe.encode(pid) ..
+                            "\",\n\t'msg':" .. cjson_safe.encode(msg) .. "\n},\n";
 		log_file:write(log_line_json)
 	end
 

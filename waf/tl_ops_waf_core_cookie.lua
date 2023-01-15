@@ -6,7 +6,6 @@
 
 local tl_ops_constant_waf_cookie    = require("constant.tl_ops_constant_waf_cookie");
 local tl_ops_constant_waf_scope     = require("constant.tl_ops_constant_waf_scope");
-local tl_ops_utils_func             = require("utils.tl_ops_utils_func");
 local cache_cookie                  = require("cache.tl_ops_cache_core"):new("tl-ops-waf-cookie");
 local tlog                          = require("utils.tl_ops_utils_log"):new("tl_ops_waf_cookie");
 local find                          = ngx.re.find
@@ -230,7 +229,7 @@ local tl_ops_waf_core_cookie_filter_service_pass = function(service_name)
                 break
             end
             -- 未命中拦截规则，进行下一个
-            local res, _ = find(request_uri , value , 'joi');
+            local res, _ = find(cookie_string , value , 'joi');
             if not res then
                 break
             end

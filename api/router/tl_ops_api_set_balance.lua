@@ -25,7 +25,7 @@ local Router = function()
             tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.error, "set service_empty err ", _)
             return;
         end
-        change = "service_empty"
+        change = "service_empty succeess"
     end
     
     local mode_empty, _ = tl_ops_utils_func:get_req_post_args_by_name("mode_empty", 1);
@@ -35,7 +35,7 @@ local Router = function()
             tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.error, "set mode_empty err ", _)
             return;
         end
-        change = "mode_empty"
+        change = "mode_empty succeess"
     end
     
     local host_empty, _ = tl_ops_utils_func:get_req_post_args_by_name("host_empty", 1);
@@ -45,7 +45,7 @@ local Router = function()
             tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.error, "set host_empty err ", _)
             return;
         end
-        change = "host_empty"
+        change = "host_empty succeess"
     end
     
     local host_pass, _ = tl_ops_utils_func:get_req_post_args_by_name("host_pass", 1);
@@ -55,7 +55,7 @@ local Router = function()
             tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.error, "set host_pass err ", _)
             return;
         end
-        change = "host_pass"
+        change = "host_pass succeess"
     end
     
     local token_limit, _ = tl_ops_utils_func:get_req_post_args_by_name("token_limit", 1);
@@ -65,7 +65,7 @@ local Router = function()
             tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.error, "set token_limit err ", _)
             return;
         end
-        change = "token_limit"
+        change = "token_limit succeess"
     end
     
     local leak_limit, _ = tl_ops_utils_func:get_req_post_args_by_name("leak_limit", 1);
@@ -75,7 +75,7 @@ local Router = function()
             tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.error, "set leak_limit err ", _)
             return;
         end
-        change = "leak_limit"
+        change = "leak_limit succeess"
     end
     
     local offline, _ = tl_ops_utils_func:get_req_post_args_by_name("offline", 1);
@@ -85,7 +85,7 @@ local Router = function()
             tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.error, "set offline err ", _)
             return;
         end
-        change = "offline"
+        change = "offline succeess"
     end
     
     local res_data = {}

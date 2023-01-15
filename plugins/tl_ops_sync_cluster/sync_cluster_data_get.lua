@@ -21,6 +21,7 @@ local cache_waf_header          =   tlops.cache.waf_header
 local cache_waf_cc              =   tlops.cache.waf_cc
 local cache_waf_param           =   tlops.cache.waf_param
 local cache_waf                 =   tlops.cache.waf
+local cache_plugins_manage      =   tlops.cache.plugins
 -- constant
 local constant_service          =   tlops.constant.service
 local constant_health           =   tlops.constant.health
@@ -38,10 +39,9 @@ local constant_waf_cc           =   tlops.constant.waf_cc
 local constant_waf_header       =   tlops.constant.waf_header
 local constant_waf_cookie       =   tlops.constant.waf_cookie
 local constant_waf_param        =   tlops.constant.waf_param
+local constant_plugins_manage   =   tlops.constant.plugins
 -- utils
 local utils                     =   tlops.utils
-local nx_socket					=   ngx.socket.tcp
-local tl_ops_rt                 =   tlops.constant.comm.tl_ops_rt
 local cjson                     =   require("cjson.safe")
 cjson.encode_empty_table_as_object(false)
 local tlog = require("utils.tl_ops_utils_log"):new("tl_ops_plugin_sync_cluster_data");
@@ -56,8 +56,8 @@ local get_sync_cluster_data_service = function ()
     local all = {}
 
     local cache_keys = {
-        service_list = constant_balance.cache_key.service_list,
-        service_rule = constant_balance.cache_key.service_rule,
+        service_list = constant_service.cache_key.service_list,
+        service_rule = constant_service.cache_key.service_rule,
     }
 
     for key , cache_key in pairs(cache_keys) do
@@ -84,7 +84,7 @@ local get_sync_cluster_data_limit = function ()
 
     local cache_keys = {
         fuse = constant_limit.fuse.cache_key.options_list,
-        token = constant_balance.token.cache_key.service_rule,
+        token = constant_limit.token.cache_key.options_list,
         leak = constant_limit.leak.cache_key.options_list
     }
 
@@ -166,6 +166,21 @@ local get_sync_cluster_data_waf = function ()
     end
 
     return all
+end
+
+
+-- plugins_manage 配置数据
+local get_sync_cluster_data_plugins_manage = function ()
+    local content = nil
+
+    local data_str, _ = cache_plugins_manage:get(constant_plugins_manage.cache_key.list);
+    if not data_str then
+        data_str = "{}"
+    end
+    
+    content = cjson.decode(data_str)
+
+    return content
 end
 
 
@@ -416,6 +431,8 @@ function _M:get_sync_cluster_data_module( modules )
             content = get_sync_cluster_data_health()
         elseif modules[i] == 'limit' then
             content = get_sync_cluster_data_limit()
+        elseif modules[i] == 'plugins_manage' then
+            content = get_sync_cluster_data_plugins_manage()
         else
             -- plugin
             content = get_sync_cluster_data_plugin(modules[i] )

@@ -45,7 +45,7 @@ const tl_ops_web_alert_event = function () {
 const tl_ops_web_alert_cols = function () {
     return [[
         {
-            type:'checkbox',fixed : 'left', width: "5%"
+            type:'checkbox',fixed : 'left', width: "8%"
         }, {
             field: 'id', title: 'ID',width:"5%"
         }, {
@@ -55,7 +55,7 @@ const tl_ops_web_alert_cols = function () {
         }, {
             field: 'interval', title: '周期时间',width:"10%"
         }, {
-            field: 'mode', title: '告警模式',width:"15%"
+            field: 'mode', title: '告警模式',width:"12%"
         }, {
             field: 'target', title: '告警对象',width:"20%"
         }, {

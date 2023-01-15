@@ -10,7 +10,7 @@ local constant_health           =   tlops.constant.health
 local constant_limit            =   tlops.constant.limit
 local constant_balance          =   tlops.constant.balance
 local constant_balance_api      =   tlops.constant.balance_api
-local constant_balance_body      =   tlops.constant.balance_body
+local constant_balance_body     =   tlops.constant.balance_body
 local constant_balance_param    =   tlops.constant.balance_param
 local constant_balance_header   =   tlops.constant.balance_header
 local constant_balance_cookie   =   tlops.constant.balance_cookie
@@ -21,13 +21,14 @@ local constant_waf_cc           =   tlops.constant.waf_cc
 local constant_waf_header       =   tlops.constant.waf_header
 local constant_waf_cookie       =   tlops.constant.waf_cookie
 local constant_waf_param        =   tlops.constant.waf_param
+local constant_plugins_manage   =   tlops.constant.plugins_manage
 local tl_ops_rt                 =   tlops.constant.comm.tl_ops_rt;
 -- cache
 local cache_service             =   tlops.cache.service
 local cache_limit               =   tlops.cache.limit
 local cache_health              =   tlops.cache.health
 local cache_balance_api         =   tlops.cache.balance_api
-local cache_balance_body         =   tlops.cache.balance_body
+local cache_balance_body        =   tlops.cache.balance_body
 local cache_balance_param       =   tlops.cache.balance_param
 local cache_balance_header      =   tlops.cache.balance_header
 local cache_balance_cookie      =   tlops.cache.balance_cookie
@@ -39,6 +40,7 @@ local cache_waf_header          =   tlops.cache.waf_header
 local cache_waf_cc              =   tlops.cache.waf_cc
 local cache_waf_param           =   tlops.cache.waf_param
 local cache_waf                 =   tlops.cache.waf
+local cache_plugins_manage      =   tlops.cache.plugins_manage
 -- utils
 local utils                             =   tlops.utils
 local tl_ops_limit_fuse_check_version   =   require("limit.fuse.tl_ops_limit_fuse_check_version")
@@ -618,6 +620,7 @@ local sync_fields_balance_body = function ()
 
     return tl_ops_rt.ok
 end
+
 
 -- cookie策略数据同步
 local sync_fields_balance_cookie = function ()
@@ -1417,6 +1420,64 @@ local sync_fields_waf_cc = function ()
 end
 
 
+--+++++++++++++++插件管理列表数据同步+++++++++++++++--
+
+-- 插件管理列表
+local sync_fields_plugins_manage = function ()
+    local cache_key_list = constant_plugins_manage.cache_key.list;
+    local constant = constant_plugins_manage.list;
+    local demo = constant_plugins_manage.demo
+
+    local data_str, _ = cache_plugins_manage:get(cache_key_list);
+    if not data_str then
+        local res, _ = cache_plugins_manage:set(cache_key_list, cjson.encode(constant))
+        if not res then
+            tlog:err("sync_fields_plugins_manage new store data err, res=",res)
+            return tl_ops_rt.error
+        end
+
+        data_str, _ = cache_plugins_manage:get(cache_key_list)
+
+        tlog:dbg("sync_fields_plugins_manage new store data, res=",res)
+    end
+
+    local data = cjson.decode(data_str);
+    if not data and type(data) ~= 'table' then
+        tlog:err("sync_fields_plugins_manage err, old=",data)
+        return tl_ops_rt.error
+    end
+
+    tlog:dbg("sync_fields_plugins_manage start, old=",data)
+
+    local add_keys = {}
+
+    -- demo fileds check
+    for key , _ in pairs(demo) do
+        -- data fileds check
+        for i = 1, #data do
+            -- add keys
+            if data[i][key] == nil then
+                data[i][key] = demo[key]
+                table.insert(add_keys , {
+                    key = data[i][key]
+                })
+            end
+        end
+    end
+
+    local res = cache_plugins_manage:set(cache_key_list, cjson.encode(data))
+    if not res then
+        tlog:err("sync_fields_plugins_manage err, res=",res,",new=",data)
+        return tl_ops_rt.error
+    end
+
+    tlog:dbg("sync_fields_plugins_manage done, new=",data,",add_keys=",add_keys)
+
+    return tl_ops_rt.ok
+end
+
+
+--+++++++++++++++单个插件数据同步+++++++++++++++--
 
 -- 获取某个插件
 local sync_fields_get_plugin = function(name)
@@ -1446,7 +1507,7 @@ local sync_fields_plugin = function (module)
         end
     end
 
-    tlog:dbg("sync_fields_plugin done, module=",module)
+    tlog:dbg("sync_fields_plugin done, module=",module, ",plugin=",plugin)
 
     return tl_ops_rt.ok
 end
@@ -1488,6 +1549,8 @@ function _M:sync_fields_module( module )
         return sync_fields_waf_param()
     elseif module == 'waf_cc' then
         return sync_fields_waf_cc()
+    elseif module == 'plugins_manage' then
+        return sync_fields_plugins_manage()
     else 
         -- plugin
         return sync_fields_plugin(module)
