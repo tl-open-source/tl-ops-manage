@@ -1,12 +1,12 @@
--- tl_ops_plugin_cros_api
--- en : cros api
+-- tl_ops_plugin_cors_api
+-- en : cors api
 -- zn : 插件api接口
 -- @author iamtsm
 -- @email 1905333456@qq.com
 
-local constant                  = require("plugins.tl_ops_cros.tl_ops_plugin_constant")
-local export_get_router         = require("plugins.tl_ops_cros.export_get_router")
-local export_set_router         = require("plugins.tl_ops_cros.export_set_router")
+local constant                  = require("plugins.tl_ops_cors.tl_ops_plugin_constant")
+local export_get_router         = require("plugins.tl_ops_cors.export_get_router")
+local export_set_router         = require("plugins.tl_ops_cors.export_set_router")
 
 -- 插件管理对外管理接口
 return function(ctx)

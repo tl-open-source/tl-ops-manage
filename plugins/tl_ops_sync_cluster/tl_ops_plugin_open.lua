@@ -18,7 +18,7 @@ local Func = function()
         return true
     end
 
-    local str, _ = cache:get(constant.export.cache_key.sync_cluster);
+    local str, _ = cache:get101(constant.export.cache_key.sync_cluster);
     if not str or str == nil then
         return false;
     end

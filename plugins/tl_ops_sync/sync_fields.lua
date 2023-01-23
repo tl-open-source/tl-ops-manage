@@ -465,6 +465,7 @@ end
 local sync_fields_balance_api = function ()
     local cache_key_list = constant_balance_api.cache_key.list;
     local cache_key_rule = constant_balance_api.cache_key.rule
+    local cache_key_rule_match_mode = constant_balance_api.cache_key.rule_match_mode
 
     local demo = constant_balance_api.demo
 
@@ -490,6 +491,17 @@ local sync_fields_balance_api = function ()
         end
 
         tlog:dbg("sync_fields_balance_api new store rule, res=",res)
+    end
+
+    local data_rule_match_mode_str, _ = cache_balance_api:get(cache_key_rule_match_mode);
+    if not data_rule_match_mode_str then
+        local res, _ = cache_balance_api:set(cache_key_rule_match_mode, constant_balance.api.rule_match_mode)
+        if not res then
+            tlog:err("sync_fields_balance_api new store rule_match_mode err, res=",res)
+            return tl_ops_rt.error
+        end
+
+        tlog:dbg("sync_fields_balance_api new store rule_match_mode, res=",res)
     end
 
     local data = cjson.decode(data_str);
@@ -545,6 +557,7 @@ end
 local sync_fields_balance_body = function ()
     local cache_key_list = constant_balance_body.cache_key.list;
     local cache_key_rule = constant_balance_body.cache_key.rule
+    local cache_key_rule_match_mode = constant_balance_body.cache_key.rule_match_mode
 
     local demo = constant_balance_body.demo
 
@@ -570,6 +583,17 @@ local sync_fields_balance_body = function ()
         end
 
         tlog:dbg("sync_fields_balance_body new store rule, res=",res)
+    end
+
+    local data_rule_match_mode_str, _ = cache_balance_body:get(cache_key_rule_match_mode);
+    if not data_rule_match_mode_str then
+        local res, _ = cache_balance_body:set(cache_key_rule_match_mode, constant_balance.body.rule_match_mode)
+        if not res then
+            tlog:err("sync_fields_balance_body new store rule_match_mode err, res=",res)
+            return tl_ops_rt.error
+        end
+
+        tlog:dbg("sync_fields_balance_body new store rule_match_mode, res=",res)
     end
 
     local data = cjson.decode(data_str);
@@ -626,6 +650,7 @@ end
 local sync_fields_balance_cookie = function ()
     local cache_key_list = constant_balance_cookie.cache_key.list
     local cache_key_rule = constant_balance_cookie.cache_key.rule
+    local cache_key_rule_match_mode = constant_balance_cookie.cache_key.rule_match_mode
 
     local demo = constant_balance_cookie.demo
 
@@ -653,6 +678,17 @@ local sync_fields_balance_cookie = function ()
         tlog:dbg("sync_fields_balance_api new store rule, res=",res)
     end
 
+    local data_rule_match_mode_str, _ = cache_balance_cookie:get(cache_key_rule_match_mode);
+    if not data_rule_match_mode_str then
+        local res, _ = cache_balance_cookie:set(cache_key_rule_match_mode, constant_balance.cookie.rule_match_mode)
+        if not res then
+            tlog:err("sync_fields_balance_cookie new store rule_match_mode err, res=",res)
+            return tl_ops_rt.error
+        end
+
+        tlog:dbg("sync_fields_balance_api new store rule_match_mode, res=",res)
+    end
+
     local data = cjson.decode(data_str);
     if not data and type(data) ~= 'table' then
         tlog:err("sync_fields_balance_cookie err, old=",data)
@@ -674,6 +710,14 @@ local sync_fields_balance_cookie = function ()
                     key = data.point[i][key]
                 })
             end
+            -- -- key type change
+            -- if data.point[i][key] and demo.point[key] then
+            --     local data_type = type (data.point[i][key]);
+            --     local demo_type = type (demo.point[key])
+            --     if o_type ~= n_type then
+            --         data.point[i][key] = demo.point[key]
+            --     end
+            -- end
         end
     end
 
@@ -688,6 +732,14 @@ local sync_fields_balance_cookie = function ()
                     key = data.random[i][key]
                 })
             end
+            -- -- key type change
+            -- if data.random[i][key] and demo.random[key] then
+            --     local data_type = type (data.random[i][key]);
+            --     local demo_type = type (demo.random[key])
+            --     if o_type ~= n_type then
+            --         data.random[i][key] = demo.random[key]
+            --     end
+            -- end
         end
     end
 
@@ -706,6 +758,7 @@ end
 local sync_fields_balance_header = function ()
     local cache_key_list = constant_balance_header.cache_key.list
     local cache_key_rule = constant_balance_header.cache_key.rule
+    local cache_key_rule_match_mode = constant_balance_header.cache_key.rule_match_mode
 
     local demo = constant_balance_header.demo
 
@@ -733,6 +786,17 @@ local sync_fields_balance_header = function ()
         tlog:dbg("sync_fields_balance_header new store rule, res=",res)
     end
 
+
+    local data_rule_match_mode_str, _ = cache_balance_header:get(cache_key_rule_match_mode);
+    if not data_rule_match_mode_str then
+        local res, _ = cache_balance_header:set(cache_key_rule_match_mode, constant_balance.header.rule_match_mode)
+        if not res then
+            tlog:err("sync_fields_balance_header new store rule_match_mode err, res=",res)
+            return tl_ops_rt.error
+        end
+
+        tlog:dbg("sync_fields_balance_header new store rule_match_mode, res=",res)
+    end
 
     local data = cjson.decode(data_str);
     if not data and type(data) ~= 'table' then
@@ -787,6 +851,7 @@ end
 local sync_fields_balance_param = function ()
     local cache_key_list = constant_balance_param.cache_key.list
     local cache_key_rule = constant_balance_param.cache_key.rule
+    local cache_key_rule_match_mode = constant_balance_param.cache_key.rule_match_mode
 
     local demo = constant_balance_param.demo
 
@@ -813,6 +878,18 @@ local sync_fields_balance_param = function ()
 
         tlog:dbg("sync_fields_balance_param new store rule, res=",res)
     end
+
+    local data_rule_match_mode_str, _ = cache_balance_param:get(cache_key_rule_match_mode);
+    if not data_rule_match_mode_str then
+        local res, _ = cache_balance_param:set(cache_key_rule_match_mode, constant_balance.param.rule_match_mode)
+        if not res then
+            tlog:err("sync_fields_balance_param new store rule_match_mode err, res=",res)
+            return tl_ops_rt.error
+        end
+
+        tlog:dbg("sync_fields_balance_param new store rule_match_mode, res=",res)
+    end
+
 
     local data = cjson.decode(data_str);
     if not data and type(data) ~= 'table' then

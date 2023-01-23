@@ -12,7 +12,7 @@ cjson.encode_empty_table_as_object(false)
 
 local Func = function()
     
-    local str, _ = cache:get(constant.export.cache_key.ssl);
+    local str, _ = cache:get101(constant.export.cache_key.ssl);
     if not str or str == nil then
         return false;
     end

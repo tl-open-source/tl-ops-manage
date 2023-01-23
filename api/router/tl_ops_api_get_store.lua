@@ -71,7 +71,7 @@ local Router = function()
     end
     local plugins_manage_content, plugins_manage_size = read("tl-ops-plugins-manage.tlstore");
     if not plugins_manage_content then
-        plugins_manage_content = ""
+        plugins_manage_content = {}
     end
     local limit_content, limit_size = read("tl-ops-limit.tlstore");
     if not limit_content then

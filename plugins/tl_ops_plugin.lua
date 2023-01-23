@@ -8,7 +8,6 @@ local tlog                      = require("utils.tl_ops_utils_log"):new("tl_ops_
 local cache_plugins_manage      = require("cache.tl_ops_cache_core"):new("tl-ops-plugins-manage")
 local constant_plugins_manage   = require("constant.tl_ops_constant_plugins_manage")
 local require                   = require
-local tl_ops_manage_env         = require("tl_ops_manage_env")
 local tl_ops_utils_func         = require("utils.tl_ops_utils_func")
 local cjson                     = require("cjson.safe");
 local plugin_load               = require("plugins.tl_ops_plugin_load"):new();
@@ -35,7 +34,7 @@ end
 
 -- 插件加载器
 function _M:tl_ops_process_load_plugins()
-    local module_str, _ = cache_plugins_manage:get(constant_plugins_manage.cache_key.list);
+    local module_str, _ = cache_plugins_manage:get101(constant_plugins_manage.cache_key.list);
     if not module_str or module_str == nil then
         tlog:dbg("tl_ops_process_load_plugins no module, use constant default, default=",constant_plugins_manage.list)
         module_str = cjson.encode(constant_plugins_manage.list)

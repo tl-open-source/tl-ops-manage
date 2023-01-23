@@ -54,6 +54,11 @@ const tl_ops_web_api_form_main = async function (){
 };
 
 
+window.tl_ops_web_api_form_render = function(data){
+    form.val("tl-ops-web-api-form", Object.assign(form.val("tl-ops-web-api-form"), data))
+    form.render()
+}
+
 const tl_ops_web_api_form_select_service_render = function(  ){
     laytpl(document.getElementById(_form_select_tlp_id_name).innerHTML).render((()=>{    
         return service_data;

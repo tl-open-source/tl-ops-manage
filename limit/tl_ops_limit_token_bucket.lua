@@ -4,12 +4,9 @@
 -- @author iamtsm
 -- @email 1905333456@qq.com
 
-local cjson             = require("cjson.safe");
 local tlog              = require("utils.tl_ops_utils_log"):new("tl_ops_limit_token_bucket");
-local tl_ops_utils_func = require("utils.tl_ops_utils_func");
 local lock              = require("lib.lock");
 local shared            = ngx.shared.tlopsbalance
-
 
 local _M = {
     _VERSION = '0.02'

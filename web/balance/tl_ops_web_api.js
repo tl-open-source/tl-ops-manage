@@ -3,6 +3,7 @@ const _search_id_name = "tl-ops-web-api-search";
 const _add_form_btn_id_name = "tl-ops-web-api-form-submit";
 const _add_form_id_name = "tl-ops-web-api-form";
 let rule = '';
+let rule_match_mode = '';
 let res_data = {};
 
 const tl_ops_web_api_main = function (){
@@ -50,15 +51,17 @@ const tl_ops_web_api_point_cols = function () {
         }, {
             field: 'id', title: 'ID',width:"10%"
         }, {
-            field: 'host', title: '域名',width:"15%"
+            field: 'host', title: '域名',width:"10%"
         }, {
             field: 'url', title: 'API', width:"10%"
+        }, {
+            field: 'match_mode', title: '匹配模式',width:"10%"
         }, {
             field: 'service', title: '所属服务',width:"10%"
         }, {
             field: 'node', title: '节点索引',width:"10%"
         }, {
-            field: 'rewrite_url', title: '重写地址',width:"15%"
+            field: 'rewrite_url', title: '重写地址',width:"10%"
         }, {
             field: 'updatetime', title: '更新时间',width:"15%",
         }, {
@@ -79,13 +82,15 @@ const tl_ops_web_api_random_cols = function () {
         }, {
             field: 'id', title: 'ID', width:"10%"
         }, {
-            field: 'host', title: '域名',width:"15%"
+            field: 'host', title: '域名',width:"10%"
         }, {
             field: 'url', title: 'API', width:"15%"
         }, {
-            field: 'service', title: '所属服务',width:"15%"
+            field: 'match_mode', title: '匹配模式',width:"10%"
         }, {
-            field: 'rewrite_url', title: '重写地址',width:"15%"
+            field: 'service', title: '所属服务',width:"10%"
+        }, {
+            field: 'rewrite_url', title: '重写地址',width:"10%"
         }, {
             field: 'updatetime', title: '更新时间',width:"15%",
         }, {
@@ -120,6 +125,8 @@ const tl_ops_web_api_render = function () {
             }
             res_data = res.data;
             rule = res_data.tl_ops_balance_api_rule
+            rule_match_mode = res_data.tl_ops_balance_api_rule_match_mode
+            
             let datas = res_data.tl_ops_balance_api_list[rule];
             if (datas === undefined){ datas = []; }
             datas = datas.sort(function(a, b){return b.id - a.id})
@@ -129,6 +136,12 @@ const tl_ops_web_api_render = function () {
                 onmouseenter="tl_mouse_enter_tips('tl-api-rule','点击切换策略，切换将实时生效')">
                 ${rule}
             </b><b> ( ${rule==='random' ? '随机节点路由' : '指定节点路由'} )</b>`;
+
+            $('#tl-ops-web-api-cur-rule-match-mode')[0].innerHTML = `<b style='color:red;font-size:16px;cursor: pointer;' class="layui-badge layui-bg-red" 
+                id="tl-api-rule-match-mode" onmouseleave="tl_mouse_leave_tips()" onclick="tl_ops_web_api_change_rule_match_mode()" 
+                onmouseenter="tl_mouse_enter_tips('tl-api-rule-match-mode','点击切换规则模式，切换将实时生效')">
+                ${rule_match_mode}
+            </b><b> ( ${rule_match_mode==='api' ? '优先匹配api' : '优先匹配域名'} )</b>`;
 
             return {
                 "code": res.code,
@@ -163,6 +176,8 @@ const tl_ops_web_api_reload = function (matcher) {
             }
             res_data = res.data;
             rule = res_data.tl_ops_balance_api_rule;
+            rule_match_mode = res_data.tl_ops_balance_api_rule_match_mode
+
             let datas = res_data.tl_ops_balance_api_list[rule];
             if (datas === undefined){ datas = []; }
             datas = datas.sort(function(a, b){return b.id - a.id})
@@ -172,7 +187,13 @@ const tl_ops_web_api_reload = function (matcher) {
                 onmouseenter="tl_mouse_enter_tips('tl-api-rule','点击切换策略，切换将实时生效')">
                 ${rule}
             </b><b> ( ${rule==='random' ? '随机节点路由' : '指定节点路由'} )</b>`;
-            
+        
+            $('#tl-ops-web-api-cur-rule-match-mode')[0].innerHTML = `<b style='color:red;font-size:16px;cursor: pointer;' class="layui-badge layui-bg-red" 
+                id="tl-api-rule-match-mode" onmouseleave="tl_mouse_leave_tips()" onclick="tl_ops_web_api_change_rule_match_mode()" 
+                onmouseenter="tl_mouse_enter_tips('tl-api-rule-match-mode','点击切换规则模式，切换将实时生效')">
+                ${rule_match_mode}
+            </b><b> ( ${rule_match_mode==='api' ? '优先匹配api' : '优先匹配域名'}  )</b>`;
+
             return {
                 "code": res.code,
                 "msg": res.msg,
@@ -215,7 +236,6 @@ const tl_ops_web_api_delete = function () {
     }));
 }
 
-
 //更新api路由策略
 const tl_ops_web_api_change_rule = function () {
     if(rule === undefined || rule === ''){
@@ -230,6 +250,32 @@ const tl_ops_web_api_change_rule = function () {
     }
 
     res_data.tl_ops_balance_api_rule = rule;
+
+    $.ajax(tl_ajax_data({
+        url: '/tlops/balance/api/set',
+        data : JSON.stringify(res_data),
+        contentType : "application/json",
+        success : (res)=>{
+            tl_ops_web_api_reload()
+        }
+    }));
+}
+
+
+//更新api路由规则匹配模式
+const tl_ops_web_api_change_rule_match_mode = function () {
+    if(rule_match_mode === undefined || rule_match_mode === ''){
+        layer.msg("由规则匹配模式有误，刷新页面重试")
+        return;
+    }
+
+    if(rule_match_mode === 'host'){
+        rule_match_mode = 'api';
+    }else if(rule_match_mode === 'api'){
+        rule_match_mode = 'host';
+    }
+
+    res_data.tl_ops_balance_api_rule_match_mode = rule_match_mode;
 
     $.ajax(tl_ajax_data({
         url: '/tlops/balance/api/set',
@@ -306,12 +352,8 @@ const tl_ops_web_api_edit = function (evtdata) {
             submit.trigger('click');
         },
         success: function(dom, index) {
-            //通过索引获取到当前iframe弹出层
-            let editForm = dom.find('iframe').contents().find('#'+ _add_form_id_name);
-
-            for (let key in evtdata){
-                editForm.find('#'+key).val(evtdata[key])
-            }
+            let editForm = dom.find('iframe')[0].contentWindow;
+            editForm.tl_ops_web_api_form_render(evtdata);
         },
     });
 };

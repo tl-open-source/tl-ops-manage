@@ -37,12 +37,16 @@ local tl_ops_constant_plugins_manage = {
             name = "tracing"
         },
         {
-            id = 6,
+            id = 8,
             name = "log_analyze"
         },
         {
             id = 9,
             name = "health_check_debug"
+        },
+        {
+            id = 10,
+            name = "cors"
         },
     },
     demo = {

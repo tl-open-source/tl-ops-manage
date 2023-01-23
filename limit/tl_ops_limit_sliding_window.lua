@@ -4,10 +4,8 @@
 -- @author iamtsm
 -- @email 1905333456@qq.com
 
-
-local cjson             = require("cjson.safe");
 local tlog              = require("utils.tl_ops_utils_log"):new("tl_ops_limit_sliding_window");
-local tl_ops_utils_func = require("utils.tl_ops_utils_func");
+local lock              = require("lib.lock");
 local shared            = ngx.shared.tlopsbalance
 
 local _M = {
@@ -65,7 +63,7 @@ function _M:new( options, keys )
 
     local ok, _ = shared:set(keys.count, 0)
     if not ok then
-        tlog:err(" init sliding window count err, count=",count,",err=",_)
+        tlog:err(" init sliding window count err, count=",keys.count,",err=",_)
         return
     end
 

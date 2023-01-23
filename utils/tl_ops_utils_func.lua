@@ -179,7 +179,7 @@ end
 --返回lua文件内的json格式数据
 function _M:get_str_json_by_lua_file (filename)
     local res,_ = require(filename);
-    if not res or str == nil then
+    if not res or filename == nil then
         return false, filename .. " nil" .. _;
     end
 
@@ -329,7 +329,7 @@ end
 
 -- 返回table中是否存在该元素
 function _M:get_table_element_exsit ( tables,  element )
-    if not str then
+    if not element then
         return nil
     end
 

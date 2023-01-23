@@ -1,10 +1,10 @@
-local snowflake = require("lib.snowflake");
-
 -- param 默认列表
 local tl_ops_constant_balance_param = {
     cache_key = {
         list = "tl_ops_balance_param_list",
-        rule = "tl_ops_balance_param_rule"
+        rule = "tl_ops_balance_param_rule",
+        rule_match_mode = "tl_ops_balance_param_rule_match_mode"
+
     },
     point = {
 
@@ -37,6 +37,10 @@ local tl_ops_constant_balance_param = {
         point = "point",        -- 路由可指定到具体节点
         random = "random"       -- 随机路由可指定到具体服务
     },
+    mode = {-- 规则匹配模式
+        host = "host",          -- host优先
+        param = "param",        -- param优先
+    }
 }
 
 return tl_ops_constant_balance_param

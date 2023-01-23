@@ -3,6 +3,7 @@ const _search_id_name = "tl-ops-web-header-search";
 const _add_form_btn_id_name = "tl-ops-web-header-form-submit";
 const _add_form_id_name = "tl-ops-web-header-form";
 let rule = '';
+let rule_match_mode = '';
 let res_data = {};
 
 const tl_ops_web_header_main = function (){
@@ -120,6 +121,8 @@ const tl_ops_web_header_render = function () {
             }
             res_data = res.data;
             rule = res_data.tl_ops_balance_header_rule
+            rule_match_mode = res_data.tl_ops_balance_header_rule_match_mode
+
             let datas = res_data.tl_ops_balance_header_list[rule];
             if (datas === undefined){ datas = []; }
             datas = datas.sort(function(a, b){return b.id - a.id})
@@ -129,6 +132,12 @@ const tl_ops_web_header_render = function () {
                 onmouseenter="tl_mouse_enter_tips('tl-header-rule','点击切换策略，切换将实时生效')">
                 ${rule}
             </b><b> ( ${rule==='random' ? '随机节点路由' : '指定节点路由'} )</b>`;
+
+            $('#tl-ops-web-header-cur-rule-match-mode')[0].innerHTML = `<b style='color:red;font-size:16px;cursor: pointer;' class="layui-badge layui-bg-red" 
+                id="tl-header-rule-match-mode" onmouseleave="tl_mouse_leave_tips()" onclick="tl_ops_web_header_change_rule_match_mode()" 
+                onmouseenter="tl_mouse_enter_tips('tl-header-rule-match-mode','点击切换规则模式，切换将实时生效')">
+                ${rule_match_mode}
+            </b><b> ( ${rule_match_mode==='header' ? '优先匹配header' : '优先匹配域名'} )</b>`;
 
             return {
                 "code": res.code,
@@ -163,14 +172,24 @@ const tl_ops_web_header_reload = function (matcher) {
             }
             res_data = res.data;
             rule = res_data.tl_ops_balance_header_rule;
+            rule_match_mode = res_data.tl_ops_balance_header_rule_match_mode
+
             let datas = res_data.tl_ops_balance_header_list[rule];
             if (datas === undefined){ datas = []; }
             datas = datas.sort(function(a, b){return b.id - a.id})
+
             $('#tl-ops-web-header-cur-rule')[0].innerHTML = `<b style='color:red;font-size:16px;cursor: pointer;' class="layui-badge layui-bg-red" 
                 id="tl-header-rule" onmouseleave="tl_mouse_leave_tips()" onclick="tl_ops_web_header_change_rule()" 
                 onmouseenter="tl_mouse_enter_tips('tl-header-rule','点击切换策略，切换将实时生效')">
                 ${rule}
             </b><b> ( ${rule==='random' ? '随机节点路由' : '指定节点路由'} )</b>`;
+
+            $('#tl-ops-web-header-cur-rule-match-mode')[0].innerHTML = `<b style='color:red;font-size:16px;cursor: pointer;' class="layui-badge layui-bg-red" 
+                id="tl-header-rule-match-mode" onmouseleave="tl_mouse_leave_tips()" onclick="tl_ops_web_header_change_rule_match_mode()" 
+                onmouseenter="tl_mouse_enter_tips('tl-header-rule-match-mode','点击切换规则模式，切换将实时生效')">
+                ${rule_match_mode}
+            </b><b> ( ${rule_match_mode==='header' ? '优先匹配header' : '优先匹配域名'} )</b>`;
+
             return {
                 "code": res.code,
                 "msg": res.msg,
@@ -180,7 +199,6 @@ const tl_ops_web_header_reload = function (matcher) {
         }
     }));
 };
-
 
 
 //删除header路由
@@ -215,7 +233,6 @@ const tl_ops_web_header_delete = function () {
 }
 
 
-
 //更新header路由策略
 const tl_ops_web_header_change_rule = function () {
     if(rule === undefined || rule === ''){
@@ -241,6 +258,31 @@ const tl_ops_web_header_change_rule = function () {
     }));
 }
 
+
+//更新header路由规则匹配模式
+const tl_ops_web_header_change_rule_match_mode = function () {
+    if(rule_match_mode === undefined || rule_match_mode === ''){
+        layer.msg("由规则匹配模式有误，刷新页面重试")
+        return;
+    }
+
+    if(rule_match_mode === 'host'){
+        rule_match_mode = 'header';
+    }else if(rule_match_mode === 'header'){
+        rule_match_mode = 'host';
+    }
+
+    res_data.tl_ops_balance_header_rule_match_mode = rule_match_mode;
+
+    $.ajax(tl_ajax_data({
+        url: '/tlops/balance/header/set',
+        data : JSON.stringify(res_data),
+        contentType : "application/json",
+        success : (res)=>{
+            tl_ops_web_header_reload()
+        }
+    }));
+}
 
 //添加
 const tl_ops_web_header_add = function () {

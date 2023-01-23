@@ -35,6 +35,7 @@ local constant_waf_cc           =   tlops.constant.waf_cc
 local constant_waf_header       =   tlops.constant.waf_header
 local constant_waf_cookie       =   tlops.constant.waf_cookie
 local constant_waf_param        =   tlops.constant.waf_param
+local constant_plugins_manage   =   tlops.constant.plugins_manage
 -- utils
 local utils                     =   tlops.utils
 local nx_socket					=   ngx.socket.tcp

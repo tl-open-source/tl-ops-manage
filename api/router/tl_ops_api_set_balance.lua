@@ -5,7 +5,6 @@
 -- @email 1905333456@qq.com
 
 
-local snowflake                 = require("lib.snowflake");
 local cache                     = require("cache.tl_ops_cache_core"):new("tl-ops-balance");
 local tl_ops_constant_balance   = require("constant.tl_ops_constant_balance");
 local tl_ops_rt                 = require("constant.tl_ops_constant_comm").tl_ops_rt;

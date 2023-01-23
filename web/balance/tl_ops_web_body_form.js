@@ -63,6 +63,13 @@ const tl_ops_web_body_form_select_service_render = function(  ){
     form.render()
 }
 
+
+window.tl_ops_web_body_form_render = function(data){
+    form.val("tl-ops-web-body-form", Object.assign(form.val("tl-ops-web-body-form"), data))
+    form.render()
+}
+
+
 const tl_ops_web_body_form_select_service_node_render = function( service_name ){
     laytpl(document.getElementById(_form_select_node_tlp_id_name).innerHTML).render((()=>{
         if(!service_name){

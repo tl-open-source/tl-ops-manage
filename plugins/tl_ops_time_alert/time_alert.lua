@@ -340,6 +340,8 @@ function _M:tl_ops_time_alert_log(ctx)
                 tl_ops_time_alert_produce(ctx, rule, ALERT_TYPE.TIME)
                 break
             end
+            
+            break
         until true
     end
 

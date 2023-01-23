@@ -101,6 +101,8 @@ end
 -- 插件加载器
 function _M:tl_ops_plugin_load_by_name( name )
 
+    local plugin_data = {}
+
     -- 先load数据
     local constant = tl_ops_plugin_load_constant(name)
 
@@ -113,13 +115,16 @@ function _M:tl_ops_plugin_load_by_name( name )
     -- 对外接口
     local api_func = tl_ops_plugin_load_api_func(name)
 
-    return {
-        name = name,
-        func = func:new(),
-        constant = constant,
-        open_func = open_func,
-        api_func = api_func,
-    }
+    plugin_data['name'] = name
+    plugin_data['constant'] = constant
+    plugin_data['open_func'] = open_func
+    plugin_data['api_func'] = api_func
+
+    if func then
+        plugin_data['func'] = func
+    end
+    
+    return plugin_data
 end
 
 

@@ -153,7 +153,7 @@ local tl_ops_waf_core_cookie_filter_service_pass = function(service_name)
     end
 
     -- 获取当前cookie
-    local cookie_string, _ = ngx.var.http_cookie
+    local cookie_string = ngx.var.http_cookie
     if not cookie_string then
         return true
     end

@@ -43,26 +43,42 @@ local Router = function(ctx)
 
             -- 插件配置不存在
             if not new_plugin_data.constant then
-                tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.error, "plugin constant err ",status)
+                tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.error, "plugin constant err ")
                 return
             end
 
             -- 插件代码不存在
             if not new_plugin_data.func then
-                tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.error, "plugin core func err ",status)
+                tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.error, "plugin core func err ")
                 return
             end
 
             -- 插件开关不存在
             if not new_plugin_data.open_func then
-                tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.error, "plugin open func err ",status)
+                tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.error, "plugin open func err ")
                 return
             end
 
             -- 插件api不存在
             if not new_plugin_data.api_func then
-                tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.error, "plugin api func err ",status)
+                tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.error, "plugin api func err ")
                 return
+            end
+
+            if new_plugin_data.func.sync_data and type(new_plugin_data.func.sync_data) == 'function' then
+                local ok, _  = new_plugin_data.func:sync_data();
+                if not ok then
+                    tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.error, "plugin sync data err ")
+                    return
+                end
+            end
+
+            if new_plugin_data.func.sync_fields and type(new_plugin_data.func.sync_fields) == 'function' then
+                local ok, _  = new_plugin_data.func:sync_fields();
+                if not ok then
+                    tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.error, "plugin sync fields err ")
+                    return
+                end
             end
 
             table.insert( ctx.tlops_plugins, new_plugin_data);

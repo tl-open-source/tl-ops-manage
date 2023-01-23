@@ -24,7 +24,7 @@ local Func = function()
         return true
     end
 
-    local str, _ = cache:get(constant.export.cache_key.sync);
+    local str, _ = cache:get101(constant.export.cache_key.sync);
     if not str or str == nil then
         return false;
     end

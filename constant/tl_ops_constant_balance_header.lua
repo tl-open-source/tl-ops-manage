@@ -1,10 +1,9 @@
-local snowflake = require("lib.snowflake");
-
 -- header 默认列表
 local tl_ops_constant_balance_header = {
     cache_key = {
         list = "tl_ops_balance_header_list",
-        rule = "tl_ops_balance_header_rule"
+        rule = "tl_ops_balance_header_rule",
+        rule_match_mode = "tl_ops_balance_header_rule_match_mode"
     },
     point = {
 
@@ -37,6 +36,10 @@ local tl_ops_constant_balance_header = {
         point = "point",        -- header路由可指定到具体节点
         random = "random"       -- 随机路由可指定到具体服务
     },
+    mode = {-- 规则匹配模式
+        host = "host",          -- host优先
+        header = "header",      -- header优先
+    }
 }
 
 return tl_ops_constant_balance_header

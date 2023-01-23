@@ -6,76 +6,123 @@
 
 local cjson                         = require("cjson.safe");
 local cache_api                     = require("cache.tl_ops_cache_core"):new("tl-ops-balance-api");
-local tl_ops_rt                     = require("constant.tl_ops_constant_comm").tl_ops_rt;
 local tl_ops_utils_func             = require("utils.tl_ops_utils_func");
 local tl_ops_constant_balance_api   = require("constant.tl_ops_constant_balance_api");
+local tl_ops_match_mode             = require("constant.tl_ops_constant_comm").tl_ops_match_mode;
 local tl_ops_constant_health        = require("constant.tl_ops_constant_health")
 local shared                        = ngx.shared.tlopsbalance
 local find                          = ngx.re.find
+
+-- 处理匹配逻辑
+local tl_ops_balance_api_matcher_mode = function (matcher, request_uri, obj)
+    local match_mode = obj.match_mode
+    if not match_mode then
+        match_mode = tl_ops_match_mode.reg
+    end
+    -- 正则匹配模式
+    if match_mode == tl_ops_match_mode.reg or match_mode == tl_ops_match_mode.regi or match_mode == tl_ops_match_mode.regid then
+        local from, to , _ = find(request_uri , obj.url , match_mode);
+        if from and to then
+            local sub = string.sub(request_uri, from, to)
+            if sub then
+                if not matcher or not matcher.url then
+                    matcher = obj
+                end
+                if matcher.url and #sub > #matcher.url then
+                    matcher = obj
+                end
+            end
+        end
+    end
+    -- 全文匹配
+    if match_mode == tl_ops_match_mode.all then
+        if request_uri == obj.url then
+            matcher = obj;
+        end
+    end
+
+    return matcher
+end
+
+-- 获取命中的api路由项
+local tl_ops_balance_api_get_matcher_rule = function(api_list_table, rule, rule_match_mode)
+    local matcher = nil;
+    local matcher_list = api_list_table[rule]
+
+    if not matcher_list then
+        return nil
+    end 
+
+    -- 获取当前url
+    local request_uri = tl_ops_utils_func:get_req_uri();
+
+    -- 获取当前host
+    local cur_host = ngx.var.host;
+
+    for i, obj in pairs(matcher_list) do
+        repeat
+
+            if rule_match_mode == tl_ops_constant_balance_api.mode.host then
+                -- 如果是优先host规则匹配，先剔除不属于当前host的规则
+                if obj.host == nil or obj.host == '' then
+                    break
+                end
+                if obj.host ~= "*" and obj.host ~= cur_host then
+                    break
+                end
+            end
+
+            matcher = tl_ops_balance_api_matcher_mode(matcher, request_uri, obj)
+
+            break
+        until true
+    end
+
+    return matcher
+end
+
 
 local tl_ops_balance_api_service_matcher = function(service_list_table)
     local matcher = nil
     local node = nil
 
-    -- 获取当前url
-    local request_uri = tl_ops_utils_func:get_req_uri();
-
+    -- 规则匹配模式
+    local rule_match_mode, _ = cache_api:get(tl_ops_constant_balance_api.cache_key.rule_match_mode);
+    if not rule_match_mode then
+        -- 默认以host优先匹配
+        rule_match_mode = tl_ops_constant_balance_api.mode.host;
+    end
+    
     -- api路由策略
     local api_rule, _ = cache_api:get(tl_ops_constant_balance_api.cache_key.rule);
     if not api_rule then
-        return nil, nil, nil, nil
+        return nil, nil, nil, nil, rule_match_mode
     end
-    
+
     -- api配置列表
     local api_list, _ = cache_api:get(tl_ops_constant_balance_api.cache_key.list);
     if not api_list then
-        return nil, nil, nil, nil
+        return nil, nil, nil, nil, rule_match_mode
     end
     
     local api_list_table = cjson.decode(api_list);
     if not api_list_table then
-        return nil, nil, nil, nil
+        return nil, nil, nil, nil, rule_match_mode
     end
     
     -- 根据路由当前策略进行路由, 返回正则命中的api
     if api_rule == tl_ops_constant_balance_api.rule.point then
-        local point = api_list_table.point
-
-        for i, obj in pairs(point) do
-            local from, to , _ = find(request_uri , obj.url , 'joi');
-            if from and to then
-                local sub = string.sub(request_uri, from, to)
-                if sub then
-                    if not matcher or not matcher.url then
-                        matcher = obj
-                    end
-                    if matcher.url and #sub > #matcher.url then
-                        matcher = obj
-                    end
-                end
-            end
-        end
+        matcher = tl_ops_balance_api_get_matcher_rule(
+            api_list_table, tl_ops_constant_balance_api.rule.point, rule_match_mode
+        );
     elseif api_rule == tl_ops_constant_balance_api.rule.random then
-        local random = api_list_table.random
-
-        for i, obj in pairs(random) do
-            local from, to , _ = find(request_uri , obj.url , 'joi');
-            if from and to then
-                local sub = string.sub(request_uri, from, to)
-                if sub then
-                    if not matcher or not matcher.url then
-                        matcher = obj
-                    end
-                    if matcher.url and #sub > #matcher.url then
-                        matcher = obj
-                    end
-                end
-            end
-        end
+        matcher = tl_ops_balance_api_get_matcher_rule(
+            api_list_table, tl_ops_constant_balance_api.rule.random, rule_match_mode
+        );
     end
 
     if not matcher or type(matcher) ~= 'table' then
-        return nil, nil, nil, nil
+        return nil, nil, nil, nil, rule_match_mode
     end
 
     local service_list = service_list_table[matcher.service]
@@ -91,10 +138,11 @@ local tl_ops_balance_api_service_matcher = function(service_list_table)
         if node_id ~= nil then
             node = service_list[tonumber(node_id) + 1]            
         else
-            return nil, nil, nil, host
+            return nil, nil, nil, host, rule_match_mode
         end
     -- 服务内随机
     elseif api_rule == tl_ops_constant_balance_api.rule.random then
+        local request_uri = tl_ops_utils_func:get_req_uri();
         math.randomseed(#request_uri)
         node_id = tonumber(math.random(0,1) % #service_list_table[matcher.service]) + 1
         node = service_list[node_id]
@@ -111,7 +159,7 @@ local tl_ops_balance_api_service_matcher = function(service_list_table)
         ngx.req.set_uri(rewrite_url, false)
     end
     
-    return node, node_state, node_id, host
+    return node, node_state, node_id, host, rule_match_mode
 end
 
 

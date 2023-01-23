@@ -5,9 +5,9 @@
 -- @author iamtsm
 -- @email 1905333456@qq.com
 
+local api_match_mode                    = require("constant.tl_ops_constant_balance_api").mode;
 local tl_ops_constant_balance           = require("constant.tl_ops_constant_balance");
 local tl_ops_constant_limit             = require("constant.tl_ops_constant_limit")
-local tl_ops_constant_health            = require("constant.tl_ops_constant_health")
 local tl_ops_constant_service           = require("constant.tl_ops_constant_service");
 local tl_ops_balance_core_api           = require("balance.tl_ops_balance_core_api");
 local tl_ops_balance_core_body          = require("balance.tl_ops_balance_core_body");
@@ -15,7 +15,6 @@ local tl_ops_balance_core_cookie        = require("balance.tl_ops_balance_core_c
 local tl_ops_balance_core_header        = require("balance.tl_ops_balance_core_header");
 local tl_ops_balance_core_param         = require("balance.tl_ops_balance_core_param");
 local cache_service                     = require("cache.tl_ops_cache_core"):new("tl-ops-service");
-local cache_balance                     = require("cache.tl_ops_cache_core"):new("tl-ops-balance");
 local balance_count                     = require("balance.count.tl_ops_balance_count");
 local waf                               = require("waf.tl_ops_waf")
 local tl_ops_limit_fuse_token_bucket    = require("limit.fuse.tl_ops_limit_fuse_token_bucket");
@@ -53,27 +52,27 @@ function _M:tl_ops_balance_core_filter(ctx)
     local balance_mode = "api"
 
     -- 先走api负载
-    local node, node_state, node_id, host = tl_ops_balance_core_api.tl_ops_balance_api_service_matcher(service_list_table)
+    local node, node_state, node_id, host, rule_match_mode = tl_ops_balance_core_api.tl_ops_balance_api_service_matcher(service_list_table)
     if not node then
         -- api不匹配，走param负载
         balance_mode = "param"
 
-        node, node_state, node_id, host = tl_ops_balance_core_param.tl_ops_balance_param_service_matcher(service_list_table)
+        node, node_state, node_id, host, rule_match_mode = tl_ops_balance_core_param.tl_ops_balance_param_service_matcher(service_list_table)
         if not node then
             -- param不匹配，走cookie负载
             balance_mode = "cookie"
 
-            node, node_state, node_id, host = tl_ops_balance_core_cookie.tl_ops_balance_cookie_service_matcher(service_list_table)
+            node, node_state, node_id, host, rule_match_mode = tl_ops_balance_core_cookie.tl_ops_balance_cookie_service_matcher(service_list_table)
             if not node then
                 -- cookie不匹配，走header负载
                 balance_mode = "header"
 
-                node, node_state, node_id, host = tl_ops_balance_core_header.tl_ops_balance_header_service_matcher(service_list_table)
+                node, node_state, node_id, host, rule_match_mode = tl_ops_balance_core_header.tl_ops_balance_header_service_matcher(service_list_table)
                 if not node then
                      -- header不匹配，走body负载
                     balance_mode = "body"
 
-                    node, node_state, node_id, host = tl_ops_balance_core_body.tl_ops_balance_body_service_matcher(service_list_table)
+                    node, node_state, node_id, host, rule_match_mode = tl_ops_balance_core_body.tl_ops_balance_body_service_matcher(service_list_table)
                     if not node then
                         -- 无匹配
                         tl_ops_err_content:err_content_rewrite_to_balance("", "empty", balance_mode, tl_ops_constant_balance.cache_key.mode_empty)
@@ -84,16 +83,18 @@ function _M:tl_ops_balance_core_filter(ctx)
         end
     end
 
-    -- 域名负载
-    if host == nil or host == '' then
-        tl_ops_err_content:err_content_rewrite_to_balance("", "nil", balance_mode, tl_ops_constant_balance.cache_key.host_empty)
-        return
-    end
+    if rule_match_mode and rule_match_mode == api_match_mode.api then
+        -- 域名负载
+        if host == nil or host == '' then
+            tl_ops_err_content:err_content_rewrite_to_balance("", "nil", balance_mode, tl_ops_constant_balance.cache_key.host_empty)
+            return
+        end
 
-    -- 域名匹配
-    if host ~= "*" and host ~= ngx.var.host then
-        tl_ops_err_content:err_content_rewrite_to_balance("", "pass", balance_mode, tl_ops_constant_balance.cache_key.host_pass)
-        return
+        -- 域名匹配
+        if host ~= "*" and host ~= ngx.var.host then
+            tl_ops_err_content:err_content_rewrite_to_balance("", "pass", balance_mode, tl_ops_constant_balance.cache_key.host_pass)
+            return
+        end
     end
 
     -- 流控介入
@@ -109,7 +110,7 @@ function _M:tl_ops_balance_core_filter(ctx)
                     return
                 end
             end
-    
+
             -- 漏桶流控 
             if depend == tl_ops_constant_limit.depend.leak then
                 local leak_result = tl_ops_limit_fuse_leak_bucket.tl_ops_limit_leak( node.service, node_id)
@@ -143,8 +144,6 @@ function _M:tl_ops_balance_core_filter(ctx)
     ctx.tlops_ups_node = node
     ctx.tlops_ups_node_id = node_id
     ctx.tlops_ups_mode = balance_mode
-
-    return
 end
 
 

@@ -3,6 +3,7 @@ const _search_id_name = "tl-ops-web-param-search";
 const _add_form_btn_id_name = "tl-ops-web-param-form-submit";
 const _add_form_id_name = "tl-ops-web-param-form";
 let rule = '';
+let rule_match_mode = '';
 let res_data = {};
 
 const tl_ops_web_param_main = function (){
@@ -120,6 +121,8 @@ const tl_ops_web_param_render = function () {
             }
             res_data = res.data;
             rule = res_data.tl_ops_balance_param_rule
+            rule_match_mode = res_data.tl_ops_balance_param_rule_match_mode
+
             let datas = res_data.tl_ops_balance_param_list[rule];
             if (datas === undefined){ datas = []; }
             datas = datas.sort(function(a, b){return b.id - a.id})
@@ -129,6 +132,12 @@ const tl_ops_web_param_render = function () {
                 onmouseenter="tl_mouse_enter_tips('tl-param-rule','点击切换策略，切换将实时生效')">
                 ${rule}
             </b><b> ( ${rule==='random' ? '随机节点路由' : '指定节点路由'} )</b>`;
+
+            $('#tl-ops-web-param-cur-rule-match-mode')[0].innerHTML = `<b style='color:red;font-size:16px;cursor: pointer;' class="layui-badge layui-bg-red" 
+                id="tl-param-rule-match-mode" onmouseleave="tl_mouse_leave_tips()" onclick="tl_ops_web_param_change_rule_match_mode()" 
+                onmouseenter="tl_mouse_enter_tips('tl-param-rule-match-mode','点击切换规则模式，切换将实时生效')">
+                ${rule_match_mode}
+            </b><b> ( ${rule_match_mode==='param' ? '优先匹配param' : '优先匹配域名'} )</b>`;
 
             return {
                 "code": res.code,
@@ -163,6 +172,8 @@ const tl_ops_web_param_reload = function (matcher) {
             }
             res_data = res.data;
             rule = res_data.tl_ops_balance_param_rule;
+            rule_match_mode = res_data.tl_ops_balance_param_rule_match_mode
+
             let datas = res_data.tl_ops_balance_param_list[rule];
             if (datas === undefined){ datas = []; }
             datas = datas.sort(function(a, b){return b.id - a.id})
@@ -172,6 +183,13 @@ const tl_ops_web_param_reload = function (matcher) {
                 onmouseenter="tl_mouse_enter_tips('tl-param-rule','点击切换策略，切换将实时生效')">
                 ${rule}
             </b><b> ( ${rule==='random' ? '随机节点路由' : '指定节点路由'} )</b>`;
+
+            $('#tl-ops-web-param-cur-rule-match-mode')[0].innerHTML = `<b style='color:red;font-size:16px;cursor: pointer;' class="layui-badge layui-bg-red" 
+                id="tl-param-rule-match-mode" onmouseleave="tl_mouse_leave_tips()" onclick="tl_ops_web_param_change_rule_match_mode()" 
+                onmouseenter="tl_mouse_enter_tips('tl-param-rule-match-mode','点击切换规则模式，切换将实时生效')">
+                ${rule_match_mode}
+            </b><b> ( ${rule_match_mode==='param' ? '优先匹配param' : '优先匹配域名'} )</b>`;
+
             return {
                 "code": res.code,
                 "msg": res.msg,
@@ -228,6 +246,32 @@ const tl_ops_web_param_change_rule = function () {
     }
 
     res_data.tl_ops_balance_param_rule = rule;
+
+    $.ajax(tl_ajax_data({
+        url: '/tlops/balance/param/set',
+        data : JSON.stringify(res_data),
+        contentType : "application/json",
+        success : (res)=>{
+            tl_ops_web_param_reload()
+        }
+    }));
+}
+
+
+//更新param路由规则匹配模式
+const tl_ops_web_param_change_rule_match_mode = function () {
+    if(rule_match_mode === undefined || rule_match_mode === ''){
+        layer.msg("由规则匹配模式有误，刷新页面重试")
+        return;
+    }
+
+    if(rule_match_mode === 'host'){
+        rule_match_mode = 'param';
+    }else if(rule_match_mode === 'param'){
+        rule_match_mode = 'host';
+    }
+
+    res_data.tl_ops_balance_param_rule_match_mode = rule_match_mode;
 
     $.ajax(tl_ajax_data({
         url: '/tlops/balance/param/set',

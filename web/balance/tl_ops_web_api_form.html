@@ -16,6 +16,12 @@
         color: darkorchid;
         font-weight: 700;
     }
+    .tl-ops-web-api-form-span{
+        margin-left: -20px;
+        position: relative;
+        top: 3px;
+        margin-right: 15px;
+    }
 </style>
 <body>
 
@@ -36,6 +42,16 @@
             <label class="layui-form-label">API</label>
             <div class="layui-input-block">
                 <input type="text" name="url" id="url" maxlength="100" placeholder="请输入API" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">匹配模式</label>
+            <div class="layui-input-block" id="tl-tips-mode" onmouseleave="tl_mouse_leave_tips()"
+                onmouseenter="tl_mouse_enter_tips('tl-tips-mode','API路径根据什么模式进行匹配')">
+                <input type="radio" name="match_mode" class="layui-input" value="jo"><span class="tl-ops-web-api-form-span">正则</span>
+                <input type="radio" name="match_mode" class="layui-input" value="joi"><span class="tl-ops-web-api-form-span">正则不区分大小写</span>
+                <input type="radio" name="match_mode" class="layui-input" value="joid"><span class="tl-ops-web-api-form-span">正则最长字符串匹配</span>
+                <input type="radio" name="match_mode" class="layui-input" value="all"><span class="tl-ops-web-api-form-span">全文匹配</span>
             </div>
         </div>
         <div class="layui-form-item">

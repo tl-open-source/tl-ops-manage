@@ -236,7 +236,7 @@ tl_ops_health_check_nodes = function (conf)
 			local bytes, _ = sock:send(check_content .. "\r\n\r\n\r\n")
 			if not bytes then
 				tlog:err("tl_ops_health_check_nodes failed to send socket: ", _)
-				socket:close()
+				sock:close()
 				tl_ops_health_check_node_failed(conf, node_id, node)
 				break
 			end
