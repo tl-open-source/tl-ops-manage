@@ -53,7 +53,9 @@ const tl_ops_web_body_point_cols = function () {
         }, {
             field: 'host', title: '域名',width:"15%"
         }, {
-            field: 'body', title: 'body', width:"20%"
+            field: 'body', title: 'body', width:"10%"
+        }, {
+            field: 'match_mode', title: '匹配模式',width:"10%"
         }, {
             field: 'service', title: '所属服务',width:"10%"
         }, {
@@ -80,9 +82,11 @@ const tl_ops_web_body_random_cols = function () {
         }, {
             field: 'host', title: '域名',width:"15%"
         }, {
-            field: 'body', title: 'body', width:"20%"
+            field: 'body', title: 'body', width:"15%"
         }, {
-            field: 'service', title: '所属服务',width:"20%"
+            field: 'match_mode', title: '匹配模式',width:"10%"
+        }, {
+            field: 'service', title: '所属服务',width:"15%"
         }, {
             field: 'updatetime', title: '更新时间',width:"15%",
         }, {
