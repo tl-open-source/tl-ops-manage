@@ -10,6 +10,7 @@ const _form_select_node_tlp_id_name = "tl-ops-web-api-form-service-node-tpl";
 const _form_select_node_service_id_name = "tl-ops-web-api-form-service-node";
 let service_data = {};
 
+
 const tl_ops_web_api_form_main = async function (){
     window.$ = layui.$;
     window.form = layui.form;
@@ -20,6 +21,11 @@ const tl_ops_web_api_form_main = async function (){
     if(rule_args === 'random'){
         document.querySelector("#"+_form_select_node_view_id_name).style = 'display:none';
     }
+
+    $("#fake_prefix").on("input",function(e){
+        let fake_prefix = e.currentTarget.value
+        document.querySelector("#prefix").innerText = fake_prefix
+    });
 
     //监听select
     form.on('select', function(data){
@@ -50,13 +56,14 @@ const tl_ops_web_api_form_main = async function (){
         form.val(_form_id_name, Object.assign(form.val(_form_id_name), {
             node : node_args
         }))
-    }
+    } 
 };
 
 
 window.tl_ops_web_api_form_render = function(data){
     form.val("tl-ops-web-api-form", Object.assign(form.val("tl-ops-web-api-form"), data))
     form.render()
+    document.querySelector("#fake_prefix").dispatchEvent(new Event('input', {}))
 }
 
 const tl_ops_web_api_form_select_service_render = function(  ){

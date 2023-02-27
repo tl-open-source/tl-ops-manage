@@ -19,9 +19,9 @@ init_worker阶段和其他阶段不太一样，此阶段存在多worker竞争，
 ```lua
 # 代码位置 : plugins/tl_ops_plugin.lua
 
--- init_worker阶段执行
-function _M:tl_ops_process_init_worker()
-    local lock_key = "tl_ops_plugin_process_worker_lock"
+-- init_worker前置阶段执行
+function _M:tl_ops_process_before_init_worker(ctx)
+    local lock_key = "tl_ops_plugin_process_before_worker_lock"
     local lock_time = 5
     if not tl_ops_utils_func:tl_ops_worker_lock(lock_key, lock_time) then
         return
@@ -29,17 +29,21 @@ function _M:tl_ops_process_init_worker()
 
     for i = 1, #self.plugins do
         local plugin = self.plugins[i]
-        if type(plugin.func.tl_ops_process_init_worker) == 'function' then
-            local ok, _ = plugin.func:tl_ops_process_init_worker()
-            if not ok then
-                tlog:err("tl_ops_process_init_worker process err , name=",plugin.name, ", ",_)
-            else
-                tlog:dbg("tl_ops_process_init_worker process ok , name=",plugin.name, ", ",_)
+        local open = plugin.open_func and plugin.open_func()
+        if open then
+            if type(plugin.func.tl_ops_process_before_init_worker) == 'function' then
+                local ok, _ = plugin.func:tl_ops_process_before_init_worker(ctx)
+                if not ok then
+                    tlog:err("tl_ops_process_before_init_worker process err , name=",plugin.name, ", ",_)
+                else
+                    tlog:dbg("tl_ops_process_before_init_worker process ok , name=",plugin.name, ", ",_)
+                end
             end
+        else 
+            tlog:dbg("tl_ops_process_before_init_worker process not open , name=",plugin.name)
         end
     end
 end
-
 ```
 
 
@@ -53,20 +57,25 @@ end
 ```lua
 # 代码位置 : plugins/tl_ops_plugin.lua
 
-function _M:tl_ops_process_init_ssl(ctx)
+-- ssl前置阶段执行
+function _M:tl_ops_process_before_init_ssl(ctx)
     for i = 1, #self.plugins do
         local plugin = self.plugins[i]
-        if type(plugin.func.tl_ops_process_init_ssl) == 'function' then
-            local ok, _ = plugin.func:tl_ops_process_init_ssl(ctx)
-            if not ok then
-                tlog:err("tl_ops_process_init_ssl process err , name=",plugin.name, ", ",_)
-            else
-                tlog:dbg("tl_ops_process_init_ssl process ok , name=",plugin.name, ", ",_)
+        local open = plugin.open_func and plugin.open_func()
+        if open then
+            if type(plugin.func.tl_ops_process_before_init_ssl) == 'function' then
+                local ok, _ = plugin.func:tl_ops_process_before_init_ssl(ctx)
+                if not ok then
+                    tlog:err("tl_ops_process_before_init_ssl process err , name=",plugin.name, ", ",_)
+                else
+                    tlog:dbg("tl_ops_process_before_init_ssl process ok , name=",plugin.name, ", ",_)
+                end
             end
+        else 
+            tlog:dbg("tl_ops_process_before_init_ssl process not open , name=",plugin.name)
         end
     end
 end
-
 ```
 
 ### tl_ops_process_*_init_rewrite
@@ -78,17 +87,28 @@ end
 ```lua
 # 代码位置 : plugins/tl_ops_plugin.lua
 
--- rewrite阶段执行
-function _M:tl_ops_process_init_rewrite()
+-- rewrite前置阶段执行
+function _M:tl_ops_process_before_init_rewrite(ctx)
     for i = 1, #self.plugins do
         local plugin = self.plugins[i]
-        if type(plugin.func.tl_ops_process_init_rewrite) == 'function' then
-            local ok, _ = plugin.func:tl_ops_process_init_rewrite()
-            if not ok then
-                tlog:err("tl_ops_process_init_rewrite process err , name=",plugin.name, ", ",_)
-            else
-                tlog:dbg("tl_ops_process_init_rewrite process ok , name=",plugin.name, ", ",_)
+        local open = plugin.open_func and plugin.open_func()
+        
+        -- 插件api加载执行
+        if plugin.api_func then
+            plugin.api_func(ctx)
+        end
+
+        if open then
+            if type(plugin.func.tl_ops_process_before_init_rewrite) == 'function' then
+                local ok, _ = plugin.func:tl_ops_process_before_init_rewrite(ctx)
+                if not ok then
+                    tlog:err("tl_ops_process_before_init_rewrite process err , name=",plugin.name, ", ",_)
+                else
+                    tlog:dbg("tl_ops_process_before_init_rewrite process ok , name=",plugin.name, ", ",_)
+                end
             end
+        else 
+            tlog:dbg("tl_ops_process_before_init_rewrite process not open , name=",plugin.name)
         end
     end
 end
@@ -103,17 +123,22 @@ end
 ```lua
 # 代码位置 : plugins/tl_ops_plugin.lua
 
--- access阶段执行
-function _M:tl_ops_process_init_access()
+-- access前置阶段执行
+function _M:tl_ops_process_before_init_access(ctx)
     for i = 1, #self.plugins do
         local plugin = self.plugins[i]
-        if type(plugin.func.tl_ops_process_init_access) == 'function' then
-            local ok, _ = plugin.func:tl_ops_process_init_access()
-            if not ok then
-                tlog:err("tl_ops_process_init_access process err , name=",plugin.name, ", ",_)
-            else
-                tlog:dbg("tl_ops_process_init_access process ok , name=",plugin.name, ", ",_)
+        local open = plugin.open_func and plugin.open_func()
+        if open then
+            if type(plugin.func.tl_ops_process_before_init_access) == 'function' then
+                local ok, _ = plugin.func:tl_ops_process_before_init_access(ctx)
+                if not ok then
+                    tlog:err("tl_ops_process_before_init_access process err , name=",plugin.name, ", ",_)
+                else
+                    tlog:dbg("tl_ops_process_before_init_access process ok , name=",plugin.name, ", ",_)
+                end
             end
+        else 
+            tlog:dbg("tl_ops_process_before_init_access process not open , name=",plugin.name)
         end
     end
 end
@@ -128,17 +153,22 @@ end
 ```lua
 # 代码位置 : plugins/tl_ops_plugin.lua
 
--- content阶段执行
-function _M:tl_ops_process_init_balancer()
+-- balance前置阶段执行
+function _M:tl_ops_process_before_init_balancer(ctx)
     for i = 1, #self.plugins do
         local plugin = self.plugins[i]
-        if type(plugin.func.tl_ops_process_init_balancer) == 'function' then
-            local ok, _ = plugin.func:tl_ops_process_init_balancer()
-            if not ok then
-                tlog:err("tl_ops_process_init_balancer process err , name=",plugin.name, ", ",_)
-            else
-                tlog:dbg("tl_ops_process_init_balancer process ok , name=",plugin.name, ", ",_)
+        local open = plugin.open_func and plugin.open_func()
+        if open then
+            if type(plugin.func.tl_ops_process_before_init_balancer) == 'function' then
+                local ok, _ = plugin.func:tl_ops_process_before_init_balancer(ctx)
+                if not ok then
+                    tlog:err("tl_ops_process_before_init_balancer process err , name=",plugin.name, ", ",_)
+                else
+                    tlog:dbg("tl_ops_process_before_init_balancer process ok , name=",plugin.name, ", ",_)
+                end
             end
+        else 
+            tlog:dbg("tl_ops_process_before_init_balancer process not open , name=",plugin.name)
         end
     end
 end
@@ -154,17 +184,22 @@ end
 ```lua
 # 代码位置 : plugins/tl_ops_plugin.lua
 
--- header阶段执行
-function _M:tl_ops_process_init_header()
+-- header前置阶段执行
+function _M:tl_ops_process_before_init_header(ctx)
     for i = 1, #self.plugins do
         local plugin = self.plugins[i]
-        if type(plugin.func.tl_ops_process_init_header) == 'function' then
-            local ok, _ = plugin.func:tl_ops_process_init_header()
-            if not ok then
-                tlog:err("tl_ops_process_init_header process err , name=",plugin.name, ", ",_)
-            else
-                tlog:dbg("tl_ops_process_init_header process ok , name=",plugin.name, ", ",_)
+        local open = plugin.open_func and plugin.open_func()
+        if open then
+            if type(plugin.func.tl_ops_process_before_init_header) == 'function' then
+                local ok, _ = plugin.func:tl_ops_process_before_init_header(ctx)
+                if not ok then
+                    tlog:err("tl_ops_process_before_init_header process err , name=",plugin.name, ", ",_)
+                else
+                    tlog:dbg("tl_ops_process_before_init_header process ok , name=",plugin.name, ", ",_)
+                end
             end
+        else 
+            tlog:dbg("tl_ops_process_before_init_header process not open , name=",plugin.name)
         end
     end
 end
@@ -180,17 +215,22 @@ end
 ```lua
 # 代码位置 : plugins/tl_ops_plugin.lua
 
--- body阶段执行
-function _M:tl_ops_process_init_body()
+-- body前置阶段执行
+function _M:tl_ops_process_before_init_body(ctx)
     for i = 1, #self.plugins do
         local plugin = self.plugins[i]
-        if type(plugin.func.tl_ops_process_init_body) == 'function' then
-            local ok, _ = plugin.func:tl_ops_process_init_body()
-            if not ok then
-                tlog:err("tl_ops_process_init_body process err , name=",plugin.name, ", ",_)
-            else
-                tlog:dbg("tl_ops_process_init_body process ok , name=",plugin.name, ", ",_)
+        local open = plugin.open_func and plugin.open_func()
+        if open then
+            if type(plugin.func.tl_ops_process_before_init_body) == 'function' then
+                local ok, _ = plugin.func:tl_ops_process_before_init_body(ctx)
+                if not ok then
+                    tlog:err("tl_ops_process_before_init_body process err , name=",plugin.name, ", ",_)
+                else
+                    tlog:dbg("tl_ops_process_before_init_body process ok , name=",plugin.name, ", ",_)
+                end
             end
+        else 
+            tlog:dbg("tl_ops_process_before_init_body process not open , name=",plugin.name)
         end
     end
 end
@@ -206,17 +246,22 @@ end
 ```lua
 # 代码位置 : plugins/tl_ops_plugin.lua
 
--- log阶段执行
-function _M:tl_ops_process_init_log()
+-- log前置阶段执行
+function _M:tl_ops_process_before_init_log(ctx)
     for i = 1, #self.plugins do
         local plugin = self.plugins[i]
-        if type(plugin.func.tl_ops_process_init_log) == 'function' then
-            local ok, _ = plugin.func:tl_ops_process_init_log()
-            if not ok then
-                tlog:err("tl_ops_process_init_log process err , name=",plugin.name, ", ",_)
-            else
-                tlog:dbg("tl_ops_process_init_log process ok , name=",plugin.name, ", ",_)
+        local open = plugin.open_func and plugin.open_func()
+        if open then
+            if type(plugin.func.tl_ops_process_before_init_log) == 'function' then
+                local ok, _ = plugin.func:tl_ops_process_before_init_log(ctx)
+                if not ok then
+                    tlog:err("tl_ops_process_before_init_log process err , name=",plugin.name, ", ",_)
+                else
+                    tlog:dbg("tl_ops_process_before_init_log process ok , name=",plugin.name, ", ",_)
+                end
             end
+        else 
+            tlog:dbg("tl_ops_process_before_init_log process not open , name=",plugin.name)
         end
     end
 end

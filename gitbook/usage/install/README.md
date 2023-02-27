@@ -1,11 +1,11 @@
 
 # 安装
 
-**下载项目 : https://github.com/iamtsm/tl-ops-manage**
+下载项目 : https://github.com/iamtsm/tl-ops-manage
 
 或者
 
-**git clone https://github.com/iamtsm/tl-ops-manage**
+git clone https://github.com/iamtsm/tl-ops-manage
 
 ## 安装依赖
 

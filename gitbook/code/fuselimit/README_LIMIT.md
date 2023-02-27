@@ -20,6 +20,9 @@
 local tl_ops_limit_token_expand = function( service_name, node_id )
 
     local token_mode = tl_ops_limit_token_mode( service_name, node_id)
+    if not token_mode then
+        return false
+    end
 
     local capacity_key = tl_ops_utils_func:gen_node_key(token_mode.cache_key.capacity, service_name, node_id)
     local capacity = shared:get(capacity_key)
@@ -29,10 +32,6 @@ local tl_ops_limit_token_expand = function( service_name, node_id )
             return false
         end
         capacity = token_mode.options.capacity
-    end
-
-    if capacity <= 1 then
-        return false
     end
 
     local expand_key = tl_ops_utils_func:gen_node_key(token_mode.cache_key.expand, service_name, node_id)
@@ -45,7 +44,10 @@ local tl_ops_limit_token_expand = function( service_name, node_id )
         expand = token_mode.options.expand
     end
 
+    tlog:dbg("token expand=",expand, ",service_name=", service_name, ",node_id=",node_id,",expand_key=", expand_key)
+    
     -- 扩容量 = 当前桶容量 * 比例
+    -- 扩容最大容量暂时不限制大小，理论上扩容前，必定伴随一次缩容，所以不最大容量会超过设置的最大容量
     local expand_capacity = capacity * expand
 
     local capacity_key = tl_ops_utils_func:gen_node_key(token_mode.cache_key.capacity, service_name, node_id)

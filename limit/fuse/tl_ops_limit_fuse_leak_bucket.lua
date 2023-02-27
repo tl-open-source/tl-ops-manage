@@ -60,6 +60,9 @@ end
 -- block 取用漏桶数量
 local tl_ops_limit_leak = function( service_name, node_id )
     local leak_mode = tl_ops_limit_leak_mode( service_name , node_id)
+    if not leak_mode then
+        return false
+    end
 
     local block_key = tl_ops_utils_func:gen_node_key(leak_mode.cache_key.block, service_name, node_id)
     local block = shared:get(block_key)
@@ -142,6 +145,9 @@ end
 -- 扩容  熔断定时器中保证锁，所以这里不加锁
 local tl_ops_limit_leak_expand = function( service_name, node_id )
     local leak_mode = tl_ops_limit_leak_mode( service_name, node_id)
+    if not leak_mode then
+        return false
+    end
 
     local capacity_key = tl_ops_utils_func:gen_node_key(leak_mode.cache_key.capacity, service_name, node_id)
     local capacity = shared:get(capacity_key)
@@ -183,7 +189,10 @@ end
 local tl_ops_limit_leak_shrink = function( service_name, node_id )
 
     local leak_mode = tl_ops_limit_leak_mode( service_name, node_id)
-
+    if not leak_mode then
+        return false
+    end
+    
     local block_key = tl_ops_utils_func:gen_node_key(leak_mode.cache_key.block, service_name, node_id)
     local block = shared:get(block_key)
     if not block then

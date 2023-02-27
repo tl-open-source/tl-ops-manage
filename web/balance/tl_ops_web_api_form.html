@@ -22,6 +22,23 @@
         top: 3px;
         margin-right: 15px;
     }
+    .prefix{
+        max-width: 40%;
+        border-radius: 5px;
+    }
+    #prefix{
+        margin-top: 10px;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        padding-left: 10px;
+        color: #918576;
+        font-weight: bold;
+        padding-right: 10px;
+    }
+    #url{
+        width: 100%;
+        min-width: 60%;
+    }
 </style>
 <body>
 
@@ -39,8 +56,16 @@
             </div>
         </div>
         <div class="layui-form-item">
+            <label class="layui-form-label">虚拟前缀</label>
+            <div class="layui-input-block" >
+                <input lay-verify="fake_prefix" type="text" name="fake_prefix" id="fake_prefix" maxlength="100" placeholder="虚拟前缀" class="layui-input" 
+                    onmouseleave="tl_mouse_leave_tips()" onmouseenter="tl_mouse_enter_tips('fake_prefix','默认为空，如果指定虚拟前缀，那么匹配的API规则将会转发到对应节点的路径下')">
+            </div>
+        </div>
+        <div class="layui-form-item">
             <label class="layui-form-label">API</label>
-            <div class="layui-input-block">
+            <div class="layui-input-block" style="display: flex;">
+                <div class="prefix"><div id="prefix"></div></div>
                 <input type="text" name="url" id="url" maxlength="100" placeholder="请输入API" autocomplete="off" class="layui-input">
             </div>
         </div>

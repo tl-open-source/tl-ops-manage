@@ -145,9 +145,11 @@ tl_ops_limit_fuse_check_nodes = function ( conf )
 		
 		if upgrade then
 			upgrade_count = upgrade_count + 1
+			tlog:dbg("node state upgrade : service_name=",service_name, ",node_name=",nodes[i].name, ",mode=",mode, ",upgrade_count=",upgrade_count)
 			tl_ops_limit_fuse_node_upgrade( conf, node_id )
 		else
 			degrade_count = degrade_count + 1
+			tlog:dbg("node state degrade : service_name=",service_name, ",node_name=",nodes[i].name, ",mode=",mode, ",degrade_count=",degrade_count)
 			tl_ops_limit_fuse_node_degrade( conf, node_id )
 		end
 	end

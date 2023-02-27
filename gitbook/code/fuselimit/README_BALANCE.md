@@ -10,29 +10,29 @@
 # 代码位置 : balance/tl_ops_balance_core.lua
 
 -- 流控介入
-local depend = tl_ops_balance_core_get_limiter(node.service, node_id)
-if depend then
-	-- 令牌桶流控
-	if depend == tl_ops_constant_limit.depend.token then
-		local token_result = tl_ops_limit_fuse_token_bucket.tl_ops_limit_token( node.service, node_id)
-		if not token_result or token_result == false then
-			ngx.header['Tl-Proxy-Server'] = "";
-			ngx.header['Tl-Proxy-State'] = "t-limit"
-			ngx.header['Tl-Proxy-Mode'] = balance_mode
-			ngx.exit(503)
-		end
-	end
+if tl_ops_manage_env.balance.limiter then
+    local depend = tl_ops_limit.tl_ops_limit_get_limiter(node.service, node_id)
+    if depend then
+        -- 令牌桶流控
+        if depend == tl_ops_constant_limit.depend.token then
+            local token_result = tl_ops_limit_fuse_token_bucket.tl_ops_limit_token( node.service, node_id)  
+            if not token_result or token_result == false then
+                balance_count:tl_ops_balance_count_incr_fail(node.service, node_id)
+                tl_ops_err_content:err_content_rewrite_to_balance("", "t-limit", balance_mode, tl_ops_constant_balance.cache_key.token_limit)
+                return
+            end
+        end
 
-	-- 漏桶流控
-	if depend == tl_ops_constant_limit.depend.leak then
-		local leak_result = tl_ops_limit_fuse_leak_bucket.tl_ops_limit_leak( node.service, node_id)
-		if not leak_result or leak_result == false then
-			ngx.header['Tl-Proxy-Server'] = "";
-			ngx.header['Tl-Proxy-State'] = "l-limit"
-			ngx.header['Tl-Proxy-Mode'] = balance_mode
-			ngx.exit(503)
-		end
-	end
+        -- 漏桶流控 
+        if depend == tl_ops_constant_limit.depend.leak then
+            local leak_result = tl_ops_limit_fuse_leak_bucket.tl_ops_limit_leak( node.service, node_id)
+            if not leak_result or leak_result == false then
+                balance_count:tl_ops_balance_count_incr_fail(node.service, node_id)
+                tl_ops_err_content:err_content_rewrite_to_balance("", "l-limit", balance_mode, tl_ops_constant_balance.cache_key.leak_limit)
+                return
+            end
+        end
+    end
 end
 ```
 
@@ -45,17 +45,18 @@ end
 ```lua
 # 代码位置 : limit/fuse/tl_ops_limit_fuse_token_bucket.lua
 
+-- get token with lazy generate
 -- block 取用令牌数量
-local tl_ops_limit_token = function( service_name, node_id )
+local tl_ops_limit_token_bucket = function( block )
+
     ...
 
     -- 取出令牌
     if token_bucket > block then
-        local ok, _ = shared:incr(token_bucket_key, -block)
+        local ok, _ = shared:incr(self.keys.token_bucket, -block)
         if not ok then
             return false
         end
-
         return true
     end
 
@@ -68,15 +69,15 @@ local tl_ops_limit_token = function( service_name, node_id )
     end
 
     local new_token_bucket = math.min(token_bucket + duration_token_bucket, capacity)
-
+    
     -- 令牌还是不够
     if new_token_bucket < block then
-        local ok, _ = shared:set(token_bucket_key, new_token_bucket)
+        local ok, _ = shared:set(self.keys.token_bucket, new_token_bucket)
         if not ok then
             return false
         end
-
-        local ok, _ = shared:set(pre_time_key, cur_time)
+    
+        local ok, _ = shared:set(self.keys.pre_time, cur_time)
         if not ok then
             return false
         end
@@ -85,18 +86,19 @@ local tl_ops_limit_token = function( service_name, node_id )
     end
 
     -- 移除一个令牌
-    local ok, _ = shared:set(token_bucket_key, new_token_bucket - block)
+    local ok, _ = shared:set(self.keys.token_bucket, new_token_bucket - block)
     if not ok then
         return false
     end
 
-    local ok, _ = shared:set(pre_time_key, cur_time)
+    local ok, _ = shared:set(self.keys.pre_time, cur_time)
     if not ok then
         return false
     end
-
+    
     return true
 end
+
 ```
 
 
@@ -109,41 +111,40 @@ end
 ```lua
 # 代码位置 : limit/fuse/tl_ops_limit_fuse_leak_bucket.lua
 
--- block 取用漏桶数量
-local tl_ops_limit_leak = function( service_name, node_id )
-
+-- get leak with lazy generate
+-- block 漏桶流速单位
+local tl_ops_limit_leak_bucket = function( block )
+    
     ...
 
     -- 当前堆积量
-    local leak_bucket_key = tl_ops_utils_func:gen_node_key(leak_mode.cache_key.leak_bucket, service_name, node_id)
-    local leak_bucket, _ = shared:get(leak_bucket_key)
+    local leak_bucket, _ = shared:get(self.keys.leak_bucket)
     if not leak_bucket then
-        local res, _ = shared:set(leak_bucket_key, 0)
-        if not res then
-            return false
-        end
         leak_bucket = 0
     end
 
-    -- 漏桶当前可堆积请求量 = 当前堆积量 - (在此时间区间应该被漏出的请求量) 
+    -- 漏桶当前时间区间内的剩余请求量 = 当前堆积量 - (在此时间区间应该被漏出的请求量) 
     -- ==
-    -- 漏桶当前可堆积请求量 = 当前堆积量 - (距离上次时间差 * 漏出速率)
+    -- 漏桶当前时间区间内的剩余请求量 = 当前堆积量 - (距离上次时间差 * 生成速率)
     ngx.update_time()
     local cur_time = ngx.now()
-    local lave_leak_bucket = math.max(leak_bucket - (cur_time - pre_time) * rate, 0)
-
-    -- 溢出
-    if lave_leak_bucket + block > capacity then
+    local lave_leak_bucket = leak_bucket - (cur_time - pre_time) * rate
+    if lave_leak_bucket <= 0 then
         return false
     end
 
-    local new_leak_bucket = math.min(capacity, lave_leak_bucket + block)
-    local ok, _ = shared:set(leak_bucket_key, new_leak_bucket)
+    -- 溢出
+    if lave_leak_bucket + 1 > capacity then
+        return false
+    end
+
+    local new_leak_bucket = math.max(capacity, lave_leak_bucket)
+    local ok, _ = shared:set(self.keys.leak_bucket, new_leak_bucket)
     if not ok then
         return false
     end
 
-    local ok, _ = shared:set(pre_time_key, cur_time)
+    local ok, _ = shared:set(self.keys.pre_time, cur_time)
     if not ok then
         return false
     end

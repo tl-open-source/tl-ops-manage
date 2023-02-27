@@ -28,10 +28,6 @@
 
     * [插件开发流程](usage/plugin/README.md)
 
-    * [动态证书配置](usage/ssl/README.md)
-
-    * [集群部署配置](usage/cluster/README.md)
-
 
 * [tl-ops-manage-源码解析](README_CODE.md)
 
@@ -52,6 +48,8 @@
     * [负载均衡](code/balance/README.md)
 
         * [多规则匹配](code/balance/README_RULE.md)
+
+        * [多模式匹配](code/balance/README_RULE.md)
 
     * [路由统计](code/balancecount/README.md)
 
@@ -82,9 +80,35 @@
 
     * [页面代理插件](code/pageproxy/README.md)
 
+        * [使用配置](usage/pageproxy/README.md)
+
     * [动态证书插件](code/ssl/README.md)
 
-    * [同步器插件](code/sync/README.md)
+        * [使用配置](usage/ssl/README.md)
+
+    * [登陆认证插件](code/auth/README.md)
+
+        * [使用配置](usage/auth/README.md)
+
+    * [跨域设置插件](code/cors/README.md)
+
+        * [使用配置](usage/cors/README.md)
+        
+    * [日志分析插件](code/loganalyze/README.md)
+
+        * [使用配置](usage/loganalyze/README.md)
+
+    * [链路追踪插件](code/tracing/README.md)
+
+        * [使用配置](usage/tracing/README.md)
+
+    * [自检调试插件](code/healthdebug/README.md)
+
+        * [使用配置](usage/healthdebug/README.md)
+
+    * [同步预热插件](code/sync/README.md)
+
+        * [使用配置](usage/sync/README.md)
 
         * [字段同步](code/sync/README_FIELDS.md)
 
@@ -92,11 +116,15 @@
     
     * [耗时告警插件](code/timealert/README.md)
 
+        * [使用配置](usage/timealert/README.md)
+
         * [日志告警](code/timealert/README_LOG.md)
 
         * [邮件告警](code/timealert/README_EMIAL.md)
 
-    * [集群管理插件](code/cluster/README_CLUSTER.md)
+    * [集群节点插件](code/cluster/README_CLUSTER.md)
+
+        * [使用配置](usage/cluster/README.md)
 
         * [主从节点](code/cluster/README_NODE.md)
 
@@ -119,7 +147,6 @@
     * [测试用例](dev/README_TEST.md)
 
     * [提交PR](dev/README_PR.md)
-
 
 
 * [常见问题解答](qa/README.md)

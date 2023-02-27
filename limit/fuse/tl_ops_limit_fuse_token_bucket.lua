@@ -60,6 +60,9 @@ end
 -- block 取用令牌数量
 local tl_ops_limit_token = function( service_name, node_id )
     local token_mode = tl_ops_limit_token_mode( service_name , node_id)
+    if not token_mode then
+        return false
+    end
 
     local capacity_key = tl_ops_utils_func:gen_node_key(token_mode.cache_key.capacity, service_name, node_id)
     local capacity = shared:get(capacity_key)
@@ -130,7 +133,7 @@ local tl_ops_limit_token = function( service_name, node_id )
         return false
     end
 
-    local new_token_bucket = math.min(token_bucket + duration_token_bucket, capacity)  
+    local new_token_bucket = math.min(token_bucket + duration_token_bucket, capacity)
 
     -- 令牌还是不够
     if new_token_bucket < block then
@@ -165,6 +168,9 @@ end
 local tl_ops_limit_token_expand = function( service_name, node_id )
 
     local token_mode = tl_ops_limit_token_mode( service_name, node_id)
+    if not token_mode then
+        return false
+    end
 
     local capacity_key = tl_ops_utils_func:gen_node_key(token_mode.cache_key.capacity, service_name, node_id)
     local capacity = shared:get(capacity_key)
@@ -206,6 +212,9 @@ end
 local tl_ops_limit_token_shrink = function( service_name, node_id )
 
     local token_mode = tl_ops_limit_token_mode( service_name, node_id)
+    if not token_mode then
+        return false
+    end
 
     local capacity_key = tl_ops_utils_func:gen_node_key(token_mode.cache_key.capacity, service_name, node_id)
     local capacity = shared:get(capacity_key)

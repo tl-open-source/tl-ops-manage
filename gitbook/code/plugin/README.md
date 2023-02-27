@@ -32,6 +32,7 @@ init_worker_by_lua_block {
 function _M:tl_ops_process_init()
     -- 加载所有插件
     m_plugin:tl_ops_process_load_plugins();
+
     _M.plugins = m_plugin:tl_ops_process_get_plugins()
 end
 

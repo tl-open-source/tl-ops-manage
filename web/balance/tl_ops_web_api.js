@@ -59,11 +59,13 @@ const tl_ops_web_api_point_cols = function () {
         }, {
             field: 'service', title: '所属服务',width:"10%"
         }, {
-            field: 'node', title: '节点索引',width:"10%"
+            field: 'node', title: '节点索引',width:"5%"
         }, {
             field: 'rewrite_url', title: '重写地址',width:"10%"
         }, {
-            field: 'updatetime', title: '更新时间',width:"15%",
+            field: 'fake_prefix', title: '节点路径',width:"10%"
+        }, {
+            field: 'updatetime', title: '更新时间',width:"10%",
         }, {
             width: "10%",
             align: 'center',
@@ -84,15 +86,17 @@ const tl_ops_web_api_random_cols = function () {
         }, {
             field: 'host', title: '域名',width:"10%"
         }, {
-            field: 'url', title: 'API', width:"15%"
+            field: 'url', title: 'API', width:"10%"
         }, {
             field: 'match_mode', title: '匹配模式',width:"10%"
         }, {
             field: 'service', title: '所属服务',width:"10%"
         }, {
             field: 'rewrite_url', title: '重写地址',width:"10%"
+        },{
+            field: 'fake_prefix', title: '节点路径',width:"10%"
         }, {
-            field: 'updatetime', title: '更新时间',width:"15%",
+            field: 'updatetime', title: '更新时间',width:"10%",
         }, {
             width: "10%",
             align: 'center',
@@ -365,7 +369,7 @@ const tl_ops_api_data_add_filter = function( data ) {
         delete data.field.node
     }
     for(let key in data.field){
-        if(key === 'id' || key === 'rewrite_url'){
+        if(key === 'id' || key === 'rewrite_url' || key === 'fake_prefix'){
             continue;
         }
         if(data.field[key] === undefined || data.field[key] === null || data.field[key] === ''){
@@ -376,6 +380,7 @@ const tl_ops_api_data_add_filter = function( data ) {
             data.field[key] = parseInt(data.field[key])   
         }
     }
+    
     res_data.tl_ops_balance_api_list[rule].push(data.field)
 
     res_data.tl_ops_balance_api_list[rule].forEach(item=>{
@@ -394,7 +399,7 @@ const tl_ops_api_data_edit_filter = function( data ) {
         delete data.field.node
     }
     for(let key in data.field){
-        if(key === 'rewrite_url'){
+        if(key === 'rewrite_url' || key === 'fake_prefix'){
             continue
         }
         if(data.field[key] === undefined || data.field[key] === null || data.field[key] === ''){

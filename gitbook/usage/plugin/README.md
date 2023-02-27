@@ -14,13 +14,17 @@
 
 ### 编写插件代码
 
-    根据你想编写的插件，在tl_ops_plugin_core模板文件中相应阶段编写相应的代码。
+根据你想编写的插件，在模板文件中相应阶段编写相应的代码。
 
-### 修改配置文件
+`tl_ops_plugin_core` : 插件逻辑
 
-    在总配置文件中 `tl-ops-manage/tl_ops_manage_env` 引入插件名称。
+`tl_ops_plugin_constant` : 插件配置数据定义
+
+`tl_ops_plugin_open` : 插件开关
+
+`tl_ops_plugin_api` : 插件对外api接口
 
 
-## 插件实例
+### 添加插件
 
-tl-ops-manage提供了一个同步器插件，`tl_ops_sync`，此插件的作用是，在启动nginx/openresty时，同步静态配置中的数据至store文件中，并提供配置数据预热功能。且支持新增静态配置字段时，同步新增至对应store文件中
+添加插件支持两种形式，从 tl_ops_constant_plugins_manage.lua 配置文件中添加， 从管理后台插件管理中添加

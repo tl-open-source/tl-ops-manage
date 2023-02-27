@@ -28,6 +28,7 @@ local tl_ops_err_content_balance_handler = function(args)
     ngx.header[constant_balance.proxy_server] = args.server
     ngx.header[constant_balance.proxy_state] = args.state
     ngx.header[constant_balance.proxy_mode] = args.mode
+    ngx.header[constant_balance.proxy_prefix] = args.prefix
 
     local str = cache_balance:get(args.cache_key)
     if not str then

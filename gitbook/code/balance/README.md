@@ -1,6 +1,6 @@
 # 负载均衡
 
-负载均衡的实现是本身nginx是支持配置多种轮询机制的，如权重，随机，备份等。tl-ops-manage提供的负载策略是更加细化的负载。目前支持几种策略 `api最长前缀正则匹配负载`，`cookie键值对匹配负载`，`请求参数键值对匹配负载`，`请求头部键值对匹配负载`，以及每种策略下支持两种模式的动态切换，`指定节点负载` ，`随机节点负载`。
+负载均衡的实现是本身nginx是支持配置多种轮询机制的，如权重，随机，备份等。tl-ops-manage提供的负载策略是更加细化的负载。目前支持几种策略 `api最长前缀正则匹配负载`，`cookie键值对匹配负载`，`请求参数键值对匹配负载`，`请求头部键值对匹配负载`，`请求Body参数匹配负载`以及每种策略下支持两种模式的动态切换，`指定节点负载` ，`随机节点负载`。
 
     在服务节点列表中，所有节点是依赖健康检查动态上下线。上线节点加入负载列表，下线节点剔除负载列表。在负载列表中的所有有效节点，将被用作根据负载策略进行负载。
 
@@ -92,9 +92,10 @@ end
 
 接下来，我们看回负载核心逻辑代码 : `tl_ops_balance_core_filter`，可以看到先获取当前所有服务节点，然后根据负载策略依次匹配，直到命中规则，得到具体节点。得到具体节点后，通过ctx保存节点，然后在balance阶段转发到具体节点
 
-策略匹配顺序为 ： `api策略 > 请求参数策略 > 请求cookie策略 > 请求头策略 `。
+策略匹配顺序为 ： `api策略 > 请求参数策略 > 请求cookie策略 > 请求头策略 > 请求Body参数策略`。
 
-匹配到具体规则后，转而匹配域名，如果域名匹配也命中，说明当前请求应该被此条规则所配置的节点处理。
+在决定执行某一种策略后，会根据设置的负载优先模式（当前有 优先host，优先api两种），进行模式优先匹配
+
 
     当前在实际负载前，应该要考虑当前节点所配置的流控策略，在流控限制下，如果能拿到令牌或正常留出漏桶，说明当前请求已经被允许转发到上游服务了，当然，如果此时，服务状态不佳，不能正常处理请求，那么就无需转发请求，直接丢弃即可。
 
@@ -121,41 +122,49 @@ function _M:tl_ops_balance_core_filter(ctx)
     local balance_mode = "api"
 
     -- 先走api负载
-    local node, node_state, node_id, host = tl_ops_balance_core_api.tl_ops_balance_api_service_matcher(service_list_table)
+    local node, node_state, node_id, host, rule_match_mode = tl_ops_balance_core_api.tl_ops_balance_api_service_matcher(service_list_table)
     if not node then
         -- api不匹配，走param负载
         balance_mode = "param"
 
-        node, node_state, node_id, host = tl_ops_balance_core_param.tl_ops_balance_param_service_matcher(service_list_table)
+        node, node_state, node_id, host, rule_match_mode = tl_ops_balance_core_param.tl_ops_balance_param_service_matcher(service_list_table)
         if not node then
             -- param不匹配，走cookie负载
             balance_mode = "cookie"
 
-            node, node_state, node_id, host = tl_ops_balance_core_cookie.tl_ops_balance_cookie_service_matcher(service_list_table)
+            node, node_state, node_id, host, rule_match_mode = tl_ops_balance_core_cookie.tl_ops_balance_cookie_service_matcher(service_list_table)
             if not node then
                 -- cookie不匹配，走header负载
                 balance_mode = "header"
 
-                node, node_state, node_id, host = tl_ops_balance_core_header.tl_ops_balance_header_service_matcher(service_list_table)
+                node, node_state, node_id, host, rule_match_mode = tl_ops_balance_core_header.tl_ops_balance_header_service_matcher(service_list_table)
                 if not node then
-                    -- 无匹配
-                    tl_ops_err_content:err_content_rewrite_to_balance("", "empty", balance_mode, tl_ops_constant_balance.cache_key.mode_empty)
-                    return
+                     -- header不匹配，走body负载
+                    balance_mode = "body"
+
+                    node, node_state, node_id, host, rule_match_mode = tl_ops_balance_core_body.tl_ops_balance_body_service_matcher(service_list_table)
+                    if not node then
+                        -- 无匹配
+                        tl_ops_err_content:err_content_rewrite_to_balance("", "empty", balance_mode, tl_ops_constant_balance.cache_key.mode_empty)
+                        return
+                    end
                 end
             end
         end
     end
 
-    -- 域名负载
-    if host == nil or host == '' then
-        tl_ops_err_content:err_content_rewrite_to_balance("", "nil", balance_mode, tl_ops_constant_balance.cache_key.host_empty)
-        return
-    end
+    if rule_match_mode and rule_match_mode == api_match_mode.api then
+        -- 域名负载
+        if host == nil or host == '' then
+            tl_ops_err_content:err_content_rewrite_to_balance("", "nil", balance_mode, tl_ops_constant_balance.cache_key.host_empty)
+            return
+        end
 
-    -- 域名匹配
-    if host ~= "*" and host ~= ngx.var.host then
-        tl_ops_err_content:err_content_rewrite_to_balance("", "pass", balance_mode, tl_ops_constant_balance.cache_key.host_pass)
-        return
+        -- 域名匹配
+        if host ~= "*" and host ~= ngx.var.host then
+            tl_ops_err_content:err_content_rewrite_to_balance("", "pass", balance_mode, tl_ops_constant_balance.cache_key.host_pass)
+            return
+        end
     end
 
     -- 流控介入
@@ -171,7 +180,7 @@ function _M:tl_ops_balance_core_filter(ctx)
                     return
                 end
             end
-    
+
             -- 漏桶流控 
             if depend == tl_ops_constant_limit.depend.leak then
                 local leak_result = tl_ops_limit_fuse_leak_bucket.tl_ops_limit_leak( node.service, node_id)
@@ -205,11 +214,7 @@ function _M:tl_ops_balance_core_filter(ctx)
     ctx.tlops_ups_node = node
     ctx.tlops_ups_node_id = node_id
     ctx.tlops_ups_mode = balance_mode
-
-    return
 end
-
-
 
 
 -- 请求负载分发
@@ -233,16 +238,15 @@ function _M:tl_ops_balance_core_balance(ctx)
     end
     shared:incr(limit_req_succ_count_key, 1)
 
-    ngx.header['Tl-Proxy-Server'] = tlops_ups_node.service .. ":" .. tlops_ups_node.name;
-    ngx.header['Tl-Proxy-State'] = "online"
-    ngx.header['Tl-Proxy-Mode'] = tlops_ups_mode
+    ngx.header[tl_ops_constant_balance.proxy_server] = tlops_ups_node.service .. ":" .. tlops_ups_node.name;
+    ngx.header[tl_ops_constant_balance.proxy_state] = "online"
+    ngx.header[tl_ops_constant_balance.proxy_mode] = tlops_ups_mode
 
     local ok, err = ngx_balancer.set_current_peer(tlops_ups_node.ip, tlops_ups_node.port)
     if ok then
         ngx_balancer.set_timeouts(3, 60, 60)
     end
 end
-
 
 ```
 

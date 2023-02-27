@@ -17,13 +17,14 @@ end
 
 -- uri重写，实现错误内容自定义
 -- 重写到balance err内容处理
-function _M:err_content_rewrite_to_balance(server, state, mode, err)
+function _M:err_content_rewrite_to_balance(server, state, mode, err, prefix)
     ngx.req.set_uri_args({ 
         type = "balance",
         cache_key = err, 
         mode = mode, 
         state = state, 
-        server = server
+        server = server,
+        prefix = prefix
     })
     ngx.req.set_uri("/balanceerr/", true)
 end

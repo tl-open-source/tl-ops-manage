@@ -15,6 +15,9 @@
 	check_timeout = 1000,               #自检心跳包接收超时时间，默认单位/ms
 	check_content = "GET / HTTP/1.0",   #自检心跳包内容，可自定义，但是需要被检方处理兼容。
 	check_service_name = "product"      #自检服务名称
+	check_success_status = {            #自检返回成功状态, 如 201,202（代表成功）
+		200
+	},
 }
 ```
 

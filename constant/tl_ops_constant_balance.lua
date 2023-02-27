@@ -25,6 +25,7 @@ local tl_ops_constant_balance = {
     proxy_server = "Tl-Proxy-Server",   -- 请求头标记
     proxy_state = "Tl-Proxy-State",
     proxy_mode = "Tl-Proxy-Mode",
+    proxy_prefix = "Tl-Proxy-Prefix",
     api = {
         list = {
             point = tl_ops_constant_balance_api.point,

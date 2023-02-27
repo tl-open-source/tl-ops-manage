@@ -13,6 +13,7 @@ local tl_ops_constant_health        = require("constant.tl_ops_constant_health")
 local shared                        = ngx.shared.tlopsbalance
 local find                          = ngx.re.find
 
+
 -- 处理匹配逻辑
 local tl_ops_balance_api_matcher_mode = function (matcher, request_uri, obj)
     local match_mode = obj.match_mode
@@ -21,13 +22,14 @@ local tl_ops_balance_api_matcher_mode = function (matcher, request_uri, obj)
     end
     -- 正则匹配模式
     if match_mode == tl_ops_match_mode.reg or match_mode == tl_ops_match_mode.regi or match_mode == tl_ops_match_mode.regid then
-        local from, to , _ = find(request_uri , obj.url , match_mode);
+        local from, to , _ = find(request_uri , (obj.fake_prefix .. obj.url) , match_mode);
         if from and to then
             local sub = string.sub(request_uri, from, to)
             if sub then
                 if not matcher or not matcher.url then
                     matcher = obj
                 end
+                -- 规则最长匹配优先
                 if matcher.url and #sub > #matcher.url then
                     matcher = obj
                 end
@@ -36,7 +38,7 @@ local tl_ops_balance_api_matcher_mode = function (matcher, request_uri, obj)
     end
     -- 全文匹配
     if match_mode == tl_ops_match_mode.all then
-        if request_uri == obj.url then
+        if request_uri == (obj.fake_prefix .. obj.url) then
             matcher = obj;
         end
     end
@@ -45,7 +47,7 @@ local tl_ops_balance_api_matcher_mode = function (matcher, request_uri, obj)
 end
 
 -- 获取命中的api路由项
-local tl_ops_balance_api_get_matcher_rule = function(api_list_table, rule, rule_match_mode)
+local tl_ops_balance_api_get_matcher_rule = function(api_list_table, rule, rule_match_mode, request_uri)
     local matcher = nil;
     local matcher_list = api_list_table[rule]
 
@@ -53,15 +55,11 @@ local tl_ops_balance_api_get_matcher_rule = function(api_list_table, rule, rule_
         return nil
     end 
 
-    -- 获取当前url
-    local request_uri = tl_ops_utils_func:get_req_uri();
-
     -- 获取当前host
     local cur_host = ngx.var.host;
 
     for i, obj in pairs(matcher_list) do
         repeat
-
             if rule_match_mode == tl_ops_constant_balance_api.mode.host then
                 -- 如果是优先host规则匹配，先剔除不属于当前host的规则
                 if obj.host == nil or obj.host == '' then
@@ -109,15 +107,18 @@ local tl_ops_balance_api_service_matcher = function(service_list_table)
     if not api_list_table then
         return nil, nil, nil, nil, rule_match_mode
     end
+
+    -- 获取当前url
+    local request_uri = tl_ops_utils_func:get_req_uri();
     
     -- 根据路由当前策略进行路由, 返回正则命中的api
     if api_rule == tl_ops_constant_balance_api.rule.point then
         matcher = tl_ops_balance_api_get_matcher_rule(
-            api_list_table, tl_ops_constant_balance_api.rule.point, rule_match_mode
+            api_list_table, tl_ops_constant_balance_api.rule.point, rule_match_mode, request_uri
         );
     elseif api_rule == tl_ops_constant_balance_api.rule.random then
         matcher = tl_ops_balance_api_get_matcher_rule(
-            api_list_table, tl_ops_constant_balance_api.rule.random, rule_match_mode
+            api_list_table, tl_ops_constant_balance_api.rule.random, rule_match_mode, request_uri
         );
     end
 
@@ -142,7 +143,6 @@ local tl_ops_balance_api_service_matcher = function(service_list_table)
         end
     -- 服务内随机
     elseif api_rule == tl_ops_constant_balance_api.rule.random then
-        local request_uri = tl_ops_utils_func:get_req_uri();
         math.randomseed(#request_uri)
         node_id = tonumber(math.random(0,1) % #service_list_table[matcher.service]) + 1
         node = service_list[node_id]
@@ -157,6 +157,16 @@ local tl_ops_balance_api_service_matcher = function(service_list_table)
     local rewrite_url = matcher.rewrite_url
     if rewrite_url and rewrite_url ~= '' then
         ngx.req.set_uri(rewrite_url, false)
+    end
+
+    -- 需要转发到服务具体路径
+    local fake_prefix = matcher.fake_prefix
+    if fake_prefix and matcher.fake_prefix ~= '' then
+        -- 通过虚拟前缀截取后缀
+        local fake_sub = string.sub(request_uri, #fake_prefix + 1, #request_uri)
+        if fake_sub then
+            ngx.var.tlops_ups_api_prefix = fake_sub
+        end
     end
     
     return node, node_state, node_id, host, rule_match_mode
