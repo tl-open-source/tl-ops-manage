@@ -49,7 +49,9 @@ const tl_ops_web_api_point_cols = function () {
         {
             type:'checkbox',fixed : 'left', width: "5%"
         }, {
-            field: 'id', title: 'ID',width:"10%"
+            field: 'id', title: 'ID',width:"5%"
+        }, {
+            field: 'api_type', title: '类型',width:"8%"
         }, {
             field: 'host', title: '域名',width:"10%"
         }, {
@@ -57,13 +59,13 @@ const tl_ops_web_api_point_cols = function () {
         }, {
             field: 'match_mode', title: '匹配模式',width:"10%"
         }, {
-            field: 'service', title: '所属服务',width:"10%"
+            field: 'service', title: '服务',width:"7%"
         }, {
-            field: 'node', title: '节点索引',width:"5%"
+            field: 'node', title: '节点',width:"5%"
         }, {
             field: 'rewrite_url', title: '重写地址',width:"10%"
         }, {
-            field: 'fake_prefix', title: '节点路径',width:"10%"
+            field: 'fake_prefix', title: '虚拟前缀',width:"10%"
         }, {
             field: 'updatetime', title: '更新时间',width:"10%",
         }, {
@@ -82,7 +84,9 @@ const tl_ops_web_api_random_cols = function () {
         {
             type:'checkbox',fixed : 'left', width: "5%"
         }, {
-            field: 'id', title: 'ID', width:"10%"
+            field: 'id', title: 'ID', width:"5%"
+        }, {
+            field: 'api_type', title: '类型',width:"7%"
         }, {
             field: 'host', title: '域名',width:"10%"
         }, {
@@ -90,11 +94,11 @@ const tl_ops_web_api_random_cols = function () {
         }, {
             field: 'match_mode', title: '匹配模式',width:"10%"
         }, {
-            field: 'service', title: '所属服务',width:"10%"
+            field: 'service', title: '服务',width:"8%"
         }, {
             field: 'rewrite_url', title: '重写地址',width:"10%"
         },{
-            field: 'fake_prefix', title: '节点路径',width:"10%"
+            field: 'fake_prefix', title: '虚拟前缀',width:"10%"
         }, {
             field: 'updatetime', title: '更新时间',width:"10%",
         }, {

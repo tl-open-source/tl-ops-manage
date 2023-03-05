@@ -1,4 +1,5 @@
 local match_mode = require("constant.tl_ops_constant_comm").tl_ops_match_mode;
+local api_type = require("constant.tl_ops_constant_comm").tl_ops_api_type;
 
 -- api 默认列表
 local tl_ops_constant_balance_api = {
@@ -23,6 +24,7 @@ local tl_ops_constant_balance_api = {
             host = "tlops1.com",                    -- 当前url处理的域名范围
             rewrite_url = "",                       -- 当前url重写后的url
             fake_prefix = "",                       -- 当前uri规则的虚拟前缀
+            api_type = api_type.api,                -- 当前uri规则的类型
         },
         random = {
             id = 1,
@@ -32,6 +34,7 @@ local tl_ops_constant_balance_api = {
             host = "tlops1.com",                    -- 当前url处理的域名范围
             rewrite_url = "",                       -- 当前url重写后的url
             fake_prefix = "",                       -- 当前uri规则的虚拟前缀
+            api_type = api_type.api,                -- 当前uri规则的类型
         }
     },
     rule = {-- api rule 策略

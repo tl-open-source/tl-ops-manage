@@ -1,6 +1,6 @@
 -- tl_ops_set_page_proxy_export
 -- en : set export page_proxy config
--- zn : 更新log_analyze插件配置管理
+-- zn : 更新page_proxy插件配置管理
 -- @author iamtsm
 -- @email 1905333456@qq.com
 

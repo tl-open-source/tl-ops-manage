@@ -48,6 +48,28 @@ tl_ops_match_mode = {-- api匹配模式
 }
 ```
 
+## API路由虚拟前缀
+
+ ![图片](https://qnproxy.iamtsm.cn/WechatIMG50.png "图片") 
+
+这个场景也是有小伙伴反馈的，目前已支持在路由后将请求转发到具体服务下的具体路径，比如有这样几个规则
+
+`/open-api/order-api/*` - `订单服务节点1`
+
+`/open-api/product-api/*` - `产品服务节点1`
+
+`/open-api/member-api/*` - `会员服务节点1`
+
+那么对应的 /open-api 作为虚拟前缀， /order-api/* 作为订单服务下的所有接口，这样可以方便的统一多个服务的对外统一接口
+
+
+## 静态资源路由
+
+目前支持静态文件资源路由配置，需要结合page_proxy插件开启使用
+
+首先需要配置好api路由策略，其次在插件配置页面设置好对应路由需要分发的静态资源路径即可。
+
+
 ## 在文件中的配置
 
 在文件中的配置需注意的是，如果`sync`插件为开启状态时，会有后台任务同步文件中的配置数据至store中，且是根据 `id` 来判定是否需要执行同步逻辑。所以需要保证文件中的配置的数据的id是具有唯一性的标识字段。
@@ -67,6 +89,8 @@ point = {
 		node = 0,                               -- 当前url路由到的service下的node的索引
 		host = "tlops1.com",                    -- 当前url处理的域名范围
 		rewrite_url = "",                       -- 当前url重写后的url
+		fake_prefix = "",                       -- 当前uri规则的虚拟前缀
+		api_type = api_type.api,                -- 当前uri规则的类型
 	}
 },
 random = {
@@ -77,6 +101,8 @@ random = {
 		service = "tlops-demo",                 -- 当前url路由到的service
 		host = "tlops1.com",                    -- 当前url处理的域名范围
 		rewrite_url = "",                       -- 当前url重写后的url
+		fake_prefix = "",                       -- 当前uri规则的虚拟前缀
+		api_type = api_type.api,                -- 当前uri规则的类型
 	}
 },
 ```

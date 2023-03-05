@@ -1,6 +1,18 @@
 local tl_ops_plugin_constant_page_proxy = {
     cache_key = {
+        list = "tl_ops_plugin_page_proxy_list"
+    },
+    tlops_api = {                       -- 对外API
+        get = "/tlops/page_proxy/list",
+        set = "/tlops/page_proxy/set"
+    },
+    list = {
 
+    },
+    demo = {
+        id = 1,
+        api = "",                   -- 对应的api路由路径，在api路由规则中定义的
+        path = "",                  -- 路由对应的静态资源的路径
     },
     export = {
         cache_key = {
@@ -12,7 +24,7 @@ local tl_ops_plugin_constant_page_proxy = {
         },
         page_proxy = {
             zname = '页面代理插件',
-            page = "",
+            page = "page_proxy/tl_ops_web_page_proxy.html",
             name = 'page_proxy',
             open = true,
             scope = "tl_ops_process_before_init_rewrite",

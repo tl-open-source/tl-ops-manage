@@ -4,9 +4,8 @@
 -- @author iamtsm
 -- @email 1905333456@qq.com
 
-local utils                 = tlops.utils
-local env                   = tlops.env
 local sync                  = require("plugins.tl_ops_page_proxy.sync");
+local page_proxy            = require("plugins.tl_ops_page_proxy.page_proxy");
 
 local _M = {
     _VERSION = '0.01'
@@ -25,18 +24,7 @@ end
 
 -- 页面转发插件实现
 function _M:tl_ops_process_before_init_rewrite(ctx)
-
-    local request_uri = utils:get_req_uri()
-
-    if ngx.re.find(request_uri, "/tlopsmanage/", 'jo') then
-        ngx.var.tlopsmanage = env.path.tlopsmanage
-    end
-
-    if ngx.re.find(request_uri, "/website/", 'jo') then
-        ngx.var.website = env.path.website
-    end
-
-    return true, "ok"
+    return page_proxy:page_proxy_core(ctx)
 end
 
 

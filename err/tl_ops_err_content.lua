@@ -4,7 +4,7 @@
 -- @author iamtsm
 -- @email 1905333456@qq.com
 
-local tl_ops_err_content_core = require(".err.tl_ops_err_content_core");
+local tl_ops_err_content_core = require("err.tl_ops_err_content_core");
 
 local _M = {}
 

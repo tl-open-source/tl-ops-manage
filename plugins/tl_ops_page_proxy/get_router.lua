@@ -1,11 +1,11 @@
--- tl_ops_ssl_get
--- en : get ssl config list
--- zn : 获取ssl配置列表
+-- tl_ops_page_proxy_get
+-- en : get page_proxy config list
+-- zn : 获取page_proxy配置列表
 -- @author iamtsm
 -- @email 1905333456@qq.com
 
-local cache                     = require("cache.tl_ops_cache_core"):new("tl-ops-ssl");
-local constant                  = require("plugins.tl_ops_ssl.tl_ops_plugin_constant");
+local cache                     = require("cache.tl_ops_cache_core"):new("tl-ops-page-proxy");
+local constant                  = require("plugins.tl_ops_page_proxy.tl_ops_plugin_constant");
 local tl_ops_rt                 = tlops.constant.comm.tl_ops_rt;
 local tl_ops_utils_func         = tlops.utils
 local cjson                     = require("cjson.safe");

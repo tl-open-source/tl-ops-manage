@@ -4,9 +4,9 @@
 -- @author iamtsm
 -- @email 1905333456@qq.com
 
-local constant_ssl  = require("plugins.tl_ops_ssl.tl_ops_plugin_constant");
+local constant      = require("plugins.tl_ops_ssl.tl_ops_plugin_constant");
 local tlog          = require("utils.tl_ops_utils_log"):new("tl_ops_plugin_ssl");
-local cache_ssl     = require("cache.tl_ops_cache_core"):new("tl-ops-ssl");
+local cache         = require("cache.tl_ops_cache_core"):new("tl-ops-ssl");
 local utils         = tlops.utils
 local ssl           = require("ngx.ssl")
 local cjson         = require("cjson.safe")
@@ -21,7 +21,7 @@ local mt = { __index = _M }
 -- 加载host的证书配置
 local get_pem_key_cache = function(host)
 
-    local list_str, _ = cache_ssl:get(constant_ssl.cache_key.list);
+    local list_str, _ = cache:get(constant.cache_key.list);
     if not list_str or list_str == nil then
         return nil
     end

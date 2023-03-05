@@ -49,8 +49,6 @@
 
         * [多规则匹配](code/balance/README_RULE.md)
 
-        * [多模式匹配](code/balance/README_RULE.md)
-
     * [路由统计](code/balancecount/README.md)
 
     * [动态配置](code/dynamic/README.md)

@@ -19,7 +19,6 @@ local utils             =  require("utils.tl_ops_utils_func");
 local env               =  require("tl_ops_manage_env")
 local constant          =  require("constant.tl_ops_constant")
 local cache             =  require("cache.tl_ops_cache")
-local tlops_api         =  require("api.tl_ops_api_core")
 local m_err_content     =  require("err.tl_ops_err_content")
 local balance_shared    =  ngx.shared.tlopsbalance
 local plugin_shared     =  ngx.shared.tlopsplugin

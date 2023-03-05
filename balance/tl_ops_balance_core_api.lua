@@ -8,11 +8,12 @@ local cjson                         = require("cjson.safe");
 local cache_api                     = require("cache.tl_ops_cache_core"):new("tl-ops-balance-api");
 local tl_ops_utils_func             = require("utils.tl_ops_utils_func");
 local tl_ops_constant_balance_api   = require("constant.tl_ops_constant_balance_api");
-local tl_ops_match_mode             = require("constant.tl_ops_constant_comm").tl_ops_match_mode;
-local tl_ops_constant_health        = require("constant.tl_ops_constant_health")
-local shared                        = ngx.shared.tlopsbalance
-local find                          = ngx.re.find
-
+local tl_ops_constant_comm          = require("constant.tl_ops_constant_comm");
+local tl_ops_constant_health        = require("constant.tl_ops_constant_health");
+local tl_ops_match_mode             = tl_ops_constant_comm.tl_ops_match_mode;
+local tl_ops_api_type               = tl_ops_constant_comm.tl_ops_api_type;
+local shared                        = ngx.shared.tlopsbalance;
+local find                          = ngx.re.find;
 
 -- 处理匹配逻辑
 local tl_ops_balance_api_matcher_mode = function (matcher, request_uri, obj)
@@ -81,6 +82,7 @@ end
 
 
 local tl_ops_balance_api_service_matcher = function(service_list_table)
+    
     local matcher = nil
     local node = nil
 
@@ -153,15 +155,26 @@ local tl_ops_balance_api_service_matcher = function(service_list_table)
     local node_state , _ = shared:get(key)
 
 
+    -- 静态页面代理路径
+    local api_type = matcher.api_type
+    if api_type and api_type == tl_ops_api_type.page then
+        ngx.req.set_uri_args({ 
+            url = request_uri
+        })
+        ngx.req.set_uri("/pageproxy", true)
+        return
+    end
+
     -- 需要重写url
     local rewrite_url = matcher.rewrite_url
     if rewrite_url and rewrite_url ~= '' then
         ngx.req.set_uri(rewrite_url, false)
+        return
     end
 
-    -- 需要转发到服务具体路径
+    -- 需要转发到服务下的具体路径
     local fake_prefix = matcher.fake_prefix
-    if fake_prefix and matcher.fake_prefix ~= '' then
+    if fake_prefix and fake_prefix ~= '' then
         -- 通过虚拟前缀截取后缀
         local fake_sub = string.sub(request_uri, #fake_prefix + 1, #request_uri)
         if fake_sub then
