@@ -384,13 +384,23 @@ end
 
 
 
--- 生成 '服务-节点' , '服务' key
-function _M:gen_node_key(prefix, node, node_id)
-    if not node_id then
-        return prefix .. "_" .. node;
-    else 
-        return prefix .. "_" .. node .. "_" .. node_id;
+-- 生成 '服务-节点'  key
+function _M:gen_node_key(prefix, node, node_id, id)
+    local key = prefix;
+
+    if node then
+        key = key .. "_" .. node
+
+        if node_id then
+            key = key .. "_" .. node_id
+        end
+
+        if id then
+            key = key .. "_" .. id
+        end
     end
+
+    return key
 end
 
 -- 替换func

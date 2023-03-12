@@ -67,6 +67,22 @@ local Router = function()
                 max_age = login.auth_time,
             })
 
+            cookie_utils:set({
+                key = "_u_name",
+                value = user.username,
+                path = "/",
+                domain = ngx.var.host,
+                max_age = login.auth_time,
+            })
+
+            cookie_utils:set({
+                key = "_u_key",
+                value = login.auth_cid,
+                path = "/",
+                domain = ngx.var.host,
+                max_age = login.auth_time,
+            })
+
             -- add session
             auth:auth_add_session(auth_cid, user);
 

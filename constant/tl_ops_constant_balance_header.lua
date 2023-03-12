@@ -1,6 +1,7 @@
 -- header 默认列表
 local tl_ops_constant_balance_header = {
     cache_key = {
+        -- 持久化字段 
         list = "tl_ops_balance_header_list",
         rule = "tl_ops_balance_header_rule",
         rule_match_mode = "tl_ops_balance_header_rule_match_mode"

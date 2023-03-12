@@ -10,7 +10,7 @@ local tl_ops_constant_balance_param     = require("constant.tl_ops_constant_bala
 
 local tl_ops_constant_balance = {
     cache_key = {
-        lock = "tl_ops_balance_lock",
+        -- 持久化字段
         service_empty = "tl_ops_balance_service_empty_err",
         mode_empty = "tl_ops_balance_mode_empty_err",
         host_empty = "tl_ops_balance_host_empty_err",
@@ -18,9 +18,6 @@ local tl_ops_constant_balance = {
         token_limit = "tl_ops_balance_token_limit_err",
         leak_limit = "tl_ops_balance_leak_limit_err",
         offline = "tl_ops_balance_offline_err",
-        req_succ = "tl_ops_balance_req_succ",                           -- 以服务节点为单位路由请求成功次数     int
-        req_fail = "tl_ops_balance_req_fail",                           -- 以服务节点为单位路由请求失败次数     int
-        balance_interval_success = "tl_ops_balance_interval_success",   -- 以服务节点为单位，周期内成功次数集合 list
     },
     proxy_server = "Tl-Proxy-Server",   -- 请求头标记
     proxy_state = "Tl-Proxy-State",
@@ -65,9 +62,6 @@ local tl_ops_constant_balance = {
         },
         rule = tl_ops_constant_balance_param.rule.point,
         rule_match_mode = tl_ops_constant_balance_param.mode.host
-    },
-    count = {
-        interval = 10       -- 统计周期 单位/s, 默认:5min
     },
     service_empty = {
         

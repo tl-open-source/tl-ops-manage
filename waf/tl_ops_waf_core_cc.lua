@@ -4,14 +4,14 @@
 -- @author iamtsm
 -- @email 1905333456@qq.com
 
+local waf_count_cc              = require("waf.count.tl_ops_waf_count_cc")
 local tl_ops_constant_waf_cc    = require("constant.tl_ops_constant_waf_cc");
-local tl_ops_constant_waf_scope = require("constant.tl_ops_constant_waf_scope");
+local waf_scope                 = require("constant.tl_ops_constant_comm").tl_ops_waf_scope;
 local tl_ops_utils_func         = require("utils.tl_ops_utils_func");
 local cache_cc                  = require("cache.tl_ops_cache_core"):new("tl-ops-waf-cc");
 local tlog                      = require("utils.tl_ops_utils_log"):new("tl_ops_waf_cc");
 local find                      = ngx.re.find
 local cjson                     = require("cjson.safe");
-local shared_balance            = ngx.shared.tlopsbalance
 local shared_waf                = ngx.shared.tlopswaf
 local MAX_URL_LEN               = 50
 
@@ -25,7 +25,7 @@ local tl_ops_waf_core_cc_filter_global_pass = function()
     end
 
     -- 根据作用域进行waf拦截
-    if cc_scope ~= tl_ops_constant_waf_scope.global then
+    if cc_scope ~= waf_scope.global then
         return true
     end
     
@@ -85,6 +85,7 @@ local tl_ops_waf_core_cc_filter_global_pass = function()
                 break
             end
             -- 触发cc
+            waf_count_cc.tl_ops_waf_count_incr_cc_succ()
             return false
         until true
     end
@@ -109,7 +110,7 @@ local tl_ops_waf_core_cc_filter_service_pass = function(service_name)
     end
 
     -- 根据作用域进行waf拦截
-    if cc_scope ~= tl_ops_constant_waf_scope.service then
+    if cc_scope ~= waf_scope.service then
         return true
     end
     
@@ -178,6 +179,7 @@ local tl_ops_waf_core_cc_filter_service_pass = function(service_name)
                 break
             end
             -- 触发cc
+            waf_count_cc.tl_ops_waf_count_incr_cc_succ(service_name, 0, cc.id)
             return false
         until true
     end

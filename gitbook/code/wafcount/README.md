@@ -83,7 +83,7 @@ end
 -- 统计器 ： 持久化数据
 local tl_ops_waf_count = function()
 	local lock_key = tl_ops_constant_waf.cache_key.lock
-    local lock_time = tl_ops_constant_waf.count.interval - 0.01
+    local lock_time = tl_ops_constant_waf_count.interval - 0.01
     if not tl_ops_utils_func:tl_ops_worker_lock(lock_key, lock_time) then
         return
     end
@@ -98,7 +98,7 @@ local tl_ops_waf_count = function()
     end
 
     -- 控制细度 ，以周期为分割，仅用store持久
-    local count_name = "tl-ops-waf-count-" .. tl_ops_constant_waf.count.interval;
+    local count_name = "tl-ops-waf-count-" .. tl_ops_constant_waf_count.interval;
     local cache_waf_count = require("cache.tl_ops_cache_core"):new(count_name);
 
     for service_name, nodes in pairs(service_list) do

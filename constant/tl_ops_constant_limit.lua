@@ -4,7 +4,7 @@ local tl_ops_utils_func         = require("utils.tl_ops_utils_func");
 -- 令牌桶配置
 local token = {   --服务令牌桶配置
     cache_key = {
-        options_list = "tl_ops_limit_token_options_list",
+        -- 临时字段
         capacity = "tl_ops_limit_token_capacity_service",
         block = "tl_ops_limit_token_block_service",
         rate = "tl_ops_limit_token_rate_service",
@@ -13,7 +13,10 @@ local token = {   --服务令牌桶配置
         pre_time = "tl_ops_limit_token_pre_time_service",
         token_bucket = "tl_ops_limit_token_bucket_service",
         warm = "tl_ops_limit_token_warm_service",
-        lock = "tl_ops_limit_token_lock_service"
+        lock = "tl_ops_limit_token_lock_service",
+
+        -- 持久化字段
+        options_list = "tl_ops_limit_token_options_list",
     },
     options = {
 
@@ -32,7 +35,7 @@ local token = {   --服务令牌桶配置
 -- 漏桶配置
 local leak = {   --服务漏桶配置
     cache_key = {
-        options_list = "tl_ops_limit_leak_options_list",
+        -- 临时字段
         capacity = "tl_ops_limit_leak_capacity_service",
         block = "tl_ops_limit_leak_block_service",
         rate = "tl_ops_limit_leak_rate_service",
@@ -40,7 +43,10 @@ local leak = {   --服务漏桶配置
         shrink = "tl_ops_limit_leak_shrink_service",
         pre_time = "tl_ops_limit_leak_pre_time_service",
         leak_bucket = "tl_ops_limit_leak_bucket_service",
-        lock = "tl_ops_limit_leak_lock_service"
+        lock = "tl_ops_limit_leak_lock_service",
+
+        -- 持久化字段
+        options_list = "tl_ops_limit_leak_options_list",
     },
     options = {
 
@@ -58,7 +64,7 @@ local leak = {   --服务漏桶配置
 -- 滑动窗口配置
 local sliding = {   --服务滑动窗口配置
     cache_key = {
-        options_list = "tl_ops_limit_sliding_options_list",
+        -- 临时字段
         window = "tl_ops_limit_sliding_window_service",
         block = "tl_ops_limit_sliding_block_service",
         cycle = "tl_ops_limit_sliding_cycle_service",
@@ -68,7 +74,10 @@ local sliding = {   --服务滑动窗口配置
         shrink = "tl_ops_limit_sliding_shrink_service",
         count = "tl_ops_limit_sliding_count_service",
         pre_time = "tl_ops_limit_sliding_pre_time_service",
-        lock = "tl_ops_limit_sliding_lock_service"
+        lock = "tl_ops_limit_sliding_lock_service",
+
+        -- 持久化字段
+        options_list = "tl_ops_limit_sliding_options_list",
     },
     options = {
 
@@ -107,14 +116,17 @@ local mode = {
 -- 熔断配置
 local fuse = {
     cache_key = {
+        -- 临时字段
         lock = "tl_ops_limit_fuse_lock",                                        -- boolean    熔断定时任务锁
-        req_succ = "tl_ops_limit_fuse_req_succ",                                -- int        周期内路由成功次数
-        req_fail = "tl_ops_limit_fuse_req_fail",                                -- int        周期内路由失败次数
-        options_list = "tl_ops_limit_fuse_options_list",                        -- list       配置缓存
+        node_req_succ = "tl_ops_limit_fuse_node_req_succ",                      -- int        周期内路由成功次数
+        node_req_fail = "tl_ops_limit_fuse_node_req_fail",                      -- int        周期内路由失败次数
         service_state = "tl_ops_limit_fuse_service_state",                      -- int        服务熔断状态
         service_version = "tl_ops_limit_fuse_service_version",                  -- int        服务配置变动
         service_options_version = "tl_ops_limit_fuse_service_options_version",  -- boolean    服务新增变动
         timers = "tl_ops_limit_fuse_timers",                                    -- list       当前开启自检的服务
+
+        -- 持久化字段
+        options_list = "tl_ops_limit_fuse_options_list",                        -- list       配置缓存
     },
     options = {
 

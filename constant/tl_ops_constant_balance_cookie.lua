@@ -1,6 +1,7 @@
 -- cookie 默认列表
 local tl_ops_constant_balance_cookie = {
     cache_key = {
+        -- 持久化字段
         list = "tl_ops_balance_cookie_list",
         rule = "tl_ops_balance_cookie_rule",
         rule_match_mode = "tl_ops_balance_cookie_rule_match_mode"

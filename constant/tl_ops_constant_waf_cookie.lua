@@ -1,9 +1,10 @@
 local snowflake = require("lib.snowflake");
-local scope     = require("constant.tl_ops_constant_waf_scope");
+local scope     = require("constant.tl_ops_constant_comm").tl_ops_waf_scope;
 
 -- cookie waf默认列表
 local tl_ops_constant_waf_cookie = {
     cache_key = {
+        -- 持久化字段
         list = "tl_ops_waf_cookie_list",
         open = "tl_ops_waf_cookie_open",
         scope = "tl_ops_waf_cookie_scope"

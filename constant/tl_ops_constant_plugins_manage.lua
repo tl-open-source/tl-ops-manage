@@ -1,6 +1,7 @@
 -- 插件列表
 local tl_ops_constant_plugins_manage = {
     cache_key = {
+        -- 持久化字段
         list = "tl_ops_plugins_list"
     },
     list = {

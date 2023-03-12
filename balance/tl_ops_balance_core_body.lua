@@ -10,6 +10,7 @@ local tl_ops_utils_func             = require("utils.tl_ops_utils_func");
 local tl_ops_constant_balance_body  = require("constant.tl_ops_constant_balance_body");
 local tl_ops_match_mode             = require("constant.tl_ops_constant_comm").tl_ops_match_mode;
 local tl_ops_constant_health        = require("constant.tl_ops_constant_health")
+local balance_count_body            = require("balance.count.tl_ops_balance_count_body")
 local shared                        = ngx.shared.tlopsbalance
 local find                          = ngx.re.find
 
@@ -147,6 +148,9 @@ local tl_ops_balance_body_service_matcher = function(service_list_table)
         node_id = tonumber(math.random(0,1) % #service_list_table[matcher.service]) + 1
         node = service_list[node_id]
     end
+
+    -- 命中统计
+    balance_count_body.tl_ops_balance_count_incr_body_succ(matcher.service,node_id, matcher.id);
 
     -- 获取当前节点健康状态
     local key = tl_ops_utils_func:gen_node_key(tl_ops_constant_health.cache_key.state, matcher.service, node_id)

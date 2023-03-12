@@ -52,7 +52,7 @@ local tl_ops_balance_count = function()
     
 
     -- 控制细度 ，以周期为分割，仅用store持久
-    local count_name = "tl-ops-balance-count-" .. tl_ops_constant_balance.count.interval;
+    local count_name = "tl-ops-balance-count-" .. tl_ops_constant_balance_count.interval;
     local cache_balance_count = require("cache.tl_ops_cache_core"):new(count_name);
 
     for service_name, nodes in pairs(service_list) do
@@ -63,13 +63,13 @@ local tl_ops_balance_count = function()
     
         for i = 1, #nodes do
             local node_id = i-1
-            local cur_succ_count_key = tl_ops_utils_func:gen_node_key(tl_ops_constant_balance.cache_key.req_succ, service_name, node_id)
+            local cur_succ_count_key = tl_ops_utils_func:gen_node_key(tl_ops_constant_balance.cache_key.node_req_succ, service_name, node_id)
             local cur_succ_count = shared:get(cur_succ_count_key)
             if not cur_succ_count then
                 cur_succ_count = 0
             end
 
-            local cur_fail_count_key = tl_ops_utils_func:gen_node_key(tl_ops_constant_balance.cache_key.req_fail, service_name, node_id)
+            local cur_fail_count_key = tl_ops_utils_func:gen_node_key(tl_ops_constant_balance.cache_key.node_req_fail, service_name, node_id)
             local cur_fail_count = shared:get(cur_fail_count_key)
             if not cur_fail_count then
                 cur_fail_count = 0
@@ -80,16 +80,16 @@ local tl_ops_balance_count = function()
                 tlog:err("balance count async err , succ=",cur_succ_count,",fail=",cur_fail_count,",service_name=",service_name,",node_id=",node_id)
             else
                 -- push to list
-                local success_key = tl_ops_utils_func:gen_node_key(tl_ops_constant_balance.cache_key.balance_interval_success, service_name, node_id)
-                local balance_interval_success = cache_balance_count:get001(success_key)
-                if not balance_interval_success then
-                    balance_interval_success = {}
+                local success_key = tl_ops_utils_func:gen_node_key(tl_ops_constant_balance.cache_key.node_counting_list, service_name, node_id)
+                local node_counting_list = cache_balance_count:get001(success_key)
+                if not node_counting_list then
+                    node_counting_list = {}
                 else
-                    balance_interval_success = cjson.decode(balance_interval_success)
+                    node_counting_list = cjson.decode(node_counting_list)
                 end
 
-                balance_interval_success[os.date("%Y-%m-%d %H:%M:%S", ngx.now())] = cur_count
-                local ok, _ = cache_balance_count:set001(success_key, cjson.encode(balance_interval_success))
+                node_counting_list[os.date("%Y-%m-%d %H:%M:%S", ngx.now())] = cur_count
+                local ok, _ = cache_balance_count:set001(success_key, cjson.encode(node_counting_list))
                 if not ok then
                     tlog:err("balance success count async err ,success_key=",success_key,",cur_count=",cur_count,",err=",_)
                 end
@@ -104,7 +104,7 @@ local tl_ops_balance_count = function()
                     tlog:err("balance fail count reset err ,success_key=",success_key,",cur_count=",cur_count)
                 end
 
-                tlog:dbg("balance count async ok ,success_key=",success_key,",balance_interval_success=",balance_interval_success)
+                tlog:dbg("balance count async ok ,success_key=",success_key,",node_counting_list=",node_counting_list)
             end
         end
     end

@@ -4,10 +4,10 @@
 -- @author iamtsm
 -- @email 1905333456@qq.com
 
-
 local tl_ops_constant_waf_ip    = require("constant.tl_ops_constant_waf_ip");
-local tl_ops_constant_waf_scope = require("constant.tl_ops_constant_waf_scope")
+local waf_scope                 = require("constant.tl_ops_constant_comm").tl_ops_waf_scope;
 local tl_ops_utils_func         = require("utils.tl_ops_utils_func");
+local waf_count_ip              = require("waf.count.tl_ops_waf_count_ip")
 local cache_ip                  = require("cache.tl_ops_cache_core"):new("tl-ops-waf-ip");
 local tlog                      = require("utils.tl_ops_utils_log"):new("tl_ops_waf_ip");
 local find                      = ngx.re.find
@@ -23,7 +23,7 @@ local tl_ops_waf_core_ip_filter_global_pass = function()
     end
 
     -- 根据作用域进行waf拦截
-    if ip_scope ~= tl_ops_constant_waf_scope.global then
+    if ip_scope ~= waf_scope.global then
         return true
     end
 
@@ -108,6 +108,7 @@ local tl_ops_waf_core_ip_filter_global_pass = function()
                 break
             end
             -- 命中规则的ip
+            waf_count_ip.tl_ops_waf_count_incr_ip_succ()
             return false
         until true
     end
@@ -120,8 +121,8 @@ end
 
 -- 匹配到服务层拦截
 -- true : 通过, false : 拦截
-local tl_ops_waf_core_ip_filter_service_pass = function(service_name)
-    if not service_name then
+local tl_ops_waf_core_ip_filter_service_pass = function(service_name, node_id)
+    if not service_name or node_id == nil then
         return true
     end
     
@@ -132,7 +133,7 @@ local tl_ops_waf_core_ip_filter_service_pass = function(service_name)
     end
 
     -- 根据作用域进行waf拦截
-    if ip_scope ~= tl_ops_constant_waf_scope.service then
+    if ip_scope ~= waf_scope.service then
         return true
     end
 
@@ -236,6 +237,7 @@ local tl_ops_waf_core_ip_filter_service_pass = function(service_name)
                 break
             end
             -- 命中规则的ip
+            waf_count_ip.tl_ops_waf_count_incr_ip_succ(service_name, 0, ip.id)
             return false
         until true
     end

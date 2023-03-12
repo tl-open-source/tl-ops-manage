@@ -29,7 +29,7 @@ local tl_ops_waf_core_api_filter_global_pass = function()
     end
 
     -- 根据作用域进行waf拦截
-    if api_scope ~= tl_ops_constant_waf_scope.global then
+    if api_scope ~= waf_scope.global then
         return true
     end
 

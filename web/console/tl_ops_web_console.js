@@ -12,10 +12,12 @@ const tl_ops_web_console_main = function () {
     window.form = layui.form;
     window.table = layui.table;
     window.laytpl = layui.laytpl;
+    window.layer = layui.layer;
 
     window.consoleEchartsList = [];
     window.syncDataInterId = 0;
 
+    let index = layer.load()
 
     form.on('switch()', function(data){
         if(data.elem.checked){ //实时刷数据
@@ -45,6 +47,7 @@ const tl_ops_web_console_main = function () {
             
             tl_ops_web_console_service_state_render(service_data)
         }
+        layer.close(index)
     }).then((res) => {
         window.onresize = function () {
             consoleEchartsList.forEach((item) => {
@@ -340,16 +343,16 @@ const tl_ops_web_console_balance_time_list_caculate_days = function (data) {
         let seriesBalanceList = [];
         let nodes = data[key].nodes;
         for (let skey in nodes) {
-            let balanceSuccessList = nodes[skey].balance_success;
+            let balanceNodeList = nodes[skey].balance_node_count;
 
-            for (let time in balanceSuccessList) {
-                let count = balanceSuccessList[time];
+            for (let time in balanceNodeList) {
+                let count = balanceNodeList[time];
                 balance_count += count;
             }
 
             let dayTimeCountList = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] //节点总量统计
-            for (let timeItem in balanceSuccessList) {
-                let count = balanceSuccessList[timeItem];
+            for (let timeItem in balanceNodeList) {
+                let count = balanceNodeList[timeItem];
                 let day = timeItem.toString().split(" ")[0]
                 let time = timeItem.toString().split(" ")[1]
                 let hours = parseInt(time.split(":")[0])

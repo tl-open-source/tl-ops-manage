@@ -33,7 +33,7 @@
                 "nodes": {                              // 节点列表
                     "test-node-1": {                    // 节点名称
                         "health_state": false,          // 节点健康状态
-                        "balance_success": {            // 负载统计列表
+                        "balance_node_count": {         // 负载统计列表
                             "2022-08-16 11:20:26": 3,
                         },
                         "limit_depend": "token",        // 节点限流熔断依赖算法

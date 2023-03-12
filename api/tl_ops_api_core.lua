@@ -30,6 +30,21 @@ tl_ops_api_core["/tlops/waf/ip/set"] = require("api.router.tl_ops_api_set_waf_ip
 tl_ops_api_core["/tlops/waf/cc/list"] = require("api.router.tl_ops_api_get_waf_cc")
 tl_ops_api_core["/tlops/waf/cc/set"] = require("api.router.tl_ops_api_set_waf_cc")
 
+-- balance count
+tl_ops_api_core["/tlops/balance/count/api/list"] = require("api.router.tl_ops_api_get_balance_count_api")
+tl_ops_api_core["/tlops/balance/count/cookie/list"] = require("api.router.tl_ops_api_get_balance_count_cookie")
+tl_ops_api_core["/tlops/balance/count/body/list"] = require("api.router.tl_ops_api_get_balance_count_body")
+tl_ops_api_core["/tlops/balance/count/header/list"] = require("api.router.tl_ops_api_get_balance_count_header")
+tl_ops_api_core["/tlops/balance/count/param/list"] = require("api.router.tl_ops_api_get_balance_count_param")
+
+-- waf count
+tl_ops_api_core["/tlops/waf/count/api/list"] = require("api.router.tl_ops_api_get_waf_count_api")
+tl_ops_api_core["/tlops/waf/count/cc/list"] = require("api.router.tl_ops_api_get_waf_count_cc")
+tl_ops_api_core["/tlops/waf/count/ip/list"] = require("api.router.tl_ops_api_get_waf_count_ip")
+tl_ops_api_core["/tlops/waf/count/cookie/list"] = require("api.router.tl_ops_api_get_waf_count_cookie")
+tl_ops_api_core["/tlops/waf/count/header/list"] = require("api.router.tl_ops_api_get_waf_count_header")
+tl_ops_api_core["/tlops/waf/count/param/list"] = require("api.router.tl_ops_api_get_waf_count_param")
+
 -- service
 tl_ops_api_core["/tlops/service/list"] = require("api.router.tl_ops_api_get_service")
 tl_ops_api_core["/tlops/service/set"] = require("api.router.tl_ops_api_set_service")

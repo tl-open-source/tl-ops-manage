@@ -15,13 +15,12 @@ local tl_ops_balance_core_cookie        = require("balance.tl_ops_balance_core_c
 local tl_ops_balance_core_header        = require("balance.tl_ops_balance_core_header");
 local tl_ops_balance_core_param         = require("balance.tl_ops_balance_core_param");
 local cache_service                     = require("cache.tl_ops_cache_core"):new("tl-ops-service");
-local balance_count                     = require("balance.count.tl_ops_balance_count");
+local balance_count_node                = require("balance.count.tl_ops_balance_count_node")
 local waf                               = require("waf.tl_ops_waf")
 local tl_ops_limit_fuse_token_bucket    = require("limit.fuse.tl_ops_limit_fuse_token_bucket");
 local tl_ops_limit_fuse_leak_bucket     = require("limit.fuse.tl_ops_limit_fuse_leak_bucket");
 local tl_ops_limit                      = require("limit.tl_ops_limit");
 local cjson                             = require("cjson.safe");
-local tl_ops_utils_func                 = require("utils.tl_ops_utils_func");
 local tl_ops_manage_env                 = require("tl_ops_manage_env")
 local ngx_balancer                      = require ("ngx.balancer")
 local tl_ops_err_content                = require("err.tl_ops_err_content")
@@ -99,13 +98,13 @@ function _M:tl_ops_balance_core_filter(ctx)
 
     -- 流控介入
     if tl_ops_manage_env.balance.limiter then
-        local depend = tl_ops_limit.tl_ops_limit_get_limiter(node.service, node_id)
+        local depend = tl_ops_limit:tl_ops_limit_get_limiter(node.service, node_id)
         if depend then
             -- 令牌桶流控
             if depend == tl_ops_constant_limit.depend.token then
                 local token_result = tl_ops_limit_fuse_token_bucket.tl_ops_limit_token( node.service, node_id)  
                 if not token_result or token_result == false then
-                    balance_count:tl_ops_balance_count_incr_fail(node.service, node_id)
+                    balance_count_node.tl_ops_balance_count_incr_node_fail(node.service, node_id)
                     tl_ops_err_content:err_content_rewrite_to_balance("", "t-limit", balance_mode, tl_ops_constant_balance.cache_key.token_limit, "")
                     return
                 end
@@ -115,7 +114,7 @@ function _M:tl_ops_balance_core_filter(ctx)
             if depend == tl_ops_constant_limit.depend.leak then
                 local leak_result = tl_ops_limit_fuse_leak_bucket.tl_ops_limit_leak( node.service, node_id)
                 if not leak_result or leak_result == false then
-                    balance_count:tl_ops_balance_count_incr_fail(node.service, node_id)
+                    balance_count_node.tl_ops_balance_count_incr_node_fail(node.service, node_id)
                     tl_ops_err_content:err_content_rewrite_to_balance("", "l-limit", balance_mode, tl_ops_constant_balance.cache_key.leak_limit, "")
                     return
                 end
@@ -128,14 +127,10 @@ function _M:tl_ops_balance_core_filter(ctx)
 
     -- 节点下线
     if not node_state or node_state == false then
-        balance_count:tl_ops_balance_count_incr_fail(node.service, node_id)
-
-        local limit_req_fail_count_key = tl_ops_utils_func:gen_node_key(tl_ops_constant_limit.fuse.cache_key.req_fail, node.service, node_id)
-        local failed_count = shared:get(limit_req_fail_count_key)
-		if not failed_count then
-			shared:set(limit_req_fail_count_key, 0);
-        end
-        shared:incr(limit_req_fail_count_key, 1)
+        -- 负载失败 -- 负载统计器
+        balance_count_node.tl_ops_balance_count_incr_node_fail(node.service, node_id)
+        -- 负载失败 -- 限流统计器
+        tl_ops_limit:tl_ops_limit_fuse_incr_fail(node.service, node_id);
         
         tl_ops_err_content:err_content_rewrite_to_balance(node.service .. ":" .. node.name, "offline", balance_mode, tl_ops_constant_balance.cache_key.offline, "")
         return
@@ -161,15 +156,11 @@ function _M:tl_ops_balance_core_balance(ctx)
         return
     end
 
-    -- 负载成功
-    balance_count:tl_ops_balance_count_incr_succ(tlops_ups_node.service, tlops_ups_node_id)
+    -- 负载成功 - 负载统计器
+    balance_count_node.tl_ops_balance_count_incr_node_succ(tlops_ups_node.service, tlops_ups_node_id)
 
-    local limit_req_succ_count_key = tl_ops_utils_func:gen_node_key(tl_ops_constant_limit.fuse.cache_key.req_succ, tlops_ups_node.service, tlops_ups_node_id)
-    local success_count = shared:get(limit_req_succ_count_key)
-    if not success_count then
-        shared:set(limit_req_succ_count_key, 0);
-    end
-    shared:incr(limit_req_succ_count_key, 1)
+    -- 负载成功 -- 限流统计器
+    tl_ops_limit:tl_ops_limit_fuse_incr_succ(tlops_ups_node.service, tlops_ups_node_id);
 
     ngx.header[tl_ops_constant_balance.proxy_server] = tlops_ups_node.service .. ":" .. tlops_ups_node.name;
     ngx.header[tl_ops_constant_balance.proxy_state] = "online"

@@ -4,6 +4,7 @@ local api_type = require("constant.tl_ops_constant_comm").tl_ops_api_type;
 -- api 默认列表
 local tl_ops_constant_balance_api = {
     cache_key = {
+        -- 持久化字段
         list = "tl_ops_balance_api_list",
         rule = "tl_ops_balance_api_rule",
         rule_match_mode = "tl_ops_balance_api_rule_match_mode"

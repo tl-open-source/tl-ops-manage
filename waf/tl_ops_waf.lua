@@ -5,7 +5,6 @@
 -- @email 1905333456@qq.com
 
 local tl_ops_waf_core           = require("waf.tl_ops_waf_core"):new();
-local tl_ops_constant_waf_scope = require("constant.tl_ops_constant_waf_scope")
 
 local _M = {}
 

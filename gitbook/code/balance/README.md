@@ -175,7 +175,7 @@ function _M:tl_ops_balance_core_filter(ctx)
             if depend == tl_ops_constant_limit.depend.token then
                 local token_result = tl_ops_limit_fuse_token_bucket.tl_ops_limit_token( node.service, node_id)  
                 if not token_result or token_result == false then
-                    balance_count:tl_ops_balance_count_incr_fail(node.service, node_id)
+                    balance_count:tl_ops_balance_count_incr_node_fail(node.service, node_id)
                     tl_ops_err_content:err_content_rewrite_to_balance("", "t-limit", balance_mode, tl_ops_constant_balance.cache_key.token_limit)
                     return
                 end
@@ -185,7 +185,7 @@ function _M:tl_ops_balance_core_filter(ctx)
             if depend == tl_ops_constant_limit.depend.leak then
                 local leak_result = tl_ops_limit_fuse_leak_bucket.tl_ops_limit_leak( node.service, node_id)
                 if not leak_result or leak_result == false then
-                    balance_count:tl_ops_balance_count_incr_fail(node.service, node_id)
+                    balance_count:tl_ops_balance_count_incr_node_fail(node.service, node_id)
                     tl_ops_err_content:err_content_rewrite_to_balance("", "l-limit", balance_mode, tl_ops_constant_balance.cache_key.leak_limit)
                     return
                 end
@@ -198,14 +198,14 @@ function _M:tl_ops_balance_core_filter(ctx)
 
     -- 节点下线
     if not node_state or node_state == false then
-        balance_count:tl_ops_balance_count_incr_fail(node.service, node_id)
+        balance_count:tl_ops_balance_count_incr_node_fail(node.service, node_id)
 
-        local limit_req_fail_count_key = tl_ops_utils_func:gen_node_key(tl_ops_constant_limit.fuse.cache_key.req_fail, node.service, node_id)
-        local failed_count = shared:get(limit_req_fail_count_key)
+        local limit_node_req_fail_count_key = tl_ops_utils_func:gen_node_key(tl_ops_constant_limit.fuse.cache_key.node_req_fail, node.service, node_id)
+        local failed_count = shared:get(limit_node_req_fail_count_key)
 		if not failed_count then
-			shared:set(limit_req_fail_count_key, 0);
+			shared:set(limit_node_req_fail_count_key, 0);
         end
-        shared:incr(limit_req_fail_count_key, 1)
+        shared:incr(limit_node_req_fail_count_key, 1)
         
         tl_ops_err_content:err_content_rewrite_to_balance(node.service .. ":" .. node.name, "offline", balance_mode, tl_ops_constant_balance.cache_key.offline)
         return
@@ -229,14 +229,14 @@ function _M:tl_ops_balance_core_balance(ctx)
     end
 
     -- 负载成功
-    balance_count:tl_ops_balance_count_incr_succ(tlops_ups_node.service, tlops_ups_node_id)
+    balance_count:tl_ops_balance_count_incr_node_succ(tlops_ups_node.service, tlops_ups_node_id)
 
-    local limit_req_succ_count_key = tl_ops_utils_func:gen_node_key(tl_ops_constant_limit.fuse.cache_key.req_succ, tlops_ups_node.service, tlops_ups_node_id)
-    local success_count = shared:get(limit_req_succ_count_key)
+    local limit_node_req_succ_count_key = tl_ops_utils_func:gen_node_key(tl_ops_constant_limit.fuse.cache_key.node_req_succ, tlops_ups_node.service, tlops_ups_node_id)
+    local success_count = shared:get(limit_node_req_succ_count_key)
     if not success_count then
-        shared:set(limit_req_succ_count_key, 0);
+        shared:set(limit_node_req_succ_count_key, 0);
     end
-    shared:incr(limit_req_succ_count_key, 1)
+    shared:incr(limit_node_req_succ_count_key, 1)
 
     ngx.header[tl_ops_constant_balance.proxy_server] = tlops_ups_node.service .. ":" .. tlops_ups_node.name;
     ngx.header[tl_ops_constant_balance.proxy_state] = "online"

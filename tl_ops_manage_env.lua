@@ -59,11 +59,11 @@ return {
         --[[
             en :load counter, after this option is enabled, every time nginx is started, 
                 a timer will be enabled to count the load requests within a certain period of time
-                The time interval is configured in 'constant.tl_ops_constant_balance.count.interval'
+                The time interval is configured in 'constant.tl_ops_constant_balance_count.interval'
                 Notice: Do not set the statistical time interval too short, which may affect performance.
             
             zn :负载统计器，开启此选项后，将在每次启动nginx时，将开启定时器统计一定时间段内的负载请求情况
-                时间间隔在‘constant.tl_ops_constant_balance.count.interval’进行配置
+                时间间隔在‘constant.tl_ops_constant_balance_count.interval’进行配置
                 注意：统计时间间隔不要设置过短，可能会影响性能。
         ]]
         counting = true,
@@ -87,14 +87,13 @@ return {
         --[[
             en :waf filter statistic, after this option is enabled, every time nginx is started, 
                 a timer will be enabled to count the waf filter requests within a certain period of time
-                The time interval is configured in 'constant.tl_ops_constant_waf.count.interval'
+                The time interval is configured in 'constant.tl_ops_constant_waf_count.interval'
                 Notice: Do not set the statistical time interval too short, which may affect performance.
             
             zn :waf过滤统计器，开启此选项后，将在每次启动nginx时，将开启定时器统计一定时间段内的waf过滤请求情况
-                时间间隔在‘constant.tl_ops_constant_waf.count.interval’进行配置
+                时间间隔在‘constant.tl_ops_constant_waf_count.interval’进行配置
                 注意：统计时间间隔不要设置过短，可能会影响性能。
         ]]
         counting = true,
-
     }
 }

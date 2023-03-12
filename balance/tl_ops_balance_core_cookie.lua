@@ -9,6 +9,7 @@ local cache_cookie                      = require("cache.tl_ops_cache_core"):new
 local tl_ops_utils_func                 = require("utils.tl_ops_utils_func");
 local tl_ops_constant_balance_cookie    = require("constant.tl_ops_constant_balance_cookie");
 local tl_ops_constant_health            = require("constant.tl_ops_constant_health")
+local balance_count_cookie              = require("balance.count.tl_ops_balance_count_cookie")
 local shared                            = ngx.shared.tlopsbalance
 
 
@@ -122,6 +123,9 @@ local tl_ops_balance_cookie_service_matcher = function(service_list_table)
         node_id = tonumber(math.random(0,1) % #service_list_table[matcher.service]) + 1
         node = service_list[node_id]
     end
+
+    -- 命中统计
+    balance_count_cookie.tl_ops_balance_count_incr_cookie_succ(matcher.service,node_id, matcher.id);
 
     -- 获取当前节点健康状态
     local key = tl_ops_utils_func:gen_node_key(tl_ops_constant_health.cache_key.state, matcher.service, node_id)

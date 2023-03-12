@@ -34,6 +34,12 @@ local tl_ops_constant_comm = {
         api = "api",
         -- 文件资源
         page = "page"
+    },
+    tl_ops_waf_scope = { -- waf模式
+        -- 全局waf
+        global = "global",
+        -- 服务级别waf
+        service = "service"
     }
 };
 

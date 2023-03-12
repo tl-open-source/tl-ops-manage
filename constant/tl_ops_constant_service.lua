@@ -3,6 +3,7 @@ local snowflake         = require("lib.snowflake");
 -- service 默认列表
 local tl_ops_constant_service = {
     cache_key = {
+        -- 持久化字段
         service_list = "tl_ops_service_list",
         service_rule = "tl_ops_service_rule",
     },

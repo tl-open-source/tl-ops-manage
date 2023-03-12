@@ -45,9 +45,19 @@
                     </a>
                 </li>
             </ul>
+            <ul class="layui-nav layui-layout-right" lay-filter="layadmin-layout-right">
+                <li class="layui-nav-item" lay-unselect>
+                    <a href="javascript:;">
+                        <cite id="tl-ops-username">未登录</cite>
+                    </a>
+                    <dl class="layui-nav-child">
+                        <dd style="text-align: center;" onclick="logout()"><a>退出</a></dd>
+                    </dl>
+                </li>
+            </ul>
         </div>
 
-        <div class="layui-side layui-bg-black layui-side-menu" style="transition: all 0.5s;" id="tl-side-menu" lay-filter="tl-side-menu">
+        <div class="layui-side layui-bg-black layui-side-menu" style="transition: all 0.1s;" id="tl-side-menu" lay-filter="tl-side-menu">
             <div class="layui-side-scroll">
                 <ul class="layui-nav layui-nav-tree" lay-shrink="all">
                     <li data-name="console" class="layui-nav-item tl-nav-item">
@@ -58,6 +68,16 @@
                         <dl class="layui-nav-child" onclick="openpage('console/tl_ops_web_console.html')">
                             <dd data-name="console-manage">
                                 <a>数据统计</a>
+                            </dd>
+                        </dl>
+                        <dl class="layui-nav-child" onclick="openpage('console/tl_ops_web_console_balance_count.html')">
+                            <dd data-name="console-balance-count-manage">
+                                <a>负载统计</a>
+                            </dd>
+                        </dl>
+                        <dl class="layui-nav-child" onclick="openpage('console/tl_ops_web_console_waf_count.html')">
+                            <dd data-name="console-waf-count-manage">
+                                <a>WAF统计</a>
                             </dd>
                         </dl>
                     </li>
@@ -240,6 +260,27 @@
     <script>
         layui.use(['element', 'layer', 'util'], function () {
             var element = layui.element, layer = layui.layer, $ = layui.$;
+
+            function getCookie(name){
+                var cookies = document.cookie.split("; ");
+                for ( var i = 0; i < cookies.length; i++) {
+                    var arr = cookies[i].split("=");
+                    if (arr[0].trim() === name){
+                        return arr[1];
+                    }
+                }
+                return "";
+            }
+
+            $("#tl-ops-username")[0].innerText = getCookie("_u_name")
+            window.logout = function () {
+                $.ajax({
+                    url: '/tlops/auth/logout',
+                    success: function(res){
+                        window.location.reload();
+                    }
+                });
+            };
             window.openpage = function (url) {
                 $("#tl-ops-web-index-iframe")[0].src = url;
             }

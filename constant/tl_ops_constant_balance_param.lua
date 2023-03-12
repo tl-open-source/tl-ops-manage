@@ -1,6 +1,7 @@
 -- param 默认列表
 local tl_ops_constant_balance_param = {
     cache_key = {
+        -- 持久化字段
         list = "tl_ops_balance_param_list",
         rule = "tl_ops_balance_param_rule",
         rule_match_mode = "tl_ops_balance_param_rule_match_mode"

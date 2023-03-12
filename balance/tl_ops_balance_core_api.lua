@@ -10,6 +10,7 @@ local tl_ops_utils_func             = require("utils.tl_ops_utils_func");
 local tl_ops_constant_balance_api   = require("constant.tl_ops_constant_balance_api");
 local tl_ops_constant_comm          = require("constant.tl_ops_constant_comm");
 local tl_ops_constant_health        = require("constant.tl_ops_constant_health");
+local balance_count_api             = require("balance.count.tl_ops_balance_count_api")
 local tl_ops_match_mode             = tl_ops_constant_comm.tl_ops_match_mode;
 local tl_ops_api_type               = tl_ops_constant_comm.tl_ops_api_type;
 local shared                        = ngx.shared.tlopsbalance;
@@ -154,6 +155,8 @@ local tl_ops_balance_api_service_matcher = function(service_list_table)
     local key = tl_ops_utils_func:gen_node_key(tl_ops_constant_health.cache_key.state, matcher.service, node_id)
     local node_state , _ = shared:get(key)
 
+    -- 命中统计
+    balance_count_api.tl_ops_balance_count_incr_api_succ(matcher.service, node_id, matcher.id);
 
     -- 静态页面代理路径
     local api_type = matcher.api_type

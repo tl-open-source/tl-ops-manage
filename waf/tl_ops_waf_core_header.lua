@@ -4,9 +4,10 @@
 -- @author iamtsm
 -- @email 1905333456@qq.com
 
+
+local waf_count_header              = require("waf.count.tl_ops_waf_count_header")
 local tl_ops_constant_waf_header    = require("constant.tl_ops_constant_waf_header")
-local tl_ops_constant_waf_scope     = require("constant.tl_ops_constant_waf_scope")
-local tl_ops_utils_func             = require("utils.tl_ops_utils_func")
+local waf_scope                     = require("constant.tl_ops_constant_comm").tl_ops_waf_scope;
 local cache_header                  = require("cache.tl_ops_cache_core"):new("tl-ops-waf-header")
 local tlog                          = require("utils.tl_ops_utils_log"):new("tl_ops_waf_header")
 local find                          = ngx.re.find
@@ -23,7 +24,7 @@ local tl_ops_waf_core_header_filter_global_pass = function()
     end
 
     -- 根据作用域进行waf拦截
-    if header_scope ~= tl_ops_constant_waf_scope.global then
+    if header_scope ~= waf_scope.global then
         return true
     end
     
@@ -135,6 +136,7 @@ local tl_ops_waf_core_header_filter_global_pass = function()
                         break
                     end
                     -- 命中规则的header
+                    waf_count_header.tl_ops_waf_count_incr_header_succ()
                     return false
                 until true
             end
@@ -162,7 +164,7 @@ local tl_ops_waf_core_header_filter_service_pass = function(service_name)
     end
 
     -- 根据作用域进行waf拦截
-    if header_scope ~= tl_ops_constant_waf_scope.service then
+    if header_scope ~= waf_scope.service then
         return true
     end
     
@@ -293,6 +295,7 @@ local tl_ops_waf_core_header_filter_service_pass = function(service_name)
                         break
                     end
                     -- 命中规则的header
+                    waf_count_header.tl_ops_waf_count_incr_header_succ(service_name, 0, header.id)
                     return false
                 until true
             end

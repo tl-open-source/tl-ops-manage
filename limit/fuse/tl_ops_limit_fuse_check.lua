@@ -261,13 +261,13 @@ tl_ops_limit_fuse_check_nodes = function ( conf )
 
 		-- 路由失败率策略
 		if mode == tl_ops_constant_limit.mode.balance_fail then
-			local success_count_key = tl_ops_utils_func:gen_node_key(tl_ops_constant_limit.fuse.cache_key.req_succ, service_name, node_id)
+			local success_count_key = tl_ops_utils_func:gen_node_key(tl_ops_constant_limit.fuse.cache_key.node_req_succ, service_name, node_id)
 			local success_count = shared:get(success_count_key)
 			if not success_count then
 				success_count = 0
 			end
 	
-			local failed_count_key = tl_ops_utils_func:gen_node_key(tl_ops_constant_limit.fuse.cache_key.req_fail, service_name, node_id)
+			local failed_count_key = tl_ops_utils_func:gen_node_key(tl_ops_constant_limit.fuse.cache_key.node_req_fail, service_name, node_id)
 			local failed_count = shared:get(failed_count_key)
 			if not failed_count then
 				failed_count = 0
@@ -612,10 +612,10 @@ tl_ops_limit_fuse_auto_recover = function( conf )
 			
 			-- 路由失败率熔断模式下 : 单个周期内请求次数统计，周期结束清除全熔断的统计值
 			if mode == tl_ops_constant_limit.mode.balance_fail then
-				local success_count_key = tl_ops_utils_func:gen_node_key(tl_ops_constant_limit.fuse.cache_key.req_succ, service_name, node_id)
+				local success_count_key = tl_ops_utils_func:gen_node_key(tl_ops_constant_limit.fuse.cache_key.node_req_succ, service_name, node_id)
 				shared:set(success_count_key, 0)
 
-				local failed_count_key = tl_ops_utils_func:gen_node_key(tl_ops_constant_limit.fuse.cache_key.req_fail, service_name, node_id)
+				local failed_count_key = tl_ops_utils_func:gen_node_key(tl_ops_constant_limit.fuse.cache_key.node_req_fail, service_name, node_id)
 				shared:set(failed_count_key, 0)
 
 				tlog:dbg("tl_ops_limit_fuse_auto_recover reset count done service_name=",service_name,",node_id=",node_id)

@@ -76,6 +76,7 @@ local tl_ops_plugin_constant_auth = {
     },
     tlops_api = {                                   -- 对外提供的API
         login = "/tlops/auth/login",
+        logout = "/tlops/auth/logout",
         get = "/tlops/auth/get",
         set = "/tlops/auth/set",
     },
