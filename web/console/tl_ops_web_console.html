@@ -174,7 +174,8 @@
                                         
                                             {{#  if(service.type === 'balance') { }}
                                             <i class="layui-icon layui-icon-fire tl-icon-font" style="position: initial;margin-left: 5px;" id="tl-icon-balance-{{service.id}}"
-                                            onmouseleave="tl_mouse_leave_tips()" onmouseenter="tl_mouse_enter_tips('tl-icon-balance-{{service.id}}','点击查看负载详情，暂不支持')"></i>
+                                            onmouseleave="tl_mouse_leave_tips()" onmouseenter="tl_mouse_enter_tips('tl-icon-balance-{{service.id}}','点击查看负载详情')" 
+                                            onclick="tl_ops_web_console_goto_detail('console/tl_ops_web_console_balance_count.html')"></i>
                                             <div style="float: right;" class="layui-form">
                                                 <span class="layui-badge layui-bg-blue " style="padding: 4px 14px 4px 14px;cursor: pointer;">当天</span>
                                                 <span class="layui-badge layui-bg-red layui-btn-disabled"
@@ -200,7 +201,8 @@
 
                                             {{#  if(service.type === 'waf') { }}
                                             <i class="layui-icon layui-icon-fire tl-icon-font" style="position: initial;" id="tl-icon-waf-{{service.id}}"
-                                            onmouseleave="tl_mouse_leave_tips()" onmouseenter="tl_mouse_enter_tips('tl-icon-waf-{{service.id}}','点击查看WAF详情，暂不支持')"></i>
+                                            onmouseleave="tl_mouse_leave_tips()" onmouseenter="tl_mouse_enter_tips('tl-icon-waf-{{service.id}}','点击查看WAF详情')" 
+                                            onclick="tl_ops_web_console_goto_detail('console/tl_ops_web_console_waf_count.html')"></i>
 
                                             <div style="float: right;" class="layui-form">
                                                 <span class="layui-badge layui-bg-blue " style="padding: 4px 14px 4px 14px;cursor: pointer;">当天</span>

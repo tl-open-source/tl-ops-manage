@@ -85,9 +85,7 @@
 - [x] Support Waf statistics display
 
 
-- [ ] Support custom back-to-source cache
-
-- [ ] Support dynamic plug-in
+- [x] Support dynamic plug-in
 
 - [x] Support for custom data sources
 
@@ -110,8 +108,6 @@
 
 - [x] [Plugin] Support cluster deployment data synchronization
 
-- [ ] [Plugin] Support health check log analysis
+- [ ] [Plugin] Support log analysis
 
-- [ ] [Plugin] Supports fuse current limiting log analysis
-
-- [ ] [Plugin] Support routing load log analysis
+- [ ] [Plugin] Supports health check debug

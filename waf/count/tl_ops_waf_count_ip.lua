@@ -23,7 +23,7 @@ local tl_ops_waf_count_ip_core = function( service_name, node_id, id )
     end
 
     if cur_count == 0 then
-        tlog:dbg("waf ip count dont need async , cur_count=",cur_count,",service_name=",service_name,",node_id=",node_id)
+        tlog:dbg("waf ip count dont need async , cur_count=",cur_count,",service_name=",service_name,",node_id=",node_id,",cur_count_key=",cur_count_key)
     else
         local list_key = tl_ops_utils_func:gen_node_key(tl_ops_constant_waf_count.cache_key.ip_counting_list, service_name, node_id)
         local list = cache_waf_count:get001(list_key)

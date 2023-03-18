@@ -6,7 +6,7 @@ TL_OPS_PATH="/usr/local/tl-ops-manage/"
 TL_OPS_CONF_PATH="/usr/local/tl-ops-manage/conf/tl_ops_manage.conf"
 TL_OPS_LUA_PATH="/usr/local/openresty/lualib/?.lua;;/usr/local/tl-ops-manage/?.lua;;"
 TL_OPS_LUAC_PATH="/usr/local/openresty/lualib/?.so;;"
-TL_OPS_VER="v3.4.0"
+TL_OPS_VER="v3.4.1"
 
 echo_msg(){
     cur_time=$(date "+%Y-%m-%d %H:%M:%S")

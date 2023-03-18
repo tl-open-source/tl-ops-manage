@@ -56,18 +56,18 @@ const tl_ops_web_store_render = function () {
         elem: '#'+_table_id_name,
         url: '/tlops/store/list',
         cols: tl_ops_web_store_cols(),
-        page:false,
+        page: true,
         needReloadMsg : false,
         toolbar: '#tl-ops-web-store-toolbar',
         defaultToolbar: ['filter', 'print', 'exports'],
         totalRow: true,
         parseData: function(res){
             let data = []
-            for(let key in res.data){
+            for(let key in res.data.list){
                 let updatetime = null
                 let newList = []
-                if (res.data[key].list){
-                    res.data[key].list.forEach((item)=>{
+                if (res.data.list[key].list){
+                    res.data.list[key].list.forEach((item)=>{
                         if(new Date(item.time) > updatetime){
                             updatetime = new Date(item.time)
                         }
@@ -77,17 +77,17 @@ const tl_ops_web_store_render = function () {
                         }
                     })
                 }
-                res.data[key].version = parseInt(res.data[key].version)
-                res.data[key].updatetime = updatetime ? updatetime.toLocaleString() : null
-                res.data[key].list = newList;
-                data.push(res.data[key])
+                res.data.list[key].version = res.data.list[key].version
+                res.data.list[key].updatetime = updatetime ? updatetime.toLocaleString() : null
+                res.data.list[key].list = newList;
+                data.push(res.data.list[key])
             }
             data = data.sort(function(a, b){return new Date(a.id) - new Date(b.id)})
 
             return {
                 "code": res.code,
                 "msg": res.msg,
-                "count": data.length,
+                "count": res.data.count,
                 "data":  data
             };
         }
@@ -100,7 +100,7 @@ const tl_ops_web_store_reload = function (matcher) {
         elem: '#'+_table_id_name,
         url: '/tlops/store/list',
         where : matcher,
-        page : false,
+        page : true,
         cols: tl_ops_web_store_cols(),
         needReloadMsg : false,
         toolbar: '#tl-ops-web-store-toolbar',
@@ -108,11 +108,11 @@ const tl_ops_web_store_reload = function (matcher) {
         totalRow: true,
         parseData: function(res){
             let data = []
-            for(let key in res.data){
+            for(let key in res.data.list){
                 let updatetime = null
                 let newList = []
-                if (res.data[key].list){
-                    res.data[key].list.forEach((item)=>{
+                if (res.data.list[key].list){
+                    res.data.list[key].list.forEach((item)=>{
                         if(new Date(item.time) > updatetime){
                             updatetime = new Date(item.time)
                         }
@@ -122,15 +122,17 @@ const tl_ops_web_store_reload = function (matcher) {
                         }
                     })
                 }
-                res.data[key].updatetime = updatetime ? updatetime.toLocaleString() : null
-                res.data[key].list = newList;
-                data.push(res.data[key])
+                res.data.list[key].version = res.data.list[key].version
+                res.data.list[key].updatetime = updatetime ? updatetime.toLocaleString() : null
+                res.data.list[key].list = newList;
+                data.push(res.data.list[key])
             }
             data = data.sort(function(a, b){return new Date(a.id) - new Date(b.id)})
+
             return {
                 "code": res.code,
                 "msg": res.msg,
-                "count": data.length,
+                "count": res.data.count,
                 "data":  data
             };
         }

@@ -12,7 +12,7 @@
     "msg": "success",   // 状态信息
     "data": {
         "waf": {                                        // WAF模块状态数据汇总
-            "waf_success": {                            // 全局WAF统计列表
+            "waf_service_count": {                            // 全局WAF统计列表
                 "2022-08-16 11:20:26": 3,               // 时间周期内触发多少次
             },                          
             "count_interval": 10                        // WAF统计器时间间隔
@@ -27,7 +27,7 @@
                 "health_uncheck": false,                // 健康检查是否暂停
                 "limit_state": 0,                       // 服务限流熔断状态
                 "limit_version": 3,                     // 熔断配置版本号
-                "waf_success": {                        // 服务WAF统计列表
+                "waf_service_count": {                        // 服务WAF统计列表
                     "2022-08-16 11:20:26": 3,
                 },                      
                 "nodes": {                              // 节点列表

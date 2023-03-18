@@ -16,7 +16,7 @@ local waf_count_api                     = require("waf.count.tl_ops_waf_count_ap
 local waf_count_cookie                  = require("waf.count.tl_ops_waf_count_cookie")
 local waf_count_header                  = require("waf.count.tl_ops_waf_count_header")
 local waf_count_param                   = require("waf.count.tl_ops_waf_count_param")
-
+local waf_count_service                 = require("waf.count.tl_ops_waf_count_service")
 
 local _M = {
     _VERSION = '0.01',
@@ -53,6 +53,9 @@ local tl_ops_waf_count_core = function()
 
     -- param规则统计
     waf_count_param.tl_ops_waf_count_param();
+
+    -- 服务级别统计
+    waf_count_service.tl_ops_waf_count_service();
 
 end
 

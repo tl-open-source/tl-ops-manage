@@ -6,8 +6,6 @@
 
 
 local tl_ops_waf_count_core     = require("waf.count.tl_ops_waf_count_core");
-local tl_ops_utils_func         = require("utils.tl_ops_utils_func");
-local shared                    = ngx.shared.tlopswaf;
 
 local _M = {}
 

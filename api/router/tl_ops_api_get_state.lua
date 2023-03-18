@@ -36,7 +36,6 @@ local Router = function()
     end
     local service_list = cjson.decode(list_str)
 
-
     for service_name, nodes in pairs(service_list) do
         -- service级别cache
         local health_lock_cache = shared:get(tl_ops_utils_func:gen_node_key(tl_ops_constant_health.cache_key.lock, service_name))
@@ -62,12 +61,49 @@ local Router = function()
             limit_version_cache = 0 --"version cache nil"
         end
 
+        -- waf统计， service级别是包含了service下所有waf规则下的汇总统计
+        local waf_api_count = cache_waf_count:get001(tl_ops_utils_func:gen_node_key(tl_ops_constant_waf_count.cache_key.service_counting_list, service_name, "api"))
+        if not waf_api_count then
+            waf_api_count = "{}"
+        end
+
+        local waf_ip_count = cache_waf_count:get001(tl_ops_utils_func:gen_node_key(tl_ops_constant_waf_count.cache_key.service_counting_list, service_name, "ip"))
+        if not waf_ip_count then
+            waf_ip_count = "{}"
+        end
+
+        local waf_cc_count = cache_waf_count:get001(tl_ops_utils_func:gen_node_key(tl_ops_constant_waf_count.cache_key.service_counting_list, service_name, "cc"))
+        if not waf_cc_count then
+            waf_cc_count = "{}"
+        end
+
+        local waf_cookie_count = cache_waf_count:get001(tl_ops_utils_func:gen_node_key(tl_ops_constant_waf_count.cache_key.service_counting_list, service_name, "cookie"))
+        if not waf_cookie_count then
+            waf_cookie_count = "{}"
+        end
+
+        local waf_header_count = cache_waf_count:get001(tl_ops_utils_func:gen_node_key(tl_ops_constant_waf_count.cache_key.service_counting_list, service_name, "header"))
+        if not waf_header_count then
+            waf_header_count = "{}"
+        end
+
+        local waf_param_count = cache_waf_count:get001(tl_ops_utils_func:gen_node_key(tl_ops_constant_waf_count.cache_key.service_counting_list, service_name, "param"))
+        if not waf_param_count then
+            waf_param_count = "{}"
+        end
+
         cache_state.service[service_name] = {
             health_lock = health_lock_cache,
             health_version = health_version_cache,
             health_uncheck = health_uncheck_cache,
             limit_state = limit_state_cache,
             limit_version = limit_version_cache,
+            waf_api_count = cjson.decode(waf_api_count),
+            waf_ip_count = cjson.decode(waf_ip_count),
+            waf_cc_count = cjson.decode(waf_cc_count),
+            waf_cookie_count = cjson.decode(waf_cookie_count),
+            waf_header_count = cjson.decode(waf_header_count),
+            waf_param_count = cjson.decode(waf_param_count),
         }
         cache_state.service[service_name].nodes = { }
 
@@ -226,7 +262,8 @@ local Router = function()
     cache_state.balance['count_interval'] = tl_ops_constant_balance_count.interval
 
     -- waf相关
-
+    
+    
     -- 其他
     -- cache_state.other['dict_keys'] = shared:get_keys(1024)
 

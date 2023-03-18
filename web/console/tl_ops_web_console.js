@@ -57,6 +57,10 @@ const tl_ops_web_console_main = function () {
     })
 };
 
+const tl_ops_web_console_goto_detail = function(url){
+    window.parent.document.querySelector("#tl-ops-web-index-iframe").src = url;
+}
+
 
 // 实时刷数据
 const tl_ops_web_console_reflush = function(){
@@ -98,7 +102,10 @@ const tl_ops_web_console_echarts_health_get_option = function(data){
             trigger: 'axis',
             axisPointer: { type: 'cross' }
         },
-        legend: {},
+        legend: {
+            type: 'scroll',
+            orient: 'horizontal'
+        },
         xAxis: [
             {
                 type: 'category',
@@ -294,7 +301,10 @@ const tl_ops_web_console_echarts_balance_get_option = function(data){
             trigger: 'axis',
             axisPointer: { type: 'cross' }
         },
-        legend: {},
+        legend: {
+            type: 'scroll',
+            orient: 'horizontal'
+        },
         xAxis: {
             type: 'category',
             axisTick: {
@@ -459,7 +469,10 @@ const tl_ops_web_console_echarts_waf_get_option = function(data){
             trigger: 'axis',
             axisPointer: { type: 'cross' }
         },
-        legend: {},
+        legend: {
+            type: 'scroll',
+            orient: 'horizontal'
+        },
         xAxis: {
             type: 'category',
             axisTick: {
@@ -500,39 +513,45 @@ const tl_ops_web_console_echarts_waf_get_option = function(data){
     return option;
 }
 
+
 //waf 统计数量 (以当天为单位)
 const tl_ops_web_console_waf_time_list_caculate_days = function (data) {
     let config = []
+    let wafSuccessListGlobal = {}
+
     for (let key in data) {
-        let waf_count = 0; //服务总量统计
         let seriesWafList = [];
-        let wafSuccessList = data[key].waf_success;
+        let waf_count = 0; //服务总量统计
 
-        for (let time in wafSuccessList) {
-            let count = wafSuccessList[time];
-            waf_count += count;
-        }
-
-        let dayTimeCountList = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] //总量统计
-        for (let timeItem in wafSuccessList) {
-            let count = wafSuccessList[timeItem];
-            let day = timeItem.toString().split(" ")[0]
-            let time = timeItem.toString().split(" ")[1]
-            let hours = parseInt(time.split(":")[0])
-            let cur_day = getDateStr(0);
-
-            //当天内
-            if (day.includes(cur_day)) {
-                let dayTimeCountIndex = parseInt((hours % 2) === 0 ? (hours / 2) : (hours / 2) + 1) - 1;
-                dayTimeCountList[dayTimeCountIndex] += count
+        ['ip','api','cookie','cc','header','param'].forEach(item => {
+            let wafSuccessList =  data[key]['waf_'+item+"_count"]
+            for (let time in wafSuccessList) {
+                let count = wafSuccessList[time];
+                waf_count += count;
             }
-        }
-        seriesWafList.push({
-            name: key+"-服务层级",
-            type: 'line',
-            yAxisIndex: 0,
-            data: dayTimeCountList,
-        })
+            Object.assign(wafSuccessListGlobal, wafSuccessList);
+
+            let dayTimeCountList = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] //总量统计
+            for (let timeItem in wafSuccessList) {
+                let count = wafSuccessList[timeItem];
+                let day = timeItem.toString().split(" ")[0]
+                let time = timeItem.toString().split(" ")[1]
+                let hours = parseInt(time.split(":")[0])
+                let cur_day = getDateStr(0);
+
+                //当天内
+                if (day.includes(cur_day)) {
+                    let dayTimeCountIndex = parseInt((hours % 2) === 0 ? (hours / 2) : (hours / 2) + 1) - 1;
+                    dayTimeCountList[dayTimeCountIndex] += count
+                }
+            }
+            seriesWafList.push({
+                name: key+"-"+item,
+                type: 'line',
+                yAxisIndex: 0,
+                data: dayTimeCountList,
+            })
+        });
         config.push({
             id: key,
             waf_count: waf_count,
@@ -543,14 +562,13 @@ const tl_ops_web_console_waf_time_list_caculate_days = function (data) {
 
     //全局统计
     let waf_count = 0;
-    let wafSuccessList = res_data.waf.waf_success;
-    for (let time in wafSuccessList) {
-        let count = wafSuccessList[time];
+    for (let time in wafSuccessListGlobal) {
+        let count = wafSuccessListGlobal[time];
         waf_count += count;
     }
     let dayTimeCountList = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] //总量统计
-    for (let timeItem in wafSuccessList) {
-        let count = wafSuccessList[timeItem];
+    for (let timeItem in wafSuccessListGlobal) {
+        let count = wafSuccessListGlobal[timeItem];
         let day = timeItem.toString().split(" ")[0]
         let time = timeItem.toString().split(" ")[1]
         let hours = parseInt(time.split(":")[0])

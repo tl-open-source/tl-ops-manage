@@ -121,8 +121,8 @@ end
 
 -- 匹配到服务层拦截
 -- true : 通过, false : 拦截
-local tl_ops_waf_core_ip_filter_service_pass = function(service_name, node_id)
-    if not service_name or node_id == nil then
+local tl_ops_waf_core_ip_filter_service_pass = function(service_name)
+    if not service_name then
         return true
     end
     
