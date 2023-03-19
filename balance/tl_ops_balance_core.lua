@@ -24,8 +24,6 @@ local cjson                             = require("cjson.safe");
 local tl_ops_manage_env                 = require("tl_ops_manage_env")
 local ngx_balancer                      = require ("ngx.balancer")
 local tl_ops_err_content                = require("err.tl_ops_err_content")
-local shared                            = ngx.shared.tlopsbalance
-
 
 local _M = {
 	_VERSION = '0.02'

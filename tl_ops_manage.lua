@@ -14,7 +14,6 @@ local m_waf_count       =  require("waf.count.tl_ops_waf_count")
 local m_api             =  require("api.tl_ops_api")
 local m_balance         =  require("balance.tl_ops_balance")
 local m_ctx             =  require("ctx.tl_ops_ctx");
-local tlog              =  require("utils.tl_ops_utils_log"):new("tl_ops_manage");
 local utils             =  require("utils.tl_ops_utils_func");
 local env               =  require("tl_ops_manage_env")
 local constant          =  require("constant.tl_ops_constant")
@@ -23,6 +22,7 @@ local m_err_content     =  require("err.tl_ops_err_content")
 local balance_shared    =  ngx.shared.tlopsbalance
 local plugin_shared     =  ngx.shared.tlopsplugin
 local waf_shared        =  ngx.shared.tlopswaf
+local cache_shared      =  ngx.shared.tlopscache
 
 
 local _M = {
@@ -34,6 +34,7 @@ local _M = {
     waf_shared = waf_shared,
     plugin_shared = plugin_shared,
     balance_shared = balance_shared,
+    cache_shared = cache_shared,
 }
 
 

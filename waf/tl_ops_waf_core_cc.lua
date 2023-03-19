@@ -10,9 +10,8 @@ local waf_scope                 = require("constant.tl_ops_constant_comm").tl_op
 local tl_ops_utils_func         = require("utils.tl_ops_utils_func");
 local cache_cc                  = require("cache.tl_ops_cache_core"):new("tl-ops-waf-cc");
 local tlog                      = require("utils.tl_ops_utils_log"):new("tl_ops_waf_cc");
-local find                      = ngx.re.find
 local cjson                     = require("cjson.safe");
-local shared_waf                = ngx.shared.tlopswaf
+local shared                    = ngx.shared.tlopswaf
 local MAX_URL_LEN               = 50
 
 -- 全局拦截
@@ -74,14 +73,14 @@ local tl_ops_waf_core_cc_filter_global_pass = function()
                 break
             end
             -- 首次
-            local res, _ = shared_waf:get(cc_key)
+            local res, _ = shared:get(cc_key)
             if not res then
-                shared_waf:set(cc_key, 1, time)
+                shared:set(cc_key, 1, time)
                 break
             end
             -- 没有达到cc次数
             if res < count then
-                shared_waf:incr(cc_key, 1)
+                shared:incr(cc_key, 1)
                 break
             end
             -- 触发cc
@@ -168,14 +167,14 @@ local tl_ops_waf_core_cc_filter_service_pass = function(service_name)
                 break
             end
             -- 首次
-            local res, _ = shared_waf:get(cc_key)
+            local res, _ = shared:get(cc_key)
             if not res then
-                shared_waf:set(cc_key, 1, time)
+                shared:set(cc_key, 1, time)
                 break
             end
             -- 没有达到cc次数
             if res < count then
-                shared_waf:incr(cc_key, 1)
+                shared:incr(cc_key, 1)
                 break
             end
             -- 触发cc

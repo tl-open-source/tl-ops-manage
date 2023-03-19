@@ -5,11 +5,10 @@
 -- @email 1905333456@qq.com
 
 
-local cjson                     = require("cjson.safe");
 local tlog                      = require("utils.tl_ops_utils_log"):new("tl_ops_health_check_version");
 local tl_ops_utils_func         = require("utils.tl_ops_utils_func");
 local tl_ops_constant_health    = require("constant.tl_ops_constant_health")
-local cache_dict                = ngx.shared.tlopsbalance;
+local shared                    = ngx.shared.tlopsbalance;
 
 local _M = {
 	_VERSION = '0.02'
@@ -23,15 +22,15 @@ local tl_ops_health_check_version_incr_service_version = function( service_name 
         return
     end
     local key = tl_ops_utils_func:gen_node_key(tl_ops_constant_health.cache_key.service_version, service_name)
-    local service_version, _ = cache_dict:get(key)
+    local service_version, _ = shared:get(key)
 
     if not service_version then
-        service_version, _ = cache_dict:add(key, 1);
+        service_version, _ = shared:add(key, 1);
         if not service_version then 
             tlog:err(" failed to publish new service_version:" , _)
         end
     else 
-        service_version, _ = cache_dict:incr(key, 1);
+        service_version, _ = shared:incr(key, 1);
         if not service_version then 
             tlog:err(" failed to publish new service_version:" , _)
         end
@@ -46,7 +45,7 @@ end
 -- 对service_options_version更新，通知timer检查是否有新增service
 local tl_ops_health_check_version_incr_service_option_version = function(  )
     local key = tl_ops_constant_health.cache_key.service_options_version;
-    local res, _ = cache_dict:set(key, true)
+    local res, _ = shared:set(key, true)
 
     tlog:dbg("service_option_version key=" , key, ", service_option_version=",res)
 

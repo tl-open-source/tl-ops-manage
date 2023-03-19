@@ -52,6 +52,9 @@ tl_ops_api_core["/tlops/service/set"] = require("api.router.tl_ops_api_set_servi
 -- state
 tl_ops_api_core["/tlops/state/get"] = require("api.router.tl_ops_api_get_state")
 tl_ops_api_core["/tlops/state/set"] = require("api.router.tl_ops_api_set_state")
+tl_ops_api_core["/tlops/state/shdict/get"] = require("api.router.tl_ops_api_get_shdict_state")
+tl_ops_api_core["/tlops/state/shdict/key/get"] = require("api.router.tl_ops_api_get_shdict_key_state")
+
 
 -- health
 tl_ops_api_core["/tlops/health/list"] = require("api.router.tl_ops_api_get_health")

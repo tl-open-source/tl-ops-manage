@@ -5,7 +5,6 @@
 -- @email 1905333456@qq.com
 
 local tlog              = require("utils.tl_ops_utils_log"):new("tl_ops_api_router");
-local tl_ops_utils_func = require("utils.tl_ops_utils_func");
 
 local _M = {}
 

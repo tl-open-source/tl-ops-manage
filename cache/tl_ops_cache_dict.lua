@@ -4,7 +4,7 @@
 -- @author iamtsm
 -- @email 1905333456@qq.com
 
-local cache_dict        = ngx.shared.tlopsbalance;
+local cache_dict        = ngx.shared.tlopscache;
 local tlog              = require("utils.tl_ops_utils_log"):new("tl_ops_cache_dict");
 local tl_ops_utils_func = require("utils.tl_ops_utils_func");
 

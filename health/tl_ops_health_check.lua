@@ -8,7 +8,6 @@ local cjson                             = require("cjson.safe")
 local tlog                              = require("utils.tl_ops_utils_log"):new("tl_ops_health")
 local tl_ops_utils_func                 = require("utils.tl_ops_utils_func")
 local tl_ops_constant_health            = require("constant.tl_ops_constant_health")
-local tl_ops_status                     = require("constant.tl_ops_constant_comm").tl_ops_status;
 local tl_ops_health_check_dynamic_conf  = require("health.tl_ops_health_check_dynamic_conf")
 local tl_ops_health_check_version       = require("health.tl_ops_health_check_version")
 local nx_socket                         = ngx.socket.tcp
@@ -22,7 +21,6 @@ local mt = { __index = _M }
 
 local tl_ops_health_check, 
 tl_ops_health_check_main ,
-tl_ops_health_check_get_lock,  
 tl_ops_health_check_default_confs,
 tl_ops_health_check_nodes,
 tl_ops_health_check_node_failed,

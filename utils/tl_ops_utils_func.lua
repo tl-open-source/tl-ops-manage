@@ -4,9 +4,8 @@
 -- @author iamtsm
 -- @email 1905333456@qq.com
 
-local cjson, _  = require("cjson.safe");
-local lock      = require("lib.lock");
-local shared    = ngx.shared.tlopsbalance;
+local cjson     = require("cjson.safe");
+local shared    = ngx.shared.tlopscache;
 local find      = ngx.re.find
 
 local _M = {}
@@ -223,6 +222,7 @@ function _M:set_ngx_req_return_ok (code, msg, data)
     ngx.status = 200;
     ngx.say(self:get_str_json_by_return_arg(code, msg, data));
     ngx.flush();
+    ngx.exit(200);
 end
 
 --指定格式返回
@@ -231,6 +231,7 @@ function _M:set_ngx_req_return_content (status, content, content_type)
     ngx.status = status;
     ngx.say(content);
     ngx.flush();
+    ngx.exit(status);
 end
 
 --返回正则的str

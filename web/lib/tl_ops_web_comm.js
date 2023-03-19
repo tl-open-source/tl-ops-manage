@@ -119,3 +119,20 @@ const tl_debounce = function(handler, time, business) {
         window['tl_debounce_timeout_id_'+business] = setTimeout(handler, time);
     };
 };
+
+
+//字节转换
+const tl_byte_to_m = function (size) {
+    let sizeStr = (size / 1048576).toString();
+    let head = sizeStr.split(".")[0];
+    let tail = "";
+    if (sizeStr.split(".")[1]) {
+        tail = sizeStr.split(".")[1].substring(0, 3);
+    }
+
+    if(tail === ''){
+        return head + "M";
+    }
+    
+    return head + '.' + tail + "M";
+}
