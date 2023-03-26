@@ -11,10 +11,7 @@
     "code": 0,          // 请求状态码，代码不报错，一般来说返回0                    
     "msg": "success",   // 状态信息
     "data": {
-        "waf": {                                        // WAF模块状态数据汇总
-            "waf_service_count": {                            // 全局WAF统计列表
-                "2022-08-16 11:20:26": 3,               // 时间周期内触发多少次
-            },                          
+        "waf": {                                        // WAF模块状态数据汇总                        
             "count_interval": 10                        // WAF统计器时间间隔
         },
         "balance": {                                    // 负载模块状态数据汇总
@@ -27,13 +24,31 @@
                 "health_uncheck": false,                // 健康检查是否暂停
                 "limit_state": 0,                       // 服务限流熔断状态
                 "limit_version": 3,                     // 熔断配置版本号
-                "waf_service_count": {                        // 服务WAF统计列表
+                "waf_service_count": {                  // 服务WAF统计列表
                     "2022-08-16 11:20:26": 3,
                 },                      
                 "nodes": {                              // 节点列表
                     "test-node-1": {                    // 节点名称
                         "health_state": false,          // 节点健康状态
-                        "balance_node_count": {         // 负载统计列表
+                        "balance_node_count": {         // 负载成功统计列表
+                            "2022-08-16 11:20:26": 3,
+                        },
+                        "waf_api_count": {              // waf-api维度统计列表
+                            "2022-08-16 11:20:26": 3,
+                        },
+                        "waf_ip_count": {               // waf-ip维度统计列表
+                            "2022-08-16 11:20:26": 3,
+                        },
+                        "waf_cc_count": {               // waf-cc维度统计列表
+                            "2022-08-16 11:20:26": 3,
+                        },
+                        "waf_cookie_count": {           // waf-cookie维度统计列表
+                            "2022-08-16 11:20:26": 3,
+                        },
+                        "waf_header_count": {           // waf-header维度统计列表
+                            "2022-08-16 11:20:26": 3,
+                        },
+                        "waf_param_count": {            // waf-param维度统计列表
                             "2022-08-16 11:20:26": 3,
                         },
                         "limit_depend": "token",        // 节点限流熔断依赖算法

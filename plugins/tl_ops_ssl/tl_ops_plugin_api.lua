@@ -17,10 +17,10 @@ return function(ctx)
     ctx.tlops_api[constant.tlops_api.get] = get_router
 
     ctx.tlops_api[constant.tlops_api.set] = set_router
-    
+
     -- 插件管理对外管理接口
     ctx.tlops_api[constant.export.tlops_api.get] = export_get_router
 
     ctx.tlops_api[constant.export.tlops_api.set] = export_set_router
-    
+
 end

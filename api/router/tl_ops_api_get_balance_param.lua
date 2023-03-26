@@ -12,23 +12,20 @@ local tl_ops_utils_func             = require("utils.tl_ops_utils_func");
 local cjson                         = require("cjson.safe");
 cjson.encode_empty_table_as_object(false)
 
-local Router = function() 
+local Handler = function() 
     local rule, _ = cache:get(tl_ops_constant_balance_param.cache_key.rule);
     if not rule or rule == nil then
-        tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.not_found, "not found rule", _);
-        return;
+        return tl_ops_rt.not_found, "not found rule", _
     end
 
     local rule_match_mode, _ = cache:get(tl_ops_constant_balance_param.cache_key.rule_match_mode);
     if not rule_match_mode or rule_match_mode == nil then
-        tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.not_found, "not found rule_match_mode", _);
-        return;
+        return tl_ops_rt.not_found, "not found rule_match_mode", _
     end
 
     local list_str, _ = cache:get(tl_ops_constant_balance_param.cache_key.list);
     if not list_str or list_str == nil then
-        tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.not_found, "not found list", _);
-        return;
+        return tl_ops_rt.not_found, "not found list", _
     end
 
 
@@ -37,7 +34,14 @@ local Router = function()
     res_data[tl_ops_constant_balance_param.cache_key.rule_match_mode] = rule_match_mode
     res_data[tl_ops_constant_balance_param.cache_key.list] = cjson.decode(list_str)
 
-    tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.ok, "success", res_data);
+    return tl_ops_rt.ok, "success", res_data
 end
 
-return Router
+local Router = function ()
+    tl_ops_utils_func:set_ngx_req_return_ok(Handler())
+end
+
+return {
+    Handler = Handler,
+    Router = Router
+}

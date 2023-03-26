@@ -13,47 +13,40 @@ local cjson                   = require("cjson.safe");
 cjson.encode_empty_table_as_object(false)
 
 
-local Router = function() 
+local Handler = function() 
    local service_empty = cache:get(tl_ops_constant_balance.cache_key.service_empty)
    if not service_empty then
-      tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.not_found, "not found service_empty", _);
-      return;
+      return tl_ops_rt.not_found, "not found service_empty", _
    end
 
    local mode_empty = cache:get(tl_ops_constant_balance.cache_key.mode_empty)
    if not mode_empty then
-      tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.not_found, "not found mode_empty", _);
-      return;
+      return tl_ops_rt.not_found, "not found mode_empty", _
    end
 
    local host_empty = cache:get(tl_ops_constant_balance.cache_key.host_empty)
    if not host_empty then
-      tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.not_found, "not found host_empty", _);
-      return;
+      return tl_ops_rt.not_found, "not found host_empty", _
    end
 
    local host_pass = cache:get(tl_ops_constant_balance.cache_key.host_pass)
    if not host_pass then
-      tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.not_found, "not found host_pass", _);
-      return;
+      return tl_ops_rt.not_found, "not found host_pass", _
    end
 
    local token_limit = cache:get(tl_ops_constant_balance.cache_key.token_limit)
    if not token_limit then
-      tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.not_found, "not found token_limit", _);
-      return;
+      return tl_ops_rt.not_found, "not found token_limit", _
    end
 
    local leak_limit = cache:get(tl_ops_constant_balance.cache_key.leak_limit)
    if not leak_limit then
-      tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.not_found, "not found leak_limit", _);
-      return;
+      return tl_ops_rt.not_found, "not found leak_limit", _
    end
 
    local offline = cache:get(tl_ops_constant_balance.cache_key.offline)
    if not offline then
-      tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.not_found, "not found offline", _);
-      return;
+      return tl_ops_rt.not_found, "not found offline", _
    end
 
    local res_data = {
@@ -66,7 +59,15 @@ local Router = function()
       offline = cjson.decode(offline)
    }
 
-   tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.ok, "success", res_data);
+   return tl_ops_rt.ok, "success", res_data
 end
 
-return Router
+
+local Router = function ()
+   tl_ops_utils_func:set_ngx_req_return_ok(Handler())
+end
+
+return {
+   Handler = Handler,
+   Router = Router
+}

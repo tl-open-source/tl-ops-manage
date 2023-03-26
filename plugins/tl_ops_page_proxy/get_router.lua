@@ -12,19 +12,25 @@ local cjson                     = require("cjson.safe");
 cjson.encode_empty_table_as_object(false)
 
 
-local Router = function()
-    
+local Handler = function()
+
     local list_str, _ = cache:get(constant.cache_key.list);
     if not list_str or list_str == nil then
-        tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.not_found, "not found list", _);
-        return;
+        return tl_ops_rt.not_found, "not found list", _
     end
-    
-    
+
     local res_data = {}
     res_data[constant.cache_key.list] = cjson.decode(list_str)
-    
-    tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.ok, "success", res_data);
+
+    return tl_ops_rt.ok, "success", res_data
 end
 
-return Router
+
+local Router = function ()
+    tl_ops_utils_func:set_ngx_req_return_ok(Handler())
+end
+
+return {
+    Handler = Handler,
+    Router = Router
+}

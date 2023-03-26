@@ -11,14 +11,21 @@ local cjson                     = require("cjson.safe");
 cjson.encode_empty_table_as_object(false)
 
 
-local Router = function()
-    
+local Handler = function()
+
     local res_data = {}
 
     res_data[constant.cache_key.current] = constant.current
     res_data[constant.cache_key.other] = constant.other
-    
-    tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.ok, "success", res_data);
+
+    return tl_ops_rt.ok, "success", res_data
 end
 
-return Router
+local Router = function ()
+    tl_ops_utils_func:set_ngx_req_return_ok(Handler())
+end
+
+return {
+    Handler = Handler,
+    Router = Router
+}

@@ -19,5 +19,5 @@ return function(ctx)
     ctx.tlops_api[constant.export.tlops_api.get] = export_get_router
 
     ctx.tlops_api[constant.export.tlops_api.set] = export_set_router
-    
+
 end

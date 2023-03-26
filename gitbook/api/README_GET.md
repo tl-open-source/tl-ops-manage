@@ -476,3 +476,315 @@
     },
 }
 ```
+
+## 负载API维度统计详情获取
+
+请求地址 : `/tlops/balance/count/api/list`
+
+请求方法 : `GET/POST`
+
+```json
+
+{
+    "code": 0,
+    "msg": "success",
+    "data": [
+        {
+            "id" : "1",                                 // 统计的规则id
+            "service_name" : "test",                    // 统计的服务
+            "node_id" : 0,                              // 统计的节点
+            "content" : "/api/test/*",                  // 统计的规则内容
+            "count_list" : [                            // 计数列表
+                {
+                    "2022-08-16 11:20:26": 3,
+                }
+            ]
+        }
+    ]
+}
+```
+
+## 负载Cookie维度统计详情获取
+
+请求地址 : `/tlops/balance/count/cookie/list`
+
+请求方法 : `GET/POST`
+
+```json
+
+{
+    "code": 0,
+    "msg": "success",
+    "data": [
+        {
+            "id" : "1",                                 // 统计的规则id
+            "service_name" : "test",                    // 统计的服务
+            "node_id" : 0,                              // 统计的节点
+            "content" : {                               // 统计的规则内容
+                "key" : "name",
+                "value" : "iamtsm"
+            },
+            "count_list" : [                            // 计数列表
+                {
+                    "2022-08-16 11:20:26": 3,
+                }
+            ]
+        }
+    ]
+}
+```
+
+## 负载Body维度统计详情获取
+
+请求地址 : `/tlops/balance/count/body/list`
+
+请求方法 : `GET/POST`
+
+```json
+
+{
+    "code": 0,
+    "msg": "success",
+    "data": [
+        {
+            "id" : "1",                                 // 统计的规则id
+            "service_name" : "test",                    // 统计的服务
+            "node_id" : 0,                              // 统计的节点
+            "content" : "test",                         // 统计的规则内容
+            "count_list" : [                            // 计数列表
+                {       
+                    "2022-08-16 11:20:26": 3,
+                }
+            ]
+        }
+    ]
+}
+```
+
+## 负载Header维度统计详情获取
+
+请求地址 : `/tlops/balance/count/header/list`
+
+请求方法 : `GET/POST`
+
+```json
+
+{
+    "code": 0,
+    "msg": "success",
+    "data": [
+        {
+            "id" : "1",                                 // 统计的规则id
+            "service_name" : "test",                    // 统计的服务
+            "node_id" : 0,                              // 统计的节点
+            "content" : {                               // 统计的规则内容
+                "key" : "name",
+                "value" : "iamtsm"
+            },
+            "count_list" : [                            // 计数列表
+                {
+                    "2022-08-16 11:20:26": 3,
+                }
+            ]
+        }
+    ]
+}
+```
+
+## 负载Param维度统计详情获取
+
+请求地址 : `/tlops/balance/count/param/list`
+
+请求方法 : `GET/POST`
+
+```json
+
+{
+    "code": 0,
+    "msg": "success",
+    "data": [
+        {
+            "id" : "1",                                 // 统计的规则id
+            "service_name" : "test",                    // 统计的服务
+            "node_id" : 0,                              // 统计的节点
+            "content" : {                               // 统计的规则内容
+                "key" : "name",
+                "value" : "iamtsm"
+            },
+            "count_list" : [                            // 计数列表
+                {
+                    "2022-08-16 11:20:26": 3,
+                }
+            ]
+        }
+    ]
+}
+```
+
+## WAF-API维度统计详情获取
+
+请求地址 : `/tlops/waf/count/api/list`
+
+请求方法 : `GET/POST`
+
+```json
+
+{
+    "code": 0,
+    "msg": "success",
+    "data": [
+        {
+            "id" : "1",                                 // 统计的规则id
+            "service_name" : "test",                    // 统计的服务
+            "node_id" : 0,                              // 统计的节点
+            "content" : "/test/api/*",                  // 统计的规则内容
+            "count_list" : [                            // 计数列表
+                {
+                    "2022-08-16 11:20:26": 3,
+                }
+            ]
+        }
+    ]
+}
+```
+
+## WAF-IP维度统计详情获取
+
+请求地址 : `/tlops/waf/count/ip/list`
+
+请求方法 : `GET/POST`
+
+```json
+
+{
+    "code": 0,
+    "msg": "success",
+    "data": [
+        {
+            "id" : "1",                                 // 统计的规则id
+            "service_name" : "test",                    // 统计的服务
+            "node_id" : 0,                              // 统计的节点
+            "content" : "127.0.0.1",                    // 统计的规则内容
+            "count_list" : [                            // 计数列表
+                {
+                    "2022-08-16 11:20:26": 3,
+                }
+            ]
+        }
+    ]
+}
+```
+
+## WAF-CC维度统计详情获取
+
+请求地址 : `/tlops/waf/count/cc/list`
+
+请求方法 : `GET/POST`
+
+```json
+
+{
+    "code": 0,
+    "msg": "success",
+    "data": [
+        {
+            "id" : "1",                                 // 统计的规则id
+            "service_name" : "test",                    // 统计的服务
+            "node_id" : 0,                              // 统计的节点
+            "content" : {                               // 统计的规则内容
+                "time" : 10,
+                "count" : 100
+            },
+            "count_list" : [                            // 计数列表
+                {
+                    "2022-08-16 11:20:26": 3,
+                }
+            ]
+        }
+    ]
+}
+```
+
+## WAF-Cookie维度统计详情获取
+
+请求地址 : `/tlops/waf/count/cookie/list`
+
+请求方法 : `GET/POST`
+
+```json
+
+{
+    "code": 0,
+    "msg": "success",
+    "data": [
+        {
+            "id" : "1",                                 // 统计的规则id
+            "service_name" : "test",                    // 统计的服务
+            "node_id" : 0,                              // 统计的节点
+            "content" : "name",                         // 统计的规则内容
+            "count_list" : [                            // 计数列表
+                {
+                    "2022-08-16 11:20:26": 3,
+                }
+            ]
+        }
+    ]
+}
+```
+
+## WAF-Header维度统计详情获取
+
+请求地址 : `/tlops/waf/count/header/list`
+
+请求方法 : `GET/POST`
+
+```json
+
+{
+    "code": 0,
+    "msg": "success",
+    "data": [
+        {
+            "id" : "1",                                 // 统计的规则id
+            "service_name" : "test",                    // 统计的服务
+            "node_id" : 0,                              // 统计的节点
+            "content" : {                               // 统计的规则内容
+                "key" : "name", 
+                "value" : "test"
+            },
+            "count_list" : [                            // 计数列表
+                {
+                    "2022-08-16 11:20:26": 3,
+                }
+            ]
+        }
+    ]
+}
+```
+
+## WAF-Param维度统计详情获取
+
+请求地址 : `/tlops/waf/count/param/list`
+
+请求方法 : `GET/POST`
+
+```json
+
+{
+    "code": 0,
+    "msg": "success",
+    "data": [
+        {
+            "id" : "1",                                 // 统计的规则id
+            "service_name" : "test",                    // 统计的服务
+            "node_id" : 0,                              // 统计的节点
+            "content" : "name=test",                    // 统计的规则内容
+            "count_list" : [                            // 计数列表
+                {
+                    "2022-08-16 11:20:26": 3,
+                }
+            ]
+        }
+    ]
+}
+```

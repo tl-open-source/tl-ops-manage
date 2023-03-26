@@ -13,7 +13,8 @@ local tl_ops_constant_balance_count     = require("constant.tl_ops_constant_bala
 local cjson                             = require("cjson.safe"); 
 cjson.encode_empty_table_as_object(false)
 
-local Router = function()
+
+local Handler = function()
 
     -- 支持只获取某个服务节点的路由规则统计
     local args = ngx.req.get_uri_args()
@@ -23,26 +24,22 @@ local Router = function()
    
     local rule, _ = cache_balance_api:get(tl_ops_constant_balance_api.cache_key.rule);
     if not rule or rule == nil then
-        tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.args_error ,"bca args err1", _);
-        return;
+        return tl_ops_rt.args_error ,"bca args err1", _
     end
     
     local list_str, _ = cache_balance_api:get(tl_ops_constant_balance_api.cache_key.list);
     if not list_str or list_str == nil then
-        tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.args_error ,"bca args err2", _);
-        return;
+        return tl_ops_rt.args_error ,"bca args err2", _
     end
 
     local list = cjson.decode(list_str);
     if not list or list == nil then
-        tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.args_error ,"bca args err3", _);
-        return;
+        return tl_ops_rt.args_error ,"bca args err3", _
     end
 
     local api_rule_list = list[rule];
     if not api_rule_list or api_rule_list == nil then
-        tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.args_error ,"bca args err4", _);
-        return;
+        return tl_ops_rt.args_error ,"bca args err4", _
     end
 
     local res_data = {}
@@ -90,7 +87,14 @@ local Router = function()
         until true
     end
 
-    tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.ok, "success", res_data);
+    return tl_ops_rt.ok, "success", res_data
 end
 
-return Router
+local Router = function ()
+    tl_ops_utils_func:set_ngx_req_return_ok(Handler())
+end
+
+return {
+    Handler = Handler,
+    Router = Router
+}

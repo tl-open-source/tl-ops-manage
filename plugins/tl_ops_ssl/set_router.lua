@@ -13,14 +13,13 @@ local cjson                     = require("cjson.safe");
 cjson.encode_empty_table_as_object(false)
 
 
-local Router = function() 
+local Handler = function()
 
     local list, _ = tl_ops_utils_func:get_req_post_args_by_name(constant.cache_key.list, 1);
     if not list or list == nil then
-        tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.args_error ,"ssl args err1", _);
-        return;
+        return tl_ops_rt.args_error ,"ssl args err1", _
     end
-    
+
     -- 更新生成id
     for _, ssl in ipairs(list) do
         if not ssl.id or ssl.id == nil or ssl.id == '' then
@@ -34,17 +33,24 @@ local Router = function()
             ssl.change = nil
         end
     end
-    
+
     local cache_list, _ = cache:set(constant.cache_key.list, cjson.encode(list));
     if not cache_list then
-        tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.error, "set list err ", _)
-        return;
+        return tl_ops_rt.error, "set list err ", _
     end
-    
+
     local res_data = {}
     res_data[constant.cache_key.list] = list
-    
-    tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.ok, "ok", res_data)
- end
- 
-return Router
+
+    return tl_ops_rt.ok, "ok", res_data
+end
+
+
+local Router = function ()
+    tl_ops_utils_func:set_ngx_req_return_ok(Handler())
+end
+
+return {
+    Handler = Handler,
+    Router = Router
+}

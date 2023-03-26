@@ -11,14 +11,14 @@
 
 -- 流控介入
 if tl_ops_manage_env.balance.limiter then
-    local depend = tl_ops_limit.tl_ops_limit_get_limiter(node.service, node_id)
+    local depend = tl_ops_limit:tl_ops_limit_get_limiter(node.service, node_id)
     if depend then
         -- 令牌桶流控
         if depend == tl_ops_constant_limit.depend.token then
             local token_result = tl_ops_limit_fuse_token_bucket.tl_ops_limit_token( node.service, node_id)  
             if not token_result or token_result == false then
-                balance_count:tl_ops_balance_count_incr_node_fail(node.service, node_id)
-                tl_ops_err_content:err_content_rewrite_to_balance("", "t-limit", balance_mode, tl_ops_constant_balance.cache_key.token_limit)
+                balance_count_node.tl_ops_balance_count_incr_node_fail(node.service, node_id)
+                tl_ops_err_content:err_content_rewrite_to_balance("", "t-limit", balance_mode, tl_ops_constant_balance.cache_key.token_limit, "")
                 return
             end
         end
@@ -27,8 +27,8 @@ if tl_ops_manage_env.balance.limiter then
         if depend == tl_ops_constant_limit.depend.leak then
             local leak_result = tl_ops_limit_fuse_leak_bucket.tl_ops_limit_leak( node.service, node_id)
             if not leak_result or leak_result == false then
-                balance_count:tl_ops_balance_count_incr_node_fail(node.service, node_id)
-                tl_ops_err_content:err_content_rewrite_to_balance("", "l-limit", balance_mode, tl_ops_constant_balance.cache_key.leak_limit)
+                balance_count_node.tl_ops_balance_count_incr_node_fail(node.service, node_id)
+                tl_ops_err_content:err_content_rewrite_to_balance("", "l-limit", balance_mode, tl_ops_constant_balance.cache_key.leak_limit, "")
                 return
             end
         end

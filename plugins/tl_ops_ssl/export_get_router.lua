@@ -12,18 +12,25 @@ local cjson                     = require("cjson.safe");
 cjson.encode_empty_table_as_object(false)
 
 
-local Router = function()
-    
+local Handler = function()
+
     local str, _ = cache:get(constant.export.cache_key.ssl);
     if not str or str == nil then
-        tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.not_found, "not found ssl", _);
-        return;
+        return tl_ops_rt.not_found, "not found ssl", _
     end
 
     local res_data = {}
     res_data[constant.export.cache_key.ssl] = cjson.decode(str)
-    
-    tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.ok, "success", res_data);
+
+    return tl_ops_rt.ok, "success", res_data
 end
 
-return Router
+
+local Router = function ()
+    tl_ops_utils_func:set_ngx_req_return_ok(Handler())
+end
+
+return {
+    Handler = Handler,
+    Router = Router
+}

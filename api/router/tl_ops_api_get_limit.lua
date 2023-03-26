@@ -12,23 +12,20 @@ local tl_ops_utils_func     = require("utils.tl_ops_utils_func");
 local cjson                 = require("cjson.safe");
 cjson.encode_empty_table_as_object(false)
 
-local Router = function() 
+local Handler = function()
     local fuse_list_str, _ = cache:get(tl_ops_constant_limit.fuse.cache_key.options_list);
     if not fuse_list_str or fuse_list_str == nil then
-        tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.not_found, "fuse not found list", _);
-        return;
+        return tl_ops_rt.not_found, "fuse not found list", _
     end
 
     local token_list_str, _ = cache:get(tl_ops_constant_limit.token.cache_key.options_list);
     if not token_list_str or token_list_str == nil then
-        tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.not_found, "token not found list", _);
-        return;
+        return tl_ops_rt.not_found, "token not found list", _
     end
 
     local leak_list_str, _ = cache:get(tl_ops_constant_limit.leak.cache_key.options_list);
     if not leak_list_str or leak_list_str == nil then
-        tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.not_found, "leak not found list", _);
-        return;
+        return tl_ops_rt.not_found, "leak not found list", _
     end
 
     local res_data = {}
@@ -36,9 +33,14 @@ local Router = function()
     res_data[tl_ops_constant_limit.leak.cache_key.options_list] = cjson.decode(leak_list_str)
     res_data[tl_ops_constant_limit.token.cache_key.options_list] = cjson.decode(token_list_str)
 
+    return tl_ops_rt.ok, "success", res_data
+end
 
-    tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.ok, "success", res_data);
+local Router = function ()
+    tl_ops_utils_func:set_ngx_req_return_ok(Handler())
+end
 
- end
- 
-return Router
+return {
+    Handler = Handler,
+    Router = Router
+}

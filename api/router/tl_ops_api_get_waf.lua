@@ -14,41 +14,35 @@ local cjson                = require("cjson.safe");
 cjson.encode_empty_table_as_object(false)
 
 
-local Router = function() 
+local Handler = function() 
    local waf_ip = cache:get(tl_ops_constant_waf.cache_key.waf_ip)
    if not waf_ip then
-      tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.not_found, "not found waf_ip", _);
-      return;
+      return tl_ops_rt.not_found, "not found waf_ip", _
    end
 
    local waf_api = cache:get(tl_ops_constant_waf.cache_key.waf_api)
    if not waf_api then
-      tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.not_found, "not found waf_api", _);
-      return;
+      return tl_ops_rt.not_found, "not found waf_api", _
    end
 
    local waf_cc = cache:get(tl_ops_constant_waf.cache_key.waf_cc)
    if not waf_cc then
-      tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.not_found, "not found waf_cc", _);
-      return;
+      return tl_ops_rt.not_found, "not found waf_cc", _
    end
 
    local waf_header = cache:get(tl_ops_constant_waf.cache_key.waf_header)
    if not waf_header then
-      tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.not_found, "not found waf_header", _);
-      return;
+      return tl_ops_rt.not_found, "not found waf_header", _
    end
 
    local waf_cookie = cache:get(tl_ops_constant_waf.cache_key.waf_cookie)
    if not waf_cookie then
-      tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.not_found, "not found waf_cookie", _);
-      return;
+      return tl_ops_rt.not_found, "not found waf_cookie", _
    end
 
    local waf_param = cache:get(tl_ops_constant_waf.cache_key.waf_param)
    if not waf_param then
-      tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.not_found, "not found waf_param", _);
-      return;
+      return tl_ops_rt.not_found, "not found waf_param", _
    end
 
    local res_data = {
@@ -60,7 +54,14 @@ local Router = function()
       waf_param = cjson.decode(waf_param),
    }
 
-   tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.ok, "success", res_data);
+   return tl_ops_rt.ok, "success", res_data
 end
 
-return Router
+local Router = function ()
+   tl_ops_utils_func:set_ngx_req_return_ok(Handler())
+end
+
+return {
+   Handler = Handler,
+   Router = Router
+}

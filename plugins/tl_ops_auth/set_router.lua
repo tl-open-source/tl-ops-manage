@@ -13,7 +13,7 @@ local cjson                     = require("cjson.safe");
 cjson.encode_empty_table_as_object(false)
 
 
-local Router = function() 
+local Handler = function()
 
     local change = "success"
 
@@ -35,8 +35,7 @@ local Router = function()
 
         local res, _ = cache:set(constant.cache_key.list, cjson.encode(list));
         if not res then
-            tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.error, "set list err ", _)
-            return;
+            return tl_ops_rt.error, "set list err ", _
         end
 
         change = "list"
@@ -46,16 +45,22 @@ local Router = function()
     if login then
         local res, _ = cache:set(constant.cache_key.login, cjson.encode(login));
         if not res then
-            tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.error, "set login err ", _)
-            return;
+            return tl_ops_rt.error, "set login err ", _
         end
 
         change = "login"
     end
-    
+
     local res_data = {}
-    
-    tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.ok, change, res_data)
- end
- 
-return Router
+
+    return tl_ops_rt.ok, change, res_data
+end
+
+local Router = function ()
+    tl_ops_utils_func:set_ngx_req_return_ok(Handler())
+end
+
+return {
+    Handler = Handler,
+    Router = Router
+}

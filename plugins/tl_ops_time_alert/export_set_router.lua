@@ -12,21 +12,28 @@ local cjson                     = require("cjson.safe");
 cjson.encode_empty_table_as_object(false)
 
 
-local Router = function() 
+local Handler = function()
 
     local time_alert, _ = tl_ops_utils_func:get_req_post_args_by_name(constant.export.cache_key.time_alert, 1);
     if time_alert then
         local res, _ = cache:set(constant.export.cache_key.time_alert, cjson.encode(time_alert));
         if not res then
-            tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.error, "set time_alert err ", _)
-            return;
+            return tl_ops_rt.error, "set time_alert err ", _
         end
     end
-    
+
     local res_data = {}
     res_data[constant.export.cache_key.time_alert] = time_alert
 
-    tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.ok, "success", res_data)
- end
- 
-return Router
+    return tl_ops_rt.ok, "success", res_data
+end
+
+
+local Router = function ()
+    tl_ops_utils_func:set_ngx_req_return_ok(Handler())
+end
+
+return {
+    Handler = Handler,
+    Router = Router
+}

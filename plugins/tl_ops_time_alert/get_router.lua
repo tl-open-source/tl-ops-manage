@@ -12,18 +12,25 @@ local cjson                     = require("cjson.safe");
 cjson.encode_empty_table_as_object(false)
 
 
-local Router = function()
+local Handler = function()
 
     local options_str, _ = cache:get(constant_alert.cache_key.options);
     if not options_str or options_str == nil then
-        tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.not_found, "not found options", _);
-        return;
+        return tl_ops_rt.not_found, "not found options", _
     end
-    
+
     local res_data = {}
     res_data[constant_alert.cache_key.options] = cjson.decode(options_str)
-    
-    tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.ok, "success", res_data);
+
+    return tl_ops_rt.ok, "success", res_data
 end
 
-return Router
+
+local Router = function ()
+    tl_ops_utils_func:set_ngx_req_return_ok(Handler())
+end
+
+return {
+    Handler = Handler,
+    Router = Router
+}

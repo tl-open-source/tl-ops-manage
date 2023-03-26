@@ -13,7 +13,7 @@ local tl_ops_constant_waf_count         = require("constant.tl_ops_constant_waf_
 local cjson                             = require("cjson.safe"); 
 cjson.encode_empty_table_as_object(false)
 
-local Router = function()
+local Handler = function()
 
     -- 支持只获取某个服务节点的路由规则统计
     local args = ngx.req.get_uri_args()
@@ -23,14 +23,12 @@ local Router = function()
    
     local list_str, _ = cache_waf_header:get(tl_ops_constant_waf_header.cache_key.list);
     if not list_str or list_str == nil then
-        tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.args_error ,"bca args err1", _);
-        return;
+        return tl_ops_rt.args_error ,"bca args err1", _
     end
 
     local header_rule_list = cjson.decode(list_str);
     if not header_rule_list or header_rule_list == nil then
-        tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.args_error ,"bca args err2", _);
-        return;
+        return tl_ops_rt.args_error ,"bca args err2", _
     end
 
     local res_data = {}
@@ -94,7 +92,15 @@ local Router = function()
         until true
     end
 
-    tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.ok, "success", res_data);
+    return tl_ops_rt.ok, "success", res_data
 end
 
-return Router
+
+local Router = function ()
+    tl_ops_utils_func:set_ngx_req_return_ok(Handler())
+end
+
+return {
+    Handler = Handler,
+    Router = Router
+}

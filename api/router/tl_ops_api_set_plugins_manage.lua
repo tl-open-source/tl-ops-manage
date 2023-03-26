@@ -14,14 +14,13 @@ local cjson                             = require("cjson.safe");
 cjson.encode_empty_table_as_object(false)
 
 
-local Router = function(ctx)
+local Handler = function(ctx)
 
     local change = "success"
 
     local list, _ = tl_ops_utils_func:get_req_post_args_by_name(tl_ops_constant_plugins_manage.cache_key.list, 1);
     if not list or list == nil then
-        tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.args_error ,"pm args err1", _);
-        return;
+        return tl_ops_rt.args_error ,"pm args err1", _
     end
 
     local del_plugin_id = nil
@@ -37,47 +36,40 @@ local Router = function(ctx)
 
             local new_plugin_data = plugin_load:tl_ops_plugin_load_by_name(plugin.name);
             if not new_plugin_data then
-                tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.error, "plugin load err ",new_plugin_data)
-                return
+                return tl_ops_rt.error, "plugin load err ",new_plugin_data
             end
 
             -- 插件配置不存在
             if not new_plugin_data.constant then
-                tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.error, "plugin constant err ")
-                return
+                return tl_ops_rt.error, "plugin constant err "
             end
 
             -- 插件代码不存在
             if not new_plugin_data.func then
-                tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.error, "plugin core func err ")
-                return
+                return tl_ops_rt.error, "plugin core func err "
             end
 
             -- 插件开关不存在
             if not new_plugin_data.open_func then
-                tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.error, "plugin open func err ")
-                return
+                return tl_ops_rt.error, "plugin open func err "
             end
 
             -- 插件api不存在
             if not new_plugin_data.api_func then
-                tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.error, "plugin api func err ")
-                return
+                return tl_ops_rt.error, "plugin api func err "
             end
 
             if new_plugin_data.func.sync_data and type(new_plugin_data.func.sync_data) == 'function' then
                 local ok, _  = new_plugin_data.func:sync_data();
                 if not ok then
-                    tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.error, "plugin sync data err ")
-                    return
+                    return tl_ops_rt.error, "plugin sync data err "
                 end
             end
 
             if new_plugin_data.func.sync_fields and type(new_plugin_data.func.sync_fields) == 'function' then
                 local ok, _  = new_plugin_data.func:sync_fields();
                 if not ok then
-                    tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.error, "plugin sync fields err ")
-                    return
+                    return tl_ops_rt.error, "plugin sync fields err "
                 end
             end
 
@@ -108,16 +100,22 @@ local Router = function(ctx)
 
     local res, _ = cache:set(tl_ops_constant_plugins_manage.cache_key.list, cjson.encode(list));
     if not res then
-        tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.error, "set list err ", _)
-        return;
+        return tl_ops_rt.error, "set list err ", _
     end
-    
+
     local res_data = {}
     res_data[tl_ops_constant_plugins_manage.cache_key.list] = list
 
-    tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.ok, change, res_data)
+    return tl_ops_rt.ok, change, res_data
+end
 
- end
- 
 
-return Router
+
+local Router = function ()
+    tl_ops_utils_func:set_ngx_req_return_ok(Handler())
+end
+
+return {
+    Handler = Handler,
+    Router = Router
+}

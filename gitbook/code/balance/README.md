@@ -104,17 +104,18 @@ end
 # 代码位置 : balance/tl_ops_balance_core.lua
 
 
+
 -- 负载节点过滤筛选
 function _M:tl_ops_balance_core_filter(ctx)
     -- 服务节点配置列表
     local service_list_str, _ = cache_service:get(tl_ops_constant_service.cache_key.service_list);
     if not service_list_str then
-        tl_ops_err_content:err_content_rewrite_to_balance("", "empty", "", tl_ops_constant_balance.cache_key.service_empty)
+        tl_ops_err_content:err_content_rewrite_to_balance("", "empty", "", tl_ops_constant_balance.cache_key.service_empty, "")
         return
     end
     local service_list_table = cjson.decode(service_list_str);
     if not service_list_table and type(service_list_table) ~= 'table' then
-        tl_ops_err_content:err_content_rewrite_to_balance("", "empty", "", tl_ops_constant_balance.cache_key.service_empty)
+        tl_ops_err_content:err_content_rewrite_to_balance("", "empty", "", tl_ops_constant_balance.cache_key.service_empty, "")
         return
     end
 
@@ -145,7 +146,7 @@ function _M:tl_ops_balance_core_filter(ctx)
                     node, node_state, node_id, host, rule_match_mode = tl_ops_balance_core_body.tl_ops_balance_body_service_matcher(service_list_table)
                     if not node then
                         -- 无匹配
-                        tl_ops_err_content:err_content_rewrite_to_balance("", "empty", balance_mode, tl_ops_constant_balance.cache_key.mode_empty)
+                        tl_ops_err_content:err_content_rewrite_to_balance("", "empty", balance_mode, tl_ops_constant_balance.cache_key.mode_empty, "")
                         return
                     end
                 end
@@ -156,27 +157,27 @@ function _M:tl_ops_balance_core_filter(ctx)
     if rule_match_mode and rule_match_mode == api_match_mode.api then
         -- 域名负载
         if host == nil or host == '' then
-            tl_ops_err_content:err_content_rewrite_to_balance("", "nil", balance_mode, tl_ops_constant_balance.cache_key.host_empty)
+            tl_ops_err_content:err_content_rewrite_to_balance("", "nil", balance_mode, tl_ops_constant_balance.cache_key.host_empty, "")
             return
         end
 
         -- 域名匹配
         if host ~= "*" and host ~= ngx.var.host then
-            tl_ops_err_content:err_content_rewrite_to_balance("", "pass", balance_mode, tl_ops_constant_balance.cache_key.host_pass)
+            tl_ops_err_content:err_content_rewrite_to_balance("", "pass", balance_mode, tl_ops_constant_balance.cache_key.host_pass, "")
             return
         end
     end
 
     -- 流控介入
     if tl_ops_manage_env.balance.limiter then
-        local depend = tl_ops_limit.tl_ops_limit_get_limiter(node.service, node_id)
+        local depend = tl_ops_limit:tl_ops_limit_get_limiter(node.service, node_id)
         if depend then
             -- 令牌桶流控
             if depend == tl_ops_constant_limit.depend.token then
                 local token_result = tl_ops_limit_fuse_token_bucket.tl_ops_limit_token( node.service, node_id)  
                 if not token_result or token_result == false then
-                    balance_count:tl_ops_balance_count_incr_node_fail(node.service, node_id)
-                    tl_ops_err_content:err_content_rewrite_to_balance("", "t-limit", balance_mode, tl_ops_constant_balance.cache_key.token_limit)
+                    balance_count_node.tl_ops_balance_count_incr_node_fail(node.service, node_id)
+                    tl_ops_err_content:err_content_rewrite_to_balance("", "t-limit", balance_mode, tl_ops_constant_balance.cache_key.token_limit, "")
                     return
                 end
             end
@@ -185,8 +186,8 @@ function _M:tl_ops_balance_core_filter(ctx)
             if depend == tl_ops_constant_limit.depend.leak then
                 local leak_result = tl_ops_limit_fuse_leak_bucket.tl_ops_limit_leak( node.service, node_id)
                 if not leak_result or leak_result == false then
-                    balance_count:tl_ops_balance_count_incr_node_fail(node.service, node_id)
-                    tl_ops_err_content:err_content_rewrite_to_balance("", "l-limit", balance_mode, tl_ops_constant_balance.cache_key.leak_limit)
+                    balance_count_node.tl_ops_balance_count_incr_node_fail(node.service, node_id)
+                    tl_ops_err_content:err_content_rewrite_to_balance("", "l-limit", balance_mode, tl_ops_constant_balance.cache_key.leak_limit, "")
                     return
                 end
             end
@@ -198,16 +199,12 @@ function _M:tl_ops_balance_core_filter(ctx)
 
     -- 节点下线
     if not node_state or node_state == false then
-        balance_count:tl_ops_balance_count_incr_node_fail(node.service, node_id)
+        -- 负载失败 -- 负载统计器
+        balance_count_node.tl_ops_balance_count_incr_node_fail(node.service, node_id)
+        -- 负载失败 -- 限流统计器
+        tl_ops_limit:tl_ops_limit_fuse_incr_fail(node.service, node_id);
 
-        local limit_node_req_fail_count_key = tl_ops_utils_func:gen_node_key(tl_ops_constant_limit.fuse.cache_key.node_req_fail, node.service, node_id)
-        local failed_count = shared:get(limit_node_req_fail_count_key)
-		if not failed_count then
-			shared:set(limit_node_req_fail_count_key, 0);
-        end
-        shared:incr(limit_node_req_fail_count_key, 1)
-        
-        tl_ops_err_content:err_content_rewrite_to_balance(node.service .. ":" .. node.name, "offline", balance_mode, tl_ops_constant_balance.cache_key.offline)
+        tl_ops_err_content:err_content_rewrite_to_balance(node.service .. ":" .. node.name, "offline", balance_mode, tl_ops_constant_balance.cache_key.offline, "")
         return
     end
 
@@ -223,24 +220,22 @@ function _M:tl_ops_balance_core_balance(ctx)
     local tlops_ups_mode = ctx.tlops_ups_mode
     local tlops_ups_node = ctx.tlops_ups_node
     local tlops_ups_node_id = ctx.tlops_ups_node_id
+    local tlops_ups_api_prefix = ngx.var.tlops_ups_api_prefix;
 
     if not tlops_ups_mode or not tlops_ups_node or not tlops_ups_node_id then
         return
     end
 
-    -- 负载成功
-    balance_count:tl_ops_balance_count_incr_node_succ(tlops_ups_node.service, tlops_ups_node_id)
+    -- 负载成功 - 负载统计器
+    balance_count_node.tl_ops_balance_count_incr_node_succ(tlops_ups_node.service, tlops_ups_node_id)
 
-    local limit_node_req_succ_count_key = tl_ops_utils_func:gen_node_key(tl_ops_constant_limit.fuse.cache_key.node_req_succ, tlops_ups_node.service, tlops_ups_node_id)
-    local success_count = shared:get(limit_node_req_succ_count_key)
-    if not success_count then
-        shared:set(limit_node_req_succ_count_key, 0);
-    end
-    shared:incr(limit_node_req_succ_count_key, 1)
+    -- 负载成功 -- 限流统计器
+    tl_ops_limit:tl_ops_limit_fuse_incr_succ(tlops_ups_node.service, tlops_ups_node_id);
 
     ngx.header[tl_ops_constant_balance.proxy_server] = tlops_ups_node.service .. ":" .. tlops_ups_node.name;
     ngx.header[tl_ops_constant_balance.proxy_state] = "online"
     ngx.header[tl_ops_constant_balance.proxy_mode] = tlops_ups_mode
+    ngx.header[tl_ops_constant_balance.proxy_prefix] = tlops_ups_api_prefix
 
     local ok, err = ngx_balancer.set_current_peer(tlops_ups_node.ip, tlops_ups_node.port)
     if ok then

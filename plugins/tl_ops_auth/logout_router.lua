@@ -15,25 +15,22 @@ local tl_ops_rt         = tlops.constant.comm.tl_ops_rt
 local cjson             = require("cjson.safe");
 cjson.encode_empty_table_as_object(false)
 
-local Router = function()
+local Handler = function()
 
     local login_str, _ = cache:get(constant.cache_key.login)
     if not login_str then
-        utils:set_ngx_req_return_ok(tl_ops_rt.args_error ,"auth logout_str err1", _);
-        return
+        return tl_ops_rt.args_error ,"auth logout_str err1", _
     end
 
     local login, _ = cjson.decode(login_str)
     if not login then
-        utils:set_ngx_req_return_ok(tl_ops_rt.args_error ,"auth logout err2", _);
-        return
+        return tl_ops_rt.args_error ,"auth logout err2", _
     end
 
     local cookie_utils = require("lib.cookie"):new();
     local auth_cid = cookie_utils:get(login.auth_cid)
     if not auth_cid then
-        utils:set_ngx_req_return_ok(tl_ops_rt.args_error ,"auth cid err3", _);
-        return
+        return tl_ops_rt.args_error ,"auth cid err3", _
     end
 
     -- del cookie
@@ -65,7 +62,14 @@ local Router = function()
     -- del session
     auth:auth_del_session(auth_cid);
 
-    utils:set_ngx_req_return_ok(tl_ops_rt.ok, "success", nil);
+    return tl_ops_rt.ok, "success", nil
 end
 
-return Router
+local Router = function ()
+    utils:set_ngx_req_return_ok(Handler())
+end
+
+return {
+    Handler = Handler,
+    Router = Router
+}

@@ -48,7 +48,7 @@ local read = function( filename )
 end
 
 
-local Router = function()
+local Handler = function()
     ngx.req.read_body()
     local args = ngx.req.get_post_args()
 
@@ -89,8 +89,15 @@ local Router = function()
         end
     end
 
-    tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.ok, "success", res_data);
- end
+    return tl_ops_rt.ok, "success", res_data
+end
 
 
-return Router
+local Router = function ()
+    tl_ops_utils_func:set_ngx_req_return_ok(Handler())
+end
+
+return {
+    Handler = Handler,
+    Router = Router
+}

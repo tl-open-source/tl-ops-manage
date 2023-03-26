@@ -22,7 +22,7 @@ local shared                        = ngx.shared.tlopsbalance
 local cjson                         = require("cjson.safe");
 cjson.encode_empty_table_as_object(false)
 
-local Router = function() 
+local Handler = function()
     --返回的cache state
     local cache_state = {
         service = {}, health = {}, limit = {}, balance = {}, waf = {}, other = {}
@@ -31,8 +31,7 @@ local Router = function()
     -- 服务相关状态
     local list_str, _ = cache_service:get(tl_ops_constant_service.cache_key.service_list);
     if not list_str or list_str == nil then
-        tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.not_found ,"not found list", _);
-        return;
+        return tl_ops_rt.not_found ,"not found list", _
     end
     local service_list = cjson.decode(list_str)
 
@@ -227,8 +226,7 @@ local Router = function()
     -- 健康检查相关状态
     local health_options_str, _ = cache_health:get(tl_ops_constant_health.cache_key.options_list);
     if not health_options_str or health_options_str == nil then
-        tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.not_found, "not found list", _);
-        return;
+        return tl_ops_rt.not_found, "not found list", _
     end
     local health_options_list = cjson.decode(health_options_str)
 
@@ -244,8 +242,7 @@ local Router = function()
     -- 限流相关状态
     local limit_options_str, _ = cache_limit:get(tl_ops_constant_limit.fuse.cache_key.options_list);
     if not limit_options_str or limit_options_str == nil then
-        tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.not_found, "not found list", _);
-        return;
+        return tl_ops_rt.not_found, "not found list", _
     end
     local limit_options_list = cjson.decode(limit_options_str)
 
@@ -262,12 +259,21 @@ local Router = function()
     cache_state.balance['count_interval'] = tl_ops_constant_balance_count.interval
 
     -- waf相关
-    
-    
+    cache_state.waf['count_interval'] = tl_ops_constant_waf_count.interval
+
     -- 其他
     -- cache_state.other['dict_keys'] = shared:get_keys(1024)
 
-    tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.ok, "success", cache_state);
- end
- 
-return Router
+    return tl_ops_rt.ok, "success", cache_state
+end
+
+
+local Router = function ()
+    tl_ops_utils_func:set_ngx_req_return_ok(Handler())
+end
+
+return {
+    Handler = Handler,
+    Router = Router
+}
+

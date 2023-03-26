@@ -13,14 +13,13 @@ local cjson                     = require("cjson.safe");
 cjson.encode_empty_table_as_object(false)
 
 
-local Router = function() 
+local Handler = function()
 
     local options, _ = tl_ops_utils_func:get_req_post_args_by_name(constant_alert.cache_key.options, 1);
     if not options or options == nil then
-        tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.args_error ,"alert args err1", _);
-        return;
+        return tl_ops_rt.args_error ,"alert args err1", _
     end
-    
+
     -- 更新生成id
     for _, alert in ipairs(options) do
         if not alert.id or alert.id == nil or alert.id == '' then
@@ -34,17 +33,24 @@ local Router = function()
             alert.change = nil
         end
     end
-    
+
     local res, _ = cache:set(constant_alert.cache_key.options, cjson.encode(options));
     if not res then
-        tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.error, "set options err ", _)
-        return;
+        return tl_ops_rt.error, "set options err ", _
     end
-    
+
     local res_data = {}
     res_data[constant_alert.cache_key.options] = options
-    
-    tl_ops_utils_func:set_ngx_req_return_ok(tl_ops_rt.ok, "ok", res_data)
- end
- 
-return Router
+
+    return tl_ops_rt.ok, "ok", res_data
+end
+
+
+local Router = function ()
+    tl_ops_utils_func:set_ngx_req_return_ok(Handler())
+end
+
+return {
+    Handler = Handler,
+    Router = Router
+}
