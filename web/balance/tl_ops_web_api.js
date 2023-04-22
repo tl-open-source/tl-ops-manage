@@ -372,16 +372,38 @@ const tl_ops_api_data_add_filter = function( data ) {
     if(rule === 'random'){
         delete data.field.node
     }
-    for(let key in data.field){
-        if(key === 'id' || key === 'rewrite_url' || key === 'fake_prefix'){
-            continue;
+
+    let api_type = data.field.api_type;
+
+    if(api_type === 'page'){
+        for(let key in data.field){
+            if(key === 'id' || key === 'rewrite_url' || key === 'fake_prefix' || key === 'service' || key === 'node'){
+                continue;
+            }
+            
+            if(data.field[key] === undefined || data.field[key] === null || data.field[key] === ''){
+                layer.msg(key + "未填写")
+                return false;
+            }
+            if(key === 'node'){
+                data.field[key] = parseInt(data.field[key])   
+            }
         }
-        if(data.field[key] === undefined || data.field[key] === null || data.field[key] === ''){
-            layer.msg(key + "未填写")
-            return false;
-        }
-        if(key === 'node'){
-            data.field[key] = parseInt(data.field[key])   
+    }
+
+    if(api_type === 'api'){
+        for(let key in data.field){
+            if(key === 'id' || key === 'rewrite_url' || key === 'fake_prefix'){
+                continue;
+            }
+            
+            if(data.field[key] === undefined || data.field[key] === null || data.field[key] === ''){
+                layer.msg(key + "未填写")
+                return false;
+            }
+            if(key === 'node'){
+                data.field[key] = parseInt(data.field[key])   
+            }
         }
     }
     
@@ -402,18 +424,41 @@ const tl_ops_api_data_edit_filter = function( data ) {
     if(rule === 'random'){
         delete data.field.node
     }
-    for(let key in data.field){
-        if(key === 'rewrite_url' || key === 'fake_prefix'){
-            continue
-        }
-        if(data.field[key] === undefined || data.field[key] === null || data.field[key] === ''){
-            layer.msg(key + "未填写")
-            return false;
-        }
-        if(key === 'node'){
-            data.field[key] = parseInt(data.field[key])   
+    
+    let api_type = data.field.api_type;
+
+    if(api_type === 'page'){
+        for(let key in data.field){
+            if(key === 'rewrite_url' || key === 'fake_prefix' || key === 'service' || key === 'node'){
+                continue;
+            }
+            
+            if(data.field[key] === undefined || data.field[key] === null || data.field[key] === ''){
+                layer.msg(key + "未填写")
+                return false;
+            }
+            if(key === 'node'){
+                data.field[key] = parseInt(data.field[key])   
+            }
         }
     }
+
+    if(api_type === 'api'){
+        for(let key in data.field){
+            if(key === 'rewrite_url' || key === 'fake_prefix'){
+                continue;
+            }
+            
+            if(data.field[key] === undefined || data.field[key] === null || data.field[key] === ''){
+                layer.msg(key + "未填写")
+                return false;
+            }
+            if(key === 'node'){
+                data.field[key] = parseInt(data.field[key])   
+            }
+        }
+    }
+
     let cur_list = []
     res_data.tl_ops_balance_api_list[rule].forEach((item)=>{
         if(parseInt(item.id) === parseInt(data.field.id)){

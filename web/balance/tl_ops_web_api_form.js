@@ -34,6 +34,16 @@ const tl_ops_web_api_form_main = async function (){
         }
     }); 
 
+    form.on('radio', function(data){
+        if(data.value === 'page'){
+            document.getElementById("tl-ops-web-api-form-service-view").style.display = "none";
+            document.getElementById("tl-ops-web-api-form-service-node-view").style.display = "none";
+        }else if(data.value === 'api'){
+            document.getElementById("tl-ops-web-api-form-service-view").style.display = "block";
+            document.getElementById("tl-ops-web-api-form-service-node-view").style.display = "block";
+        }
+    });  
+
     let res = await axios.get("/tlops/service/list");
     res = res.data;
     if(res.code === 0){
@@ -61,6 +71,15 @@ const tl_ops_web_api_form_main = async function (){
 
 
 window.tl_ops_web_api_form_render = function(data){
+    if(data){
+        if(data.api_type === 'page'){
+            document.getElementById("tl-ops-web-api-form-service-view").style.display = "none";
+            document.getElementById("tl-ops-web-api-form-service-node-view").style.display = "none";
+        }else if(data.api_type === 'api'){
+            document.getElementById("tl-ops-web-api-form-service-view").style.display = "block";
+            document.getElementById("tl-ops-web-api-form-service-node-view").style.display = "block";
+        }
+    }
     form.val("tl-ops-web-api-form", Object.assign(form.val("tl-ops-web-api-form"), data))
     form.render()
     document.querySelector("#fake_prefix").dispatchEvent(new Event('input', {}))

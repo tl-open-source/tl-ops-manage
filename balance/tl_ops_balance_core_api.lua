@@ -184,7 +184,7 @@ local tl_ops_balance_api_service_matcher = function(service_list_table)
             ngx.var.tlops_ups_api_prefix = fake_sub
         end
     end
-    
+
     return node, node_state, node_id, host, rule_match_mode
 end
 
