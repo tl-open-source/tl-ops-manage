@@ -82,7 +82,7 @@ end
 
 -- get leak with lazy generate
 -- block 漏桶流速单位
-local tl_ops_limit_leak_bucket = function( block )
+function _M:tl_ops_limit_leak_bucket( block )
     local capacity = shared:get(self.keys.capacity)
     if not capacity then
         return false
@@ -154,7 +154,7 @@ function _M:tl_ops_limit_leak( block )
         return false
     end
 
-    local leak = tl_ops_limit_leak_bucket( block )
+    local leak = self:tl_ops_limit_leak_bucket( block )
     if not leak or leak == false then
         return false
     end

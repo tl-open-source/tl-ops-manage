@@ -129,7 +129,7 @@ function _M:tl_ops_balance_core_filter(ctx)
         balance_count_node.tl_ops_balance_count_incr_node_fail(node.service, node_id)
         -- 负载失败 -- 限流统计器
         tl_ops_limit:tl_ops_limit_fuse_incr_fail(node.service, node_id);
-        
+
         tl_ops_err_content:err_content_rewrite_to_balance(node.service .. ":" .. node.name, "offline", balance_mode, tl_ops_constant_balance.cache_key.offline, "")
         return
     end
@@ -164,7 +164,7 @@ function _M:tl_ops_balance_core_balance(ctx)
     ngx.header[tl_ops_constant_balance.proxy_state] = "online"
     ngx.header[tl_ops_constant_balance.proxy_mode] = tlops_ups_mode
     ngx.header[tl_ops_constant_balance.proxy_prefix] = tlops_ups_api_prefix
-    
+
     local ok, err = ngx_balancer.set_current_peer(tlops_ups_node.ip, tlops_ups_node.port)
     if ok then
         ngx_balancer.set_timeouts(3, 60, 60)

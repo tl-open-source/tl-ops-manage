@@ -79,7 +79,7 @@ end
 
 -- try sliding, 尝试通过滑动窗口
 -- block : 请求大小
-local tl_ops_limit_sliding_window = function( block )
+function _M:tl_ops_limit_sliding_window( block )
 
     local window = shared:get(self.keys.window)
     if not window then
@@ -116,7 +116,7 @@ local tl_ops_limit_sliding_window = function( block )
             if not count then
                 count = 0
             end
-            local res, _ = shared:del(self.keys.count .. i)
+            local res, _ = shared:delete(self.keys.count .. i)
             if not res then
                 return false
             end
@@ -190,7 +190,7 @@ function _M:tl_ops_sliding_window( block )
         return false
     end
 
-    local sliding = tl_ops_limit_sliding_window( block )
+    local sliding = self:tl_ops_limit_sliding_window( block )
     if not sliding or sliding == false then
         return false
     end

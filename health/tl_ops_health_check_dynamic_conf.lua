@@ -72,7 +72,7 @@ local tl_ops_health_check_dynamic_conf_add_core = function(options, services)
 		shared:set(tl_ops_constant_health.cache_key.service_options_version, nil)
 		return
 	end
-	
+
 	-- 如果有，查看cache service中的所有服务是否都已启动timer，如果没有, 补充启动相应service timer
 	local timers_list = cjson.decode(timers_str)
 	for service_name, nodes in pairs(services) do
@@ -83,7 +83,7 @@ local tl_ops_health_check_dynamic_conf_add_core = function(options, services)
 			end
 		end
 		if service_name_exist == true then
-			tlog:dbg("[add-check] timer exist , service_name=",service_name)
+			tlog:dbg("[add-check] timer exist, service_name=",service_name)
 		else
 			local matcher_options = tl_ops_health_check_dynamic_conf_get_option( options, service_name)
 			tlog:dbg("[add-check] new timer done, service_name=",service_name, ",matcher_options=",matcher_options)
@@ -131,6 +131,7 @@ end
 -- 加载新增配置的周期为10s
 tl_ops_health_check_dynamic_conf_add_timer_check = function(premature, args)
 	if premature then
+		tlog:err("premature")
 		return
 	end
 

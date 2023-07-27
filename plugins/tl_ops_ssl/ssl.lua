@@ -27,8 +27,8 @@ local get_pem_key_cache = function(host)
     end
 
     local list = cjson.decode(list_str)
-    if not list then 
-        return nil 
+    if not list then
+        return nil
     end
 
     for i = 1, #list do
@@ -45,7 +45,7 @@ end
 -- 核心逻辑
 function _M:ssl_core()
 
-    local host = ssl.server_name()        
+    local host = ssl.server_name()
 
     local ok, err = ssl.clear_certs()
     if not ok then
@@ -71,8 +71,7 @@ function _M:ssl_core()
         return false, err
     end
 
-    local passphrase = nil
-    local der_pkey, err = ssl.priv_key_pem_to_der(host_pem_key.key, passphrase)
+    local der_pkey, err = ssl.priv_key_pem_to_der(host_pem_key.key)
     if not der_pkey then
         tlog:err("failed to convert private key, ",err,",key=",host_pem_key.key)
         return false, err

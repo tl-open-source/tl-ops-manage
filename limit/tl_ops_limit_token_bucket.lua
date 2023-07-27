@@ -104,7 +104,7 @@ end
 
 -- get token with lazy generate
 -- block 取用令牌数量
-local tl_ops_limit_token_bucket = function( block )
+function _M:tl_ops_limit_token_bucket( block )
     local capacity = shared:get(self.keys.capacity)
     if not capacity then
         return false
@@ -194,7 +194,7 @@ function _M:tl_ops_limit_token( block )
         return false
     end
 
-    local token = tl_ops_limit_token_bucket( block )
+    local token = self:tl_ops_limit_token_bucket( block )
     if not token or token == false then
         return false
     end

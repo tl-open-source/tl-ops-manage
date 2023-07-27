@@ -241,6 +241,7 @@ end
 local tl_ops_time_alert_timer
 tl_ops_time_alert_timer = function(premature, options)
 	if premature then
+        tlog:err("premature")
 		return
     end
 

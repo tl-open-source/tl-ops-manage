@@ -134,6 +134,7 @@ end
 -- 加载新增配置的周期为10s
 tl_ops_limit_fuse_check_dynamic_conf_add_timer_check = function(premature, args)
 	if premature then
+		tlog:err("premature")
 		return
 	end
 

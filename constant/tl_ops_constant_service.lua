@@ -8,7 +8,7 @@ local tl_ops_constant_service = {
         service_rule = "tl_ops_service_rule",
     },
     list = {
-        
+
     },
     demo = {
         id = 1,

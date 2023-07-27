@@ -20,6 +20,7 @@ local mt = { __index = _M }
 -- 核心逻辑
 local tl_ops_sync_timer = function(premature, args)
 	if premature then
+        tlog:err("premature")
 		return
     end
     

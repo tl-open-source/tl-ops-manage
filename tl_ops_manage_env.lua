@@ -33,7 +33,7 @@ return {
             en :log level, please be careful not to enable debug level logs 
                 in the production environment, it will greatly affect the performance.
             
-            zn :日志等级, 注意请不要在生产环境开启调试级别日志，十分影响性能。
+            zn :日志等级, 注意请不要在生产环境开启调试级别日志，十分影响性能。debug = 1, std = 2, error = 3
         ]]
         level = 1,
         --[[

@@ -84,7 +84,7 @@
 
         * [使用配置](usage/ssl/README.md)
 
-    * [登陆认证插件](code/auth/README.md)
+    * [登录认证插件](code/auth/README.md)
 
         * [使用配置](usage/auth/README.md)
 

@@ -28,6 +28,7 @@ end
 -- 定时器
 tl_ops_sync_cluster_timer = function(premature, options)
 	if premature then
+        tlog:err("premature")
 		return
     end
 

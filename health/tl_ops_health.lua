@@ -14,15 +14,15 @@ local _M = {}
 function _M:init(  )
 
     --给定配置启动健康检查，支持动态加载已有服务变更配置
-    local health_check = tl_ops_health_check:new( 
+    local health_check = tl_ops_health_check:new(
         tl_ops_constant_health.options,  tl_ops_constant_health.service
     );
     health_check:tl_ops_health_check_start();
 
-    
+
     --动态加载新增配置
     tl_ops_health_check_dynamic_conf.dynamic_conf_add_start()
-    
+
 
     --默认初始化一次version
     for i = 1, #tl_ops_constant_health.options do
@@ -32,7 +32,7 @@ function _M:init(  )
             tl_ops_health_check_version.incr_service_version(service_name)
         end
     end
-	
+
 	tl_ops_health_check_version.incr_service_option_version()
 
 end

@@ -64,6 +64,7 @@ end
 -- 统计waf次数周期默认为5min，可调整配置
 tl_ops_waf_count_timer = function(premature, args)
 	if premature then
+        tlog:err("premature")
 		return
     end
 

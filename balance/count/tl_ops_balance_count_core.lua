@@ -57,6 +57,7 @@ end
 -- 统计balance次数周期默认为5min，可调整配置
 tl_ops_balance_count_timer = function(premature, args)
 	if premature then
+        tlog:err("premature")
 		return
     end
 

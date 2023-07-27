@@ -189,6 +189,10 @@ end
 
 tl_ops_limit_fuse = function(premature, conf)
     if premature then
+		tlog:err("premature")
+
+		-- 重启时，清空所有定时器记录
+		shared:set(tl_ops_constant_limit.fuse.cache_key.timers, nil)
 		return
 	end
 

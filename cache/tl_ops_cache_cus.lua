@@ -37,24 +37,35 @@ end
 
 
 function _M:new()
+    local default_cus = {
+        get =  function(key)
+            return nil
+        end,
+        set = function(key, value)
+            return nil
+        end,
+        del = function(key)
+            return nil
+        end
+    }
     if not use_cus or use_cus == 'none' then
-        return nil
+        return default_cus
     end
 
     local status, cus = pcall(require, "cache.tl_ops_cache_" .. use_cus)
     if status then
         if cus and type(cus) == 'table' then
             if type(cus.new) ~= 'function' then
-                return nil
+                return default_cus
             end
             if type(cus.get) ~= 'function' then
-                return nil
+                return default_cus
             end
             if type(cus.set) ~= 'function' then
-                return nil
+                return default_cus
             end
             if type(cus.del) ~= 'function' then
-                return nil
+                return default_cus
             end
         end
     end

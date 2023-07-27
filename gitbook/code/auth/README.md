@@ -1,13 +1,13 @@
-# 登陆认证插件
+# 登录认证插件
 
-登陆认证插件主要为管理后台系统提供一个操作可控的权限认证，实现的方式是在 `tl_ops_process_before_init_rewrite` 阶段进行cookie或者header验证，对于需要拦截验证的链接进行验证，当然，拦截链接是可视化配置的，可以根据需要自定义
+登录认证插件主要为管理后台系统提供一个操作可控的权限认证，实现的方式是在 `tl_ops_process_before_init_rewrite` 阶段进行cookie或者header验证，对于需要拦截验证的链接进行验证，当然，拦截链接是可视化配置的，可以根据需要自定义
 
-登陆插件数据主要分为两个子模块，一个是自定义配置模块，一个是账号密码模块
+登录插件数据主要分为两个子模块，一个是自定义配置模块，一个是账号密码模块
 
 
 ### 拦截配置
 
-我们先看一下拦截配置的数据定义，主要包含几个方面，拦截的api，拦截api白名单，拦截后返回的内容，登陆验证身份相关。
+我们先看一下拦截配置的数据定义，主要包含几个方面，拦截的api，拦截api白名单，拦截后返回的内容，登录验证身份相关。
 
 ```lua
 # 代码位置 : plugins/tl_ops_auth/tl_ops_plugin_constant.lua
@@ -24,9 +24,9 @@ login = {
         "/tlops/auth/login",
         "/tlopsmanage/lib/",
     },
-    auth_time = 3600,               -- 登陆后session有效时间
-    auth_cid = "_tl_t",             -- 登陆后cookie值key
-    auth_hid = "Tl-Auth-Rid",       -- 登陆后header值key
+    auth_time = 3600,               -- 登录后session有效时间
+    auth_cid = "_tl_t",             -- 登录后cookie值key
+    auth_hid = "Tl-Auth-Rid",       -- 登录后header值key
 },
 ```
 
@@ -67,7 +67,7 @@ end
 ```
 
 进入 `auth_core` 方法，看实现逻辑为拿到设置配置后，判断当前uri是否需要拦截，如果需要拦截， 判断cookie或者header中的sessionkey是否有效，
-如果无效，则是没有登陆，返回自定义的配置内容。
+如果无效，则是没有登录，返回自定义的配置内容。
 
 ```lua
 # 代码位置 : plugins/tl_ops_auth/auth.lua

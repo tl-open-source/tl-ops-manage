@@ -19,8 +19,8 @@ local _M = {
 }
 local mt = { __index = _M }
 
-local tl_ops_health_check, 
-tl_ops_health_check_main ,
+local tl_ops_health_check,
+tl_ops_health_check_main,
 tl_ops_health_check_default_confs,
 tl_ops_health_check_nodes,
 tl_ops_health_check_node_failed,
@@ -148,6 +148,10 @@ end
 -- 创建健康检查定时器
 tl_ops_health_check = function(premature, conf)
 	if premature then
+		tlog:err("premature")
+
+		-- 重启时，清空所有定时器记录
+		shared:set(tl_ops_constant_health.cache_key.timers, nil)
 		return
 	end
 

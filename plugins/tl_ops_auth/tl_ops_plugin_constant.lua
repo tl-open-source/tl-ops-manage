@@ -31,7 +31,7 @@ local default_content_page = [[
         </form>
         <div class="layui-form-item" style="margin-top: 30px;">
             <div class="layui-input-block">
-                <button class="layui-btn" onclick="tl_ops_manage_login()" style="letter-spacing: 40px;text-indent: 30px;">登陆</button>
+                <button class="layui-btn" onclick="tl_ops_manage_login()" style="letter-spacing: 40px;text-indent: 30px;">登录</button>
             </div>
         </div>
     </div>

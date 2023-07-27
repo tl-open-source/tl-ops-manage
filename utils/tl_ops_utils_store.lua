@@ -9,23 +9,35 @@ local tlog				= require("utils.tl_ops_utils_log"):new("tl_ops_utils_store");
 local tl_ops_utils_func	= require("utils.tl_ops_utils_func");
 local tl_ops_manage_env	= require("tl_ops_manage_env")
 local tl_ops_rt			= require("constant.tl_ops_constant_comm").tl_ops_rt;
-
+local MAX_SEEK			= 4294967296;	-- 最大支持4GB 4 * 1024 * 1024 * 1024
+local PREVIOUS_KEY 		= "previous$_"; -- 支持上一次索引，进行版本控制
 
 local _M = {}
 
 -- store json index file
 -- 写索引文件
-function _M:store_index( key , seek)
+function _M:store_index( key, seek )
 	-- 最大支持4GB
-	if seek > 4 * 1024 * 1024 * 1024 then
-		tlog:err("not allowed seek store-index : " .. seek)
+	if seek > MAX_SEEK then
+		tlog:err("file max, not allowed seek store-index : " .. seek)
 		return
 	end
-	-- add index
+
+	-- get all index
 	local content = self:read_index();
 	if not content or content == nil then
 		content = {}
 	end
+
+	-- add previous index
+	local cur_index = content[key];
+	if cur_index and cur_index ~= nil then
+		content[PREVIOUS_KEY .. key] = cur_index
+	else
+		content[PREVIOUS_KEY .. key] = seek
+	end
+
+	-- update new index
 	content[key] = seek;
 
 	local store_file_name = self.path .. self.business .. ".tlindex"
@@ -59,14 +71,15 @@ function _M:store( key,  ... )
 	else
 		self:store_index(key ,file_size)
 	end
-	
+
+	-- store data
 	local store_data = {
         time = os.date("%Y-%m-%d %H:%M:%S", ngx.now()),
         business = self.business,
         value = tl_ops_utils_func:data_to_string( {...} )
 	}
     local store_data_encode = cjson.encode(store_data)
-	
+
     store_file_io:write(store_data_encode .. "\n")
     store_file_io:flush()
     store_file_io:close()
@@ -129,7 +142,7 @@ function _M:new(business)
 	}
  	setmetatable(store_conf, self)
 	self.__index = self
-	 
+
   	return store_conf
 end
 
