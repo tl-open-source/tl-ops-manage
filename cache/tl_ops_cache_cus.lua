@@ -9,6 +9,7 @@ local tlog              = require("utils.tl_ops_utils_log"):new("tl_ops_cache_cu
 local tl_ops_utils_func = require("utils.tl_ops_utils_func");
 local tl_ops_manage_env = require("tl_ops_manage_env")
 local use_cus           = tl_ops_manage_env.cache.cus;
+local use_cus_name      = use_cus.name;
 
 
 local _M = tl_ops_utils_func:new_tab(0, 10)
@@ -48,11 +49,11 @@ function _M:new()
             return nil
         end
     }
-    if not use_cus or use_cus == 'none' then
+    if not use_cus or not use_cus_name or use_cus_name == 'none' then
         return default_cus
     end
 
-    local status, cus = pcall(require, "cache.tl_ops_cache_" .. use_cus)
+    local status, cus = pcall(require, "cache.tl_ops_cache_" .. use_cus_name)
     if status then
         if cus and type(cus) == 'table' then
             if type(cus.new) ~= 'function' then
@@ -70,7 +71,7 @@ function _M:new()
         end
     end
 
-    tlog:dbg("use cus new ok, cus=" .. use_cus)
+    tlog:dbg("use cus new ok, cus=" .. use_cus_name)
 
     return setmetatable({cus = cus}, mt)
 end

@@ -11,6 +11,7 @@ local constant_rt       = require("constant.tl_ops_constant_comm").tl_ops_rt;
 local tl_ops_manage_env = require("tl_ops_manage_env")
 local tl_ops_utils_func = require("utils.tl_ops_utils_func");
 local use_cus           = tl_ops_manage_env.cache.cus;
+local use_cus_name      = use_cus.name;
 
 
 local _M = tl_ops_utils_func:new_tab(0, 20)
@@ -18,8 +19,8 @@ _M._VERSION = '0.02'
 local mt = { __index = _M }
 
 
-function _M:new(business)
-    local cache_store = require("cache.tl_ops_cache_store"):new(business);
+function _M:new(business, store_full)
+    local cache_store = require("cache.tl_ops_cache_store"):new(business, store_full);
     return setmetatable({
         business = business,
         cache_store = cache_store
@@ -78,7 +79,7 @@ end
     cus 模式 
 ]]
 function _M:get010( key )
-    if not use_cus or use_cus == 'none' then
+    if not use_cus or not use_cus_name or use_cus_name == 'none' then
         return nil , "un open cus cache " .. key;
     end
     
@@ -96,7 +97,7 @@ function _M:get010( key )
 end
 
 function _M:set010(key, value)
-    if not use_cus or use_cus == 'none' then
+    if not use_cus or not use_cus_name or use_cus_name == 'none' then
         return nil , "un open cus cache " .. key;
     end
     
@@ -114,7 +115,7 @@ function _M:set010(key, value)
 end
 
 function _M:del010(key)
-    if not use_cus or use_cus == 'none' then
+    if not use_cus or not use_cus_name or use_cus_name == 'none' then
         return nil , "un open cus cache " .. key;
     end
 
@@ -168,7 +169,7 @@ function _M:get011( key )
 end
 
 function _M:set011(key, value)
-    if not use_cus or use_cus == 'none' then
+    if not use_cus or not use_cus_name or use_cus_name == 'none' then
         return nil , "un open cus cache " .. key;
     end
 
@@ -194,7 +195,7 @@ function _M:set011(key, value)
 end
 
 function _M:del011(key)
-    if not use_cus or use_cus == 'none' then
+    if not use_cus or not use_cus_name or use_cus_name == 'none' then
         return nil , "un open cus cache " .. key;
     end
 
@@ -344,7 +345,7 @@ end
     dict-cus 模式 
 ]]
 function _M:get110( key )
-    if not use_cus or use_cus == 'none' then
+    if not use_cus or not use_cus_name or use_cus_name == 'none' then
         return nil , "un open cus cache " .. key;
     end
 
@@ -373,7 +374,7 @@ function _M:get110( key )
 end
 
 function _M:set110(key, value)
-    if not use_cus or use_cus == 'none' then
+    if not use_cus or not use_cus_name or use_cus_name == 'none' then
         return nil , "un open cus cache " .. key;
     end
 
@@ -397,7 +398,7 @@ function _M:set110(key, value)
 end
 
 function _M:del110(key)
-    if not use_cus or use_cus == 'none' then
+    if not use_cus or not use_cus_name or use_cus_name == 'none' then
         return nil , "un open cus cache " .. key;
     end
 
@@ -437,9 +438,7 @@ function _M:get( key )
         return res_dict;
     end
 
-    
-
-    if use_cus and use_cus ~= 'none' then
+    if use_cus and use_cus_name and use_cus_name ~= 'none' then
         -- load from cus
         local res_cus ,_ = cache_cus:get(key);
         if res_cus and res_cus ~= nil then
@@ -455,8 +454,8 @@ function _M:get( key )
     -- load from store
     local res_store ,_ = self.cache_store:get(key);
     if res_store and res_store ~= nil then
-        
-        if use_cus and use_cus ~= 'none' then
+
+        if use_cus and use_cus_name and use_cus_name ~= 'none' then
             -- set to cus 
             local set_res ,_ = cache_cus:set(key, res_store);
             if not set_res then
@@ -487,7 +486,7 @@ function _M:set(key, value)
         return nil, "failed set to store " .. key;
     end
 
-    if use_cus and use_cus ~= 'none' then
+    if use_cus and use_cus_name and use_cus_name ~= 'none' then
         -- set cus
         local set_cus ,_ = cache_cus:set(key, value);
         if not set_cus then
@@ -516,7 +515,7 @@ function _M:del(key)
         return nil, "failed to del store " .. key;
     end
 
-    if use_cus and use_cus ~= 'none' then
+    if use_cus and use_cus_name and use_cus_name ~= 'none' then
         -- del cus
         local del_cus ,_ = cache_dict:del(key);
         if not del_cus then

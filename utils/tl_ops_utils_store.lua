@@ -55,10 +55,19 @@ end
 
 
 -- store json file
+-- full : 是否删除之前的内容
+-- key  : key
+-- value: value
 -- 写内容文件
-function _M:store( key,  ... )
+function _M:store( key, ... )
 	local store_file_name = self.path .. self.business .. ".tlstore"
-	local store_file_io, _ = io.open(store_file_name, "a+")  -- 追加内容
+	local ioMode = "a+"; -- 默认追加内容
+	-- 覆盖
+	if self.store_full and self.store_full == true then
+		ioMode = "w+";
+	end
+
+	local store_file_io, _ = io.open(store_file_name, ioMode)
     if not store_file_io then
     	tlog:err("failed to open file in store: " .. store_file_name)
         return
@@ -72,13 +81,13 @@ function _M:store( key,  ... )
 		self:store_index(key ,file_size)
 	end
 
+	local time = os.date("%Y-%m-%d %H:%M:%S", ngx.now());
+	local val = tl_ops_utils_func:data_to_string( {...} );
+
 	-- store data
-	local store_data = {
-        time = os.date("%Y-%m-%d %H:%M:%S", ngx.now()),
-        business = self.business,
-        value = tl_ops_utils_func:data_to_string( {...} )
-	}
-    local store_data_encode = cjson.encode(store_data)
+    local store_data_encode = cjson.encode({
+        time = time, business = self.business, value = val
+	})
 
     store_file_io:write(store_data_encode .. "\n")
     store_file_io:flush()
@@ -135,10 +144,11 @@ end
 
 
 
-function _M:new(business)
+function _M:new(business, store_full)
 	local store_conf = {
 		path = tl_ops_manage_env.path.store,
-		business = business
+		business = business,
+		store_full = store_full
 	}
  	setmetatable(store_conf, self)
 	self.__index = self

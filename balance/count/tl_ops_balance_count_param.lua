@@ -7,7 +7,7 @@
 
 local cjson                             = require("cjson.safe")
 local cache_balance_param               = require("cache.tl_ops_cache_core"):new("tl-ops-balance-param")
-local cache_balance_count               = require("cache.tl_ops_cache_core"):new("tl-ops-balance-count");
+local cache_balance_count               = require("cache.tl_ops_cache_core"):new("tl-ops-balance-count", true);
 local tlog                              = require("utils.tl_ops_utils_log"):new("tl_ops_balance_count")
 local tl_ops_constant_balance_param     = require("constant.tl_ops_constant_balance_param")
 local tl_ops_constant_balance_count     = require("constant.tl_ops_constant_balance_count")

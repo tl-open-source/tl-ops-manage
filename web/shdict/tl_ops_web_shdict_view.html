@@ -45,7 +45,6 @@
             let value = ""
             if(type && key){
                 let res = await axios.get("/tlops/state/shdict/key/get?type="+type+"&key="+key);
-                console.log(res)
                 res = res.data;
                 if(res.code === 0){
                     value = res.data.value;

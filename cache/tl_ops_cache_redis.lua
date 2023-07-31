@@ -4,7 +4,15 @@
 -- @author iamtsm
 -- @email 1905333456@qq.com
 
-local cache_redis       = require("lib.iredis"):new();
+local tl_ops_manage_env = require("tl_ops_manage_env")
+local use_cus           = tl_ops_manage_env.cache.cus;
+
+local cache_redis       = require("lib.iredis"):new({
+    check_timeout       = use_cus.check_timeout,
+    host                = use_cus.host,
+    port                = use_cus.port,
+    auth                = use_cus.auth,
+});
 local tlog              = require("utils.tl_ops_utils_log"):new("tl_ops_cache_cus");
 local tl_ops_utils_func = require("utils.tl_ops_utils_func");
 

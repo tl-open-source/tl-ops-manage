@@ -29,7 +29,7 @@ local tl_ops_balance_count_timer
 -- 统计器 ： 持久化数据
 local tl_ops_balance_count = function()
     local lock_key = tl_ops_constant_balance_count.cache_key.lock
-    local lock_time = tl_ops_constant_balance_count.interval - 0.01
+    local lock_time = tl_ops_manage_env.balance.counting_interval - 0.01
     if not tl_ops_utils_func:tl_ops_worker_lock(lock_key, lock_time) then
         return
     end
@@ -66,7 +66,7 @@ tl_ops_balance_count_timer = function(premature, args)
 		tlog:err("failed to pcall : " ,  _)
     end
 
-	local ok, _ = ngx.timer.at(tl_ops_constant_balance_count.interval, tl_ops_balance_count_timer, args)
+	local ok, _ = ngx.timer.at(tl_ops_manage_env.balance.counting_interval, tl_ops_balance_count_timer, args)
 	if not ok then
 		tlog:err("failed to create timer: " , _)
     end

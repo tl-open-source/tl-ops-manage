@@ -64,11 +64,15 @@ end
 -- change connect address as you need
 function _M.connect_mod( self, redis )
     redis:set_timeout(self.check_timeout)
-    local ok, err = redis:connect("127.0.0.1", 6379)
+    local ok, err = redis:connect(self.host, self.port)
     if not ok then
         return err;
     end
 
+    local res, err = redis:auth(self.auth)
+    if not res then
+        return err;
+    end
 
     return ok;
 end
@@ -191,8 +195,8 @@ local function do_command(self, cmd, ... )
  
     return result, err
 end
- 
- 
+
+
 for i = 1, #commands do
     local cmd = commands[i]
     _M[cmd] =
@@ -200,17 +204,20 @@ for i = 1, #commands do
                 return do_command(self, cmd, ...)
             end
 end
- 
- 
+
 function _M.new(self, opts)
     opts = opts or {}
     local check_timeout = (opts.check_timeout and opts.check_timeout * 1000) or 1000  --1s
     local db_index= opts.db_index or 0
     return setmetatable({
-            check_timeout = check_timeout,
-            db_index = db_index,
-            _reqs = nil }, mt)
+        host = opts.host,
+        port = opts.port,
+        auth = opts.auth,
+        check_timeout = check_timeout,
+        db_index = db_index,
+        _reqs = nil
+    }, mt)
 end
- 
- 
+
+
 return _M

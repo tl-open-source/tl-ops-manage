@@ -50,23 +50,34 @@ return {
                  [none] means close L2 cache
                  Supports custom extended cache implementations, such as etcd, mysql, etcd.
             
-            zn :开启自定义二级缓存，目前支持选项 【redis】, 【none】, 【none】表示不开启二级缓存
+            zn :开启自定义二级缓存，目前支持选项 redis, none, none表示不开启二级缓存
                 支持自定义扩展缓存实现，如etcd，mysql等。
         ]]
-        cus = "none"
+        cus = {
+            name = "none",
+            check_timeout = 30000,
+            host = "127.0.0.1",
+            port = 6379,
+            auth = "your password",
+        }
     },
     balance = {
         --[[
             en :load counter, after this option is enabled, every time nginx is started, 
                 a timer will be enabled to count the load requests within a certain period of time
-                The time interval is configured in 'constant.tl_ops_constant_balance_count.interval'
-                Notice: Do not set the statistical time interval too short, which may affect performance.
             
             zn :负载统计器，开启此选项后，将在每次启动nginx时，将开启定时器统计一定时间段内的负载请求情况
-                时间间隔在‘constant.tl_ops_constant_balance_count.interval’进行配置
-                注意：统计时间间隔不要设置过短，可能会影响性能。
         ]]
         counting = true,
+        --[[
+            en :load counter interval, the time interval of the load counter, 
+                the unit is seconds, the default is 10s 
+                Notice: Do not set the statistical time interval too short, which may affect performance.
+            
+            zn :负载统计器间隔，负载统计器的时间间隔，单位为秒，默认为10s, 
+                注意：统计时间间隔不要设置过短，可能会影响性能。
+        ]]
+        counting_interval = 10,
         --[[
             en :load current limiter. After this option is enabled, a current limiter will be 
                 connected to the load balancing module. If you need to access current limit, 
@@ -74,7 +85,7 @@ return {
             
             zn :负载限流器，开启此选项后，将在负载均衡模块接入限流器。如果需要接入限流，推荐开启此选项
         ]]
-        limiter = true,
+        limiter = true
     },
     waf = {
         --[[
@@ -95,5 +106,14 @@ return {
                 注意：统计时间间隔不要设置过短，可能会影响性能。
         ]]
         counting = true,
+        --[[
+            en :waf filter statistic interval, the time interval of the waf filter statistic, 
+                the unit is seconds, the default is 10s 
+                Notice: Do not set the statistical time interval too short, which may affect performance.
+            
+            zn :waf过滤统计器间隔，waf过滤统计器的时间间隔，单位为秒，默认为10s, 
+                注意：统计时间间隔不要设置过短，可能会影响性能。
+        ]]
+        counting_interval = 10,
     }
 }

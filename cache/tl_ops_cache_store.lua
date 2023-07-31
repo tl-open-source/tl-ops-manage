@@ -13,8 +13,8 @@ _M._VERSION = '0.02'
 local mt = { __index = _M }
 
 
-function _M:new(business)
-    local cache_store = require("utils.tl_ops_utils_store"):new(business);
+function _M:new(business, store_full)
+    local cache_store = require("utils.tl_ops_utils_store"):new(business, store_full);
     return setmetatable({
         business = business,
         cache_store = cache_store

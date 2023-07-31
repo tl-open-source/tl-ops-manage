@@ -17,9 +17,7 @@ local tl_ops_constant_balance_count = {
         cookie_counting_list = "tl_ops_balance_cookie_counting_list",   -- 以服务节点的cookie为单位，周期内统计次数集合 list
         header_counting_list = "tl_ops_balance_header_counting_list",   -- 以服务节点的header为单位，周期内统计次数集合 list
         param_counting_list = "tl_ops_balance_param_counting_list",     -- 以服务节点的param为单位，周期内统计次数集合 list
-        
-    },
-    interval = 10,              -- 统计周期 单位/s, 默认:10s
+    }
 }
 
 return tl_ops_constant_balance_count
